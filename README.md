@@ -1,2 +1,2 @@
-# Data-Driven-Computing_in_PorousMedia_LinearElasticity
+# DDCM
 Codes and usefull documents
