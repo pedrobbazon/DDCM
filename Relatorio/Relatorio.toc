@@ -1,0 +1,26 @@
+\babel@toc {portuguese}{}\relax 
+\contentsline {section}{\numberline {1}Resumo}{5}{section.1}%
+\contentsline {section}{\numberline {2}Introdução}{7}{section.2}%
+\contentsline {section}{\numberline {3}Revisão Bibliográfica}{8}{section.3}%
+\contentsline {section}{\numberline {4}Meios Porosos}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Definição}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Propriedades físicas dos meios porosos}{9}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Porosidade}{9}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Permeabilidade}{10}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Saturação}{11}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Propriedades físicas dos fluidos}{11}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Volumes elementares representativos}{11}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Leis constitutivas para escoamento em meios porosos}{11}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Lineares}{11}{subsubsection.4.5.1}%
+\contentsline {paragraph}{Modelo de Darcy}{11}{section*.3}%
+\contentsline {subsubsection}{\numberline {4.5.2}Não lineares}{13}{subsubsection.4.5.2}%
+\contentsline {paragraph}{Modelo de Forchheimer}{13}{section*.6}%
+\contentsline {section}{\numberline {5}Resultados}{15}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Sensibilidade quanto ao número de amostras}{15}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Sensibilidade quanto a discretização da malha de elementos finitos}{22}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Análise de convergência em relação ao número de pontos amostrais}{28}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Permeabilidade homogênea e unitária}{28}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Permeabilidade heterogênea: função gaussiana}{29}{subsubsection.5.3.2}%
+\contentsline {section}{\numberline {6}Problema de Poisson com condições de contorno mistas}{31}{section.6}%
+\contentsline {section}{\numberline {7}Conclusão}{33}{section.7}%
+\contentsline {section}{\numberline {A}Apêndice}{34}{appendix.A}%

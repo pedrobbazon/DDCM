@@ -1,0 +1,55 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Relatorio.aux
+A level-1 auxiliary file: Textual/Resumo.aux
+A level-1 auxiliary file: Textual/Introducao.aux
+A level-1 auxiliary file: Textual/RevisaoBibliografica.aux
+A level-1 auxiliary file: Textual/MeiosPorosos.aux
+A level-1 auxiliary file: Textual/Resultados.aux
+A level-1 auxiliary file: Textual/Conclusao.aux
+A level-1 auxiliary file: Textual/Apendice.aux
+The style file: abbrv.bst
+Database file #1: Bibliografia/Bibliografia.bib
+Warning--empty school in Jambhekar2011
+You've used 13 entries,
+            2118 wiz_defined-function locations,
+            600 strings with 6295 characters,
+and the built_in function-call counts, 3349 in all, are:
+= -- 321
+> -- 139
+< -- 3
++ -- 55
+- -- 42
+* -- 200
+:= -- 597
+add.period$ -- 45
+call.type$ -- 13
+change.case$ -- 54
+chr.to.int$ -- 0
+cite$ -- 14
+duplicate$ -- 156
+empty$ -- 286
+format.name$ -- 42
+if$ -- 700
+int.to.chr$ -- 0
+int.to.str$ -- 13
+missing$ -- 21
+newline$ -- 72
+num.names$ -- 28
+pop$ -- 75
+preamble$ -- 1
+purify$ -- 47
+quote$ -- 0
+skip$ -- 83
+stack$ -- 0
+substring$ -- 87
+swap$ -- 18
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 30
+warning$ -- 1
+while$ -- 28
+width$ -- 15
+write$ -- 160
+(There was 1 warning)
