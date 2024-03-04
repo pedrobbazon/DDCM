@@ -81,14 +81,14 @@ def ExperimentalPoissonCG(mesh,Time, dt, t, theta, dtheta, n):
 
     # Boundary Conditions
     bc_bottom = DirichletBC(W, Constant(0.0), 3)  # Bottom boundary condition
-    p = Constant(1.0*sin(t))       # Pressure on the top boundary
+    p = Constant(1.0*sin(t))       # Pressure on the top boundary (time dependent b.c.)
     bc_top = DirichletBC(W, p, 4)  # Top boundary condition
 
     # Allocating memory to store the rotated solutions
     grad_rot = [];  flux_rot = []
    
     #Output Files
-    outfile_u = File('Pressure_test.pvd');  outfile_gradu = File('Gradu_test.pvd'); outfile_flux = File('Flux_test.pvd')
+    outfile_u = File('Pressure_exp.pvd');  outfile_gradu = File('Gradu_exp.pvd'); outfile_flux = File('Flux_exp.pvd')
       
     # Solve
     while t < Time:
@@ -96,7 +96,7 @@ def ExperimentalPoissonCG(mesh,Time, dt, t, theta, dtheta, n):
         # Solve the Poisson problem
         solve(a == L, w, bcs=[bc_bottom, bc_top])
         
-        print(f"Solution at time {t:.2f}\t=====\tOK")
+        print(f"Solution at time {t:.2f}\t===\tOK")
         
         # Obtain the gradient and flux 
         gradu = project(grad(w), VectorFunctionSpace(mesh, 'DG', 0),name='Gradu')
@@ -109,7 +109,7 @@ def ExperimentalPoissonCG(mesh,Time, dt, t, theta, dtheta, n):
            so we just need to extract one value for each variable and rotate it."""
         
         # Rotation 
-        while n < theta:
+        while n <= theta:
 
             # Rotate the obtained solutions
             R = RotationalMatrix(n)
@@ -134,20 +134,21 @@ def ExperimentalPoissonCG(mesh,Time, dt, t, theta, dtheta, n):
     return w, gradu, flux, grad_rot, flux_rot
  
  
-def PoissonCG(mesh, kappa, f, p_dirichlet, orderU):
+def PoissonCG(mesh, kappa, f, pressure_dirichlet, orderU):
     
     # Construct the function space
     W = FunctionSpace(mesh, "CG", orderU)
 
     # Define the trial and test functions
-    u = TrialFunction(W);   v = TestFunction(W)
+    u = TrialFunction(W)  
+    v = TestFunction(W)
 
     # Variational form
-    a = inner(kappa * grad(u), grad(v)) * dx
+    a = inner(kappa*grad(u),grad(v))*dx
     L = f*v*dx
 
     # Apply boundary conditions in the entire domain (Dirichlet)
-    bc = DirichletBC(W, p_dirichlet, "on_boundary")
+    bc = DirichletBC(W, pressure_dirichlet, "on_boundary")
 
     # Solve the problem
     w = Function(W, name='Pressure')
@@ -171,7 +172,7 @@ def FluxLaw(sigma, u):
     return grad(u) + muokap*sigma + betarho * modreg * sigma
 
 
-def PoissonHdiv(mesh, f, p_dirichlet, Quad_mesh, orderF=1, orderU=2):
+def PoissonHdiv(mesh, f, pressure_dirichlet, Quad_mesh, orderF=1, orderU=2):
 
   # Define the function spaces
   if(Quad_mesh):
@@ -194,7 +195,7 @@ def PoissonHdiv(mesh, f, p_dirichlet, Quad_mesh, orderF=1, orderU=2):
   Res += f*v*dx
 
   # Define boundary conditions
-  bcall = DirichletBC(W.sub(1), p_dirichlet, "on_boundary")
+  bcall = DirichletBC(W.sub(1), pressure_dirichlet, "on_boundary")
 
   # Solve the problem
   solve(Res == 0, w, bcs=[bcall], solver_parameters=solpet)
@@ -203,15 +204,15 @@ def PoissonHdiv(mesh, f, p_dirichlet, Quad_mesh, orderF=1, orderU=2):
   return sigma, u
 
 
-def ComputeState(flux, grad, StateOption):
-  if(StateOption == 'R4'):
+def ComputeState(flux, grad, State_option):
+  if(State_option == 'R4'):
     state_vector = np.column_stack((grad, flux))
-  elif(StateOption == 'R2'):
+  elif(State_option == 'R2'):
     magflux = np.linalg.norm(flux, axis=1)
     maggrad = np.linalg.norm(flux, axis=1)
     state_vector = np.column_stack((maggrad, magflux))
   else:
-    raise ValueError('Option flag_dist not recognized')
+    raise ValueError('State_option not recognized')
   return state_vector
 
 
@@ -231,14 +232,14 @@ def KDTree(observed_data, current_state):
 
 # Domain parameters
 Lx, Ly = 1.0, 1.0
-Nx, Ny = 10, 10 
+Nx, Ny = 50, 50 
 mesh = RectangleMesh(Nx, Ny, Lx, Ly, quadrilateral=False) 
 x, y = SpatialCoordinate(mesh)
 
 
 # Permeability 
-constant_perm = True
-if (constant_perm):
+Constant_perm = True
+if (Constant_perm):
   # Constant
     kappa = Constant(1.0)
 else:
@@ -262,9 +263,6 @@ if(Formulation_solver == 'Primal-CG'):
   # Call the Poisson solver function
   orderU=1
   u = PoissonCG(mesh, kappa, f, pressure_dirichlet, orderU)
-  
-  #uref = Function(u.function_space())
-  #uref.assign(u)
   
   # Recover the pressure gradient and the corresponding flux on each element
   Gradu = project(grad(u), VectorFunctionSpace(mesh, family='DG', degree=0),name = 'Gradu')
@@ -299,7 +297,7 @@ elif(Formulation_solver == 'DualMixed-Hdiv'):
         
 else:
         
-  raise ValueError('FormulationSolver option not recognized\n')
+  raise ValueError('Formulation_solver option not recognized\n')
 
 
 
@@ -314,8 +312,8 @@ print(f'Sampling process: {Sampling_data}\n')
 if(Sampling_data == 'Experimental'):
     
   # Time and angle parameters
-  Time =  np.pi/2;   N_time = 50;    dt = Time/N_time;   t0 = 0.
-  theta = np.pi;     N_theta = 5;   dtheta = theta/N_theta;   theta0 = 0.    
+  Time =  np.pi/2;   N_time = 10;    dt = Time/N_time;   t0 = 0.
+  theta = np.pi;     N_theta = 4;   dtheta = theta/N_theta;   theta0 = 0.    
   visualization = False
   
   # Call the experimental Poisson solver function
@@ -329,7 +327,6 @@ if(Sampling_data == 'Experimental'):
   gradu_obs_vals, flux_obs_vals = grad_rot, flux_rot
   
   if(visualization):
-    
     # Reshape the arrays
     grad_rot = grad_rot.reshape(N_time,N_theta,-1)
     flux_rot = flux_rot.reshape(N_time,N_theta,-1)
@@ -363,7 +360,7 @@ elif(Sampling_data == 'Numerical'):
   # Define a generator to produce the random numbers
   generator = np.random.default_rng(0)
   # Define the white noise to be added to the data
-  signal_to_noise = 100.
+  signal_to_noise = 1e9
 
   # Extract the data from the standard solution (pressure gradient)
   Gu_ar = Gradu.dat.data_ro[:]
@@ -402,22 +399,21 @@ elif(Sampling_data == 'Numerical'):
    
 else:
   
-  raise ValueError('SamplingData option not recognized\n')
+  raise ValueError('Sampling_data option not recognized\n')
             
-
 
 
 "PART 03: COMPUTE STATES"
 
 
 
-StateOption = 'R4'
-#StateOption = 'R2'
+State_option = 'R4'
+#State_option = 'R2'
 
 # Compute the state of pressure gradient and flux for the observed data
-observed_data = ComputeState(flux_obs_vals, gradu_obs_vals, StateOption)
+observed_data = ComputeState(flux_obs_vals, gradu_obs_vals, State_option)
 # Compute the state of pressure gradient and flux for the current state
-current_state = ComputeState(flux_vals, gradu_vals, StateOption)
+current_state = ComputeState(flux_vals, gradu_vals, State_option)
 
 
 
@@ -558,7 +554,6 @@ print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
 
 
-
 "Formulation: 5A"
 
 
@@ -622,3 +617,4 @@ print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 print(f'p_L2:{pnormL2_5A:.6} \t u_L2: {fluxnormL2_5A:.6}\n')
 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
+sys.exit()
