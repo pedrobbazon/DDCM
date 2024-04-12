@@ -20,30 +20,47 @@ import matplotlib.pyplot as plt
 import ddcm_classes
 #----------------------------------------------------------------------
 
+
+#----------------------------------------------------------------------------
+# Read some experimental (Flux-Grad) data set and accommodate it 
+# into the appropriate format to be consumed by ddcm_solvers
 def SetManualData():
     # Read or program some user defined data
     # ...
     return ddcm_data
 
 
+#----------------------------------------------------------------------------
+# From a standard FEM solution of the corresponding physical problem,
+# sample the (Flux-Grad) data set and accommodate it 
+# into the appropriate format to be consumed by ddcm_solvers
 def CreateSyntheticData(std_solution):
 
     return ddcm_data
 
-
+#----------------------------------------------------------------------------
+# Program the different DDCM formulations
 def DDCMSolver(ddcm_data, ddcm_formulation_type):
 
     # Run DDCM model
-    ddcm_sol = DDCM()
+    if(ddcm_formulation_type == 'NLSQP-5F-A'):
+
+        ddcm_sol = 0
+    
+    elif(ddcm_formulation_type == 'NLSQP-5F-B'):
+
+        ddcm_sol = 0
+
+    else:
+        raise ValueError(ddcm_formulation_type 'not implemented')
+    
+
+    return ddcm_sol
 
 
-    # Visualize the results
-
-    return 0
-
-
-#------------------------------------------
-# User defined main() function: Program your solver below
+#----------------------------------------------------------------------------
+#----------------------------------------------------------------------------
+# User defined main() function: Program your options and problem below
 
 def _main_ex1_():
     
@@ -53,14 +70,12 @@ def _main_ex1_():
     domain = SimpleComputationalDomain(nsd, Ls, Ns)
 
     std_model_type = 'Darcy-Linear'
-    sol_std = 
-
-
+    sol_std = StandardSolver()
 
     ddcm_data = CreateSyntheticData(std_model_type)
 
     ddcm_model_type = 'NLSQP-5F-A'
-    ir = DDCMSolver(ddcm_data, ddcm_model_type)
+    ddcm_sol = DDCMSolver(ddcm_data, ddcm_model_type)
 
 
 #------------------------------------------

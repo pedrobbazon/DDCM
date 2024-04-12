@@ -17,32 +17,38 @@ class StandardModel:
 #
 # geometry data: domain size, mesh, etc ...
 class SimpleComputationalDomain:
-    def __init__(self, nsd, Lsides, Ndivs):
+    def __init__(self, nsd, Lsides, Ndivs, flag_quads):
+        # Number of spatial dimension
+        if(nsd == 3):
+            raise Exception('3D not implemented yet')
+        else:
+            self.dim = nsd
+        # Domain size
         self.Lx = Lsides[0]
         self.Ly = Lsides[1]
-        self.Lz = Lsides[2]
-        # mesh discretization
+        # Mesh discretization
         self.Nx = Ndivs[0]
         self.Ny = Ndivs[1]
-        self.Nz = Ndivs[2]
-        # define the mesh for 
-        self.msh = ''
-        # dimension
-        self.dim = nsd
-        # element type
-        #self.elem = 
-        # domain volume
+        # Element type 
+        self.flag_quads = flag_quads
+        self.msh = RectangleMesh(Nx, Ny, Lx, Ly, quadrilateral=flag_quads)
+        # UFL element type
+        #self.elem = self.msh.ufl_elem???
+        # Domain volume
         self.vol = 1.0
 
 class GeneralComputationalDomain:
     def __init__(self, nsd, meshfile):
-        # define the mesh for 
+        # Number of spatial dimension
+        if(nsd == 3):
+            raise Exception('3D not implemented yet')
+        else:
+            self.dim = nsd
+        # Read the mesh
         self.msh = Mesh(meshfile)
-        # dimension
-        self.dim = nsd
-        # element type
-        #self.elem = 
-        # domain volume
+        # UFL element type
+        #self.elem = self.msh.ufl_elem???
+        # Domain volume
         self.vol = 1.0
 #
 # IO utils
@@ -57,6 +63,6 @@ class IO_DDMC:
 
 #
 # Spaces and functions utils
-class Spaces:
+class CommonSpaces:
     def __init__(self, domain):
         self.sp = FunctionSpace(domain.msh, "CG", 1)
