@@ -4,6 +4,7 @@ from firedrake.__future__ import interpolate
 
 class StandardModel:
     def __init__(self, model):
+        self.model = model
         if (model == 'Darcy-Linear'):
             self.kappa = Constant(1.0)
         elif(model == 'Darcy-Nonlinear'):
@@ -14,6 +15,12 @@ class StandardModel:
             print('ERROR: In standard_model()')
             print('REASON: Model not implemented')
             exit()
+
+    def FluxLaw(self, potencial, fluxo):
+        if(model == 'Darcy-Linear'):
+            return fluxo + self.kappa * grad(potencial)
+        elif():
+
 #
 # geometry data: domain size, mesh, etc ...
 class SimpleComputationalDomain:
@@ -64,5 +71,7 @@ class IO_DDMC:
 #
 # Spaces and functions utils
 class CommonSpaces:
-    def __init__(self, domain):
+    def __init__(self, domain, deg_flux, deg_pot):
+        self.deg_flux = deg_flux
+        self.deg_pot = deg_pot
         self.sp = FunctionSpace(domain.msh, "CG", 1)
