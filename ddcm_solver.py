@@ -17,26 +17,9 @@ import matplotlib.pyplot as plt
 
 #----------------------------------------------------------------------
 # Our libraries
-import ddcm_classes
+from ddcm_classes import *
 #----------------------------------------------------------------------
 
-
-#----------------------------------------------------------------------------
-# Read some experimental (Flux-Grad) data set and accommodate it 
-# into the appropriate format to be consumed by ddcm_solvers
-def SetManualData():
-    # Read or program some user defined data
-    # ...
-    return ddcm_data
-
-
-#----------------------------------------------------------------------------
-# From a standard FEM solution of the corresponding physical problem,
-# sample the (Flux-Grad) data set and accommodate it 
-# into the appropriate format to be consumed by ddcm_solvers
-def CreateSyntheticData(std_solution):
-
-    return ddcm_data
 
 #----------------------------------------------------------------------------
 # Program the different DDCM formulations
@@ -52,30 +35,44 @@ def DDCMSolver(ddcm_data, ddcm_formulation_type):
         ddcm_sol = 0
 
     else:
-        raise ValueError(ddcm_formulation_type 'not implemented')
+        raise ValueError(ddcm_formulation_type, 'not implemented')
     
 
     return ddcm_sol
 
+def StandardSolver():
+
+    return solution
+
 
 #----------------------------------------------------------------------------
 #----------------------------------------------------------------------------
-# User defined main() function: Program your options and problem below
+# User defined main() functions: Program your options and problem below
 
 def _main_ex1_():
     
+    # Create or import the computational domain and mesh
     nsd = 2
     Ls = [1.0, 1.0]
     Ns = [100, 100]
-    domain = SimpleComputationalDomain(nsd, Ls, Ns)
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    #domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
 
+    # Reference solution and synthetic data are both generated from a standard model
     std_model_type = 'Darcy-Linear'
-    sol_std = StandardSolver()
+    
+    # This is a reference solution to be used to initially distribute the data
+    ref_sol = StandardSolver()
 
-    ddcm_data = CreateSyntheticData(std_model_type)
+    # Read or create some synthetic 
+    ddcm_data = 0.0
+    #ddcm_data = CreateSyntheticData(std_model_type, read_data=False)
 
-    ddcm_model_type = 'NLSQP-5F-A'
-    ddcm_sol = DDCMSolver(ddcm_data, ddcm_model_type)
+    ddcm_formulation = 'NLSQP-5F-A'
+    ddcm_sol = DDCMSolver(ddcm_data, ddcm_formulation)
 
+#----------------------------------------------------------------------------
 
-#------------------------------------------
+#----------------------------------------------------------------------------
+#--- Exectute the script
+_main_ex1_()

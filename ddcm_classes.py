@@ -1,3 +1,4 @@
+import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
@@ -21,13 +22,11 @@ class StandardModel:
         elif(model == 'Klinkenberg'):
             self.kapomu = params[0]
             self.DK = params[1]
+
         else:
             print('ERROR: In standard_model()')
             print('REASON: Model not implemented')
             exit()
-
-    #def InitialGuess(self, udfguess):
-    #    return udfguess()
 
     def FluxLaw(self, potential, flux):
             
@@ -42,43 +41,59 @@ class StandardModel:
             return flux + self.kapomu * grad(potential) + (self.DK/potential)*grad(potential)
 
     
-
 #
 # geometry data: domain size, mesh, etc ...
-class SimpleComputationalDomain:
-    def __init__(self, nsd, Lsides, Ndivs, flag_quads):
+class ComputationalDomain:
+    def __init__(self, nsd=2, Lsides=[1.0,1.0], Ndivs=[1,1], meshfile=None, flag_quads=False):
         # Number of spatial dimension
         if(nsd == 3):
             raise Exception('3D not implemented yet')
         else:
             self.dim = nsd
+
+        self.meshfile = meshfile
+        self.simple_domain = False
+        if(self.meshfile == None): # Then, it is obviously a simple rectangle mesh
+            self.simple_domain = True
+
         # Domain size
         self.Lx = Lsides[0]
         self.Ly = Lsides[1]
         # Mesh discretization
         self.Nx = Ndivs[0]
         self.Ny = Ndivs[1]
+
         # Element type 
         self.flag_quads = flag_quads
-        self.msh = RectangleMesh(Nx, Ny, Lx, Ly, quadrilateral=flag_quads)
-        # UFL element type
-        #self.elem = self.msh.ufl_elem???
-        # Domain volume
-        self.vol = 1.0
 
-class GeneralComputationalDomain:
-    def __init__(self, nsd, meshfile):
-        # Number of spatial dimension
-        if(nsd == 3):
-            raise Exception('3D not implemented yet')
-        else:
-            self.dim = nsd
-        # Read the mesh
-        self.msh = Mesh(meshfile)
-        # UFL element type
-        #self.elem = self.msh.ufl_elem???
+        # Build the mesh
+        self.msh = self.Create()
+
+        # Some useful spaces associated to this domain mesh
+        self.DGtype = 'DG'
+        if(self.flag_quads):
+            self.DGtype = "DQ"
+        self.DG0  = fd.FunctionSpace(self.msh, self.DGtype, degree=0)
+        self.VDG0 = fd.FunctionSpace(self.msh, self.DGtype, degree=0)
+        self.CG   = fd.FunctionSpace(self.msh, 'CG', degree=1)
+        self.Hdiv = None # to be defined if needed on each case
+
         # Domain volume
-        self.vol = 1.0
+        one = fd.Function(self.DG0).interpolate(fd.Constant(1.0))
+        self.volume = fd.assemble(one*dx)
+
+        # Element areas
+        tstdg          = fd.TestFunction(self.DG0)
+        self.area_els  = fd.assemble(one*tstdg*dx)
+
+    def Create(self):
+        if(self.simple_domain):
+            return fd.RectangleMesh(self.Nx, self.Ny, 
+                                    self.Lx, self.Ly, 
+                                    quadrilateral=self.flag_quads)
+        else:
+            return fd.Mesh(self.meshfile)
+
 #
 # IO utils
 class IO_DDCM:
@@ -91,9 +106,37 @@ class IO_DDCM:
         self.dir = dir
 
 #
-# Spaces and functions utils
-class CommonSpaces:
-    def __init__(self, domain, deg_flux, deg_pot):
-        self.deg_flux = deg_flux
-        self.deg_pot = deg_pot
-        self.sp = FunctionSpace(domain.msh, "CG", 1)
+# Set up the (discrete) data to be used
+class DDCMData():
+    def __init__(self, read_data=False):
+        self.ddcm_data = None
+
+    #----------------------------------------------------------------------------
+    # Read some experimental (Flux-Grad) data set and accommodate it 
+    # into the appropriate format to be consumed by ddcm_solvers
+    def SetManualData():
+        ddcm_data = 0
+    return ddcm_data
+
+    #----------------------------------------------------------------------------
+    # From a standard FEM solution of the corresponding physical problem,
+    # sample the (Flux-Grad) data set and accommodate it 
+    # into the appropriate format to be consumed by ddcm_solvers
+    def CreateSyntheticData(std_solution, read_data):
+        return ddcm_data
+
+
+class StandardSolution():
+    def __init__(self):
+        self.u = None # Potential function (pressure, temperature or displacement)
+        self.s = None # Flux function (mass flux, heat flux or Stress tensor)
+        self.g = None # Gradient (usual gradient or symmetric gradient)
+
+class DDCMSolution():
+    def __init__(self):
+        self.u = None # Potential function (pressure, temperature or displacement)
+        self.s = None # Flux function (mass flux, heat flux or Stress tensor)
+        self.g = None # Gradient (usual gradient or symmetric gradient)
+        self.lmd = None # Lagrange multiplier associated to balance equation
+        self.mu = None # Lagrange multiplier associated compatibility condition
+        
