@@ -51,17 +51,17 @@ def StandardSolver():
 
 def main_ex1_():
     
-    # Create (or import) the computational domain and mesh
+    # 1. Create (or import) the computational domain/mesh
     nsd = 2
     Ls = [1.0, 1.0]
     Ns = [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
     #domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
 
-    # Reference solution and synthetic data are both generated from a
+    # The reference solution and synthetic data are both generated from a
     # a standard physical/numerical model
     
-    # Compute a reference solution to initially distribute the data
+    # 2. Compute a reference solution to initially distribute the data
     ref_sol = StandardSolver(domain)
     ref_sol.solve(StdModel('Darcy-Linear', 'Dual-Mixed', ''))
 

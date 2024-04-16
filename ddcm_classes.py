@@ -116,15 +116,15 @@ class DDCMData():
     # into the appropriate format to be consumed by ddcm_solvers
     def SetManualData():
         ddcm_data = 0
-    return ddcm_data
+        return ddcm_data
 
     #----------------------------------------------------------------------------
     # From a standard FEM solution of the corresponding physical problem,
     # sample the (Flux-Grad) data set and accommodate it 
     # into the appropriate format to be consumed by ddcm_solvers
     def CreateSyntheticData(std_solution, read_data):
+        ddcm_data = 0
         return ddcm_data
-
 
 class StandardSolution():
     def __init__(self):
@@ -134,14 +134,14 @@ class StandardSolution():
 
 class DDCMSolution():
     def __init__(self):
-        self.u = None # Potential function (pressure, temperature or displacement)
-        self.s = None # Flux function (mass flux, heat flux or Stress tensor)
-        self.g = None # Gradient (usual gradient or symmetric gradient)
-        self.lmd = None # Lagrange multiplier associated to balance equation
-        self.mu = None # Lagrange multiplier associated compatibility condition
+        self.u   = None  # Potential function (pressure, temperature or displacement)
+        self.s   = None  # Flux function (mass flux, heat flux or Stress tensor)
+        self.g   = None  # Gradient (usual gradient or symmetric gradient)
+        self.lmd = None  # Lagrange multiplier associated to balance equation
+        self.mu  = None  # Lagrange multiplier associated to compatibility condition
         
 class StdModel():
-    def __init__(self, flux_law, formulation, setting_type):
-        self.flux_law = flux_law          # Darcy-Linear, Forcheimer, etc
-        self.formulation = formulation    # Dual-Mixed, 
-        self.setting_type = setting_type  # Uniaxial, Real-Forcing
+    def __init__(self, flux_law, fem_formulation, setting_type):
+        self.flux_law        = flux_law        # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
+        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
+        self.setting_type    = setting_type    # Uniaxial, Real-Setting
