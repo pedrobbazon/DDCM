@@ -49,30 +49,33 @@ def StandardSolver():
 #----------------------------------------------------------------------------
 # User defined main() functions: Program your options and problem below
 
-def _main_ex1_():
+def main_ex1_():
     
-    # Create or import the computational domain and mesh
+    # Create (or import) the computational domain and mesh
     nsd = 2
     Ls = [1.0, 1.0]
     Ns = [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
     #domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
 
-    # Reference solution and synthetic data are both generated from a standard model
-    std_model_type = 'Darcy-Linear'
+    # Reference solution and synthetic data are both generated from a
+    # a standard physical/numerical model
     
-    # This is a reference solution to be used to initially distribute the data
-    ref_sol = StandardSolver()
+    # Compute a reference solution to initially distribute the data
+    ref_sol = StandardSolver(domain)
+    ref_sol.solve(StdModel('Darcy-Linear', 'Dual-Mixed', ''))
 
     # Read or create some synthetic 
-    ddcm_data = 0.0
-    #ddcm_data = CreateSyntheticData(std_model_type, read_data=False)
+    #ddcm_data = CreateSyntheticData(std_model = 'Darcy-Linear', read_data=False)
 
-    ddcm_formulation = 'NLSQP-5F-A'
-    ddcm_sol = DDCMSolver(ddcm_data, ddcm_formulation)
+    # 
+    ddcm_sol = DDCMSolver(ddcm_data = 0)
+    ddcm_sol.solve(ddcm_formulation = 'NLSQP-5F-A')
+
+    return 0
 
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 #--- Exectute the script
-_main_ex1_()
+_ = main_ex1_()

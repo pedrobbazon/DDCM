@@ -140,3 +140,8 @@ class DDCMSolution():
         self.lmd = None # Lagrange multiplier associated to balance equation
         self.mu = None # Lagrange multiplier associated compatibility condition
         
+class StdModel():
+    def __init__(self, flux_law, formulation, setting_type):
+        self.flux_law = flux_law          # Darcy-Linear, Forcheimer, etc
+        self.formulation = formulation    # Dual-Mixed, 
+        self.setting_type = setting_type  # Uniaxial, Real-Forcing
