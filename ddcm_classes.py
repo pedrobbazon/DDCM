@@ -2,45 +2,7 @@ import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
-
-class StandardModel:
-    def __init__(self, model, params, petsc_opt):
-        self.petsc_opt = petsc_opt
-        
-        self.model = model
-        if (model == 'Darcy-Linear'):
-            self.kappa = params[0]
-
-        elif(model == 'Darcy-Nonlinear'):
-            self.kappa0 = params[0]
-
-        elif(model == 'Forcheimer-Reg'):
-            self.eta = params[0]
-            self.muokap = params[1]
-            self.betarho = params[2]
-
-        elif(model == 'Klinkenberg'):
-            self.kapomu = params[0]
-            self.DK = params[1]
-
-        else:
-            print('ERROR: In standard_model()')
-            print('REASON: Model not implemented')
-            exit()
-
-    def FluxLaw(self, potential, flux):
-            
-        if(self.model == 'Darcy-Linear'):
-            return flux + self.kappa * grad(potential)
-
-        elif(self.model == 'Forcheimer-Reg'):
-            modreg = self.eta*(sqrt(1.0 + inner(flux,flux)/self.eta**2) - 1.0)
-            return grad(potential) + self.muokap*flux + self.betarho * modreg * flux
-
-        elif(self.model == 'Klinkenberg'):
-            return flux + self.kapomu * grad(potential) + (self.DK/potential)*grad(potential)
-
-    
+#-----------------------------------------------------------------------------
 #
 # geometry data: domain size, mesh, etc ...
 class ComputationalDomain:
@@ -93,9 +55,39 @@ class ComputationalDomain:
                                     quadrilateral=self.flag_quads)
         else:
             return fd.Mesh(self.meshfile)
+#
+# Actual functions containing a standard solution
+class StdSolution():
+    def __init__(self):
+        self.u = None # Potential function (pressure, temperature or displacement)
+        self.s = None # Flux function (mass flux, heat flux or Stress tensor)
+        self.g = None # Gradient (usual gradient or symmetric gradient)
+
+from PoissonSolvers import *  
+# 
+# Define the Standard problem, model and solver
+class StdProblem():
+    def __init__(self, domain, params, flux_law, fem_formulation, setting_type):
+        self.domain = domain
+        self.params = params
+        self.flux_law        = flux_law        # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
+        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
+        self.setting_type    = setting_type    # Uniaxial or Real-Setting
+        self.std_solution = StdSolution()
+    
+    def solve(self):
+
+        sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, self.setting_type, 
+                                           sourceval, bcvals, 
+                                           self.flux_law, self.params, petsc_opt, orderF=2, orderU=1)
+        self.std_solution.u = u
+        self.std_solution.s = sigma 
+        self.std_solution.g = g 
+
+        return self.std_solution
 
 #
-# IO utils
+# IO utility functions
 class IO_DDCM:
     def __init__(self, dir):
         # creating directory and file to write
@@ -105,33 +97,8 @@ class IO_DDCM:
             os.makedirs(dir)
         self.dir = dir
 
-#
-# Set up the (discrete) data to be used
-class DDCMData():
-    def __init__(self, read_data=False):
-        self.ddcm_data = None
-
-    #----------------------------------------------------------------------------
-    # Read some experimental (Flux-Grad) data set and accommodate it 
-    # into the appropriate format to be consumed by ddcm_solvers
-    def SetManualData():
-        ddcm_data = 0
-        return ddcm_data
-
-    #----------------------------------------------------------------------------
-    # From a standard FEM solution of the corresponding physical problem,
-    # sample the (Flux-Grad) data set and accommodate it 
-    # into the appropriate format to be consumed by ddcm_solvers
-    def CreateSyntheticData(std_solution, read_data):
-        ddcm_data = 0
-        return ddcm_data
-
-class StandardSolution():
-    def __init__(self):
-        self.u = None # Potential function (pressure, temperature or displacement)
-        self.s = None # Flux function (mass flux, heat flux or Stress tensor)
-        self.g = None # Gradient (usual gradient or symmetric gradient)
-
+# 
+# Actual functions containing the DDCM solution
 class DDCMSolution():
     def __init__(self):
         self.u   = None  # Potential function (pressure, temperature or displacement)
@@ -139,9 +106,49 @@ class DDCMSolution():
         self.g   = None  # Gradient (usual gradient or symmetric gradient)
         self.lmd = None  # Lagrange multiplier associated to balance equation
         self.mu  = None  # Lagrange multiplier associated to compatibility condition
-        
-class StdModel():
-    def __init__(self, flux_law, fem_formulation, setting_type):
-        self.flux_law        = flux_law        # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
-        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
-        self.setting_type    = setting_type    # Uniaxial, Real-Setting
+
+
+#
+# Discrete data to be used in the DDCM problem
+class DDCMData():
+    def __init__(self, read_data=False):
+        self.ddcm_data = None
+
+    #----------------------------------------------------------------------------
+    # Read some experimental (Flux-Grad) data set and accommodate
+    # in the appropriate format to be consumed by ddcm_solvers
+    def SetManualData():
+        ddcm_data = 0
+        return ddcm_data
+
+    #----------------------------------------------------------------------------
+    # From a standard FEM solution of the corresponding physical problem,
+    # sample the (Flux-Grad) data and accommodate in
+    # the appropriate format to be consumed by ddcm_solvers
+    def CreateSyntheticData(std_solution, read_data):
+        ddcm_data = 0
+        return ddcm_data
+
+
+#
+# Program the different DDCM formulations
+class DDCMProblem():
+
+    def __init__(self, ddcm_data, ddcm_formulation: str)
+        self.ddcm_data = ddcm_data
+        self.ddcm_formulation = ddcm_formulation
+
+    def solve(self):
+        if(self.ddcm_formulation == 'NLSQP-5F-A'):
+
+            ddcm_sol = 0
+    
+        elif(self.ddcm_formulation == 'NLSQP-5F-B'):
+
+            ddcm_sol = 0
+
+        else:
+            raise ValueError(self.ddcm_formulation, 'not implemented')
+    
+
+        return ddcm_sol

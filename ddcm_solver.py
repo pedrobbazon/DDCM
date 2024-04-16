@@ -15,67 +15,64 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 
-#----------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Our libraries
 from ddcm_classes import *
-#----------------------------------------------------------------------
-
-
 #----------------------------------------------------------------------------
-# Program the different DDCM formulations
-def DDCMSolver(ddcm_data, ddcm_formulation_type):
-
-    # Run DDCM model
-    if(ddcm_formulation_type == 'NLSQP-5F-A'):
-
-        ddcm_sol = 0
-    
-    elif(ddcm_formulation_type == 'NLSQP-5F-B'):
-
-        ddcm_sol = 0
-
-    else:
-        raise ValueError(ddcm_formulation_type, 'not implemented')
-    
-
-    return ddcm_sol
-
-def StandardSolver():
-
-    return solution
 
 
 #----------------------------------------------------------------------------
 #----------------------------------------------------------------------------
 # User defined main() functions: Program your options and problem below
 
-def main_ex1_():
+def main_EX1_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
     
     # 1. Create (or import) the computational domain/mesh
-    nsd = 2
-    Ls = [1.0, 1.0]
-    Ns = [100, 100]
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-    #domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
-
-    # The reference solution and synthetic data are both generated from a
-    # a standard physical/numerical model
+    print('|:: Computational domain OK')
     
     # 2. Compute a reference solution to initially distribute the data
-    ref_sol = StandardSolver(domain)
-    ref_sol.solve(StdModel('Darcy-Linear', 'Dual-Mixed', ''))
+    params = [Constant(1.0)]
+    ref_sol = StdProblem(domain, params, FLM_DarcyLinear, PoissonDualMixedHdiv, 'Full-Setting'))
+    ref_sol.solve()
+    print('|:: Reference solution OK')
 
-    # Read or create some synthetic 
-    #ddcm_data = CreateSyntheticData(std_model = 'Darcy-Linear', read_data=False)
+    '''
+    # 3. Read or sample some synthetic data from a standard solution
+    ddcm_data = DDCMData()
+    ddcm_data.CreateSyntheticData(StdModelFlags('Darcy-Linear', 'Dual-Mixed', 'Uniaxial'), read_data=False)
+    print('|:: Synthetic data OK')
 
-    # 
-    ddcm_sol = DDCMSolver(ddcm_data = 0)
-    ddcm_sol.solve(ddcm_formulation = 'NLSQP-5F-A')
+    # 4. Solve the Data Driven problem
+    ddcm_sol = DDCMProblem(ddcm_data, ddcm_formulation = 'NLSQP-5F-A')
+    ddcm_sol.solve()
+    print('|> Data Drive solution OK')
+    '''
+    
+    elapsed_time = time.time() - ti
+    print('|> End DDCM Computational | Total time= %1.1f s' %(elapsed_time))
 
     return 0
 
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
-#--- Exectute the script
-_ = main_ex1_()
+#--- Run
+_ = main_EX1_()
+
+
+
+
+
+
+
+
+
+
+
+
+#domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
