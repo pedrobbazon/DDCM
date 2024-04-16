@@ -3,23 +3,45 @@ from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
 
 class StandardModel:
-    def __init__(self, model):
+    def __init__(self, model, params, petsc_opt):
+        self.petsc_opt = petsc_opt
+        
         self.model = model
         if (model == 'Darcy-Linear'):
-            self.kappa = Constant(1.0)
+            self.kappa = params[0]
+
         elif(model == 'Darcy-Nonlinear'):
-            self.kappa0 = Constant(1.0)
-        elif(model == 'Forcheimer'):
-            self.kappa0 = Constant(1.0)
+            self.kappa0 = params[0]
+
+        elif(model == 'Forcheimer-Reg'):
+            self.eta = params[0]
+            self.muokap = params[1]
+            self.betarho = params[2]
+
+        elif(model == 'Klinkenberg'):
+            self.kapomu = params[0]
+            self.DK = params[1]
         else:
             print('ERROR: In standard_model()')
             print('REASON: Model not implemented')
             exit()
 
-    def FluxLaw(self, potencial, fluxo):
-        if(model == 'Darcy-Linear'):
-            return fluxo + self.kappa * grad(potencial)
-        elif():
+    #def InitialGuess(self, udfguess):
+    #    return udfguess()
+
+    def FluxLaw(self, potential, flux):
+            
+        if(self.model == 'Darcy-Linear'):
+            return flux + self.kappa * grad(potential)
+
+        elif(self.model == 'Forcheimer-Reg'):
+            modreg = self.eta*(sqrt(1.0 + inner(flux,flux)/self.eta**2) - 1.0)
+            return grad(potential) + self.muokap*flux + self.betarho * modreg * flux
+
+        elif(self.model == 'Klinkenberg'):
+            return flux + self.kapomu * grad(potential) + (self.DK/potential)*grad(potential)
+
+    
 
 #
 # geometry data: domain size, mesh, etc ...
@@ -59,7 +81,7 @@ class GeneralComputationalDomain:
         self.vol = 1.0
 #
 # IO utils
-class IO_DDMC:
+class IO_DDCM:
     def __init__(self, dir):
         # creating directory and file to write
         if(dir == None):
