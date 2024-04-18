@@ -36,7 +36,7 @@ class ComputationalDomain:
         if(self.flag_quads):
             self.DGtype = "DQ"
         self.DG0  = fd.FunctionSpace(self.msh, self.DGtype, degree=0)
-        self.VDG0 = fd.FunctionSpace(self.msh, self.DGtype, degree=0)
+        self.VDG0 = fd.VectorFunctionSpace(self.msh, self.DGtype, degree=0)
         self.CG   = fd.FunctionSpace(self.msh, 'CG', degree=1)
         self.Hdiv = None # to be defined if needed on each case
 
@@ -63,23 +63,37 @@ class StdSolution():
         self.s = None # Flux function (mass flux, heat flux or Stress tensor)
         self.g = None # Gradient (usual gradient or symmetric gradient)
 
-from PoissonSolvers import *  
+from PoissonSolvers import *
+
+#
+# Encapsulate the forcings
+class ForcingData():
+    def __init__(self, volumetric_source, boundary_flux, boundary_vals):
+        self.volumetric_source = volumetric_source
+        self.boundary_flux = boundary_flux
+        self.boundary_vals = boundary_vals
+
 # 
 # Define the Standard problem, model and solver
 class StdProblem():
-    def __init__(self, domain, params, flux_law, fem_formulation, setting_type):
+    def __init__(self, domain, params, setting_type_flag: str, forcings, flux_law, fem_formulation, orders):
         self.domain = domain
         self.params = params
-        self.flux_law        = flux_law        # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
-        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
-        self.setting_type    = setting_type    # Uniaxial or Real-Setting
+        self.setting_type    = setting_type_flag  # Uniaxial or Real-Setting
+        self.forcings = forcings                  # Source functio, Surface flux and BC vals
+        self.flux_law        = flux_law           # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
+        self.fem_formulation = fem_formulation    # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
         self.std_solution = StdSolution()
+        self.orders = orders                      # Orders of Flux and potential approximations
     
     def solve(self):
 
         sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, self.setting_type, 
-                                           sourceval, bcvals, 
-                                           self.flux_law, self.params, petsc_opt, orderF=2, orderU=1)
+                                           self.forcings.volumetric_source,
+                                           self.forcings.boundary_flux,
+                                           self.forcings.boundary_vals,
+                                           self.flux_law, self.params,
+                                           petsc_opt, self.orders)
         self.std_solution.u = u
         self.std_solution.s = sigma 
         self.std_solution.g = g 
@@ -107,7 +121,6 @@ class DDCMSolution():
         self.lmd = None  # Lagrange multiplier associated to balance equation
         self.mu  = None  # Lagrange multiplier associated to compatibility condition
 
-
 #
 # Discrete data to be used in the DDCM problem
 class DDCMData():
@@ -128,7 +141,6 @@ class DDCMData():
     def CreateSyntheticData(std_solution, read_data):
         ddcm_data = 0
         return ddcm_data
-
 
 #
 # Program the different DDCM formulations

@@ -3,7 +3,7 @@ from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
 
-petsc_opt = {
+petsc_opt1 = {
     'snes_type': 'newtonls',
     'snes_monitor': None,
     'snes_converged_reason': None,
@@ -52,11 +52,16 @@ def FLP_DarcyLinear(self, potential):
 
 #-------------------------------------------------------------------------------------
 # Program your FEM formulation (Mixed or Primal): please, follow format for the names: 
-def PoissonDualMixedHdiv(domain, flag_quads, flag_setting, sourceval, bcvals,
-                         FluxLaw, params, petsc_opt, orderF=2, orderU=1):
+def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
+                         volumetric_source, boundary_flux, boundary_vals,
+                         FluxLaw, petsc_opt, orders):
     print( "|> Solving with Dual-Mixed formulation\n")
 
     mesh = domain.msh
+
+    orderF, orderU = orders
+    print(orderF, orderU)
+    raise Exception('ddjdjd')
 
     if(flag_quads):
         HD = fd.FunctionSpace(mesh, "RTCF", orderF)
@@ -71,23 +76,29 @@ def PoissonDualMixedHdiv(domain, flag_quads, flag_setting, sourceval, bcvals,
     sigma, u = fd.split(w)
     tau, v = fd.TestFunctions(W)
 
-    x, y = fd.SpatialCoordinate(mesh)
+    x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
 
-    if(flag_setting == 'Full-Setting'):
-        f = fd.Constant(sourceval)
-        bcall = [fd.DirichletBC(W.sub(1), fd.Constant(bcsvals), 'on_boundary')]
+    if(flag_setting == 'Setting-A'):
+        
+        q = volumetric_source(x)
+        bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 'on_boundary')]
+
     elif(flag_setting == 'Uniaxial'):
-        f = fd.Constant(0.0)
-        pbottom, ptop = fd.Constant(1.0), fd.Constant(3.0)
+        
+        # By definition, the uniaxial test consists of this:
+        q = fd.Constant(0.0)
+        pbottom, ptop = fd.Constant(1.0), boundary_vals(x)
         flag_bottom, flag_top = 3, 4
         bcall = [fd.DirichletBC(W.sub(1), pbottom, flag_bottom), fd.DirichletBC(W.sub(1), ptop, flag_top)]
+
     else:
+        
         raise ValuerError('Unrecognized problem setting option')
     
-    Res  = (inner(FluxLaw(sigma,u, params),tau))*dx
-    Res += inner(sigma,grad(v))*dx
-    Res += f*v*fd.dx
+    Res  = (inner(FluxLaw(sigma,u, params),tau))*fd.dx
+    Res += inner(sigma,grad(v))*fd.dx
+    Res += q*v*fd.dx
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt)
     return w.sub(0), w.sub(1), fd.project(grad(u), domain.VDG0)
 #-------------------------------------------------------------------------------------
