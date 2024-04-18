@@ -2,6 +2,7 @@ import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
+#
 #-----------------------------------------------------------------------------
 #
 # geometry data: domain size, mesh, etc ...
@@ -86,14 +87,19 @@ class StdProblem():
         self.std_solution = StdSolution()
         self.orders = orders                      # Orders of Flux and potential approximations
     
-    def solve(self):
+    def solve(self, dir_outs=None):
+        
+        print( "|:| Solving with %s() FEM-formulation and %s() flux law" 
+              %(self.fem_formulation.__name__, self.flux_law.__name__))
 
-        sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, self.setting_type, 
+        sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
+                                           self.params, self.setting_type, 
                                            self.forcings.volumetric_source,
                                            self.forcings.boundary_flux,
                                            self.forcings.boundary_vals,
-                                           self.flux_law, self.params,
-                                           petsc_opt, self.orders)
+                                           self.flux_law, 
+                                           self.orders,
+                                           dir_outs)
         self.std_solution.u = u
         self.std_solution.s = sigma 
         self.std_solution.g = g 
@@ -129,24 +135,27 @@ class DDCMData():
 
     #----------------------------------------------------------------------------
     # Read some experimental (Flux-Grad) data set and accommodate
-    # in the appropriate format to be consumed by ddcm_solvers
-    def SetManualData():
+    # it in the appropriate format to be consumed by ddcm_solvers
+    def SetManualData(self, datafile: str):
         ddcm_data = 0
         return ddcm_data
 
     #----------------------------------------------------------------------------
     # From a standard FEM solution of the corresponding physical problem,
-    # sample the (Flux-Grad) data and accommodate in
+    # sample the (Flux-Grad) data and accommodate it in
     # the appropriate format to be consumed by ddcm_solvers
-    def CreateSyntheticData(std_solution, read_data):
+    def CreateSyntheticData(self, std_solution, read_data):
         ddcm_data = 0
         return ddcm_data
+    
+    def AddNoisetoData(self):
+        return 0
 
 #
 # Program the different DDCM formulations
 class DDCMProblem():
 
-    def __init__(self, ddcm_data, ddcm_formulation: str)
+    def __init__(self, ddcm_data, ddcm_formulation: str):
         self.ddcm_data = ddcm_data
         self.ddcm_formulation = ddcm_formulation
 

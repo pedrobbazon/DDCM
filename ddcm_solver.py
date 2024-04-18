@@ -55,16 +55,17 @@ def main_EX1_():
 
     forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
 
-    ref_sol = StdProblem(domain, params, 'Setting-A', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2, 1])
+    ref_sol = StdProblem(domain, params, 'Setting-A', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_sol.solve()
+    ref_sol.solve("myresults")
 
     print('-----------------------------')
     print('|:: Reference solution OK')
     print('-----------------------------')
 
     '''
-    # 3. Read or sample some synthetic data from a standard solution
+    # 3. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what and experiment would give
 
     ddcm_data = DDCMData()
 
@@ -74,7 +75,8 @@ def main_EX1_():
     print('|:: Synthetic data OK')
     print('-----------------------------')
 
-    # 4. Solve the Data Driven problem
+    # 4. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
 
     ddcm_sol = DDCMProblem(ddcm_data, ddcm_formulation = 'NLSQP-5F-A')
 
