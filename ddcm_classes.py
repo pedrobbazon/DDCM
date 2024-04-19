@@ -89,8 +89,12 @@ class StdProblem():
     
     def solve(self, dir_outs=None):
         
-        print( "|:| Solving with %s() FEM-formulation and %s() flux law" 
-              %(self.fem_formulation.__name__, self.flux_law.__name__))
+        if(self.flux_law != None):
+            fluxlaw_name = self.flux_law.__name__+'()'
+        else:
+            fluxlaw_name = 'No explicit'
+        print( "|:| Solving with %s() FEM-formulation and %s flux law" 
+              %(self.fem_formulation.__name__, fluxlaw_name))
 
         sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
                                            self.params, self.setting_type, 

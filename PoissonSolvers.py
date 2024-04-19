@@ -79,15 +79,21 @@ def FLP_DarcyLinear(potential, params):
 #-------------------------------------------------------------------------------------
 # Program your FEM formulation (Mixed or Primal):
 # Use representative names (e.g. PoissonPrimalCG(), PoissonDualMixedHdiv(), etc.)
-#
+#-------------------------------------------------------------------------------------
+
+#=====================================================================================
+
 def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
                          volumetric_source, boundary_flux, boundary_vals,
                          FluxLaw, orders, dir_outs):
+    
+    # In this formulation we need constitutive 
+    # parameters and a FluxLaw in which sigma might
+    # not be explicity obtained from grad(u)
       
     mesh = domain.msh
 
     orderF, orderU = orders
-
     if(flag_quads):
         HD = fd.FunctionSpace(mesh, "RTCF", orderF)
         CG = fd.FunctionSpace(mesh, "CG", orderU)
@@ -107,36 +113,135 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
     if(flag_setting == 'Setting-A'):
         
         q = volumetric_source(x)
+
+        # u bc (strong in this formulation)
         bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 'on_boundary')]
 
     elif(flag_setting == 'Uniaxial'):
         
         # By definition, the uniaxial test consists of this:
         q = fd.Constant(0.0)
-        pbottom, ptop = fd.Constant(1.0), boundary_vals(x)
-        flag_bottom, flag_top = 3, 4
-        bcall = [fd.DirichletBC(W.sub(1), pbottom, flag_bottom), fd.DirichletBC(W.sub(1), ptop, flag_top)]
+
+        # u bc (strong in this formulation)
+        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
+        tag_bottom, tag_top = 3, 4
+        bcall = [fd.DirichletBC(W.sub(1), ubottom, tag_bottom), fd.DirichletBC(W.sub(1), utop, tag_top)]
 
     else:
         
         raise ValueError('Unrecognized problem setting option')
     
-    Res  = (inner(FluxLaw(u, sigma, params),tau))*fd.dx
+    Res  = (inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
     Res += inner(sigma,grad(v))*fd.dx
-    Res += q*v*fd.dx
+    Res += q*v*fd.dx(degree=4)
+
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
-    # It may be reasonable that the output be consistent with the choices above
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here
     if(dir_outs != None):
+
         filename = dir_outs+'/flux.pvd'
         w.sub(0).rename('Flux')
-        VTKFile(filename).write(w.sub(0)) #project(w.sub(0), HD, name="Flux"))
-        filename = dir_outs+'/u.pvd'
-        VTKFile(filename).write(w.sub(1)) #project(w.sub(1), CG, name="Potential"))
-        filename = dir_outs+'/u.pvd'
-        w.sub(0).rename('Potential')
-        VTKFile(filename).write(w.sub(1)) #project(w.sub(1), CG, name="Potential"))
-        
+        VTKFile(filename).write(w.sub(0))
 
-    return w.sub(0), w.sub(1), fd.project(grad(u), domain.VDG0)
-#-------------------------------------------------------------------------------------
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('Potential')
+        VTKFile(filename).write(w.sub(1))
+        
+        filename = dir_outs+'/gradu.pvd'
+        g = fd.project(grad(u), domain.VDG0, name='Grad(u)')
+        VTKFile(filename).write(g)
+
+    return w.sub(0), w.sub(1), g
+
+#=====================================================================================
+
+def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
+                     volumetric_source, boundary_flux, boundary_vals,
+                     FluxLaw, orders, dir_outs):
+
+    # In this formulation the FluxLaw is not used.
+    # We just need the definition of kappa and assume
+    # that we can write (1/K)sigma = -grad(u)
+
+    mesh = domain.msh
+
+    orderF, orderU = orders
+    if(flag_quads):
+        HD = fd.FunctionSpace(mesh, "RTCF", orderF)
+        DG = fd.FunctionSpace(mesh, "DQ", orderU)
+    else:
+        HD = fd.FunctionSpace(mesh, "RT", orderF)
+        DG = fd.FunctionSpace(mesh, "DG", orderU)
+
+    W = HD * DG
+
+    w = fd.Function(W, name='Solution')
+    sigma, u = fd.split(w)
+    tau, v = fd.TestFunctions(W)
+
+    x = fd.SpatialCoordinate(mesh)
+
+    n = fd.FacetNormal(mesh)
+
+    if(flag_setting == 'Setting-A'):
+        
+        q = volumetric_source(x)
+        
+        # Pressure bc (weak in this formulation)
+        pressure_boundary_term = boundary_vals(x)*dot(tau,n)*ds(degree=4)
+        
+        # Flux bc (strong in this formulation) - empty for this setting
+        bcall = []
+
+        # Some non-zero initial guess to avoid singularities
+        w.sub(1).interpolate(boundary_vals(x))
+        
+    elif(flag_setting == 'Uniaxial'):
+        
+        # By definition, the uniaxial test consists of this:
+        q = fd.Constant(0.0)
+        
+        # Pressure bc (weak in this formulation)
+        tag_bottom, tag_top = 3, 4
+        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
+        pressure_boundary_term = ubottom*dot(tau,n)*ds(tag_top, degree=4) + utop*dot(tau,n)*ds(tag_top, degree=4)
+
+        # Flux bc (strong in this formulation)
+        no_flux = as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        tag_left, tag_right = 1, 2
+        bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
+
+        # Some non-zero initial guess to avoid singularities
+        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+
+    kappa = params[0]
+    Res  = ((1.0/kappa(u))*dot(sigma, tau) - div(tau)*u - div(sigma)*v)*dx(degree=4)
+    Res += -q*v*dx(degree=4) + pressure_boundary_term
+
+    fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here
+    if(dir_outs != None):
+
+        filename = dir_outs+'/flux.pvd'
+        w.sub(0).rename('Flux')
+        VTKFile(filename).write(w.sub(0))
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('Potential')
+        VTKFile(filename).write(w.sub(1))
+        
+        filename = dir_outs+'/gradu.pvd'
+        g = fd.project(grad(u), domain.VDG0, name='Grad(u)')
+        VTKFile(filename).write(g)
+
+    return w.sub(0), w.sub(1), g
+
+#=====================================================================================
