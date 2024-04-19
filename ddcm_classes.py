@@ -93,8 +93,9 @@ class StdProblem():
             fluxlaw_name = self.flux_law.__name__+'()'
         else:
             fluxlaw_name = 'No explicit'
-        print( "|:| Solving with %s() FEM-formulation and %s flux law" 
+        print("|:| Solving with %s() FEM-formulation and %s flux law" 
               %(self.fem_formulation.__name__, fluxlaw_name))
+        print("|:|:| Setting type: %s", %(self.setting_type))
 
         sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
                                            self.params, self.setting_type, 
@@ -110,16 +111,30 @@ class StdProblem():
 
         return self.std_solution
 
+
+import DDCMSolvers
+
 #
-# IO utility functions
-class IO_DDCM:
-    def __init__(self, dir):
-        # creating directory and file to write
-        if(dir == None):
-            dir = 'results'
-        if os.path.exists(dir) == False:
-            os.makedirs(dir)
-        self.dir = dir
+# Discrete data to be used in the DDCM problem
+class DDCMData():
+    def __init__(self, ):
+        self.ddcm_data = []
+
+    #----------------------------------------------------------------------------
+    # From a standard FEM solution of the corresponding physical problem,
+    # sample the (Flux-Grad) data and accommodate it in
+    # the appropriate format to be consumed by ddcm_solvers
+    def AppendSyntheticData(self, synthetic_solution):
+        return 0    
+    
+    def AddNoisetoData(self, noise_parameters):
+        return 0
+
+    def Distribute(self, ref_solution):
+        return 0
+    
+    def ReadDataFromFile(self):
+        return 0
 
 # 
 # Actual functions containing the DDCM solution
@@ -132,54 +147,15 @@ class DDCMSolution():
         self.mu  = None  # Lagrange multiplier associated to compatibility condition
 
 #
-# Discrete data to be used in the DDCM problem
-class DDCMData():
-    def __init__(self, read_data=False):
-        self.ddcm_data = None
-        self.read_data = read_data
-        self.domain = domain
-        self.params = params
-        self.setting_type    = setting_type_flag  # Uniaxial or Real-Setting
-        self.forcings = forcings                  # Source functio, Surface flux and BC vals
-        self.flux_law        = flux_law           # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
-        self.fem_formulation = fem_formulation    # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
-        self.std_solution = StdSolution()
-        self.orders = orders                      # Orders of Flux and potential approximations
-
-    #----------------------------------------------------------------------------
-    # From a standard FEM solution of the corresponding physical problem,
-    # sample the (Flux-Grad) data and accommodate it in
-    # the appropriate format to be consumed by ddcm_solvers
-    def SetSyntheticData(self, std_solution):
-        if(self.read_data):
-            # Do something
-            ddcm_data = 0
-            return ddcm_data
-        else:
-            a = 1
-    
-    def AddNoisetoData(self):
-        return 0
-
-#
 # Program the different DDCM formulations
 class DDCMProblem():
 
-    def __init__(self, ddcm_data, ddcm_formulation: str):
+    def __init__(self, ddcm_data, ddcm_formulation):
         self.ddcm_data = ddcm_data
         self.ddcm_formulation = ddcm_formulation
+        self.J = None     # Function to be minimized
 
     def solve(self):
-        if(self.ddcm_formulation == 'NLSQP-5F-A'):
-
-            ddcm_sol = 0
+        ddcm_sol = self.ddcm_formulation(self.ddcm_data)
     
-        elif(self.ddcm_formulation == 'NLSQP-5F-B'):
-
-            ddcm_sol = 0
-
-        else:
-            raise ValueError(self.ddcm_formulation, 'not implemented')
-    
-
         return ddcm_sol

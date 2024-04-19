@@ -33,7 +33,6 @@ def main_EX1_():
     # 1. Create (or import) the computational domain/mesh
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
-
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     print('-----------------------------')
@@ -56,7 +55,7 @@ def main_EX1_():
 
     ref_sol = StdProblem(domain, params, 'Setting-A', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_sol.solve("myresults")
+    ref_sol.solve("myrefsol")
 
     print('-----------------------------')
     print('|:: Reference solution OK')
@@ -65,13 +64,27 @@ def main_EX1_():
     # 3. Read or sample some synthetic data from a standard solution: 
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
-    ddcm_data = DDCMData(domain, params, 'Setting-Uniaxial', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1], read_data=False)
+    ddcm_data = DDCMData()
 
-    def mybcvals(x):
-        return fd.Constant(3.0)
-    forcings = ForcingData(None, None, mybcvals)
+    nsd, Ls, Ns = 2, [1.0, 0.2], [100, 20]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    ddcm_data.SetSyntheticData()
+    # Let suppose we do some continuation to compute the data:
+    bcvals = [3.0]
+    for n in bcvals:
+
+        def mybcvals(x):
+            return fd.Constant(bcvals[n])
+        synth_forcings = ForcingData(None, None, mybcvals)
+        
+        params = [Constant(1.0)]
+        
+        synth_sol = StdProblem(synth_domain, params, 'Setting-Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[1,0])
+        synth_sol.solve("mysynthsol")
+
+        ddcm_data.AppendSyntheticData(synth_sol)
+
+    ddcm_data.Distribute(ref_sol)
 
     print('-----------------------------')
     print('|:: Synthetic data OK')
