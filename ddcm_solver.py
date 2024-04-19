@@ -52,9 +52,9 @@ def main_EX1_():
 
     params = [Constant(1.0)]
 
-    ref_sol = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    ref_prob = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_sol.solve("myrefsol")
+    ref_prob.solve("myrefsol")
     print('----------------------------------------------------------')
     print('|::| Reference solution: OK')
     print('----------------------------------------------------------')
@@ -64,7 +64,7 @@ def main_EX1_():
 
     ddcm_data = DDCMData(domain)
 
-    nsd, Ls, Ns = 2, [1.0, 0.2], [100, 20]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let suppose we do some continuation to compute the data:
@@ -77,12 +77,25 @@ def main_EX1_():
         
         params = [Constant(1.0)]
         
-        synth_sol = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
-        synth_sol.solve("mysynthsol")
+        synth_prob = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+        synth_prob.solve("mysynthsol")
 
-        ddcm_data.AppendSyntheticData(synth_sol)
+        # Sample the synthetic solution: Program this according to your problem/data:
+        Nsampx, Nsampy  = 1, 30
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+        std_sol = synth_prob.std_solution
+        gradu_sampled_vals = np.array(std_sol.g.at(xs))
+        flux_sampled_vals = np.array(std_sol.s.at(xs))
 
-    ddcm_data.Distribute(ref_sol)
+        # Apply any transformation you need to multiplicate the synthetic solution (rotations, scalings, etc)
+
+        #ddcm_data.AppendSyntheticData(synth_data)
+
+    ddcm_data.Distribute(ref_prob.std_solution)
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: OK')
     print('----------------------------------------------------------')

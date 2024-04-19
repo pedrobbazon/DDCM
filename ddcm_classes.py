@@ -113,6 +113,7 @@ class StdProblem():
 
 
 import DDCMSolvers
+import scipy as sp
 
 #
 # Discrete data to be used in the DDCM problem
@@ -134,7 +135,7 @@ class DDCMData():
     # the appropriate format to be consumed by ddcm_solvers
     def AppendSyntheticData(self, synthetic_solution):
 
-        state_vector = np.dstack([grad0, grad1, flux0, flux1])[0]
+        #state_vector = np.dstack([grad0, grad1, flux0, flux1])[0]
         return 0    
     
     def AddNoisetoData(self, noise_parameters):
@@ -143,7 +144,7 @@ class DDCMData():
     def Distribute(self, ref_solution):
         #reference_state = np.dstack([grad0, grad1, flux0, flux1])[0]
         #ddcm_state = np.dstack([grad0, grad1, flux0, flux1])[0]
-        #distances, indexes = KDTree(ddcm_state, reference_state)
+        distances, indexes = sp.KDTree(ddcm_state, reference_state)
         #self.ddcm_graddata.dat.data[:] = observed_data[indexes,0:2]
         #self.ddcm_fluxdata.dat.data[:] = observed_data[indexes,2:4]
 
