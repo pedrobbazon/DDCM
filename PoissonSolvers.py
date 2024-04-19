@@ -97,10 +97,9 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
 
     W = HD * CG
 
-    w = fd.Function(W)
+    w = fd.Function(W, name='Solution')
     sigma, u = fd.split(w)
     tau, v = fd.TestFunctions(W)
-    help(sigma)
 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
@@ -130,9 +129,14 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
     # It may be reasonable that the output be consistent with the choices above
     if(dir_outs != None):
         filename = dir_outs+'/flux.pvd'
+        w.sub(0).rename('Flux')
         VTKFile(filename).write(w.sub(0)) #project(w.sub(0), HD, name="Flux"))
         filename = dir_outs+'/u.pvd'
-        VTKFile(filename).write(w.sub(1)) #project(w.sub(0), HD, name="Flux"))
+        VTKFile(filename).write(w.sub(1)) #project(w.sub(1), CG, name="Potential"))
+        filename = dir_outs+'/u.pvd'
+        w.sub(0).rename('Potential')
+        VTKFile(filename).write(w.sub(1)) #project(w.sub(1), CG, name="Potential"))
+        
 
     return w.sub(0), w.sub(1), fd.project(grad(u), domain.VDG0)
 #-------------------------------------------------------------------------------------
