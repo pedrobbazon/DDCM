@@ -136,21 +136,27 @@ class DDCMSolution():
 class DDCMData():
     def __init__(self, read_data=False):
         self.ddcm_data = None
-
-    #----------------------------------------------------------------------------
-    # Read some experimental (Flux-Grad) data set and accommodate
-    # it in the appropriate format to be consumed by ddcm_solvers
-    def SetManualData(self, datafile: str):
-        ddcm_data = 0
-        return ddcm_data
+        self.read_data = read_data
+        self.domain = domain
+        self.params = params
+        self.setting_type    = setting_type_flag  # Uniaxial or Real-Setting
+        self.forcings = forcings                  # Source functio, Surface flux and BC vals
+        self.flux_law        = flux_law           # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
+        self.fem_formulation = fem_formulation    # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
+        self.std_solution = StdSolution()
+        self.orders = orders                      # Orders of Flux and potential approximations
 
     #----------------------------------------------------------------------------
     # From a standard FEM solution of the corresponding physical problem,
     # sample the (Flux-Grad) data and accommodate it in
     # the appropriate format to be consumed by ddcm_solvers
-    def CreateSyntheticData(self, std_solution, read_data):
-        ddcm_data = 0
-        return ddcm_data
+    def SetSyntheticData(self, std_solution):
+        if(self.read_data):
+            # Do something
+            ddcm_data = 0
+            return ddcm_data
+        else:
+            a = 1
     
     def AddNoisetoData(self):
         return 0

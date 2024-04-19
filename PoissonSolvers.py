@@ -117,7 +117,7 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
         # u bc (strong in this formulation)
         bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 'on_boundary')]
 
-    elif(flag_setting == 'Uniaxial'):
+    elif(flag_setting == 'Setting-Uniaxial'):
         
         # By definition, the uniaxial test consists of this:
         q = fd.Constant(0.0)
@@ -222,7 +222,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
     kappa = params[0]
     Res  = ((1.0/kappa(u))*dot(sigma, tau) - div(tau)*u - div(sigma)*v)*dx(degree=4)
-    Res += -q*v*dx(degree=4) + pressure_boundary_term
+    Res += q*v*dx(degree=4) + pressure_boundary_term
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
