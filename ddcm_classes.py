@@ -93,10 +93,10 @@ class StdProblem():
             fluxlaw_name = self.flux_law.__name__+'()'
         else:
             fluxlaw_name = 'No explicit'
-        print("|:| Solving with %s() FEM-formulation and %s flux law" 
+        print("|> Solving with:\n   - %s() FEM-formulation\n   - %s Flux-Law" 
               %(self.fem_formulation.__name__, fluxlaw_name))
-        print("|:|:| Setting type: %s", %(self.setting_type))
-
+        print("   - Setting type: %s" %(self.setting_type))
+        print("   ... Solving ...")
         sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
                                            self.params, self.setting_type, 
                                            self.forcings.volumetric_source,
@@ -117,23 +117,36 @@ import DDCMSolvers
 #
 # Discrete data to be used in the DDCM problem
 class DDCMData():
-    def __init__(self, ):
-        self.ddcm_data = []
+    def __init__(self, domain):
+        self.domain = domain
+        self.ddcm_fluxdata = fd.Function(domain.VDG0)
+        self.ddcm_graddata = fd.Function(domain.VDG0)
+
+    #----------------------------------------------------------------------------
+    # Read the (Flux-Grad) data from a file and accommodate it in
+    # the appropriate format to be consumed by ddcm_solvers
+    def ReadDataFromFile(self):
+        return 0
 
     #----------------------------------------------------------------------------
     # From a standard FEM solution of the corresponding physical problem,
     # sample the (Flux-Grad) data and accommodate it in
     # the appropriate format to be consumed by ddcm_solvers
     def AppendSyntheticData(self, synthetic_solution):
+
+        state_vector = np.dstack([grad0, grad1, flux0, flux1])[0]
         return 0    
     
     def AddNoisetoData(self, noise_parameters):
         return 0
 
     def Distribute(self, ref_solution):
-        return 0
-    
-    def ReadDataFromFile(self):
+        #reference_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+        #ddcm_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+        #distances, indexes = KDTree(ddcm_state, reference_state)
+        #self.ddcm_graddata.dat.data[:] = observed_data[indexes,0:2]
+        #self.ddcm_fluxdata.dat.data[:] = observed_data[indexes,2:4]
+
         return 0
 
 # 

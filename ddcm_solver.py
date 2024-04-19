@@ -34,10 +34,9 @@ def main_EX1_():
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-
-    print('-----------------------------')
-    print('|:: Computational domain OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
+    print('|::| Reference computational domain: OK')
+    print('----------------------------------------------------------')
     
     # 2. Compute a reference solution to initially distribute the data
     
@@ -53,42 +52,40 @@ def main_EX1_():
 
     params = [Constant(1.0)]
 
-    ref_sol = StdProblem(domain, params, 'Setting-A', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    ref_sol = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_sol.solve("myrefsol")
-
-    print('-----------------------------')
-    print('|:: Reference solution OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
+    print('|::| Reference solution: OK')
+    print('----------------------------------------------------------')
 
     # 3. Read or sample some synthetic data from a standard solution: 
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
-    ddcm_data = DDCMData()
+    ddcm_data = DDCMData(domain)
 
     nsd, Ls, Ns = 2, [1.0, 0.2], [100, 20]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let suppose we do some continuation to compute the data:
     bcvals = [3.0]
-    for n in bcvals:
+    for bcvs in bcvals:
 
         def mybcvals(x):
-            return fd.Constant(bcvals[n])
+            return fd.Constant(bcvs)
         synth_forcings = ForcingData(None, None, mybcvals)
         
         params = [Constant(1.0)]
         
-        synth_sol = StdProblem(synth_domain, params, 'Setting-Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[1,0])
+        synth_sol = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
         synth_sol.solve("mysynthsol")
 
         ddcm_data.AppendSyntheticData(synth_sol)
 
     ddcm_data.Distribute(ref_sol)
-
-    print('-----------------------------')
-    print('|:: Synthetic data OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: OK')
+    print('----------------------------------------------------------')
 
     '''
     # 4. Solve the Data Driven problem: This problem should share the same 
@@ -98,13 +95,13 @@ def main_EX1_():
 
     ddcm_sol.solve()
 
-    print('-----------------------------')
+    print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
     '''
     
     elapsed_time = time.time() - ti
-    print('|> End DDCM Computational | Total time= %1.1f s' %(elapsed_time))
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
 
     return 0
 
@@ -121,9 +118,9 @@ def main_EX2_():
 
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    print('-----------------------------')
-    print('|:: Computational domain OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
+    print('|::| Reference computational domain: OK')
+    print('----------------------------------------------------------')
     
     # 2. Compute a reference solution to initially distribute the data
         
@@ -144,16 +141,16 @@ def main_EX2_():
        return kappa
     params = [kappa_of_u]
 
-    ref_sol = StdProblem(domain, params, 'Setting-A', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    ref_sol = StdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
 
     ref_sol.solve("myresults")
 
-    print('-----------------------------')
-    print('|:: Reference solution OK')
-    print('-----------------------------')
+    print('----------------------------------------------------------')
+    print('|::| Reference solution: OK')
+    print('----------------------------------------------------------')
     
     elapsed_time = time.time() - ti
-    print('|> End DDCM Computational | Total time= %1.1f s' %(elapsed_time))
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
 
     return 0
 

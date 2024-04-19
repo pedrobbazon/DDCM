@@ -110,14 +110,14 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
 
-    if(flag_setting == 'Setting-A'):
+    if(flag_setting == 'Pure-Dirichlet'):
         
         q = volumetric_source(x)
 
         # u bc (strong in this formulation)
         bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 'on_boundary')]
 
-    elif(flag_setting == 'Setting-Uniaxial'):
+    elif(flag_setting == 'Uniaxial'):
         
         # By definition, the uniaxial test consists of this:
         q = fd.Constant(0.0)
@@ -185,7 +185,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
     n = fd.FacetNormal(mesh)
 
-    if(flag_setting == 'Setting-A'):
+    if(flag_setting == 'Pure-Dirichlet'):
         
         q = volumetric_source(x)
         
