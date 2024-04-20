@@ -62,12 +62,12 @@ def main_EX1_():
     # 3. Read or sample some synthetic data from a standard solution: 
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
-    ddcm_data = DDCMData(domain)
+    ddcm_data = PoissonDDCMData(domain)
 
     nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    # Let suppose we do some continuation to compute the data:
+    # Let us suppose we do some continuation to compute the data:
     bcvals = [3.0]
     for bcvs in bcvals:
 
@@ -80,7 +80,7 @@ def main_EX1_():
         synth_prob = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve("mysynthsol")
 
-        # Sample the synthetic solution: Program this according to your problem/data:
+        # Sample the synthetic solution: Program this according to your problem
         Nsampx, Nsampy  = 1, 30
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
@@ -91,11 +91,17 @@ def main_EX1_():
         gradu_sampled_vals = np.array(std_sol.g.at(xs))
         flux_sampled_vals = np.array(std_sol.s.at(xs))
 
-        # Apply any transformation you need to multiplicate the synthetic solution (rotations, scalings, etc)
+        # Apply any manipulation/transformation you need to define
+        # the synthetic data (rotations, scalings, removing outliers, etc)
+        # final_gradu_sampled_vals
+        # final_flux_sampled_vals
 
         #ddcm_data.AppendSyntheticData(synth_data)
 
+    ddcm_data.SetSampledData(final_gradu_sampled_vals, final_flux_sampled_vals)
+
     ddcm_data.Distribute(ref_prob.std_solution)
+
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: OK')
     print('----------------------------------------------------------')

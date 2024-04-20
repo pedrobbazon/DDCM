@@ -3,6 +3,9 @@ from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
 #
+import numpy as np
+import scipy as sp
+#
 #-----------------------------------------------------------------------------
 #
 # geometry data: domain size, mesh, etc ...
@@ -113,35 +116,43 @@ class StdProblem():
 
 
 import DDCMSolvers
-import scipy as sp
-
 #
 # Discrete data to be used in the DDCM problem
-class DDCMData():
+class PoissonDDCMData():
     def __init__(self, domain):
         self.domain = domain
+        # By option we assign the data to the elements.
+        # Therefore, the natural choice is to use DG0 spaces,
+        # this way, the induced domain decompostion from the data
+        # will conform to the element edges
         self.ddcm_fluxdata = fd.Function(domain.VDG0)
         self.ddcm_graddata = fd.Function(domain.VDG0)
+        # The final data set to be used by the DDCM solver
+        self.sampled_gradu = None
+        self.sampled_flux = None
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in
     # the appropriate format to be consumed by ddcm_solvers
-    def ReadDataFromFile(self):
+    def ReadDataFromFile(self, datafile):
+        dataset = np.loadtxt(datafile)
+        # We expect the data in this format:
+        self.sampled_gradu = dataset[:,0:2] 
+        self.sampled_flux  = dataset[:,2:4] 
         return 0
 
-    #----------------------------------------------------------------------------
-    # From a standard FEM solution of the corresponding physical problem,
-    # sample the (Flux-Grad) data and accommodate it in
-    # the appropriate format to be consumed by ddcm_solvers
-    def AppendSyntheticData(self, synthetic_solution):
-
-        #state_vector = np.dstack([grad0, grad1, flux0, flux1])[0]
-        return 0    
+    def SetSampledData(self, gradu_vals, flux_vals):
+        self.sampled_gradu = gradu_vals 
+        self.sampled_flux  = flux_vals
+        return 0
     
-    def AddNoisetoData(self, noise_parameters):
+    def AddNoisetoData(self, noise_parameters: dict):
+        #self.sampled_gradu += GaussianNoise()
+        #self.sampled_gradu += GaussianNoise()
         return 0
 
     def Distribute(self, ref_solution):
+
         #reference_state = np.dstack([grad0, grad1, flux0, flux1])[0]
         #ddcm_state = np.dstack([grad0, grad1, flux0, flux1])[0]
         distances, indexes = sp.KDTree(ddcm_state, reference_state)
