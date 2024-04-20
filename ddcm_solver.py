@@ -69,6 +69,7 @@ def main_EX1_():
 
     # Let us suppose we do some continuation to compute the data:
     bcvals = [3.0]
+    fin_gradu_samples, fin_flux_samples = [], []
     for bcvs in bcvals:
 
         def mybcvals(x):
@@ -93,12 +94,20 @@ def main_EX1_():
 
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        # final_gradu_sampled_vals
-        # final_flux_sampled_vals
+
+        def RotationalMatrix(theta):
+            return np.array([[np.cos(theta), -np.sin(theta)], 
+                             [np.sin(theta), np.cos(theta)]])
+        
+        for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
+            R = RotationalMatrix(angle)
+            gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
+            flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
+            fin_gradu_samples.append(gradu_rot_values[:,:])
+            fin_flux_samples.append()
 
         #ddcm_data.AppendSyntheticData(synth_data)
-
-    ddcm_data.SetSampledData(final_gradu_sampled_vals, final_flux_sampled_vals)
+    ddcm_data.SetSampledData(fin_gradu_samples, fin_flux_samples)
 
     ddcm_data.Distribute(ref_prob.std_solution)
 
