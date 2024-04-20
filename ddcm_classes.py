@@ -120,16 +120,18 @@ import DDCMSolvers
 # Discrete data to be used in the DDCM problem
 class PoissonDDCMData():
     def __init__(self, domain):
+        # The DDCM data is associated to a domain
         self.domain = domain
-        # By option we assign the data to the elements.
-        # Therefore, the natural choice is to use DG0 spaces,
+        # The complete sampled data set 
+        self.sampled_grad = None
+        self.sampled_flux = None
+        # Data distributed over the domain to be used by the DDCM solver:
+        # by option we assign the data to the elements.
+        # Therefore, the natural choice is to use elementwise discontinuous spaces,
         # this way, the induced domain decompostion from the data
         # will conform to the element edges
         self.ddcm_fluxdata = fd.Function(domain.VDG0)
         self.ddcm_graddata = fd.Function(domain.VDG0)
-        # The final data set to be used by the DDCM solver
-        self.sampled_gradu = None
-        self.sampled_flux = None
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in
@@ -154,10 +156,12 @@ class PoissonDDCMData():
     def Distribute(self, ref_solution):
 
         #reference_state = np.dstack([grad0, grad1, flux0, flux1])[0]
-        #ddcm_state = np.dstack([grad0, grad1, flux0, flux1])[0]
-        distances, indexes = sp.KDTree(ddcm_state, reference_state)
-        #self.ddcm_graddata.dat.data[:] = observed_data[indexes,0:2]
-        #self.ddcm_fluxdata.dat.data[:] = observed_data[indexes,2:4]
+        #sampled_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+        # Choose those values that are closest to the reference solution
+        distances, indexes = sp.KDTree(sampled_state, reference_state)
+        # Choose those values that are closest to the reference solution
+        self.ddcm_graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        self.ddcm_fluxdata.dat.data[:] = self.sampled_flux[indexes,2:4]
 
         return 0
 
