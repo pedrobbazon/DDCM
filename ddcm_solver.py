@@ -91,7 +91,7 @@ def main_EX1_():
         std_sol = synth_prob.std_solution
         gradu_sampled_vals = np.array(std_sol.g.at(xs))
         flux_sampled_vals = np.array(std_sol.s.at(xs))
-
+        
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
 
@@ -99,16 +99,15 @@ def main_EX1_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        print(gradu_samples)
         for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
+            print(angle)
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            print(gradu_rot_values)
             gradu_samples.append(gradu_rot_values)
             flux_samples.append(flux_rot_values)
-            gradu_samples = np.concatenate(np.asarray(gradu_samples),axis=0)
-            flux_samples = np.concatenate(np.asarray(flux_samples),axis=0)
+        gradu_samples = np.concatenate(gradu_samples)
+        flux_samples = np.concatenate(flux_samples)
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
@@ -118,21 +117,19 @@ def main_EX1_():
     print('|::| Synthetic data computation/distribution: OK')
     print('----------------------------------------------------------')
 
-    '''
     # 4. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
 
     def myObjFunc(g,gdata,s,sdata):
         return inner(g-gdata, g-gdata)*dx + inner(s-sdata, s-sdata)*dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings,  NLSP5FA, orders=[])
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[])
 
     ddcm_prob.solve("myddcmsol")
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
     print('----------------------------------------------------------')
-    '''
     
     elapsed_time = time.time() - ti
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))

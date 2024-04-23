@@ -116,7 +116,8 @@ class StdProblem():
         return self.std_solution
 
 
-import DDCMSolvers
+from DDCMSolvers import *
+
 #
 # Discrete data to be used in the DDCM problem
 class PoissonDDCMData():
@@ -131,8 +132,8 @@ class PoissonDDCMData():
         # Therefore, the natural choice is to use elementwise discontinuous spaces,
         # this way, the induced domain decompostion from the data
         # will conform to the element edges
-        self.ddcm_fluxdata = fd.Function(domain.VDG0)
-        self.ddcm_graddata = fd.Function(domain.VDG0)
+        self.graddata = fd.Function(domain.VDG0)
+        self.fluxdata = fd.Function(domain.VDG0)
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in
@@ -147,7 +148,6 @@ class PoissonDDCMData():
     def SetSampledData(self, gradu_vals, flux_vals):
         self.sampled_grad = gradu_vals 
         self.sampled_flux = flux_vals
-        print(self.sampled_grad)
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):
@@ -157,8 +157,8 @@ class PoissonDDCMData():
 
     def Distribute(self, ref_solution):
 
-        refgrad = self.ddcm_graddata.dat.data
-        refflux = self.ddcm_fluxdata.dat.data
+        refgrad = ref_solution.g.dat.data
+        refflux = ref_solution.s.dat.data
         reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
 
         # These are only vector with data, not associated yet to any domain
@@ -170,8 +170,8 @@ class PoissonDDCMData():
         # and distribute over the domain (this induces a domain decomposition)
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
-        self.ddcm_graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        self.ddcm_fluxdata.dat.data[:] = self.sampled_flux[indexes,2:4]
+        self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
 
         return 0
 
@@ -189,7 +189,7 @@ class DDCMSolution():
 # Program the different DDCM formulations
 class DDCMProblem():
 
-    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation):
+    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation, orders):
         self.ddcm_data = ddcm_data
         self.J = ObjF        # Function to be minimized
         self.dJ = dObjF      # Jacobian of function to be minimized (can be given or compute by the program)
