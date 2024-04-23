@@ -76,7 +76,7 @@ def main_EX1_():
             return fd.Constant(bcvs)
         synth_forcings = ForcingData(None, None, mysynbcvals)
         
-        params = [Constant(1.0)]
+        params = [fd.Constant(1.0)]
         
         synth_prob = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve("mysynthsol")
@@ -99,12 +99,14 @@ def main_EX1_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
+        print(gradu_samples)
         for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            gradu_samples.append(gradu_rot_values[:,:])
-            flux_samples.append(flux_rot_values[:,:])
+            print(gradu_rot_values)
+            gradu_samples.append(gradu_rot_values)
+            flux_samples.append(flux_rot_values)
             gradu_samples = np.concatenate(np.asarray(gradu_samples),axis=0)
             flux_samples = np.concatenate(np.asarray(flux_samples),axis=0)
 
