@@ -69,12 +69,12 @@ def main_EX1_():
 
     # Let us suppose we do some continuation to compute the data:
     bcvals = [3.0]
-    fin_gradu_samples, fin_flux_samples = [], []
+    gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
-        def mybcvals(x):
+        def mysynbcvals(x):
             return fd.Constant(bcvs)
-        synth_forcings = ForcingData(None, None, mybcvals)
+        synth_forcings = ForcingData(None, None, mysynbcvals)
         
         params = [Constant(1.0)]
         
@@ -103,10 +103,12 @@ def main_EX1_():
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            fin_gradu_samples.append(gradu_rot_values[:,:])
-            fin_flux_samples.append(flux_rot_values[:,:])
+            gradu_samples.append(gradu_rot_values[:,:])
+            flux_samples.append(flux_rot_values[:,:])
+            gradu_samples = np.concatenate(np.asarray(gradu_samples),axis=0)
+            flux_samples = np.concatenate(np.asarray(flux_samples),axis=0)
 
-    ddcm_data.SetSampledData(fin_gradu_samples, fin_flux_samples)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
     ddcm_data.Distribute(ref_prob.std_solution)
 
@@ -118,9 +120,12 @@ def main_EX1_():
     # 4. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
 
-    ddcm_sol = DDCMProblem(ddcm_data, ddcm_formulation = 'NLSQP-5F-A')
+    def myObjFunc(g,gdata,s,sdata):
+        return inner(g-gdata, g-gdata)*dx + inner(s-sdata, s-sdata)*dx
 
-    ddcm_sol.solve()
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings,  NLSP5FA, orders=[])
+
+    ddcm_prob.solve("myddcmsol")
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')

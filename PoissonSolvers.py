@@ -230,7 +230,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     # of spaces above. That's why I program this here
     if(dir_outs != None):
 
-        filename = dir_outs+'/flux.pvd'
+        filename = dir_outs+'/s.pvd'
         w.sub(0).rename('Flux')
         VTKFile(filename).write(w.sub(0))
 
@@ -239,7 +239,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         VTKFile(filename).write(w.sub(1))
         
         filename = dir_outs+'/gradu.pvd'
-        g = fd.project(grad(u), domain.VDG0, name='Grad(u)')
+        g = fd.project(grad(u), domain.VDG0, name='Gradient(u)')
         VTKFile(filename).write(g)
 
     return w.sub(0), w.sub(1), g

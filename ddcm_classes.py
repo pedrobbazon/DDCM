@@ -145,8 +145,9 @@ class PoissonDDCMData():
         return 0
 
     def SetSampledData(self, gradu_vals, flux_vals):
-        self.sampled_gradu = gradu_vals 
-        self.sampled_flux  = flux_vals
+        self.sampled_grad = gradu_vals 
+        self.sampled_flux = flux_vals
+        print(self.sampled_grad)
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):
@@ -161,9 +162,9 @@ class PoissonDDCMData():
         reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
 
         # These are only vector with data, not associated yet to any domain
-        sampgrad = self.ddcm_data.sampled_gradu
-        sampflux = self.ddcm_data.sampled_flux
-        sampled_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+        sampgrad = self.sampled_grad
+        sampflux = self.sampled_flux
+        sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
 
         # Choose those values that are closest to the reference solution
         # and distribute over the domain (this induces a domain decomposition)
@@ -188,12 +189,37 @@ class DDCMSolution():
 # Program the different DDCM formulations
 class DDCMProblem():
 
-    def __init__(self, ddcm_data, ddcm_formulation):
+    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation):
         self.ddcm_data = ddcm_data
+        self.J = ObjF        # Function to be minimized
+        self.dJ = dObjF      # Jacobian of function to be minimized (can be given or compute by the program)
+        self.setting_type = setting_type_flag
         self.ddcm_formulation = ddcm_formulation
-        self.J = None     # Function to be minimized
+        self.forcing = forcings
+        self.orders = orders
+        self.ddcm_solution = DDCMSolution()
 
-    def solve(self):
-        ddcm_sol = self.ddcm_formulation(self.ddcm_data)
+    def solve(self, dir_outs=None):
+
+        print("|> Solving with:\n   - %s() DDCM-formulation" %(self.ddcm_formulation.__name__))
+        print("   - Setting type: %s" %(self.setting_type))
+        print("   ... Solving ...")
+
+        sigma, u, g, lmd, mu = self.ddcm_formulation(self.ddcm_data.domain,
+                                                     self.J, self.dJ,
+                                                     self.ddcm_data.graddata, self.ddcm_data.fluxdata,
+                                                     self.domain.flag_quads, 
+                                                     self.setting_type, 
+                                                     self.forcings.volumetric_source,
+                                                     self.forcings.boundary_flux,
+                                                     self.forcings.boundary_vals,
+                                                     self.orders,
+                                                     dir_outs)
+        
+        self.ddcm_solution.u   = u
+        self.ddcm_solution.s   = sigma 
+        self.ddcm_solution.g   = g
+        self.ddcm_solution.lmd = lmd
+        self.ddcm_solution.mu  = mu 
     
-        return ddcm_sol
+        return self.ddcm_solution
