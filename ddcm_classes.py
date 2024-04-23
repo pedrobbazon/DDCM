@@ -4,7 +4,8 @@ from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
 #
 import numpy as np
-import scipy as sp
+import scipy
+from scipy.spatial import KDTree
 #
 #-----------------------------------------------------------------------------
 #
@@ -155,11 +156,19 @@ class PoissonDDCMData():
 
     def Distribute(self, ref_solution):
 
-        #reference_state = np.dstack([grad0, grad1, flux0, flux1])[0]
-        #sampled_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+        refgrad = self.ddcm_graddata.dat.data
+        refflux = self.ddcm_fluxdata.dat.data
+        reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
+
+        # These are only vector with data, not associated yet to any domain
+        sampgrad = self.ddcm_data.sampled_gradu
+        sampflux = self.ddcm_data.sampled_flux
+        sampled_state = np.dstack([grad0, grad1, flux0, flux1])[0]
+
         # Choose those values that are closest to the reference solution
-        distances, indexes = sp.KDTree(sampled_state, reference_state)
-        # Choose those values that are closest to the reference solution
+        # and distribute over the domain (this induces a domain decomposition)
+        mytree = scipy.spatial.KDTree(sampled_state)
+        distances, indexes = mytree.query(reference_state)
         self.ddcm_graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
         self.ddcm_fluxdata.dat.data[:] = self.sampled_flux[indexes,2:4]
 
