@@ -55,8 +55,8 @@ def FLM_DarcyLinear(potential, flux, params):
 
 def FLM_ForcheimerReg(potential, flux, params):
     eta = params[0]
-    muokap = self.params[1]
-    betarho = self.params[2]
+    muokap = params[1]
+    betarho = params[2]
     modreg = eta*(sqrt(1.0 + inner(flux,flux)/eta**2) - 1.0)
     return grad(potential) + muokap*flux + betarho * modreg * flux
 
@@ -131,14 +131,17 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
         
         raise ValueError('Unrecognized problem setting option')
     
-    Res  = (inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
-    Res += inner(sigma,grad(v))*fd.dx
+    Res  = (fd.inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
+    Res += fd.inner(sigma,grad(v))*fd.dx
     Res += q*v*fd.dx(degree=4)
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+    g = fd.grad(u)
 
     # It may be reasonable that the output be consistent with the choices
-    # of spaces above. That's why I program this here
+    # of spaces above. That's why I program this here 
+    # e.g., if u \in DG1, g may belong to DG0, but if u \in DG0 then we should 
+    # integrate by parts during projection??
     if(dir_outs != None):
 
         filename = dir_outs+'/flux.pvd'
@@ -150,8 +153,8 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
         VTKFile(filename).write(w.sub(1))
         
         filename = dir_outs+'/gradu.pvd'
-        g = fd.project(grad(u), domain.VDG0, name='Grad(u)')
-        VTKFile(filename).write(g)
+        gpl = fd.project(g, domain.VDG0, name='Grad(u)')
+        VTKFile(filename).write(gpl)
 
     return w.sub(0), w.sub(1), g
 

@@ -155,13 +155,18 @@ class PoissonDDCMData():
         #self.sampled_gradu += GaussianNoise()
         return 0
 
-    def Distribute(self, ref_solution):
+    def Distribute(self, ref_solution, flag_project='Project-VDG0'):
 
-        refgrad = ref_solution.g.dat.data
-        refflux = ref_solution.s.dat.data
+        # Something reasonable would be to ask that g and s to be in the same space
+        if(flag_project == 'Project-VDG0'):
+            refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
+            refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
+        else:
+            raise ValueError(flag_project+' option not recognized in method Distribuite()')
+        
         reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
 
-        # These are only vector with data, not associated yet to any domain
+        # These are only vectors with data, not associated yet to any domain
         sampgrad = self.sampled_grad
         sampflux = self.sampled_flux
         sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
@@ -195,7 +200,7 @@ class DDCMProblem():
         self.dJ = dObjF      # Jacobian of function to be minimized (can be given or compute by the program)
         self.setting_type = setting_type_flag
         self.ddcm_formulation = ddcm_formulation
-        self.forcing = forcings
+        self.forcings = forcings
         self.orders = orders
         self.ddcm_solution = DDCMSolution()
 
@@ -208,7 +213,7 @@ class DDCMProblem():
         sigma, u, g, lmd, mu = self.ddcm_formulation(self.ddcm_data.domain,
                                                      self.J, self.dJ,
                                                      self.ddcm_data.graddata, self.ddcm_data.fluxdata,
-                                                     self.domain.flag_quads, 
+                                                     self.ddcm_data.domain.flag_quads, 
                                                      self.setting_type, 
                                                      self.forcings.volumetric_source,
                                                      self.forcings.boundary_flux,
