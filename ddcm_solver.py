@@ -25,6 +25,116 @@ from ddcm_classes import *
 #----------------------------------------------------------------------------
 # User defined main() functions: Program your options and problem below
 
+def main_EX0_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    def mysource(x):
+        return fd.Constant(1.0)
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    params = [Constant(1.0)]
+
+    ref_prob = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve("myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 3. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    ddcm_data = PoissonDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    def mysynbcvals(x):
+            return fd.Constant(bcvs)
+        synth_forcings = ForcingData(None, None, mysynbcvals)
+        
+    params = [fd.Constant(1.0)]
+    synth_prob = StdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    synth_prob.solve("mysynthsol")
+
+    # Sample the synthetic solution: Program this according to your problem
+    Nsampx, Nsampy  = 2, 2
+    Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+    xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+    yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+    xlsg, ylsg = np.meshgrid(xls, yls)
+    xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+    std_sol = synth_prob.std_solution
+    #- Pay attention: this is a concious decision
+    # and it may change in other situations
+    g = fd.project(std_sol.g, synth_domain.VDG0)
+    s = fd.project(std_sol.s, synth_domain.VDG0)
+    gradu_sampled_vals = np.array(g.at(xs))
+    flux_sampled_vals = np.array(s.at(xs))
+    #-------------------------------------------  
+        
+    # Apply any manipulation/transformation you need to define
+    # the synthetic data (rotations, scalings, removing outliers, etc)   
+    gradu_samples = gradu_sampled_vals #np.concatenate(gradu_samples)
+    flux_samples  = flux_sampled_vals  #np.concatenate(flux_samples)
+
+    ddcm_data.SetSampledData(gradu_samples, flux_samples)
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0')
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: OK')
+    print('----------------------------------------------------------')
+
+    # 4. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*dx + fd.inner(s-sdata, s-sdata)*dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
+
+#----------------------------------------------------------------------------
+
 def main_EX1_():
 
     ti = time.time()
