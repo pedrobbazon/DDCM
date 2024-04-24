@@ -155,7 +155,7 @@ class PoissonDDCMData():
         #self.sampled_gradu += GaussianNoise()
         return 0
 
-    def Distribute(self, ref_solution, flag_project='Project-VDG0'):
+    def Distribute(self, ref_solution, flag_project='Project-VDG0', flag_plot=False):
 
         # Something reasonable would be to ask that g and s to be in the same space
         if(flag_project == 'Project-VDG0'):
@@ -176,7 +176,17 @@ class PoissonDDCMData():
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
         self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        self.fluxdata.rename('GradDataDistrib')
         self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
+        self.fluxdata.rename('FluxDataDistrib')
+
+        if(flag_plot):
+            index_field = fd.Function(self.domain.DG0)
+            index_field.dat.data[:] = indexes.astype(float)
+            index_field.rename('IndexDataDistrib')
+            VTKFile('indexdata.pvd').write(index_field)
+            VTKFile('graddata.pvd').write(self.graddata)
+            VTKFile('fluxdata.pvd').write(self.fluxdata)
 
         return 0
 

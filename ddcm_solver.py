@@ -71,26 +71,31 @@ def main_EX0_():
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    def mysynbcvals(x):
-            return fd.Constant(bcvs)
-        synth_forcings = ForcingData(None, None, mysynbcvals)
+    synth_forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
         
     params = [fd.Constant(1.0)]
     synth_prob = StdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
     synth_prob.solve("mysynthsol")
 
     # Sample the synthetic solution: Program this according to your problem
-    Nsampx, Nsampy  = 2, 2
-    Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
-    xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
-    yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
-    xlsg, ylsg = np.meshgrid(xls, yls)
-    xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
-    std_sol = synth_prob.std_solution
+
+    one_sample_per_element = True
+    if(one_sample_per_element == True): # One point per element centroid
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+    else: # Sample points one a regular grid
+        Nsampx, Nsampy  = 3, 3
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
     #- Pay attention: this is a concious decision
     # and it may change in other situations
-    g = fd.project(std_sol.g, synth_domain.VDG0)
-    s = fd.project(std_sol.s, synth_domain.VDG0)
+    stdsyn_sol = synth_prob.std_solution
+    g = fd.project(stdsyn_sol.g, synth_domain.VDG0)
+    s = fd.project(stdsyn_sol.s, synth_domain.VDG0)
     gradu_sampled_vals = np.array(g.at(xs))
     flux_sampled_vals = np.array(s.at(xs))
     #-------------------------------------------  
@@ -102,7 +107,7 @@ def main_EX0_():
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
-    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0')
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: OK')
@@ -229,7 +234,7 @@ def main_EX1_():
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
-    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0')
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: OK')
@@ -313,7 +318,7 @@ def main_EX2_():
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX1_()
+_ = main_EX0_()
 
 
 
