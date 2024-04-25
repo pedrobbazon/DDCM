@@ -79,12 +79,12 @@ def main_EX0_():
 
     # Sample the synthetic solution: Program this according to your problem
 
-    one_sample_per_element = True
+    one_sample_per_element = False
     if(one_sample_per_element == True): # One point per element centroid
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
     else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 3, 3
+        Nsampx, Nsampy  = 2, 2
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
