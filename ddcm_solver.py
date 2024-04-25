@@ -46,7 +46,7 @@ def main_EX0_():
         return None
     def mybcvals(x):
         return fd.Constant(0.123456789)
-    forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
     params = [Constant(1.0)]
@@ -71,7 +71,7 @@ def main_EX0_():
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    synth_forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
+    synth_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
         
     params = [fd.Constant(1.0)]
     synth_prob = StdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
@@ -161,7 +161,7 @@ def main_EX1_():
         return None
     def mybcvals(x):
         return fd.Constant(0.123456789)
-    forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
     params = [Constant(1.0)]
@@ -193,7 +193,7 @@ def main_EX1_():
 
         def mysynbcvals(x):
             return fd.Constant(bcvs)
-        synth_forcings = ForcingData(None, None, mysynbcvals)
+        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         params = [fd.Constant(1.0)]
         
@@ -275,7 +275,6 @@ def main_EX2_():
     # 1. Create (or import) the computational domain/mesh
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
-
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     print('----------------------------------------------------------')
@@ -291,7 +290,7 @@ def main_EX2_():
         return None
     def mybcvals(x):
         return fd.Constant(0.123456789)
-    forcings = ForcingData(mysource, mysurfaceflux, mybcvals)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
     def kappa_of_u(u):

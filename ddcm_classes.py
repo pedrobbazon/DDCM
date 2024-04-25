@@ -42,7 +42,9 @@ class ComputationalDomain:
             self.DGtype = "DQ"
         self.DG0  = fd.FunctionSpace(self.msh, self.DGtype, degree=0)
         self.VDG0 = fd.VectorFunctionSpace(self.msh, self.DGtype, degree=0)
-        self.CG   = fd.FunctionSpace(self.msh, 'CG', degree=1)
+        self.TDG0 = fd.TensorFunctionSpace(self.msh, self.DGtype, degree=0)
+        self.CG1  = fd.FunctionSpace(self.msh, 'CG', degree=1)
+        self.VCG1 = fd.VectorFunctionSpace(self.msh, 'CG', degree=1)
         self.Hdiv = None # to be defined if needed on each case
 
         # Domain volume
@@ -69,18 +71,25 @@ class StdSolution():
         self.g = None # Gradient (usual gradient or symmetric gradient)
 
 from PoissonSolvers import *
+from MechanicalSolvers import *
 
 #
 # Encapsulate the forcings
-class ForcingData():
+class MechanicalForcingData():
+    def __init__(self, body_force, boundary_force, boundary_vals):
+        self.body_force = body_force
+        self.boundary_force = boundary_force
+        self.boundary_vals = boundary_vals
+
+class PoissonForcingData():
     def __init__(self, volumetric_source, boundary_flux, boundary_vals):
         self.volumetric_source = volumetric_source
         self.boundary_flux = boundary_flux
         self.boundary_vals = boundary_vals
 
 # 
-# Define the Standard problem, model and solver
-class StdProblem():
+# Define the Standard Poisson problem, model and solver
+class PoissonStdProblem():
     def __init__(self, domain, params, setting_type_flag: str, forcings, flux_law, fem_formulation, orders):
         self.domain = domain
         self.params = params
@@ -114,10 +123,119 @@ class StdProblem():
         self.std_solution.g = g 
 
         return self.std_solution
+    
+# Define the Standard Poisson problem, model and solver
+class MechanicalStdProblem():
+    def __init__(self, domain, params, setting_type_flag: str, forcings, tensdef_law, fem_formulation, orders):
+        self.domain = domain
+        self.params = params
+        self.setting_type = setting_type_flag  # Uniaxial or Real-Setting
+        self.forcings = forcings               # Source functio, Surface flux and BC vals
+        self.flux_law        = tensdef_law     # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
+        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
+        self.std_solution = StdSolution()
+        self.orders = orders                   # Orders of Flux and potential approximations
+    
+    def solve(self, dir_outs=None):
+        
+        if(self.flux_law != None):
+            tensdef_name = self.flux_law.__name__+'()'
+        else:
+            tensdef_name = 'No explicit'
+        print("|> Solving with:\n   - %s() FEM-formulation\n   - %s StressDef-Law" 
+              %(self.fem_formulation.__name__, tensdef_name))
+        print("   - Setting type: %s" %(self.setting_type))
+        print("   ... Solving ...")
+        sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
+                                           self.params, self.setting_type, 
+                                           self.forcings.volumetric_source,
+                                           self.forcings.boundary_flux,
+                                           self.forcings.boundary_vals,
+                                           self.flux_law, 
+                                           self.orders,
+                                           dir_outs)
+        self.std_solution.u = u
+        self.std_solution.s = sigma 
+        self.std_solution.g = g 
+
+        return self.std_solution
 
 
 from DDCMSolvers import *
 
+#
+# Discrete data to be used in the DDCM problem
+class DDCMData():
+    def __init__(self, domain):
+        # The DDCM data is associated to a domain
+        self.domain = domain
+        # The complete sampled data set 
+        self.g_sampled = None
+        self.s_sampled = None
+        '''
+        Data distributed over the domain to be used by the DDCM solver:
+        By option we assign the data to the elements.
+        Therefore, the natural choice is to use elementwise discontinuous spaces,
+        this way, the induced domain decompostion from the data
+        will conform to the element edges
+        '''
+        self.g_distrib = fd.Function(domain.VDG0)
+        self.s_distrib = fd.Function(domain.VDG0)
+
+    #----------------------------------------------------------------------------
+    # Read the (Flux-Grad) data from a file and accommodate it in
+    # the appropriate format to be consumed by ddcm_solvers
+    def ReadDataFromFile(self, datafile):
+        dataset = np.loadtxt(datafile)
+        # We expect the data in this format:
+        self.sampled_gradu = dataset[:,0:2] 
+        self.sampled_flux  = dataset[:,2:4] 
+        return 0
+
+    def SetSampledData(self, gradu_vals, flux_vals):
+        self.sampled_grad = gradu_vals 
+        self.sampled_flux = flux_vals
+        return 0
+    
+    def AddNoisetoData(self, noise_parameters: dict):
+        #self.sampled_gradu += GaussianNoise()
+        #self.sampled_gradu += GaussianNoise()
+        return 0
+
+    def Distribute(self, ref_solution, flag_project='Project-VDG0', flag_plot=False):
+
+        # Something reasonable would be to ask that g and s to be in the same space
+        if(flag_project == 'Project-VDG0'):
+            refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
+            refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
+        else:
+            raise ValueError(flag_project+' option not recognized in method Distribuite()')
+        
+        reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
+
+        # These are only vectors with data, not associated yet to any domain
+        sampgrad = self.sampled_grad
+        sampflux = self.sampled_flux
+        sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
+
+        # Choose those values that are closest to the reference solution
+        # and distribute over the domain (this induces a domain decomposition)
+        mytree = scipy.spatial.KDTree(sampled_state)
+        distances, indexes = mytree.query(reference_state)
+        self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        self.fluxdata.rename('GradDataDistrib')
+        self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
+        self.fluxdata.rename('FluxDataDistrib')
+
+        if(flag_plot):
+            index_field = fd.Function(self.domain.DG0)
+            index_field.dat.data[:] = indexes.astype(float)
+            index_field.rename('IndexDataDistrib')
+            VTKFile('indexdata.pvd').write(index_field)
+            VTKFile('graddata.pvd').write(self.graddata)
+            VTKFile('fluxdata.pvd').write(self.fluxdata)
+
+        return 0
 #
 # Discrete data to be used in the DDCM problem
 class PoissonDDCMData():
