@@ -94,11 +94,11 @@ class PoissonStdProblem():
         self.domain = domain
         self.params = params
         self.setting_type    = setting_type_flag  # Uniaxial or Real-Setting
-        self.forcings = forcings                  # Source functio, Surface flux and BC vals
+        self.forcings        = forcings           # Source functio, Surface flux and BC vals
         self.flux_law        = flux_law           # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
         self.fem_formulation = fem_formulation    # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
-        self.std_solution = StdSolution()
-        self.orders = orders                      # Orders of Flux and potential approximations
+        self.std_solution    = StdSolution()
+        self.orders          = orders             # Orders of Flux and potential approximations
     
     def solve(self, dir_outs=None):
         
@@ -126,15 +126,17 @@ class PoissonStdProblem():
     
 # Define the Standard Poisson problem, model and solver
 class MechanicalStdProblem():
-    def __init__(self, domain, params, setting_type_flag: str, forcings, tensdef_law, fem_formulation, orders):
+    def __init__(self, domain, params, setting_type_flag: str, forcings, 
+                 stress_strain_law, fem_formulation, orders, energy_function=None):
         self.domain = domain
         self.params = params
-        self.setting_type = setting_type_flag  # Uniaxial or Real-Setting
-        self.forcings = forcings               # Source functio, Surface flux and BC vals
-        self.flux_law        = tensdef_law     # Darcy-Linear, Darcy-Nonlinear, Forcheimer, etc
-        self.fem_formulation = fem_formulation # Dual-Mixed-Hdiv, Mixed-Hdiv, Primal-CG
+        self.setting_type = setting_type_flag     # Uniaxial or Real-Setting
+        self.forcings = forcings                  # Source functio, Surface flux and BC vals
+        self.flux_law        = stress_strain_law  # Stress-Strain constitutive law: linear isotropic, hyperelastic, etc.
+        self.energy_function = energy_function    # Energy as a functions of deformation measures
+        self.fem_formulation = fem_formulation    # Primal-CG will be possibly the only one for now
         self.std_solution = StdSolution()
-        self.orders = orders                   # Orders of Flux and potential approximations
+        self.orders = orders                      # Orders of Stress and displacement field approximations
     
     def solve(self, dir_outs=None):
         
@@ -159,8 +161,7 @@ class MechanicalStdProblem():
         self.std_solution.g = g 
 
         return self.std_solution
-
-
+    
 from DDCMSolvers import *
 
 #

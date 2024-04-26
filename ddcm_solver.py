@@ -51,7 +51,7 @@ def main_EX0_():
 
     params = [Constant(1.0)]
 
-    ref_prob = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_prob.solve("myrefsol")
 
@@ -74,7 +74,7 @@ def main_EX0_():
     synth_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
         
     params = [fd.Constant(1.0)]
-    synth_prob = StdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    synth_prob = PoissonStdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
     synth_prob.solve("mysynthsol")
 
     # Sample the synthetic solution: Program this according to your problem
@@ -166,7 +166,7 @@ def main_EX1_():
 
     params = [Constant(1.0)]
 
-    ref_prob = StdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_prob.solve("myrefsol")
 
@@ -197,7 +197,7 @@ def main_EX1_():
         
         params = [fd.Constant(1.0)]
         
-        synth_prob = StdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve("mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
@@ -300,7 +300,7 @@ def main_EX2_():
        return kappa
     params = [kappa_of_u]
 
-    ref_sol = StdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    ref_sol = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
 
     ref_sol.solve("myresults")
 
