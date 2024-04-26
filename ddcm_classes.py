@@ -246,11 +246,13 @@ class PoissonDDCMData():
         # The complete sampled data set 
         self.sampled_grad = None
         self.sampled_flux = None
-        # Data distributed over the domain to be used by the DDCM solver:
-        # by option we assign the data to the elements.
-        # Therefore, the natural choice is to use elementwise discontinuous spaces,
-        # this way, the induced domain decompostion from the data
-        # will conform to the element edges
+        '''
+        Data distributed over the domain to be used by the DDCM solver:
+        by option we assign the data to the elements.
+        Therefore, the natural choice is to use elementwise discontinuous spaces,
+        this way, the induced domain decompostion from the data
+        will conform to the element edges
+        '''
         self.graddata = fd.Function(domain.VDG0)
         self.fluxdata = fd.Function(domain.VDG0)
 
@@ -303,9 +305,9 @@ class PoissonDDCMData():
             index_field = fd.Function(self.domain.DG0)
             index_field.dat.data[:] = indexes.astype(float)
             index_field.rename('IndexDataDistrib')
-            VTKFile('indexdata.pvd').write(index_field)
-            VTKFile('graddata.pvd').write(self.graddata)
-            VTKFile('fluxdata.pvd').write(self.fluxdata)
+            VTKFile('mydatafields/indexdata.pvd').write(index_field)
+            VTKFile('mydatafields/graddata.pvd').write(self.graddata)
+            VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
 
         return 0
 

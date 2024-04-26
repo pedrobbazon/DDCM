@@ -50,7 +50,7 @@ petsc_opt2 = {
 # Follow format for the names: FLX_mymodel()
 #
 def FLM_DarcyLinear(potential, flux, params):
-    kappa = params[0]
+    kappa = params['kappa']
     return flux + kappa * grad(potential)
 
 def FLM_ForcheimerReg(potential, flux, params):
@@ -209,10 +209,10 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         # Pressure bc (weak in this formulation)
         tag_bottom, tag_top = 3, 4
         ubottom, utop = fd.Constant(1.0), boundary_vals(x)
-        pressure_boundary_term = ubottom*dot(tau,n)*ds(tag_top, degree=4) + utop*dot(tau,n)*ds(tag_top, degree=4)
+        pressure_boundary_term = ubottom*fd.dot(tau,n)*fd.ds(tag_bottom) + utop*fd.dot(tau,n)*fd.ds(tag_top)
 
         # Flux bc (strong in this formulation)
-        no_flux = as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        no_flux = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
         tag_left, tag_right = 1, 2
         bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
 
@@ -224,10 +224,26 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         raise ValueError('Unrecognized problem setting option')
 
     kappa = params[0]
-    Res  = ((1.0/kappa(u))*dot(sigma, tau) - div(tau)*u - div(sigma)*v)*dx(degree=4)
-    Res += q*v*dx(degree=4) + pressure_boundary_term
+    Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
+    Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+    g = fd.grad(u)
+
+    # Compute g in a consistent way
+    
+    g = fd.TrialFunction(HD)
+    usol = fd.Function(DG)
+    usol.assign(w.sub(1))
+    Resg = fd.inner(g,tau)*fd.dx + usol*fd.div(tau)*fd.dx # - usol*fd.dot(tau,n)*fd.ds
+    #fd.solve(Resg == 0, g, bcs=[], solver_parameters=petsc_opt1)
+    a = fd.inner(g,tau)*fd.dx
+    L = -usol*fd.div(tau)*fd.dx
+    gsol = fd.Function(HD, name='Hdiv-Gradient')
+    prob = fd.LinearVariationalProblem(a, L, gsol)
+    solver = fd.LinearVariationalSolver(prob)
+    gsol = solver.solve()
+    #fd.solve(a == L, gsol, bcs=[])
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here
@@ -242,8 +258,8 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         VTKFile(filename).write(w.sub(1))
         
         filename = dir_outs+'/gradu.pvd'
-        g = fd.project(grad(u), domain.VDG0, name='Gradient(u)')
-        VTKFile(filename).write(g)
+        gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
+        VTKFile(filename).write(gpl)
 
     return w.sub(0), w.sub(1), g
 
