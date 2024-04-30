@@ -323,7 +323,8 @@ def main_EX2_():
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
-        print('|||| BCVal= %1.2f' %(bcvs))
+        print('----')
+        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
         def mysynbcvals(x):
             return fd.Constant(bcvs)
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
@@ -370,9 +371,9 @@ def main_EX2_():
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
     
-    print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points', gradu_samples.shape[0])
-    print('----------------------------------------------------------')
+    print('--------------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
+    print('--------------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
