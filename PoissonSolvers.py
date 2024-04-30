@@ -44,6 +44,13 @@ petsc_opt2 = {
     'pc_factor_mat_solver_type': 'superlu-dist'
 }
 #
+petsc_opt3 = {
+    "ksp_type": "gmres",
+    "ksp_gmres_restart": 100,
+    "ksp_rtol": 1e-8,
+    "pc_type": "ilu"
+}
+#
 #----------------------------------------------------------------
 #
 # Program your Flux Law: (Mixed or Primal): 
@@ -232,18 +239,20 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
     # Compute g in a consistent way
     
-    g = fd.TrialFunction(HD)
+    g = fd.Function(HD)
     usol = fd.Function(DG)
     usol.assign(w.sub(1))
     Resg = fd.inner(g,tau)*fd.dx + usol*fd.div(tau)*fd.dx # - usol*fd.dot(tau,n)*fd.ds
-    #fd.solve(Resg == 0, g, bcs=[], solver_parameters=petsc_opt1)
+    fd.solve(Resg == 0, g, bcs=[], solver_parameters=petsc_opt3)
+    
+    '''
     a = fd.inner(g,tau)*fd.dx
     L = -usol*fd.div(tau)*fd.dx
     gsol = fd.Function(HD, name='Hdiv-Gradient')
     prob = fd.LinearVariationalProblem(a, L, gsol)
     solver = fd.LinearVariationalSolver(prob)
     gsol = solver.solve()
-    #fd.solve(a == L, gsol, bcs=[])
+    '''
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here

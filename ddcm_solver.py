@@ -298,7 +298,7 @@ def main_EX2_():
        return kappa
     params = [kappa_of_u]
 
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[2,1])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
 
     ref_prob.solve("myrefsol")
 
