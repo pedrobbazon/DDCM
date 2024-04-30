@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 Created on:         12th April, 2024
-Last Modified on:   12th April, 2024
+Last Modified on:   30th April, 2024
 
 @authors: P. Vazao Balbao & R.F. Ausas
 """
 
 #----------------------------------------------------------------------
 # General libraries
-import os
 import time
 import numpy as np
 import scipy as sp
