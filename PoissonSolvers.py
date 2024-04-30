@@ -14,6 +14,7 @@ from firedrake.__future__ import interpolate
 # Different petsc option solvers that might be used by
 # the Poisson solvers below
 #
+# Nonlinear solver with mumps
 petsc_opt1 = {
     'snes_type': 'newtonls',
     'snes_monitor': None,
@@ -29,26 +30,21 @@ petsc_opt1 = {
     'pc_factor_mat_solver_type': 'mumps'
 }
 #
+# Simple direct solver
 petsc_opt2 = {
-    'snes_type': 'newtonls',
-    'snes_monitor': None,
-    'snes_converged_reason': None,
-    'snes_linesearch_type': 'basic',
-    'snes_max_it': 100,
-    'snes_divergence_tolerance': 1e20,
-    'snes_rtol': 1e-10,
-    'snes_atol': 1e-12,
-    'mat_type': 'aij',
-    'ksp_type': 'preonly',
-    'pc_type': 'lu',
-    'pc_factor_mat_solver_type': 'superlu-dist'
+    "ksp_type": "preonly",
+    "pc_type": "lu",
+    "pc_factor_mat_solver_type": "mumps",
+    "ksp_monitor": None
 }
 #
+# # Simple krylov solver
 petsc_opt3 = {
     "ksp_type": "gmres",
     "ksp_gmres_restart": 100,
     "ksp_rtol": 1e-8,
-    "pc_type": "ilu"
+    "pc_type": "ilu",
+    "ksp_monitor": None
 }
 #
 #----------------------------------------------------------------
@@ -139,7 +135,7 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
         raise ValueError('Unrecognized problem setting option')
     
     Res  = (fd.inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
-    Res += fd.inner(sigma,grad(v))*fd.dx
+    Res += fd.inner(sigma,fd.grad(v))*fd.dx
     Res += q*v*fd.dx(degree=4)
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
@@ -200,7 +196,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         q = volumetric_source(x)
         
         # Pressure bc (weak in this formulation)
-        pressure_boundary_term = boundary_vals(x)*dot(tau,n)*ds(degree=4)
+        pressure_boundary_term = boundary_vals(x)*fd.dot(tau,n)*fd.ds(degree=4)
         
         # Flux bc (strong in this formulation) - empty for this setting
         bcall = []
@@ -235,24 +231,16 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
-    g = fd.grad(u)
 
-    # Compute g in a consistent way
-    
-    g = fd.Function(HD)
+    # Compute g in a consistent way?
+    gtr = fd.TrialFunction(HD)
+    tau = fd.TestFunction(HD)
     usol = fd.Function(DG)
     usol.assign(w.sub(1))
-    Resg = fd.inner(g,tau)*fd.dx + usol*fd.div(tau)*fd.dx # - usol*fd.dot(tau,n)*fd.ds
-    fd.solve(Resg == 0, g, bcs=[], solver_parameters=petsc_opt3)
-    
-    '''
-    a = fd.inner(g,tau)*fd.dx
-    L = -usol*fd.div(tau)*fd.dx
-    gsol = fd.Function(HD, name='Hdiv-Gradient')
-    prob = fd.LinearVariationalProblem(a, L, gsol)
-    solver = fd.LinearVariationalSolver(prob)
-    gsol = solver.solve()
-    '''
+    a = fd.inner(gtr,tau)*fd.dx
+    L = -usol*fd.div(tau)*fd.dx + usol*fd.dot(tau,n)*fd.ds
+    g = fd.Function(HD, name='Hdiv-Gradient')
+    fd.solve(a == L, g, bcs=[], solver_parameters=petsc_opt2)
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here
@@ -265,10 +253,14 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         filename = dir_outs+'/u.pvd'
         w.sub(1).rename('Potential')
         VTKFile(filename).write(w.sub(1))
+
+        filename = dir_outs+'/ucg.pvd'
+        w.sub(1).rename('Potential-CG')
+        VTKFile(filename).write(project(w.sub(1), domain.CG1, name='Potential-CG1'))
         
         filename = dir_outs+'/gradu.pvd'
-        gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
-        VTKFile(filename).write(gpl)
+        #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
+        VTKFile(filename).write(g)
 
     return w.sub(0), w.sub(1), g
 

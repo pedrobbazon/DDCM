@@ -102,8 +102,8 @@ def main_EX0_():
         
     # Apply any manipulation/transformation you need to define
     # the synthetic data (rotations, scalings, removing outliers, etc)   
-    gradu_samples = gradu_sampled_vals #np.concatenate(gradu_samples)
-    flux_samples  = flux_sampled_vals  #np.concatenate(flux_samples)
+    gradu_samples = gradu_sampled_vals
+    flux_samples  = flux_sampled_vals
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
@@ -229,8 +229,9 @@ def main_EX1_():
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
             gradu_samples.append(gradu_rot_values)
             flux_samples.append(flux_rot_values)
-        gradu_samples = np.concatenate(gradu_samples)
-        flux_samples = np.concatenate(flux_samples)
+    
+    gradu_samples = np.concatenate(gradu_samples)
+    flux_samples = np.concatenate(flux_samples)
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
@@ -248,7 +249,7 @@ def main_EX1_():
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*dx + fd.inner(s-sdata, s-sdata)*dx
+        return fd.inner(g-gdata, g-gdata)*fd.x + fd.inner(s-sdata, s-sdata)*fd.dx
 
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
 
@@ -319,10 +320,11 @@ def main_EX2_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = [3.0]
+    bcvals = [2.0, 4.0, 6.0, 8]
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
+        print('|||| BCVal= %1.2f' %(bcvs))
         def mysynbcvals(x):
             return fd.Constant(bcvs)
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
@@ -333,7 +335,7 @@ def main_EX2_():
         synth_prob.solve("mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 30
+        Nsampx, Nsampy  = 1, 10
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -361,24 +363,40 @@ def main_EX2_():
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
             gradu_samples.append(gradu_rot_values)
             flux_samples.append(flux_rot_values)
-        gradu_samples = np.concatenate(gradu_samples)
-        flux_samples = np.concatenate(flux_samples)
+    
+    gradu_samples = np.concatenate(gradu_samples)
+    flux_samples = np.concatenate(flux_samples)
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples)
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
-
+    
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: OK')
+    print('|::| Synthetic data computation/distribution: %d data points', gradu_samples.shape[0])
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
 
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
 
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
     
     elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
 
     return 0
 
