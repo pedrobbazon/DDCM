@@ -496,7 +496,7 @@ def main_EX3_():
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, flag_savetxt=None)
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 

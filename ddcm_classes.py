@@ -193,9 +193,11 @@ class DDCMData():
         self.sampled_flux  = dataset[:,2:4] 
         return 0
 
-    def SetSampledData(self, gradu_vals, flux_vals):
+    def SetSampledData(self, gradu_vals, flux_vals, flag_savetxt=None):
         self.sampled_grad = gradu_vals 
         self.sampled_flux = flux_vals
+        if(flag_savetxt != None):
+            np.savetxt('DATA.txt', (gradu_vals, flux_vals))
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):
@@ -224,7 +226,7 @@ class DDCMData():
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
         self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        self.fluxdata.rename('GradDataDistrib')
+        self.graddata.rename('GradDataDistrib')
         self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
         self.fluxdata.rename('FluxDataDistrib')
 
