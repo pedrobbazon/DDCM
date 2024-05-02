@@ -100,7 +100,7 @@ class PoissonStdProblem():
         self.std_solution    = StdSolution()
         self.orders          = orders             # Orders of Flux and potential approximations
     
-    def solve(self, dir_outs=None):
+    def solve(self, tt=0.0, dir_outs=None):
         
         if(self.flux_law != None):
             fluxlaw_name = self.flux_law.__name__+'()'
@@ -117,7 +117,7 @@ class PoissonStdProblem():
                                            self.forcings.boundary_vals,
                                            self.flux_law, 
                                            self.orders,
-                                           dir_outs)
+                                           tt, dir_outs)
         self.std_solution.u = u
         self.std_solution.s = sigma 
         self.std_solution.g = g 

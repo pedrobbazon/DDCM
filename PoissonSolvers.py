@@ -54,30 +54,30 @@ petsc_opt3 = {
 #
 def FLM_DarcyLinear(potential, flux, params):
     kappa = params['kappa']
-    return flux + kappa * grad(potential)
+    return flux + kappa * fd.grad(potential)
 
 def FLM_ForcheimerReg(potential, flux, params):
-    eta = params[0]
-    muokap = params[1]
-    betarho = params[2]
-    modreg = eta*(sqrt(1.0 + inner(flux,flux)/eta**2) - 1.0)
-    return grad(potential) + muokap*flux + betarho * modreg * flux
+    eta = params['eta']
+    muokap = params['mu_over_kappa']
+    betarho = params['beta_x_rho']
+    modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
+    return fd.grad(potential) + muokap*flux + betarho * modfluxreg * flux
 
 def FLM_Klinkenberg(potential, flux, params):
-    kapomu = params[0]
-    DK = params[1]
-    return flux + kapomu * grad(potential) + (DK/potential)*grad(potential)
+    kapomu = params['kappaovermu']
+    DK = params['DK']
+    return flux + kapomu * fd.grad(potential) + (DK/potential)*fd.grad(potential)
     
 def FLM_DarcyNonLinear(potential, flux, params):
     def Kofu(u, params):
-        kappa0 = params[0]
-        viol = params[1]
+        kappa0 = params['kappa0']
+        viol = params['viol']
         return kappa0*(1 + 10*0.5 * (1.0 + tanh(viol*(u-2.0))))
-    return flux + Kofu(potential,params) * grad(potential)
+    return flux + Kofu(potential,params) * fd.grad(potential)
     
 def FLP_DarcyLinear(potential, params):
     kappa = params[0]
-    return -kappa * grad(potential)
+    return -kappa * fd.grad(potential)
 
 #-------------------------------------------------------------------------------------
 # Program your FEM formulation (Mixed or Primal):
@@ -88,7 +88,7 @@ def FLP_DarcyLinear(potential, params):
 
 def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
                          volumetric_source, boundary_flux, boundary_vals,
-                         FluxLaw, orders, dir_outs):
+                         FluxLaw, orders, tt, dir_outs):
     
     # In this formulation we need constitutive 
     # parameters and a FluxLaw in which sigma might
@@ -147,17 +147,22 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
     # integrate by parts during projection??
     if(dir_outs != None):
 
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
         filename = dir_outs+'/flux.pvd'
         w.sub(0).rename('Flux')
-        VTKFile(filename).write(w.sub(0))
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
 
         filename = dir_outs+'/u.pvd'
         w.sub(1).rename('Potential')
-        VTKFile(filename).write(w.sub(1))
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
         gpl = fd.project(g, domain.VDG0, name='Grad(u)')
-        VTKFile(filename).write(gpl)
+        VTKFile(filename, mode=mode).write(gpl, time=tt)
 
     return w.sub(0), w.sub(1), g
 
@@ -165,7 +170,7 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
 
 def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
                      volumetric_source, boundary_flux, boundary_vals,
-                     FluxLaw, orders, dir_outs):
+                     FluxLaw, orders, tt, dir_outs):
 
     # In this formulation the FluxLaw is not used.
     # We just need the definition of kappa and assume
@@ -246,21 +251,26 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     # of spaces above. That's why I program this here
     if(dir_outs != None):
 
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
         filename = dir_outs+'/s.pvd'
         w.sub(0).rename('Flux')
-        VTKFile(filename).write(w.sub(0))
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
 
         filename = dir_outs+'/u.pvd'
         w.sub(1).rename('Potential')
-        VTKFile(filename).write(w.sub(1))
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
 
         filename = dir_outs+'/ucg.pvd'
         w.sub(1).rename('Potential-CG')
-        VTKFile(filename).write(project(w.sub(1), domain.CG1, name='Potential-CG1'))
+        VTKFile(filename, mode=mode).write(project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
         #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
-        VTKFile(filename).write(g)
+        VTKFile(filename, mode=mode).write(g, time=tt)
 
     return w.sub(0), w.sub(1), g
 
