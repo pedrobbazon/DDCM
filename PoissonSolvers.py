@@ -88,7 +88,7 @@ def FLP_DarcyLinear(potential, params):
 
 def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
                          volumetric_source, boundary_flux, boundary_vals,
-                         FluxLaw, orders, tt, dir_outs):
+                         FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
     
     # In this formulation we need constitutive 
     # parameters and a FluxLaw in which sigma might
@@ -170,7 +170,7 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
 
 def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
                      volumetric_source, boundary_flux, boundary_vals,
-                     FluxLaw, orders, tt, dir_outs):
+                     FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
 
     # In this formulation the FluxLaw is not used.
     # We just need the definition of kappa and assume

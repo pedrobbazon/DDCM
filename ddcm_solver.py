@@ -429,7 +429,7 @@ def main_EX3_():
     params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_prob.solve("myrefsol")
+    ref_prob.solve(0.0, "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -444,11 +444,11 @@ def main_EX3_():
 
     ddcm_data = PoissonDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = [2.0, 4.0, 6.0, 8.0]
+    bcvals = np.linspace(1.0, 10.0, 100)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -458,7 +458,7 @@ def main_EX3_():
             return fd.Constant(bcvs)
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
-        # It could be the same parameters as in the reference solution or we may add some perturbation
+        # They could be the same parameters as in the reference solution or we may add some perturbation
         params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
