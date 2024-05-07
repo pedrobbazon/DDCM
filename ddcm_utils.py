@@ -22,18 +22,18 @@ def PlotPoissonData(data_file, flag_type_plot = 'magnitude'):
         maggrad = np.linalg.norm(gradu, axis=1)
         l = plt.plot(maggrad, magflux,'or')
     
-    elif(flag_type_plot == 'x-component'):
+    elif(flag_type_plot == 'x'):
     
         plt.xlabel('$\partial_x{u}$', fontsize=10)
         plt.ylabel('$\sigma_x$',fontsize=10)
         l = plt.plot(gradu[:,0], flux[:,0],'or')
     
-    elif(flag_type_plot == 'y-component'):
+    elif(flag_type_plot == 'y'):
         plt.xlabel('$\partial_y{u}$', fontsize=10)
         plt.ylabel('$\sigma_y$',fontsize=10)
         l = plt.plot(gradu[:,1], flux[:,1],'or')
 
-    elif(flag_type_plot == 'z-component'):
+    elif(flag_type_plot == 'z'):
         plt.xlabel('$\partial_z{u}$', fontsize=10)
         plt.ylabel('$\sigma_z$',fontsize=10)
         l = plt.plot(gradu[:,2], flux[:,2],'or')

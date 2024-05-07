@@ -448,7 +448,7 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.0, 10.0, 100)
+    bcvals = np.linspace(1.01, 10.01, 100)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -486,7 +486,7 @@ def main_EX3_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
+        for angle in np.linspace(0.0*np.pi, 2*np.pi, 100):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
