@@ -426,7 +426,7 @@ def main_EX3_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+    params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(100.0)}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -448,7 +448,7 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.01, 10.01, 100)
+    bcvals = np.linspace(1.0, 10.0, 20)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -459,12 +459,12 @@ def main_EX3_():
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         # They could be the same parameters as in the reference solution or we may add some perturbation
-        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(0.1)}
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 30
+        Nsampx, Nsampy  = 1, 1
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
