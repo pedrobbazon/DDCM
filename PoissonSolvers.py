@@ -275,3 +275,51 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     return w.sub(0), w.sub(1), g
 
 #=====================================================================================
+
+def PoissonAnalytical(domain, flag_quads, params, flag_setting,
+                      volumetric_source, boundary_flux, boundary_vals,
+                      FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
+
+    # In this formulation the FluxLaw is not used.
+    # We have an analytical solution to work with
+
+    # The mesh and spaces are intended to interpolate the 
+    #analytical solution and they will be possible quite accurate
+    mesh = domain.msh
+
+    orderF, orderU = orders
+    if(flag_quads):
+        Vflux = fd.VectorFunctionSpace(mesh, "CG", orderF)
+        Vpot = fd.FunctionSpace(mesh, "CG", orderU)
+
+    flux = fd.Function(Vflux, name='Flux.Solution')
+    potential = fd.Function(Vpot, name='Potential.Solution')
+    g = fd.Function(Vflux, name='grad.Solution')
+
+    x = fd.SpatialCoordinate(mesh)
+
+    flux.interpolate(params['exact-flux'])
+    potential.interpolate(params['exact-potential'])
+    g.interpolate(fd.grad(params['exact-potential']))
+
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/s.pvd'
+        VTKFile(filename, mode=mode).write(flux, time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        VTKFile(filename, mode=mode).write(potential, time=tt)
+        
+        filename = dir_outs+'/gradu.pvd'
+        VTKFile(filename, mode=mode).write(g, time=tt)
+
+    return flux, potential, g
+
+#=====================================================================================
