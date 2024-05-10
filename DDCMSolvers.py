@@ -50,7 +50,7 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     x = fd.SpatialCoordinate(mesh)
 
     # Unknown field
-    w = Function(W)
+    w = fd.Function(W)
     q, u, g, l, m = fd.split(w)
 
     # Test functions
