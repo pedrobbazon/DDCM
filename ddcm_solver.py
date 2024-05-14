@@ -577,6 +577,7 @@ def main_EX4_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
+    # This will be only called for visualation purposes
     params = {'exact-potential': uexact, 'exact-flux': sexact}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
@@ -599,40 +600,19 @@ def main_EX4_():
     ddcm_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
     ddcm_data = PoissonDDCMData(ddcm_domain)
 
-    # Create the synthetic data
-    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
-    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-
-    # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.0, 10.0, 20)
+    # In this manufactured example, we create by hand fluxes and grads 
+    # without actually solving a synthetic problem:
+    bcvals = np.linspace(1.0, 10.0, 5)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
-
-        print('----')
-        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
-        def mysynbcvals(x):
-            return fd.Constant(bcvs)
-        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
-        
-        # They could be the same parameters as in the reference solution or we may add some perturbation
-        params = {'kappa': fd.Constant(1.0)}
-        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, None, PoissonDualMixedHdiv, orders=[2,1])
-        synth_prob.solve(bcvs, "mysynthsol")
-
-        # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 1
-        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
-        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
-        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
-        xlsg, ylsg = np.meshgrid(xls, yls)
-        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
-        std_sol = synth_prob.std_solution
-        #- Pay attention: this is a concious decision
-        # and it may change in other situations
-        g = fd.project(std_sol.g, synth_domain.VDG0)
-        s = fd.project(std_sol.s, synth_domain.VDG0)
-        gradu_sampled_vals = np.array(g.at(xs))
-        flux_sampled_vals = np.array(s.at(xs))
+        # Generate a flux s and a grad g 
+        g1 = 0.0
+        s1 = 0.0
+        g2 = (bcvs - 1.0)/1.0
+        kappa = 1.0
+        s2 = -kappa*g2
+        gradu_sampled_vals = np.array([g1, g2])
+        flux_sampled_vals  = np.array([s1, s2])
         #-------------------------------------------  
         
         # Apply any manipulation/transformation you need to define
@@ -642,7 +622,7 @@ def main_EX4_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0*np.pi, 2*np.pi, 100):
+        for angle in np.linspace(0.0*np.pi, 2*np.pi, 4):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
@@ -651,10 +631,13 @@ def main_EX4_():
     
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
+    print(gradu_samples)
+
+    raise Exception('ldldld')
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, 'myDATA.txt')
 
-    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
+    ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))

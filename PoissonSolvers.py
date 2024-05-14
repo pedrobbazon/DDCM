@@ -280,30 +280,14 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
                       volumetric_source, boundary_flux, boundary_vals,
                       FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
 
-    # In this formulation the FluxLaw is not used.
-    # We have an analytical solution to work with
+    # This function is essentially called for visualization purposes
+    # in turn, the solution that it returns is the same analytical function
+    # provided as input
 
-    # The mesh and spaces are intended to interpolate the 
-    #analytical solution and they will be possible quite accurate
+    # The mesh and spaces are intended to represent well the 
+    # analytical solution and they will likely be quite accurate
     mesh = domain.msh
 
-    orderF, orderU = orders
-    if(flag_quads):
-        Vflux = fd.VectorFunctionSpace(mesh, "CG", orderF)
-        Vpot = fd.FunctionSpace(mesh, "CG", orderU)
-
-    flux = fd.Function(Vflux, name='Flux.Solution')
-    potential = fd.Function(Vpot, name='Potential.Solution')
-    g = fd.Function(Vflux, name='grad.Solution')
-
-    x = fd.SpatialCoordinate(mesh)
-
-    flux.interpolate(params['exact-flux'])
-    potential.interpolate(params['exact-potential'])
-    g.interpolate(fd.grad(params['exact-potential']))
-
-    # It may be reasonable that the output be consistent with the choices
-    # of spaces above. That's why I program this here
     if(dir_outs != None):
 
         if(tt == 0.0): # This time acts as a parameter over which we do continuation
@@ -311,15 +295,30 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         else:
             mode = 'a'
 
-        filename = dir_outs+'/s.pvd'
+        orderF, orderU = orders
+        Vflux = fd.VectorFunctionSpace(mesh, "CG", orderF)
+        Vpot = fd.FunctionSpace(mesh, "CG", orderU)     
+
+        x = fd.SpatialCoordinate(mesh)
+        
+        filename = dir_outs+'/s.pvd'        
+        sexact = params['exact-flux']
+        flux = fd.assemble(interpolate(sexact(x), Vflux))
+        flux.rename('Flux')
         VTKFile(filename, mode=mode).write(flux, time=tt)
 
         filename = dir_outs+'/u.pvd'
+        uexact = params['exact-potential']
+        potential = fd.assemble(interpolate(uexact(x), Vpot),)
+        potential.rename('Potential')
         VTKFile(filename, mode=mode).write(potential, time=tt)
         
         filename = dir_outs+'/gradu.pvd'
-        VTKFile(filename, mode=mode).write(g, time=tt)
+        gradexact = fd.grad(uexact(x))
+        gradu = fd.assemble(interpolate(gradexact, Vflux))
+        gradu.rename('Grad(u)')
+        VTKFile(filename, mode=mode).write(gradu, time=tt)
 
-    return flux, potential, g
+    return params['exact-flux'], params['exact-potential'], gradexact
 
 #=====================================================================================

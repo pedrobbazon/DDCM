@@ -286,6 +286,10 @@ class PoissonDDCMData():
         if(flag_project == 'Project-VDG0'):
             refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
             refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
+        elif(flag_project == 'Interpolate-VDG0'): 
+            # This is typically used to intepolate a manufactured solution onto de DG0 space
+            refgrad = fd.assemble(interpolate(ref_solution.g, self.domain.VDG0)).dat.data
+            refflux = fd.assemble(interpolate(ref_solution.s, self.domain.VDG0)).dat.data
         else:
             raise ValueError(flag_project+' option not recognized in method Distribuite()')
         
