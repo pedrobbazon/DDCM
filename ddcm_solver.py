@@ -608,7 +608,8 @@ def main_EX4_():
         # Generate a flux s and a grad g 
         g1 = 0.0
         s1 = 0.0
-        g2 = (bcvs - 1.0)/1.0
+        L = 1.0
+        g2 = (bcvs - 1.0)/L
         kappa = 1.0
         s2 = -kappa*g2
         gradu_sampled_vals = np.array([g1, g2])
@@ -622,7 +623,7 @@ def main_EX4_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0*np.pi, 2*np.pi, 4):
+        for angle in np.linspace(0.0, 2*np.pi, 4):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
