@@ -1,7 +1,7 @@
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
-from firedrake.__future__ import interpolate
+#from firedrake.__future__ import interpolate
 #
 import numpy as np
 import scipy
@@ -148,16 +148,16 @@ class MechanicalStdProblem():
               %(self.fem_formulation.__name__, tensdef_name))
         print("   - Setting type: %s" %(self.setting_type))
         print("   ... Solving ...")
-        sigma, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
-                                           self.params, self.setting_type, 
-                                           self.forcings.volumetric_source,
-                                           self.forcings.boundary_flux,
-                                           self.forcings.boundary_vals,
-                                           self.flux_law, 
-                                           self.orders,
-                                           dir_outs)
+        s, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
+                                       self.params, self.setting_type, 
+                                       self.forcings.volumetric_source,
+                                       self.forcings.boundary_flux,
+                                       self.forcings.boundary_vals,
+                                       self.flux_law, 
+                                       self.orders,
+                                       dir_outs)
+        self.std_solution.s = s 
         self.std_solution.u = u
-        self.std_solution.s = sigma 
         self.std_solution.g = g 
 
         return self.std_solution
@@ -287,9 +287,10 @@ class PoissonDDCMData():
             refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
             refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
         elif(flag_project == 'Interpolate-VDG0'): 
-            # This is typically used to intepolate a manufactured solution onto de DG0 space
+            x = fd.SpatialCoordinate(self.domain.msh)
+            # This is typically used to intepolate a manufactured solution onto a vector DG0 space
             refgrad = fd.assemble(interpolate(ref_solution.g, self.domain.VDG0)).dat.data
-            refflux = fd.assemble(interpolate(ref_solution.s, self.domain.VDG0)).dat.data
+            refflux = fd.assemble(interpolate(ref_solution.s(x), self.domain.VDG0)).dat.data
         else:
             raise ValueError(flag_project+' option not recognized in method Distribuite()')
         

@@ -288,6 +288,8 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     # analytical solution and they will likely be quite accurate
     mesh = domain.msh
     x = fd.SpatialCoordinate(mesh)
+    sexact = params['exact-flux']
+    uexact = params['exact-potential']
     gradexact = fd.grad(uexact(x))
 
     if(dir_outs != None):
@@ -302,13 +304,11 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         Vpot = fd.FunctionSpace(mesh, "CG", orderU)     
         
         filename = dir_outs+'/s.pvd'        
-        sexact = params['exact-flux']
         flux = fd.assemble(interpolate(sexact(x), Vflux))
         flux.rename('Flux')
         VTKFile(filename, mode=mode).write(flux, time=tt)
 
         filename = dir_outs+'/u.pvd'
-        uexact = params['exact-potential']
         potential = fd.assemble(interpolate(uexact(x), Vpot),)
         potential.rename('Potential')
         VTKFile(filename, mode=mode).write(potential, time=tt)
@@ -318,6 +318,6 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         gradu.rename('Grad(u)')
         VTKFile(filename, mode=mode).write(gradu, time=tt)
 
-    return params['exact-flux'], params['exact-potential'], gradexact
+    return sexact, uexact, gradexact
 
 #=====================================================================================

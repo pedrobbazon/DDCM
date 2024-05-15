@@ -460,7 +460,7 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.0, 10.0, 20)
+    bcvals = np.linspace(1.0, 10.0, 4)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -498,7 +498,7 @@ def main_EX3_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0*np.pi, 2*np.pi, 100):
+        for angle in np.linspace(0.0*np.pi, 2*np.pi, 5, endpoint=True):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
@@ -507,6 +507,8 @@ def main_EX3_():
     
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
+    #print(gradu_samples, '\n')
+    #print(flux_samples, '\n')
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, 'myDATA.txt')
 
@@ -565,11 +567,11 @@ def main_EX4_():
         return cos(pi*x[0])*cos(pi*x[1])
     def sexact(x):
         kappa = fd.Constant(1.0)
-        # eventually -kappa * grad(uexact)
-        return as_vector([kappa*pi*sin(pi*x[0])*cos(pi*x[1]), kappa*pi*cos(pi*x[0])*sin(pi*x[1])])
+        return -kappa * fd.grad(uexact(x))
+        #return as_vector([kappa*pi*sin(pi*x[0])*cos(pi*x[1]), kappa*pi*cos(pi*x[0])*sin(pi*x[1])])
 
     def mysource(x):
-        return 2.0*pi*pi*cos(pi*x[0])*cos(pi*x[1]) # eventually fd.div(-kappa*grad(uexact))
+        return fd.div(-kappa*fd.grad(uexact(x)))
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
@@ -612,8 +614,8 @@ def main_EX4_():
         g2 = (bcvs - 1.0)/L
         kappa = 1.0
         s2 = -kappa*g2
-        gradu_sampled_vals = np.array([g1, g2])
-        flux_sampled_vals  = np.array([s1, s2])
+        gradu_sampled_vals = np.array([[g1, g2]])
+        flux_sampled_vals  = np.array([[s1, s2]])
         #-------------------------------------------  
         
         # Apply any manipulation/transformation you need to define
@@ -623,7 +625,7 @@ def main_EX4_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0, 2*np.pi, 4):
+        for angle in np.linspace(0.0, 2*np.pi, 50, endpoint=False):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
@@ -632,13 +634,12 @@ def main_EX4_():
     
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
-    print(gradu_samples)
-
-    raise Exception('ldldld')
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, 'myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
+
+    print('hello')
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
