@@ -153,15 +153,15 @@ def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
             mode = 'a'
 
         filename = dir_outs+'/flux.pvd'
-        w.sub(0).rename('Flux')
+        w.sub(0).rename('Reference.Flux')
         VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
 
         filename = dir_outs+'/u.pvd'
-        w.sub(1).rename('Potential')
+        w.sub(1).rename('Reference.Potential')
         VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
-        gpl = fd.project(g, domain.VDG0, name='Grad(u)')
+        gpl = fd.project(g, domain.VDG0, name='Reference.Grad(u)')
         VTKFile(filename, mode=mode).write(gpl, time=tt)
 
     return w.sub(0), w.sub(1), g
@@ -244,7 +244,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     usol.assign(w.sub(1))
     a = fd.inner(gtr,tau)*fd.dx
     L = -usol*fd.div(tau)*fd.dx + usol*fd.dot(tau,n)*fd.ds
-    g = fd.Function(HD, name='Hdiv-Gradient')
+    g = fd.Function(HD, name='Reference.Hdiv-Gradient')
     fd.solve(a == L, g, bcs=[], solver_parameters=petsc_opt2)
 
     # It may be reasonable that the output be consistent with the choices
@@ -257,15 +257,15 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
             mode = 'a'
 
         filename = dir_outs+'/s.pvd'
-        w.sub(0).rename('Flux')
+        w.sub(0).rename('Reference.Flux')
         VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
 
         filename = dir_outs+'/u.pvd'
-        w.sub(1).rename('Potential')
+        w.sub(1).rename('Reference.Potential')
         VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
 
         filename = dir_outs+'/ucg.pvd'
-        w.sub(1).rename('Potential-CG')
+        w.sub(1).rename('Reference.Potential-CG')
         VTKFile(filename, mode=mode).write(project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
@@ -305,17 +305,17 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         
         filename = dir_outs+'/s.pvd'        
         flux = fd.assemble(interpolate(sexact(x), Vflux))
-        flux.rename('Flux')
+        flux.rename('Reference.Flux')
         VTKFile(filename, mode=mode).write(flux, time=tt)
 
         filename = dir_outs+'/u.pvd'
         potential = fd.assemble(interpolate(uexact(x), Vpot),)
-        potential.rename('Potential')
+        potential.rename('Reference.Potential')
         VTKFile(filename, mode=mode).write(potential, time=tt)
         
         filename = dir_outs+'/gradu.pvd'
         gradu = fd.assemble(interpolate(gradexact, Vflux))
-        gradu.rename('Grad(u)')
+        gradu.rename('Reference.Grad(u)')
         VTKFile(filename, mode=mode).write(gradu, time=tt)
 
     return sexact, uexact, gradexact

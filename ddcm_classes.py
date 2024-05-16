@@ -268,9 +268,12 @@ class PoissonDDCMData():
         self.sampled_flux  = dataset[:,2:4] 
         return 0
 
-    def SetSampledData(self, gradu_vals, flux_vals, data_file=None):
+    def SetSampledData(self, gradu_vals, flux_vals, add_origin=False, data_file=None):
         self.sampled_grad = gradu_vals 
         self.sampled_flux = flux_vals
+        if(add_origin):
+            self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0]], axis=0)
+            self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0]], axis=0)
         if(data_file != None):
             np.savetxt(data_file, np.hstack((gradu_vals, flux_vals)))
         return 0

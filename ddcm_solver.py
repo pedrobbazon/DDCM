@@ -107,7 +107,7 @@ def main_EX0_():
     gradu_samples = gradu_sampled_vals
     flux_samples  = flux_sampled_vals
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -238,7 +238,7 @@ def main_EX1_():
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -376,7 +376,7 @@ def main_EX2_():
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
     
@@ -456,11 +456,11 @@ def main_EX3_():
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = PoissonDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 5]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.0, 10.0, 4)
+    bcvals = np.linspace(1.0+1.e-15, 10.0, 50)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -498,7 +498,7 @@ def main_EX3_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0*np.pi, 2*np.pi, 5, endpoint=True):
+        for angle in np.linspace(0.0*np.pi, 2*np.pi, 200, endpoint=True):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
@@ -507,10 +507,8 @@ def main_EX3_():
     
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
-    #print(gradu_samples, '\n')
-    #print(flux_samples, '\n')
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, 'myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -568,7 +566,6 @@ def main_EX4_():
     def sexact(x):
         kappa = fd.Constant(1.0)
         return -kappa * fd.grad(uexact(x))
-        #return as_vector([kappa*pi*sin(pi*x[0])*cos(pi*x[1]), kappa*pi*cos(pi*x[0])*sin(pi*x[1])])
 
     def mysource(x):
         return fd.div(-kappa*fd.grad(uexact(x)))
@@ -604,7 +601,7 @@ def main_EX4_():
 
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
-    bcvals = np.linspace(1.0, 10.0, 5)
+    bcvals = np.linspace(1.0+1.e-15, 10.0, 200)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
         # Generate a flux s and a grad g 
@@ -625,7 +622,7 @@ def main_EX4_():
             return np.array([[np.cos(theta), -np.sin(theta)], 
                              [np.sin(theta), np.cos(theta)]])
         
-        for angle in np.linspace(0.0, 2*np.pi, 50, endpoint=False):
+        for angle in np.linspace(0.0, 2*np.pi, 500, endpoint=True):
             R = RotationMatrix(angle)
             gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
             flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
@@ -635,11 +632,9 @@ def main_EX4_():
     gradu_samples = np.concatenate(gradu_samples)
     flux_samples = np.concatenate(flux_samples)
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, 'myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
-
-    print('hello')
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
@@ -672,7 +667,7 @@ def main_EX4_():
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX4_()
+_ = main_EX3_()
 
 
 
