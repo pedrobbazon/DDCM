@@ -124,7 +124,7 @@ class PoissonStdProblem():
 
         return self.std_solution
     
-# Define the Standard Poisson problem, model and solver
+# Define the Standard Mechanical problem, model and solver
 class MechanicalStdProblem():
     def __init__(self, domain, params, setting_type_flag: str, forcings, 
                  stress_strain_law, fem_formulation, orders, energy_function=None):
