@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 #----------------------------------------------------------------------------
 # Our libraries
 from ddcm_classes import *
+from ddcm_utils import *
 #----------------------------------------------------------------------------
 
 
@@ -24,7 +25,7 @@ from ddcm_classes import *
 #----------------------------------------------------------------------------
 # User defined main() functions: Program your options and problem below
 
-# Example using the simple linear Darcy model to generate the data, but sampling directly from the reference 
+# Example using the simple linear Darcy model to generate the reference solution and sample the data from it
 def main_EX0_():
 
     ti = time.time()
@@ -53,7 +54,7 @@ def main_EX0_():
 
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_prob.solve("myrefsol")
+    ref_prob.solve(0.0, "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -77,7 +78,7 @@ def main_EX0_():
         
     params = {'kappa': fd.Constant(1.0)}
     synth_prob = PoissonStdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
-    synth_prob.solve("mysynthsol")
+    synth_prob.solve(0.0, "mysynthsol")
 
     # Sample the synthetic solution: Program this according to your problem
 
@@ -86,7 +87,7 @@ def main_EX0_():
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
     else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 2, 2
+        Nsampx, Nsampy  = 3, 3
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -103,7 +104,7 @@ def main_EX0_():
     #-------------------------------------------  
         
     # Apply any manipulation/transformation you need to define
-    # the synthetic data (rotations, scalings, removing outliers, etc)   
+    # the synthetic data (rotations, scalings, removing outliers, etc)
     gradu_samples = gradu_sampled_vals
     flux_samples  = flux_sampled_vals
 
@@ -112,7 +113,7 @@ def main_EX0_():
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: OK')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -159,7 +160,7 @@ def main_EX1_():
 
     #________________________________
     def mysource(x):
-        return fd.Constant(1.0)
+        return fd.Constant(100.0)
     def mysurfaceflux(x):
         return None
     def mybcvals(x):
@@ -171,7 +172,7 @@ def main_EX1_():
 
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
 
-    ref_prob.solve("myrefsol")
+    ref_prob.solve(0.0, "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -188,11 +189,11 @@ def main_EX1_():
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = PoissonDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = [3.0]
+    bcvals = [2.0, 4.0, 6.0, 8.0]
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
 
@@ -201,12 +202,11 @@ def main_EX1_():
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         params = {'kappa': fd.Constant(1.0)}
-        
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 30
+        Nsampx, Nsampy  = 1, 1
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -223,27 +223,15 @@ def main_EX1_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
+        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
 
-        def RotationMatrix(theta):
-            return np.array([[np.cos(theta), -np.sin(theta)], 
-                             [np.sin(theta), np.cos(theta)]])
-        
-        for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
-            R = RotationMatrix(angle)
-            gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
-            flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            gradu_samples.append(gradu_rot_values)
-            flux_samples.append(flux_rot_values)
-    
-    gradu_samples = np.concatenate(gradu_samples)
-    flux_samples = np.concatenate(flux_samples)
-
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: OK')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -254,7 +242,7 @@ def main_EX1_():
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*fd.x + fd.inner(s-sdata, s-sdata)*fd.dx
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
 
@@ -307,7 +295,7 @@ def main_EX2_():
 
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
 
-    ref_prob.solve("myrefsol")
+    ref_prob.solve(0.0, "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -361,27 +349,15 @@ def main_EX2_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-
-        def RotationMatrix(theta):
-            return np.array([[np.cos(theta), -np.sin(theta)], 
-                             [np.sin(theta), np.cos(theta)]])
-        
-        for angle in np.linspace(0.5*np.pi, 2*np.pi, 4):
-            R = RotationMatrix(angle)
-            gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
-            flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            gradu_samples.append(gradu_rot_values)
-            flux_samples.append(flux_rot_values)
+        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
     
-    gradu_samples = np.concatenate(gradu_samples)
-    flux_samples = np.concatenate(flux_samples)
-
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
     
     print('--------------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
     print('--------------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -493,27 +469,15 @@ def main_EX3_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
+        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
 
-        def RotationMatrix(theta):
-            return np.array([[np.cos(theta), -np.sin(theta)], 
-                             [np.sin(theta), np.cos(theta)]])
-        
-        for angle in np.linspace(0.0*np.pi, 2*np.pi, 200, endpoint=True):
-            R = RotationMatrix(angle)
-            gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
-            flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            gradu_samples.append(gradu_rot_values)
-            flux_samples.append(flux_rot_values)
-    
-    gradu_samples = np.concatenate(gradu_samples)
-    flux_samples = np.concatenate(flux_samples)
-
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=False, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -601,7 +565,7 @@ def main_EX4_():
 
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
-    bcvals = np.linspace(1.0+1.e-15, 10.0, 200)
+    bcvals = np.linspace(1.0+1.e-15, 10.0, 10)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
         # Generate a flux s and a grad g 
@@ -617,27 +581,15 @@ def main_EX4_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
+        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
 
-        def RotationMatrix(theta):
-            return np.array([[np.cos(theta), -np.sin(theta)], 
-                             [np.sin(theta), np.cos(theta)]])
-        
-        for angle in np.linspace(0.0, 2*np.pi, 500, endpoint=True):
-            R = RotationMatrix(angle)
-            gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
-            flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-            gradu_samples.append(gradu_rot_values)
-            flux_samples.append(flux_rot_values)
-    
-    gradu_samples = np.concatenate(gradu_samples)
-    flux_samples = np.concatenate(flux_samples)
-
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
 
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points' %(gradu_samples.shape[0]))
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -667,7 +619,7 @@ def main_EX4_():
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX3_()
+_ = main_EX1_()
 
 
 

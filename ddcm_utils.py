@@ -46,3 +46,19 @@ def PlotPoissonData(lst_data_files, flag_type_plot = 'magnitude'):
     plt.setp(l, 'markerfacecolor', 'white')
     plt.grid()
     plt.show()
+
+
+def RotationMatrix(theta):
+    return np.array([[np.cos(theta), -np.sin(theta)], 
+                     [np.sin(theta), np.cos(theta)]])
+
+def RotateData2D(angi, angf, Nang, EP, gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples):
+    
+    for angle in np.linspace(angi, angf, Nang, endpoint=EP):
+        R = RotationMatrix(angle)
+        gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
+        flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
+        gradu_samples.append(gradu_rot_values)
+        flux_samples.append(flux_rot_values)
+    
+    return gradu_samples, flux_samples
