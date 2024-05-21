@@ -6,6 +6,7 @@ from firedrake.output import VTKFile
 import numpy as np
 import scipy
 from scipy.spatial import KDTree
+import time
 #
 #-----------------------------------------------------------------------------
 #
@@ -285,6 +286,7 @@ class PoissonDDCMData():
 
     def Distribute(self, ref_solution, flag_project='Project-VDG0', flag_plot=False):
 
+        ti = time.time()
         # Something reasonable would be to ask that g and s to be in the same space
         if(flag_project == 'Project-VDG0'):
             refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
@@ -304,22 +306,28 @@ class PoissonDDCMData():
         sampflux = self.sampled_flux
         sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
 
+        print(' . Proj-Int= ', time.time() - ti)
+
         # Choose those values that are closest to the reference solution
         # and distribute over the domain (this induces a domain decomposition)
+        ti = time.time()
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
         self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
         self.fluxdata.rename('GradDataDistrib')
         self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
         self.fluxdata.rename('FluxDataDistrib')
+        print(' . KDTree and query= ', time.time() - ti)
 
         if(flag_plot):
+            ti = time.time()
             index_field = fd.Function(self.domain.DG0)
             index_field.dat.data[:] = indexes.astype(float)
             index_field.rename('IndexDataDistrib')
             VTKFile('mydatafields/indexdata.pvd').write(index_field)
             VTKFile('mydatafields/graddata.pvd').write(self.graddata)
             VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
+            print(' . Plot= ', time.time() - ti)
 
         return 0
 
