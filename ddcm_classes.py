@@ -353,19 +353,19 @@ class DDCMProblem():
         print("   - Setting type: %s" %(self.setting_type))
         print("   ... Solving ...")
 
-        sigma, u, g, lmd, mu = self.ddcm_formulation(self.ddcm_data.domain,
-                                                     self.J, self.dJ,
-                                                     self.ddcm_data.graddata, self.ddcm_data.fluxdata,
-                                                     self.ddcm_data.domain.flag_quads, 
-                                                     self.setting_type, 
-                                                     self.forcings.volumetric_source,
-                                                     self.forcings.boundary_flux,
-                                                     self.forcings.boundary_vals,
-                                                     self.orders,
-                                                     dir_outs)
+        s, u, g, lmd, mu = self.ddcm_formulation(self.ddcm_data.domain,
+                                                 self.J, self.dJ,
+                                                 self.ddcm_data.graddata, self.ddcm_data.fluxdata,
+                                                 self.ddcm_data.domain.flag_quads, 
+                                                 self.setting_type, 
+                                                 self.forcings.volumetric_source,
+                                                 self.forcings.boundary_flux,
+                                                 self.forcings.boundary_vals,
+                                                 self.orders,
+                                                 dir_outs)
         
         self.ddcm_solution.u   = u
-        self.ddcm_solution.s   = sigma 
+        self.ddcm_solution.s   = s 
         self.ddcm_solution.g   = g
         self.ddcm_solution.lmd = lmd
         self.ddcm_solution.mu  = mu 

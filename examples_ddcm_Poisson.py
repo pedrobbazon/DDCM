@@ -124,7 +124,7 @@ def main_EX0_():
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*dx + fd.inner(s-sdata, s-sdata)*dx
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
 
@@ -560,12 +560,13 @@ def main_EX4_():
     # Note in this case, I've made the data associated to the same domain (and mesh)
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     nsd, Ls, Ns = 2, [1.0, 1.0], [50, 50]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
     ddcm_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
     ddcm_data = PoissonDDCMData(ddcm_domain)
 
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
-    bcvals = np.linspace(1.0+1.e-15, 10.0, 10)
+    bcvals = np.linspace(1.0+1.e-15, 12.0, 400)
     gradu_samples, flux_samples = [], []
     for bcvs in bcvals:
         # Generate a flux s and a grad g 
@@ -581,15 +582,16 @@ def main_EX4_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 800, True, 
                                                    gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
 
     ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
 
+    npoints_data = ddcm_data.sampled_grad.shape[0]
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('|::| Synthetic data computation/distribution: %d data points' %(npoints_data))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -606,6 +608,14 @@ def main_EX4_():
 
     ddcm_prob.solve("myddcmsol")
 
+    # 4. Compute some error norms
+    
+    print('   ... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
+
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
     print('----------------------------------------------------------')
@@ -615,11 +625,12 @@ def main_EX4_():
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return 0
+    return npoints_data, hsize, L2error_u, H1error_u, L2error_s
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX1_()
+npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
+print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
 
 

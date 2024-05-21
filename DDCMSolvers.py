@@ -66,10 +66,10 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     # Residual
     dL  =  dqJ + dgJ
-    dL +=  -inner(dq, grad(l)) * dx
-    dL += (-inner(q, grad(dl)) - volumetric_source(x) * dl ) * dx
-    dL += inner(g-grad(u), dm) * dx
-    dL += inner(dg, m) * dx - inner(m, grad(du)) * dx
+    dL +=  -fd.inner(dq, grad(l)) * fd.dx
+    dL += (-fd.inner(q, grad(dl)) - volumetric_source(x) * dl ) * fd.dx
+    dL += fd.inner(g-grad(u), dm) * fd.dx
+    dL += fd.inner(dg, m) * fd.dx - fd.inner(m, grad(du)) * fd.dx
 
     # Jacobian
     Jac = fd.derivative(dL, w)
