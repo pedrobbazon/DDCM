@@ -189,12 +189,16 @@ def main_EX1_():
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = PoissonDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [1, 5]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = [2.0, 4.0, 6.0, 8.0]
-    gradu_samples, flux_samples = [], []
+    Nbc, Nth = 10, 10
+    Nsampx, Nsampy  = 1, 1
+    bcvals = np.linspace(1.0+1.e-15, 20.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    count = 0
     for bcvs in bcvals:
 
         def mysynbcvals(x):
@@ -206,7 +210,6 @@ def main_EX1_():
         synth_prob.solve(bcvs, "mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 1
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -217,16 +220,23 @@ def main_EX1_():
         # and it may change in other situations
         g = fd.project(std_sol.g, synth_domain.VDG0)
         s = fd.project(std_sol.s, synth_domain.VDG0)
-        gradu_sampled_vals = np.array(g.at(xs))
-        flux_sampled_vals = np.array(s.at(xs))
+        gradu_sampled_vals = np.array(g.at(xs))[0]
+        flux_sampled_vals = np.array(s.at(xs))[0]
         #-------------------------------------------  
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
-                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
+            gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
+            flux_samples[count,0] = ct * flux_sampled_vals[0] - st * flux_sampled_vals[1]
+            flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
+            count += 1
+        #gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
+        #                                           gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
 
-    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -316,8 +326,12 @@ def main_EX2_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = [2.0, 4.0, 6.0, 8.0]
-    gradu_samples, flux_samples = [], []
+    Nbc, Nth = 4, 4
+    Nsampx, Nsampy  = 1, 10
+    bcvals = np.linspace(2.0, 8.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    count = 0
     for bcvs in bcvals:
 
         print('----')
@@ -332,7 +346,6 @@ def main_EX2_():
         synth_prob.solve(bcvs, "mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
-        Nsampx, Nsampy  = 1, 10
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -349,10 +362,16 @@ def main_EX2_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
-                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            for s in range(Nsampx*Nsampy):
+                gradu_samples[count,0] = ct * gradu_sampled_vals[s,0] - st * gradu_sampled_vals[s,1]
+                gradu_samples[count,1] = st * gradu_sampled_vals[s,0] + ct * gradu_sampled_vals[s,1]
+                flux_samples[count,0] = ct * flux_sampled_vals[s,0] - st * flux_sampled_vals[s,1]
+                flux_samples[count,1] = st * flux_sampled_vals[s,0] + ct * flux_sampled_vals[s,1]
+                count += 1
     
-    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
     
@@ -436,8 +455,11 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    bcvals = np.linspace(1.0+1.e-15, 10.0, 50)
-    gradu_samples, flux_samples = [], []
+    Nbc, Nth = 50, 4
+    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
     for bcvs in bcvals:
 
         print('----')
@@ -463,16 +485,21 @@ def main_EX3_():
         # and it may change in other situations
         g = fd.project(std_sol.g, synth_domain.VDG0)
         s = fd.project(std_sol.s, synth_domain.VDG0)
-        gradu_sampled_vals = np.array(g.at(xs))
-        flux_sampled_vals = np.array(s.at(xs))
+        gradu_sampled_vals = np.array(g.at(xs))[0]
+        flux_sampled_vals = np.array(s.at(xs))[0]
         #-------------------------------------------  
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 4, False, 
-                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
+            gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
+            flux_samples[count,0] = ct * flux_sampled_vals[0] - st * flux_sampled_vals[1]
+            flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
+            count += 1
 
-    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=False, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -567,8 +594,11 @@ def main_EX4_():
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
     ti = time.time()
-    bcvals = np.linspace(1.0+1.e-15, 12.0, 400)
-    gradu_samples, flux_samples = [], []
+    Nbc, Nth = 400, 800
+    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
     for bcvs in bcvals:
         # Generate a flux s and a grad g 
         g1 = 0.0
@@ -577,18 +607,24 @@ def main_EX4_():
         g2 = (bcvs - 1.0)/L
         kappa = 1.0
         s2 = -kappa*g2
-        gradu_sampled_vals = np.array([[g1, g2]])
-        flux_sampled_vals  = np.array([[s1, s2]])
+        gradu_sampled_vals = np.array([g1, g2])
+        flux_sampled_vals  = np.array([s1, s2])
         #-------------------------------------------  
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 800, True, 
-                                                   gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
-    print(' . Rotate= ', time.time() - ti)
-    print(np.concatenate(gradu_samples))
+        # This implementation is much faster
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
+            gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
+            flux_samples[count,0] = ct * flux_sampled_vals[0] - st * flux_sampled_vals[1]
+            flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
+            count += 1
 
-    ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file=None)
+    print(' . Bcs x Rotate= ', time.time() - ti)
+
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file=None)
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
 
@@ -632,8 +668,9 @@ def main_EX4_():
 
 #----------------------------------------------------------------------------
 #--- Run
-npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
-print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
+_ = main_EX1_()
+#npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
+#print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
 
 
