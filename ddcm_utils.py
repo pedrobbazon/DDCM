@@ -77,6 +77,6 @@ def RotateData2D(angi, angf, Nang, EP, gradu_sampled_vals, flux_sampled_vals, gr
         flux_samples.append(flux_rot_values)
         tRS += time.time() - ti 
     #print(gradu_samples)
-    print('Times rotation=', tRS)
+    #print('Times rotation=', tRS)
     
     return gradu_samples, flux_samples

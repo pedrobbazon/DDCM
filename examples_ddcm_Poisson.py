@@ -586,10 +586,9 @@ def main_EX4_():
         gradu_samples, flux_samples = RotateData2D(0.0, 2.0*np.pi, 800, True, 
                                                    gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples)
     print(' . Rotate= ', time.time() - ti)
+    print(np.concatenate(gradu_samples))
 
-    ti = time.time()
     ddcm_data.SetSampledData(np.concatenate(gradu_samples), np.concatenate(flux_samples), add_origin=True, data_file=None)
-    print(' . SetSampleData= ', time.time() - ti)
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
 
