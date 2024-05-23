@@ -4,7 +4,7 @@
 Created on:         12th April, 2024
 Last Modified on:   17th May, 2024
 
-@authors: P. Vazao Balbao & R.F. Ausas
+@authors: P. Balbao & R.F. Ausas
 """
 
 #----------------------------------------------------------------------
