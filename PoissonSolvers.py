@@ -276,6 +276,117 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
 #=====================================================================================
 
+#=====================================================================================
+
+def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
+                        volumetric_source, boundary_flux, boundary_vals,
+                        FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
+
+    # In this formulation the FluxLaw is not used.
+    # We just need the definition of kappa and assume
+    # that we can write (1/K)sigma = -grad(u)
+
+    mesh = domain.msh
+
+    orderF, orderU = orders
+    if(flag_quads):
+        HD = fd.FunctionSpace(mesh, "RTCF", orderF)
+        DG = fd.FunctionSpace(mesh, "DQ", orderU)
+    else:
+        HD = fd.FunctionSpace(mesh, "RT", orderF)
+        DG = fd.FunctionSpace(mesh, "DG", orderU)
+
+    W = HD * DG
+
+    w = fd.Function(W, name='Solution')
+    sigma, u = fd.split(w)
+    tau, v = fd.TestFunctions(W)
+
+    x = fd.SpatialCoordinate(mesh)
+
+    n = fd.FacetNormal(mesh)
+
+    if(flag_setting == 'Pure-Dirichlet'):
+        
+        q = volumetric_source(x)
+        
+        # Pressure bc (weak in this formulation)
+        pressure_boundary_term = boundary_vals(x)*fd.dot(tau,n)*fd.ds(degree=4)
+        
+        # Flux bc (strong in this formulation) - empty for this setting
+        bcall = []
+
+        # Some non-zero initial guess to avoid singularities
+        w.sub(1).interpolate(boundary_vals(x))
+        
+    elif(flag_setting == 'Uniaxial'):
+        
+        # By definition, the uniaxial test consists of this:
+        q = fd.Constant(0.0)
+        
+        # Pressure bc (weak in this formulation)
+        tag_bottom, tag_top = 3, 4
+        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
+        pressure_boundary_term = ubottom*fd.dot(tau,n)*fd.ds(tag_bottom) + utop*fd.dot(tau,n)*fd.ds(tag_top)
+
+        # Flux bc (strong in this formulation)
+        no_flux = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        tag_left, tag_right = 1, 2
+        bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
+
+        # Some non-zero initial guess to avoid singularities
+        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+
+    kappa = params[0]
+    #Km1 = fd.as_tensor([])
+    Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
+    Res += q*v*fd.dx(degree=4) + pressure_boundary_term
+
+    fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+
+    # Compute g in a consistent way?
+    gtr = fd.TrialFunction(HD)
+    tau = fd.TestFunction(HD)
+    usol = fd.Function(DG)
+    usol.assign(w.sub(1))
+    a = fd.inner(gtr,tau)*fd.dx
+    L = -usol*fd.div(tau)*fd.dx + usol*fd.dot(tau,n)*fd.ds
+    g = fd.Function(HD, name='Reference.Hdiv-Gradient')
+    fd.solve(a == L, g, bcs=[], solver_parameters=petsc_opt2)
+
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('Reference.Flux')
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('Reference.Potential')
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+
+        filename = dir_outs+'/ucg.pvd'
+        w.sub(1).rename('Reference.Potential-CG')
+        VTKFile(filename, mode=mode).write(project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
+        
+        filename = dir_outs+'/gradu.pvd'
+        #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
+        VTKFile(filename, mode=mode).write(g, time=tt)
+
+    return w.sub(0), w.sub(1), g
+
+#=====================================================================================
+
 def PoissonAnalytical(domain, flag_quads, params, flag_setting,
                       volumetric_source, boundary_flux, boundary_vals,
                       FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):

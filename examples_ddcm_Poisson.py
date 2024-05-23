@@ -87,7 +87,7 @@ def main_EX0_():
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
     else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 3, 3
+        Nsampx, Nsampy  = 5, 5
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -668,7 +668,7 @@ def main_EX4_():
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX1_()
+_ = main_EX0_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
