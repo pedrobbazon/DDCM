@@ -668,7 +668,7 @@ def main_EX4_():
 
 #----------------------------------------------------------------------------
 #--- Run
-_ = main_EX1_()
+_ = main_EX0_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
