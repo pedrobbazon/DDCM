@@ -277,7 +277,6 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 #=====================================================================================
 
 #=====================================================================================
-
 def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
                         volumetric_source, boundary_flux, boundary_vals,
                         FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
