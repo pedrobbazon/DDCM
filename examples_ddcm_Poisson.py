@@ -804,11 +804,7 @@ def main_EX5_():
 
 #----------------------------------------------------------------------------
 #--- Run
-<<<<<<< HEAD
-_ = main_EX0_()
-=======
-_ = main_EX5_()
->>>>>>> 163f823f587d3aac54249bede68ecfdf7ff0c077
+main_EX0_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
