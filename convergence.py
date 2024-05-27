@@ -22,17 +22,15 @@ def convergence_study():
     for i, N_d in enumerate(N_data):
         synthetic_data_points = N_d * N_d
         print(f"\nRunning with N = {synthetic_data_points} synthetic data points\n")
-        
         for j, N_f in enumerate(N_fem):
             print(f"\nRunning with Ns = {N_f} elements per direction\n")
-            
             npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_(Ns=N_f, Nbc=N_d, Nth=N_d)
-            
             hsize_matrix[j] = hsize
             L2error_u_matrix[i, j] = L2error_u
             H1error_u_matrix[i, j] = H1error_u
             L2error_s_matrix[i, j] = L2error_s
     
+    # Save the results in txt files
     np.savetxt('n_data.txt', N_data)
     np.savetxt('mesh.txt', hsize_matrix)
     np.savetxt('L2error_u.txt', L2error_u_matrix)
