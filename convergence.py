@@ -6,8 +6,8 @@ from ddcm_classes import *
 
 
 def convergence_study():
-    N_data = np.array([10, 20, 40, 80, 160, 320, 640, 1280])    
-    N_fem = np.array([10, 20, 40, 80, 160])
+    N_data = np.array([10, 20, 40, 80, 160])    
+    N_fem = np.array([10, 20, 40, 80])
     
     num_data = len(N_data)
     num_fem = len(N_fem)
@@ -16,6 +16,8 @@ def convergence_study():
     L2error_u_matrix = np.zeros((num_data, num_fem))
     H1error_u_matrix = np.zeros((num_data, num_fem))
     L2error_s_matrix = np.zeros((num_data, num_fem))
+    L2error_lmd_matrix = np.zeros((num_data, num_fem))
+    L2error_mu_matrix = np.zeros((num_data, num_fem))
     
     start_time = time.time()
     
@@ -24,11 +26,13 @@ def convergence_study():
         print(f"\nRunning with N = {synthetic_data_points} synthetic data points\n")
         for j, N_f in enumerate(N_fem):
             print(f"\nRunning with Ns = {N_f} elements per direction\n")
-            npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_(Ns=N_f, Nbc=N_d, Nth=N_d)
+            npoints_data, hsize, L2error_u, H1error_u, L2error_s, L2error_lmd, L2error_mu = main_EX4_(Ns=N_f, Nbc=N_d, Nth=N_d)
             hsize_matrix[j] = hsize
             L2error_u_matrix[i, j] = L2error_u
             H1error_u_matrix[i, j] = H1error_u
             L2error_s_matrix[i, j] = L2error_s
+            L2error_lmd_matrix[i, j] = L2error_lmd
+            L2error_mu_matrix[i, j] = L2error_mu
     
     # Save the results in txt files
     np.savetxt('n_data.txt', N_data)
@@ -39,11 +43,15 @@ def convergence_study():
     
     # Print the results in a formatted way
     results = "\nConvergence Study Results:\n"
-    results += "N_data    N_fem     hsize      L2error_u    H1error_u    L2error_s\n"
+    results += "N_data    N_fem     hsize    L2error_u    H1error_u    L2error_s     L2error_lmd    L2error_mu\n"
     for i, N_d in enumerate(N_data):
         for j, N_f in enumerate(N_fem):
-            results += f"{N_d:<8} {N_f:<8} {hsize_matrix[j]:<10.5f} {L2error_u_matrix[i, j]:<12.5e} {H1error_u_matrix[i, j]:<12.5e} {L2error_s_matrix[i, j]:<12.5e}\n"
-    
+            results += (
+                f"{N_d:<8} {N_f:<8} {hsize_matrix[j]:<10.5f} "
+                f"{L2error_u_matrix[i, j]:<12.5e} {H1error_u_matrix[i, j]:<12.5e} "
+                f"{L2error_s_matrix[i, j]:<12.5e} {L2error_lmd_matrix[i, j]:<12.5e} "
+                f"{L2error_mu_matrix[i, j]:<12.5e} \n"
+            )
     print(results)
     print(f"Total computation time: {time.time() - start_time:.2f} seconds")
 
@@ -141,11 +149,13 @@ def main_EX4_(Ns,Nbc, Nth):
 
     ddcm_prob.solve("myddcmsol")
 
-    print('   ... Computing some error norms ...')
+    print('... Computing some error norms ...')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='L2')
+    L2error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
+    L2error_mu = fd.errornorm(fd.Constant([0,0]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -156,7 +166,7 @@ def main_EX4_(Ns,Nbc, Nth):
     print('|> End DDCM Computation | Total time= %1.1f s' % (elapsed_time))
     print('----------------------------------------------------------')
 
-    return npoints_data, hsize, L2error_u, H1error_u, L2error_s
+    return npoints_data, hsize, L2error_u, H1error_u, L2error_s, L2error_lmd, L2error_mu
 
 
 
