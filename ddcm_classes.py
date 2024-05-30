@@ -164,41 +164,47 @@ class MechanicalStdProblem():
         return self.std_solution
     
 from DDCMSolvers import *
-
 #
-# Discrete data to be used in the DDCM problem
-class DDCMData():
+# Discrete data to be used in the DDCM problem (Mechanical problem)
+class MechanicalDDCMData():
     def __init__(self, domain):
         # The DDCM data is associated to a domain
         self.domain = domain
         # The complete sampled data set 
-        self.g_sampled = None
-        self.s_sampled = None
+        self.sampled_grad = None
+        self.sampled_stress = None
         '''
         Data distributed over the domain to be used by the DDCM solver:
-        By option we assign the data to the elements.
+        by option we assign the data to the elements.
         Therefore, the natural choice is to use elementwise discontinuous spaces,
         this way, the induced domain decompostion from the data
         will conform to the element edges
         '''
-        self.g_distrib = fd.Function(domain.VDG0)
-        self.s_distrib = fd.Function(domain.VDG0)
+        self.graddata = fd.Function(domain.VDG0)
+        self.stressdata = fd.Function(domain.VDG0)
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in
     # the appropriate format to be consumed by ddcm_solvers
     def ReadDataFromFile(self, datafile):
         dataset = np.loadtxt(datafile)
+        dim = self.domain.dim
         # We expect the data in this format:
-        self.sampled_gradu = dataset[:,0:2] 
-        self.sampled_flux  = dataset[:,2:4] 
+        self.sampled_gradu = dataset[:,0:3*dim] 
+        self.sampled_flux  = dataset[:,3*dim:6*dim] 
         return 0
 
-    def SetSampledData(self, gradu_vals, flux_vals, flag_savetxt=None):
-        self.sampled_grad = gradu_vals 
-        self.sampled_flux = flux_vals
-        if(flag_savetxt != None):
-            np.savetxt('DATA.txt', (gradu_vals, flux_vals))
+    def SetSampledData(self, gradu_vals, stress_vals, add_origin=False, data_file=None):
+        self.sampled_grad   = gradu_vals 
+        self.sampled_stress = stress_vals
+        if(add_origin):
+            if(self.domain.dim == 2):
+                self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0, 0.0, 0.0]], axis=0)
+                self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0, 0.0, 0.0]], axis=0)
+            elif(self.domain.dim == 3):
+                raise Exception('3D not implemented yet')
+        if(data_file != None):
+            np.savetxt(data_file, np.hstack((gradu_vals, stress_vals)))
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):
@@ -208,10 +214,16 @@ class DDCMData():
 
     def Distribute(self, ref_solution, flag_project='Project-VDG0', flag_plot=False):
 
+        ti = time.time()
         # Something reasonable would be to ask that g and s to be in the same space
         if(flag_project == 'Project-VDG0'):
             refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
             refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
+        elif(flag_project == 'Interpolate-VDG0'): 
+            x = fd.SpatialCoordinate(self.domain.msh)
+            # This is typically used to intepolate a manufactured solution onto a vector DG0 space
+            refgrad = fd.assemble(interpolate(ref_solution.g, self.domain.VDG0)).dat.data
+            refflux = fd.assemble(interpolate(ref_solution.s(x), self.domain.VDG0)).dat.data
         else:
             raise ValueError(flag_project+' option not recognized in method Distribuite()')
         
@@ -222,26 +234,33 @@ class DDCMData():
         sampflux = self.sampled_flux
         sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
 
+        print(' . Proj-Int= ', time.time() - ti)
+
         # Choose those values that are closest to the reference solution
         # and distribute over the domain (this induces a domain decomposition)
+        ti = time.time()
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
         self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        self.graddata.rename('GradDataDistrib')
+        self.fluxdata.rename('GradDataDistrib')
         self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
         self.fluxdata.rename('FluxDataDistrib')
+        print(' . KDTree and query= ', time.time() - ti)
 
         if(flag_plot):
+            ti = time.time()
             index_field = fd.Function(self.domain.DG0)
             index_field.dat.data[:] = indexes.astype(float)
             index_field.rename('IndexDataDistrib')
-            VTKFile('indexdata.pvd').write(index_field)
-            VTKFile('graddata.pvd').write(self.graddata)
-            VTKFile('fluxdata.pvd').write(self.fluxdata)
+            VTKFile('mydatafields/indexdata.pvd').write(index_field)
+            VTKFile('mydatafields/graddata.pvd').write(self.graddata)
+            VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
+            print(' . Plot= ', time.time() - ti)
 
         return 0
+
 #
-# Discrete data to be used in the DDCM problem
+# Discrete data to be used in the DDCM problem (Poisson problem)
 class PoissonDDCMData():
     def __init__(self, domain):
         # The DDCM data is associated to a domain
@@ -265,16 +284,21 @@ class PoissonDDCMData():
     def ReadDataFromFile(self, datafile):
         dataset = np.loadtxt(datafile)
         # We expect the data in this format:
-        self.sampled_gradu = dataset[:,0:2] 
-        self.sampled_flux  = dataset[:,2:4] 
+        dim = self.domain.dim
+        self.sampled_gradu = dataset[:,0:dim] 
+        self.sampled_flux  = dataset[:,dim:2*dim] 
         return 0
 
     def SetSampledData(self, gradu_vals, flux_vals, add_origin=False, data_file=None):
         self.sampled_grad = gradu_vals 
         self.sampled_flux = flux_vals
         if(add_origin):
-            self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0]], axis=0)
-            self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0]], axis=0)
+            if(self.domain.dim == 2):
+                self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0]], axis=0)
+                self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0]], axis=0)
+            elif(self.domain.dim == 3):
+                self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0, 0.0]], axis=0)
+                self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0, 0.0]], axis=0)
         if(data_file != None):
             np.savetxt(data_file, np.hstack((gradu_vals, flux_vals)))
         return 0
