@@ -232,7 +232,11 @@ class MechanicalDDCMData():
         # These are only vectors with data, not associated yet to any domain
         sampgrad = self.sampled_grad
         sampflux = self.sampled_flux
-        sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
+        if(self.domain.dim == 2):
+            sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampgrad[:,2], sampgrad[:,3],
+                                       sampflux[:,0], sampflux[:,1], sampflux[:,2], sampflux[:,3]])[0]
+        elif(self.domain.dim == 3):
+            raise Exception('3D not implemented yet')
 
         print(' . Proj-Int= ', time.time() - ti)
 
@@ -328,7 +332,11 @@ class PoissonDDCMData():
         # These are only vectors with data, not associated yet to any domain
         sampgrad = self.sampled_grad
         sampflux = self.sampled_flux
-        sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
+        if(self.domain.dim == 2):
+            sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampflux[:,0], sampflux[:,1]])[0]
+        elif(self.domain.dim == 3):
+            sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampgrad[:,2], 
+                                       sampflux[:,0], sampflux[:,1], sampflux[:,2]])[0]    
 
         print(' . Proj-Int= ', time.time() - ti)
 
