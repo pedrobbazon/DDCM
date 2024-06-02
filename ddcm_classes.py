@@ -77,10 +77,11 @@ from MechanicalSolvers import *
 #
 # Encapsulate the forcings
 class MechanicalForcingData():
-    def __init__(self, body_force, boundary_force, boundary_vals):
+    def __init__(self, body_force, boundary_force, boundary_vals, boundary_tags):
         self.body_force = body_force
         self.boundary_force = boundary_force
         self.boundary_vals = boundary_vals
+        self.boundary_tags = boundary_tags
 
 class PoissonForcingData():
     def __init__(self, volumetric_source, boundary_flux, boundary_vals):

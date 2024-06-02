@@ -54,7 +54,7 @@ def SSLM_LinearElas(displ, stress, params):
 #=====================================================================================
 
 def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
-                       body_force, boundary_force, boundary_vals,
+                       body_force, boundary_force, boundary_vals, boundary_tags,
                        StressLaw, orders, tt=0.0, dir_outs='myrefsol'):
     
     mesh = domain.msh
@@ -73,7 +73,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
 
-    if(flag_setting == 'Indentation-Block'):
+    if(flag_setting == 'Indent-Block'):
         # By definition an indentation problem corresponds to:
         # x restricted in the left, y restricted in the bottom
         # No force on the right and a force distribution on the top
@@ -81,18 +81,25 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         f = body_force(x)
 
         # u bc (strong in this formulation)
+        tag_left = boundary_tags['Left']
+        tag_bottom = boundary_tags['Bottom']
         bcall = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
                  fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
+        
+        fs = boundary_force['Top'](x)
+        tag_top = boundary_tags['Top']
+        surface_term = fd.inner(fs, v)*fd.ds(tag_top)
 
     elif(flag_setting == 'Uniaxial'):
         
         # By definition, the uniaxial test consists of this:
-        q = fd.Constant(0.0)
+        f = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
 
         # u bc (strong in this formulation)
-        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
-        tag_bottom, tag_top = 3, 4
-        bcall = [fd.DirichletBC(W.sub(1), ubottom, tag_bottom), fd.DirichletBC(W.sub(1), utop, tag_top)]
+        uybottom, uytop = fd.Constant(0.0), boundary_vals(x)
+        tag_top, tag_bottom = boundary_tags['Top'], boundary_tags['Bottom']
+        bcall = [fd.DirichletBC(W.sub(1), uybottom, tag_bottom), 
+                 fd.DirichletBC(W.sub(1), uytop, tag_top)]
 
     else:
         
@@ -102,8 +109,12 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     Res += fd.inner(sigma,fd.grad(v))*fd.dx
     Res += inner(f,v)*fd.dx(degree=4)
 
+    sigma = StressLin(u)
+    Res = fd.inner(sigma, fd.grad(v))*dx
+    Res -= fd.inner(f, v)*dx + surface_term
+
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
-    g = fd.grad(u)
+    g = fd.sym(fd.grad(u))
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here 
