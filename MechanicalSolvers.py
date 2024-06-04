@@ -62,7 +62,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     orderU = orders[0]
     W = fd.VectorFunctionSpace(mesh, "CG", orderU)
 
-    u = fd.Function(W)
+    u = fd.Function(W, name='Solution')
     v = fd.TestFunction(W)
 
     EY = params['YoundMod']
@@ -73,6 +73,10 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
 
+    sigma = StressLaw(u)
+    Res = fd.inner(sigma, fd.grad(v))*fd.dx
+    Res -= fd.inner(f, v)*fd.dx
+
     if(flag_setting == 'Indent-Block'):
         # By definition an indentation problem corresponds to:
         # x restricted in the left, y restricted in the bottom
@@ -80,7 +84,6 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         
         f = body_force(x)
 
-        # u bc (strong in this formulation)
         tag_left = boundary_tags['Left']
         tag_bottom = boundary_tags['Bottom']
         bcall = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
@@ -88,14 +91,15 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         
         fs = boundary_force['Top'](x)
         tag_top = boundary_tags['Top']
-        surface_term = fd.inner(fs, v)*fd.ds(tag_top)
+        Res -= fd.inner(fs, v)*fd.ds(tag_top)
 
     elif(flag_setting == 'Uniaxial'):
         
-        # By definition, the uniaxial test consists of this:
+        # By definition, the uniaxial test consists of
+        # Bottom wall restricted, top wall imposed vertical
+        # displacement and free lateral walls:
         f = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
 
-        # u bc (strong in this formulation)
         uybottom, uytop = fd.Constant(0.0), boundary_vals(x)
         tag_top, tag_bottom = boundary_tags['Top'], boundary_tags['Bottom']
         bcall = [fd.DirichletBC(W.sub(1), uybottom, tag_bottom), 
@@ -104,17 +108,10 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     else:
         
         raise ValueError('Unrecognized problem setting option')
-    
-    Res  = (fd.inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
-    Res += fd.inner(sigma,fd.grad(v))*fd.dx
-    Res += inner(f,v)*fd.dx(degree=4)
 
-    sigma = StressLin(u)
-    Res = fd.inner(sigma, fd.grad(v))*dx
-    Res -= fd.inner(f, v)*dx + surface_term
-
-    fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+    fd.solve(Res == 0, u, bcs=bcall, solver_parameters=petsc_opt1)
     g = fd.sym(fd.grad(u))
+    sigma = StressLaw(u)
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here 
@@ -127,18 +124,18 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         else:
             mode = 'a'
 
-        filename = dir_outs+'/flux.pvd'
-        w.sub(0).rename('Reference.Flux')
-        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+        filename = dir_outs+'/stress.pvd'
+        gpl = fd.project(g, domain.TDG0, name='Reference.Stress')
+        VTKFile(filename, mode=mode).write(sigma, time=tt)
 
         filename = dir_outs+'/u.pvd'
-        w.sub(1).rename('Reference.Potential')
-        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+        u.rename('Reference.Displacement')
+        VTKFile(filename, mode=mode).write(u, time=tt)
         
         filename = dir_outs+'/gradu.pvd'
-        gpl = fd.project(g, domain.VDG0, name='Reference.Grad(u)')
+        gpl = fd.project(g, domain.TVDG0, name='Reference.SymGrad(u)')
         VTKFile(filename, mode=mode).write(gpl, time=tt)
 
-    return w.sub(0), w.sub(1), g
+    return sigma, u, g
 
     return 
