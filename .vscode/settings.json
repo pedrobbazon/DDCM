@@ -1,0 +1,8 @@
+{
+    "workbench.editor.historyBasedLanguageDetection": true,
+    "workbench.editor.languageDetection": true,
+    "workbench.editor.languageDetectionHints": {
+        "untitledEditors": false,
+        "notebookEditors": false
+    }
+}
