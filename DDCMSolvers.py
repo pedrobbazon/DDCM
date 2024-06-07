@@ -145,6 +145,7 @@ def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Functional to be minimized
     J = ObjFunc(g, graddata, q, fluxdata)
 
+
     # First variations
     if(der_ObjFunc == None):
         dqJ = fd.derivative(J, q, dq)
