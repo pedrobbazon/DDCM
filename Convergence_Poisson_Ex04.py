@@ -179,8 +179,8 @@ N_data, N_fem, hsize_matrix, L2error_u_matrix, H1error_u_matrix, L2error_s_matri
 
 
 
-# Graphs
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 6))
+# Create a 3x2 grid of subplots
+fig, ((ax1, ax2), (ax3, ax4), (ax5, _)) = plt.subplots(3, 2, figsize=(12, 12))
 
 # Define font sizes
 title_fontsize = 10
@@ -191,9 +191,7 @@ tick_fontsize = 8
 # Plotting L2 error for u
 ax1.set_title('Error in L2 norm for u', fontsize=title_fontsize)
 for i in range(len(N_data)):
-    ax1.loglog(hsize_matrix, L2error_u_matrix[i, :], '*-', label=f'N = {N_data[i]**2}')
-#ax1.loglog(hsize_matrix, hsize_matrix, '-', label='O(h)')
-#ax1.loglog(hsize_matrix, hsize_matrix**2, '-', label='O(h²)')
+    ax1.loglog(hsize_matrix, L2error_u_matrix[i], '*-', label=f'N = {N_data[i]**2}')
 ax1.set_xlabel(r'$\Delta_x = \Delta_y = h$', fontsize=label_fontsize)
 ax1.set_ylabel(r'$\|u-u_{h}\|_{L2}$', fontsize=label_fontsize)
 ax1.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -205,9 +203,7 @@ ax1.tick_params(axis='both', which='minor', labelsize=tick_fontsize)
 # Plotting H1 error for u
 ax2.set_title('Error in H1 norm for u', fontsize=title_fontsize)
 for i in range(len(N_data)):
-    ax2.loglog(hsize_matrix, H1error_u_matrix[i, :], 's-', label=f'N = {N_data[i]**2}')
-#ax2.loglog(hsize_matrix, hsize_matrix, '-', label='O(h)')
-#ax2.loglog(hsize_matrix, hsize_matrix**2, '-', label='O(h²)')
+    ax2.loglog(hsize_matrix, H1error_u_matrix[i], 's-', label=f'N = {N_data[i]**2}')
 ax2.set_xlabel(r'$\Delta_x = \Delta_y = h$', fontsize=label_fontsize)
 ax2.set_ylabel(r'$\|u-u_{h}\|_{H1}$', fontsize=label_fontsize)
 ax2.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -219,9 +215,7 @@ ax2.tick_params(axis='both', which='minor', labelsize=tick_fontsize)
 # Plotting L2 error for s
 ax3.set_title('Error in L2 norm for s', fontsize=title_fontsize)
 for i in range(len(N_data)):
-    ax3.loglog(hsize_matrix, L2error_s_matrix[i, :], 'o-', label=f'N = {N_data[i]**2}')
-#ax3.loglog(hsize_matrix, hsize_matrix, '-', label='O(h)')
-#ax3.loglog(hsize_matrix, hsize_matrix**2, '-', label='O(h²)')
+    ax3.loglog(hsize_matrix, L2error_s_matrix[i], 'o-', label=f'N = {N_data[i]**2}')
 ax3.set_xlabel(r'$\Delta_x = \Delta_y = h$', fontsize=label_fontsize)
 ax3.set_ylabel(r'$\|s-s_{h}\|_{L2}$', fontsize=label_fontsize)
 ax3.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -233,9 +227,7 @@ ax3.tick_params(axis='both', which='minor', labelsize=tick_fontsize)
 # Plotting L2 error for lambda
 ax4.set_title('Error in L2 norm for lambda', fontsize=title_fontsize)
 for i in range(len(N_data)):
-    ax4.loglog(hsize_matrix, L2error_lmd_matrix[i, :], 'x-', label=f'N = {N_data[i]**2}')
-#ax4.loglog(hsize_matrix, hsize_matrix, '-', label='O(h)')
-#ax4.loglog(hsize_matrix, hsize_matrix**2, '-', label='O(h²)')
+    ax4.loglog(hsize_matrix, L2error_lmd_matrix[i], 'x-', label=f'N = {N_data[i]**2}')
 ax4.set_xlabel(r'$\Delta_x = \Delta_y = h$', fontsize=label_fontsize)
 ax4.set_ylabel(r'$\|\lambda-\lambda_{h}\|_{L2}$', fontsize=label_fontsize)
 ax4.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -244,14 +236,23 @@ ax4.legend(loc='lower right', fontsize=legend_fontsize)
 ax4.tick_params(axis='both', which='major', labelsize=tick_fontsize)
 ax4.tick_params(axis='both', which='minor', labelsize=tick_fontsize)
 
+# Plotting L2 error for mu
+ax5.set_title('Error in L2 norm for mu', fontsize=title_fontsize)
+for i in range(len(N_data)):
+    ax5.loglog(hsize_matrix, L2error_mu_matrix[i], '*-', label=f'N = {N_data[i]**2}')
+ax5.set_xlabel(r'$\Delta_x = \Delta_y = h$', fontsize=label_fontsize)
+ax5.set_ylabel(r'$\|\mu-\mu_{h}\|_{L2}$', fontsize=label_fontsize)
+ax5.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+ax5.minorticks_on()
+ax5.legend(loc='lower right', fontsize=legend_fontsize)
+ax5.tick_params(axis='both', which='major', labelsize=tick_fontsize)
+ax5.tick_params(axis='both', which='minor', labelsize=tick_fontsize)
+
+# Hide the empty subplot (ax6)
+fig.delaxes(_)
+
 plt.tight_layout()
 plt.show()
-
-
-
-plt.figure(figsize = (8,6))
-for i in range(len(N_data)):
-    plt.loglog(hsize_matrix, L2error_mu_matrix[i, :], '*-', label=f'N = {N_data[i]**2}')
 
 
 
