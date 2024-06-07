@@ -36,9 +36,9 @@ petsc_opt1 = {
 # Program your Stress-Strain Law: (Primal or Mixed): 
 # Follow format for the names: SSLX_mymodel() (where X can be P: primal or M: mixed)
 #
-def SSLP_LinearElas(displ, params):
-    mu = params['mu']
-    lmd = params['lmd']
+def SSLP_LinearElas(displ, Lame):
+    mu = Lame['mu']
+    lmd = Lame['lmd']
     return (2*mu*fd.sym(fd.grad(displ)) + lmd*fd.div(displ)*fd.Identity(2))
 
 def SSLM_LinearElas(displ, stress, params):
@@ -65,17 +65,17 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     u = fd.Function(W, name='Solution')
     v = fd.TestFunction(W)
 
-    EY = params['YoundMod']
+    EY = params['YoungMod']
     poi = params['PoissonRat']
     mu  = fd.Constant(EY/(2.0*(1.0 + poi)))
     lmd = fd.Constant(EY*poi/((1.0 + poi)*(1.0 - 2.0*poi)))
+    Lame = {'mu': mu, 'lmd': lmd}
 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
-
-    sigma = StressLaw(u)
+    
+    sigma = StressLaw(u, Lame)
     Res = fd.inner(sigma, fd.grad(v))*fd.dx
-    Res -= fd.inner(f, v)*fd.dx
 
     if(flag_setting == 'Indent-Block'):
         # By definition an indentation problem corresponds to:
@@ -83,6 +83,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         # No force on the right and a force distribution on the top
         
         f = body_force(x)
+        Res -= fd.inner(f, v)*fd.dx
 
         tag_left = boundary_tags['Left']
         tag_bottom = boundary_tags['Bottom']
@@ -99,6 +100,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         # Bottom wall restricted, top wall imposed vertical
         # displacement and free lateral walls:
         f = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        Res -= fd.inner(f, v)*fd.dx
 
         uybottom, uytop = fd.Constant(0.0), boundary_vals(x)
         tag_top, tag_bottom = boundary_tags['Top'], boundary_tags['Bottom']
@@ -111,7 +113,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
 
     fd.solve(Res == 0, u, bcs=bcall, solver_parameters=petsc_opt1)
     g = fd.sym(fd.grad(u))
-    sigma = StressLaw(u)
+    sigma = StressLaw(u, Lame)
 
     # It may be reasonable that the output be consistent with the choices
     # of spaces above. That's why I program this here 
@@ -125,15 +127,15 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
             mode = 'a'
 
         filename = dir_outs+'/stress.pvd'
-        gpl = fd.project(g, domain.TDG0, name='Reference.Stress')
-        VTKFile(filename, mode=mode).write(sigma, time=tt)
+        sigmapl = fd.project(sigma, domain.TDG0, name='Reference.Stress')
+        VTKFile(filename, mode=mode).write(sigmapl, time=tt)
 
         filename = dir_outs+'/u.pvd'
         u.rename('Reference.Displacement')
         VTKFile(filename, mode=mode).write(u, time=tt)
         
         filename = dir_outs+'/gradu.pvd'
-        gpl = fd.project(g, domain.TVDG0, name='Reference.SymGrad(u)')
+        gpl = fd.project(g, domain.TDG0, name='Reference.SymGrad(u)')
         VTKFile(filename, mode=mode).write(gpl, time=tt)
 
     return sigma, u, g

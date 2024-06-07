@@ -47,7 +47,7 @@ def main_Elas_EX0_():
     def mysurfaceforceTop(x):
         return fd.as_vector([fd.Constant(0.0), -5.0*exp(-5.0*(x[0])**2)])
     mysurfaceforce = {'Top': mysurfaceforceTop}
-    boundary_tags = {'Left': 1 , 'Right': 2, 'Bottom': 3, 'Right': 4}
+    boundary_tags = {'Left': 1 , 'Right': 2, 'Bottom': 3, 'Top': 4}
     forcings = MechanicalForcingData(mybodyforce, mysurfaceforce, None, boundary_tags)
     #________________________________
 

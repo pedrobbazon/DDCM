@@ -128,22 +128,22 @@ class PoissonStdProblem():
     
 # Define the Standard Mechanical problem, model and solver
 class MechanicalStdProblem():
-    def __init__(self, domain, params, setting_type_flag: str, forcings, 
+    def __init__(self, domain, params, setting_type_flag: str, forcings,
                  stress_strain_law, fem_formulation, orders, energy_function=None):
         self.domain = domain
         self.params = params
         self.setting_type = setting_type_flag     # Uniaxial or Real-Setting
         self.forcings = forcings                  # Source functio, Surface flux and BC vals
-        self.flux_law        = stress_strain_law  # Stress-Strain constitutive law: linear isotropic, hyperelastic, etc.
+        self.stress_law      = stress_strain_law  # Stress-Strain constitutive law: linear isotropic, hyperelastic, etc.
         self.energy_function = energy_function    # Energy as a functions of deformation measures
         self.fem_formulation = fem_formulation    # Primal-CG will be possibly the only one for now
         self.std_solution = StdSolution()
         self.orders = orders                      # Orders of Stress and displacement field approximations
     
-    def solve(self, dir_outs=None):
+    def solve(self, tt=0.0, dir_outs=None):
         
-        if(self.flux_law != None):
-            tensdef_name = self.flux_law.__name__+'()'
+        if(self.stress_law != None):
+            tensdef_name = self.stress_law.__name__+'()'
         else:
             tensdef_name = 'No explicit'
         print("|> Solving with:\n   - %s() FEM-formulation\n   - %s StressDef-Law" 
@@ -152,12 +152,13 @@ class MechanicalStdProblem():
         print("   ... Solving ...")
         s, u, g = self.fem_formulation(self.domain, self.domain.flag_quads, 
                                        self.params, self.setting_type, 
-                                       self.forcings.volumetric_source,
-                                       self.forcings.boundary_flux,
+                                       self.forcings.body_force,
+                                       self.forcings.boundary_force,
                                        self.forcings.boundary_vals,
-                                       self.flux_law, 
+                                       self.forcings.boundary_tags,
+                                       self.stress_law, 
                                        self.orders,
-                                       dir_outs)
+                                       tt, dir_outs)
         self.std_solution.s = s 
         self.std_solution.u = u
         self.std_solution.g = g 
