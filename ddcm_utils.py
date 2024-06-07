@@ -52,31 +52,14 @@ def RotationMatrix(theta):
     return np.array([[np.cos(theta), -np.sin(theta)], 
                      [np.sin(theta), np.cos(theta)]])
 
-import time 
 def RotateData2D(angi, angf, Nang, EP, gradu_sampled_vals, flux_sampled_vals, gradu_samples, flux_samples):
     
-    tRS = 0.0
     aux1 = np.empty(shape=(1,2), dtype=np.float64)
     for angle in np.linspace(angi, angf, Nang, endpoint=EP):
         R = RotationMatrix(angle)
-        ti = time.time()
-        #print('1', gradu_sampled_vals.shape)
-        #gradu_rot_values = R.dot(gradu_sampled_vals[0])
         gradu_rot_values = np.reshape([R.dot(vec) for vec in gradu_sampled_vals], (-1, 2))
-        #aux1[0,:] = R @ gradu_sampled_vals[0]
-        #gradu_samples.append(aux1)
         gradu_samples.append(gradu_rot_values)
-        #print('2', aux1)
-        #print('3', np.reshape([gradu_rot_values] , (-1, 2)).shape)
         flux_rot_values = np.reshape([R.dot(vec) for vec in flux_sampled_vals], (-1, 2))
-        #print('1', flux_rot_values)
-        #flux_rot_values = R.dot(flux_sampled_vals[0])
-        #aux1[0,:] = R @ flux_sampled_vals[0]
-        #print('2', aux1)
-        #flux_samples.append(aux1)
         flux_samples.append(flux_rot_values)
-        tRS += time.time() - ti 
-    #print(gradu_samples)
-    #print('Times rotation=', tRS)
     
     return gradu_samples, flux_samples
