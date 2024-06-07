@@ -567,7 +567,7 @@ def main_EX4_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    # This will be only called for visualation purposes
+    # This will only be called for visualization purposes
     params = {'exact-potential': uexact, 'exact-flux': sexact}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
@@ -584,8 +584,6 @@ def main_EX4_():
     print('|::| Synthetic data computation/distribution begins ...')
     print('-------------------------------------------------------')
 
-    # Note in this case, I've made the data associated to the same domain (and mesh)
-    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     nsd, Ls, Ns = 2, [1.0, 1.0], [50, 50]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
     ddcm_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
@@ -594,7 +592,7 @@ def main_EX4_():
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
     ti = time.time()
-    Nbc, Nth = 400, 800
+    Nbc, Nth = 2, 5
     bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
@@ -643,7 +641,7 @@ def main_EX4_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA_EQUOR, orders=[1,1])
 
     ddcm_prob.solve("myddcmsol")
 
@@ -706,7 +704,7 @@ def main_EX5_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    # This will be only called for visualation purposes
+    # This will only be called for visualization purposes
     params = {'exact-potential': uexact, 'exact-flux': sexact}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
@@ -723,8 +721,6 @@ def main_EX5_():
     print('|::| Synthetic data computation/distribution begins ...')
     print('-------------------------------------------------------')
 
-    # Note in this case, I've made the data associated to the same domain (and mesh)
-    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     nsd, Ls, Ns = 2, [1.0, 1.0], [50, 50]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
     ddcm_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
@@ -804,21 +800,6 @@ def main_EX5_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_EX0_()
-#npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
+#main_EX0_()
+npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#domain = ComputationalDomain(nsd, meshfile='cook_memb.msh', flag_quads=False)
