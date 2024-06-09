@@ -75,19 +75,20 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Jacobian
     Jac = fd.derivative(dL, w)
 
+    bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
-        bcu = fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
 
         # Homogeneous boundary condition for scalar Lagrange multiplier
-        bcl = fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary")
+        bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
 
     else:
         
         raise ValueError('Unrecognized problem setting option')
 
     # Non-linear solve (see solver parameters above)
-    fd.solve(dL == 0, w, bcs=[bcu, bcl], J=Jac, solver_parameters=petsc_opt1)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
     if(dir_outs != None):
 
@@ -161,19 +162,20 @@ def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Jacobian
     Jac = fd.derivative(dL, w)
 
+    bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
-        bcu = fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
 
         # Homogeneous boundary condition for scalar Lagrange multiplier
-        bcl = fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary")
+        bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
 
     else:
         
         raise ValueError('Unrecognized problem setting option')
 
     # Non-linear solve (see solver parameters above)
-    fd.solve(dL == 0, w, bcs=[bcu, bcl], J=Jac, solver_parameters=petsc_opt1)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
     if(dir_outs != None):
 
@@ -250,6 +252,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Jacobian
     Jac = fd.derivative(dL, w)
 
+    bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
         dL += - boundary_vals(x) * fd.inner(dm,n) * fd.ds
@@ -259,7 +262,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         raise ValueError('Unrecognized problem setting option')
 
     # Non-linear solve (see solver parameters above)
-    fd.solve(dL == 0, w, bcs=[], J=Jac, solver_parameters=petsc_opt1)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
     if(dir_outs != None):
 
