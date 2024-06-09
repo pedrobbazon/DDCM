@@ -214,8 +214,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     RTtype, DGtype = 'RT', 'DG'
     if(flag_quads):
-        RTtype = "RTCF"
-        DGtype = 'DQ'
+        RTtype, DGtype = "RTCF", 'DQ'
 
     Hdiv  = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
     VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF)

@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 # Our libraries
 from ddcm_classes import *
 from ddcm_utils import *
+
 #----------------------------------------------------------------------------
 
 
@@ -25,7 +26,7 @@ from ddcm_utils import *
 #----------------------------------------------------------------------------
 # User defined main() functions: Program your options and problem below
 
-# Example using the simple linear Darcy model to generate the reference solution and sample the data from it
+# Example using the simple linear Darcy model to generate the reference solution and sample the data from itself
 def main_EX0_():
 
     ti = time.time()
