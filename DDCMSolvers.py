@@ -146,7 +146,6 @@ def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Functional to be minimized
     J = ObjFunc(g, graddata, q, fluxdata)
 
-
     # First variations
     if(der_ObjFunc == None):
         dqJ = fd.derivative(J, q, dq)
@@ -217,14 +216,15 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         RTtype, DGtype = "RTCF", 'DQ'
 
     Hdiv  = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
-    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF)
+    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderF)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
-    #  flux    u    g  lambda  mu
-    W = VDG * Hdiv * VDG * Hdiv * VDG
+    #   flux   u      g  lambda  mu
+    W = Hdiv * DG * Hdiv * DG * Hdiv
 
     x = fd.SpatialCoordinate(mesh)
+    n = fd.FacetNormal(mesh)
 
     # Unknown field
     w = fd.Function(W)
