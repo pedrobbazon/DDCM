@@ -653,6 +653,8 @@ def main_EX4_():
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
+    L2error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
+    L2error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -663,7 +665,7 @@ def main_EX4_():
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return npoints_data, hsize, L2error_u, H1error_u, L2error_s
+    return npoints_data, hsize, L2error_u, H1error_u, L2error_s, L2error_lmd, L2error_mu
 
 # Example of a refence solution based on an analytical expression with anisotropic K
 def main_EX5_():
