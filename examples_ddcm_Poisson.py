@@ -665,8 +665,6 @@ def main_EX4_():
 
     return npoints_data, hsize, L2error_u, H1error_u, L2error_s
 
-#----------------------------------------------------------------------------
-
 # Example of a refence solution based on an analytical expression with anisotropic K
 def main_EX5_():
 
