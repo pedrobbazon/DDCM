@@ -127,7 +127,7 @@ def main_EX0_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FB, orders=[0,1])
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FB, orders=[1,0])
 
     ddcm_prob.solve("myddcmsol")
 

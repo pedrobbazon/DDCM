@@ -215,8 +215,8 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if(flag_quads):
         RTtype, DGtype = "RTCF", 'DQ'
 
-    Hdiv  = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
-    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderF)
+    Hdiv  = fd.FunctionSpace(mesh, family=RTtype, degree=orderF)
+    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderU)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields
@@ -303,14 +303,15 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if(flag_quads):
         RTtype, DGtype = "RTCF", 'DQ'
 
-    Hdiv = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
-    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderF)
-    CG = fd.FunctionSpace(mesh, family='CG', degree=orderF)
+    Hdiv = fd.FunctionSpace(mesh, family=RTtype, degree=orderF)
+    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF-1)
+    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderU)
+    CG = fd.FunctionSpace(mesh, family='CG', degree=orderU+1)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
-    #   flux   u      g  lambda  mu
-    W = Hdiv * DG * Hdiv * CG * Hdiv
+    #  flux    u    g   lambda  mu
+    W = VDG * DG * Hdiv * CG * Hdiv
 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
