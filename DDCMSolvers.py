@@ -219,8 +219,9 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderF)
 
     # Mixed space: In this formulation we assume all scalar fields 
-    # are approximated in the same space, the same for all vector fields 
-    #   flux   u      g  lambda  mu
+    # are approximated in the same space, the same for all vector fields
+    # It makes sense that g \in Hdiv, since it is the Hdiv projection of grad(u)?
+    #   flux   u     g   lambda  mu
     W = Hdiv * DG * Hdiv * DG * Hdiv
 
     x = fd.SpatialCoordinate(mesh)
@@ -302,13 +303,14 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if(flag_quads):
         RTtype, DGtype = "RTCF", 'DQ'
 
-    Hdiv  = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
+    Hdiv = fd.FunctionSpace(mesh, family=RTtype, degree=orderU)
     DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderF)
+    CG = fd.FunctionSpace(mesh, family='CG', degree=orderF)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
     #   flux   u      g  lambda  mu
-    W = Hdiv * DG * Hdiv * DG * Hdiv
+    W = Hdiv * DG * Hdiv * CG * Hdiv
 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
@@ -330,9 +332,10 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     # Residual
     dL  =  dqJ + dgJ
-    dL +=  fd.inner(fd.div(dq), l) * fd.dx
-    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl ) * fd.dx
-    dL += fd.inner(dg, m) * fd.dx + fd.inner(du, fd.div(m)) * fd.dx
+    dL  = -fd.inner(dq, fd.grad(l)) * fd.dx
+    dL += fd.inner(du, fd.div(m)) * fd.dx
+    dL += fd.inner(dg, m) * fd.dx
+    dL += (-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl ) * fd.dx
     dL += fd.inner(dm, g) * fd.dx + fd.inner(u, fd.div(dm)) * fd.dx
 
     # Jacobian
