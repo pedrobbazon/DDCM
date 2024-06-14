@@ -67,10 +67,10 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     # Residual
     dL  =  dqJ + dgJ
-    dL +=  -fd.inner(dq, fd.grad(l)) * fd.dx
-    dL += (-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl ) * fd.dx
-    dL += fd.inner(g-fd.grad(u), dm) * fd.dx
-    dL += fd.inner(dg, m) * fd.dx - fd.inner(m, fd.grad(du)) * fd.dx
+    dL += -fd.inner(dq, fd.grad(l)) * fd.dx
+    dL +=(-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl ) * fd.dx
+    dL += (fd.inner(g, dm) - fd.inner(fd.grad(u), dm))* fd.dx
+    dL += (fd.inner(dg, m) - fd.inner(fd.grad(du), m)) * fd.dx
 
     # Jacobian
     Jac = fd.derivative(dL, w)
@@ -154,9 +154,9 @@ def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Residual
     dL  =  dqJ + dgJ
     dL += -fd.inner(dq, fd.grad(l)) * fd.dx
-    dL += -fd.inner(q, fd.grad(dl)) * fd.dx - volumetric_source(x) * dl * fd.dx(degree=4)
+    dL +=(-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl) * fd.dx(degree=4)
     dL +=  fd.inner(g-fd.grad(u), dm) * fd.dx
-    dL +=  fd.inner(dg, m) * fd.dx - fd.inner(m, fd.grad(du)) * fd.dx
+    dL += (fd.inner(dg, m) - fd.inner(fd.grad(du), m)) * fd.dx
 
     # Jacobian
     Jac = fd.derivative(dL, w)
@@ -245,9 +245,9 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Residual
     dL  =  dqJ + dgJ
     dL +=  fd.inner(fd.div(dq), l) * fd.dx
-    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl ) * fd.dx
-    dL += fd.inner(dg, m) * fd.dx + fd.inner(du, fd.div(m)) * fd.dx
-    dL += fd.inner(dm, g) * fd.dx + fd.inner(u, fd.div(dm)) * fd.dx
+    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl) * fd.dx
+    dL += (fd.inner(dg, m) + fd.inner(du, fd.div(m))) * fd.dx
+    dL += (fd.inner(dm, g) + fd.inner(u, fd.div(dm))) * fd.dx
 
     # Jacobian
     Jac = fd.derivative(dL, w)
@@ -255,7 +255,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
-        dL += - boundary_vals(x) * fd.inner(dm,n) * fd.ds
+        dL += -boundary_vals(x) * fd.inner(dm,n) * fd.ds
 
     else:
         
@@ -333,11 +333,11 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     # Residual
     dL  =  dqJ + dgJ
-    dL  = -fd.inner(dq, fd.grad(l)) * fd.dx
-    dL += fd.inner(du, fd.div(m)) * fd.dx
-    dL += fd.inner(dg, m) * fd.dx
-    dL += (-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl ) * fd.dx
-    dL += fd.inner(dm, g) * fd.dx + fd.inner(u, fd.div(dm)) * fd.dx
+    dL += -fd.inner(dq, fd.grad(l)) * fd.dx
+    dL +=  fd.inner(du, fd.div(m)) * fd.dx
+    dL +=  fd.inner(dg, m) * fd.dx
+    dL +=(-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl) * fd.dx
+    dL += (fd.inner(g, dm) + fd.inner(u, fd.div(dm))) * fd.dx
 
     # Jacobian
     Jac = fd.derivative(dL, w)
@@ -345,7 +345,100 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
-        dL += - boundary_vals(x) * fd.inner(dm,n) * fd.ds
+        dL += -boundary_vals(x) * fd.inner(dm,n) * fd.ds
+
+        # Homogeneous boundary condition for scalar Lagrange multiplier
+        bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+
+    # Non-linear solve (see solver parameters above)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+    
+    if(dir_outs != None):
+
+        # Split the solution for post-processing
+        #qpl, ppl, gpl, lpl, mpl = split(w)
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('DDCM.Flux')
+        VTKFile(filename).write(w.sub(0))
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('DDCM.Potential')
+        VTKFile(filename).write(w.sub(1))
+        
+        filename = dir_outs+'/g.pvd'
+        w.sub(2).rename('DDCM.gradient(u)')
+        VTKFile(filename).write(w.sub(2))
+
+        filename = dir_outs+'/l.pvd'
+        w.sub(3).rename('DDCM.lambda')
+        VTKFile(filename).write(w.sub(3))
+
+        filename = dir_outs+'/m.pvd'
+        w.sub(3).rename('DDCM.mu')
+        VTKFile(filename).write(w.sub(4))
+    
+    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
+def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
+            flag_setting, volumetric_source, boundary_flux, boundary_vals,
+            orders, dir_outs):
+
+    mesh = domain.msh
+    
+    orderF, orderU = orders
+
+    RTtype, DGtype = 'RT', 'DG'
+    if(flag_quads):
+        RTtype, DGtype = "RTCF", 'DQ'
+
+    Hdiv = fd.FunctionSpace(mesh, family=RTtype, degree=orderF)
+    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF-1)
+    DG = fd.FunctionSpace(mesh, family=DGtype, degree=orderU)
+    CG = fd.FunctionSpace(mesh, family='CG', degree=orderU+1)
+
+    # Mixed space: In this formulation we assume all scalar fields 
+    # are approximated in the same space, the same for all vector fields 
+    #   flux    u    g   lambda  mu
+    W = Hdiv * CG * Hdiv * DG * VDG
+
+    x = fd.SpatialCoordinate(mesh)
+    n = fd.FacetNormal(mesh)
+
+    # Unknown field
+    w = fd.Function(W)
+    q, u, g, l, m = fd.split(w)
+
+    # Test functions
+    dq, du, dg, dl, dm = fd.TestFunctions(W)
+
+    # Functional to be minimized
+    J = ObjFunc(g, graddata, q, fluxdata)
+
+    # First variations
+    if(der_ObjFunc == None):
+        dqJ = fd.derivative(J, q, dq)
+        dgJ = fd.derivative(J, g, dg)
+    
+    # Residual
+    dL  =  dqJ + dgJ
+    dL +=  fd.inner(fd.div(dq),l) * fd.dx
+    dL += -fd.inner(fd.grad(du),m) * fd.dx
+    dL +=  fd.inner(dg, m) * fd.dx
+    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl ) * fd.dx
+    dL += (fd.inner(g, dm) -  fd.inner(fd.grad(u), dm)) * fd.dx
+
+    # Jacobian
+    Jac = fd.derivative(dL, w)
+
+    bc_lst = []
+    if(flag_setting == 'Pure-Dirichlet'):
+        # Boundary condition for potential field
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
 
     else:
         
