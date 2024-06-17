@@ -403,8 +403,8 @@ def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
-    #   flux    u    g   lambda  mu
-    W = Hdiv * CG * Hdiv * DG * VDG
+    #   flux    u    g  lambda  mu
+    W = Hdiv * CG * VDG * DG * VDG
 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
