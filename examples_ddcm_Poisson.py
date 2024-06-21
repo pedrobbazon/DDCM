@@ -196,7 +196,7 @@ def main_EX1_():
     # Let us suppose we do some continuation to compute the data:
     Nbc, Nth = 10, 10
     Nsampx, Nsampy  = 1, 1
-    bcvals = np.linspace(1.0+1.e-15, 20.0, Nbc)
+    bcvals = np.linspace(1.0+1.e-15, 34.0, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
     count = 0
@@ -255,7 +255,7 @@ def main_EX1_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FD, orders=[1,0])
 
     ddcm_prob.solve("myddcmsol")
 
@@ -272,7 +272,7 @@ def main_EX1_():
 
 #----------------------------------------------------------------------------
 
-# Example using k(u) nonlinear model (invinted by me) to generate the synthetic data
+# Example using k(u) nonlinear model (invented by me) to generate the synthetic data
 def main_EX2_():
 
     ti = time.time()
@@ -801,6 +801,6 @@ def main_EX5_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_EX0_()
+main_EX1_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))

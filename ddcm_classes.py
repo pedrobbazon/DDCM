@@ -50,7 +50,7 @@ class ComputationalDomain:
 
         # Domain volume
         one = fd.Function(self.DG0).interpolate(fd.Constant(1.0))
-        self.volume = fd.assemble(one*dx)
+        self.volume = fd.assemble(one*fd.dx)
 
         # Element areas
         tstdg          = fd.TestFunction(self.DG0)
