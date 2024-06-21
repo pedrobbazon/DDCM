@@ -1,5 +1,68 @@
 \section{Numerical experiments}
 
+Two different problems are used to illustrate the behavior
+of the data-driven formulation introduced in the previous section,
+namely, the prototypical elliptic second order Poisson's problem, that
+models flow in porous media or heat conduction, as an example of a problem
+with scalar unknown and on the other hand, the also classical
+elasticity problem as an example of an elliptic problem with
+vector unknown.
+
 \subsection{Darcy's problem}
 
+With reference to the general formulation we have presented in the
+previous section, let us rewrite Darcy's problem with a more usual
+notation specific of flow in porous media by redefining the primal
+unknowns, namely the flux, the potential and the gradient measure
+as follows
+\begin{itemize}
+ \item Flux unknown: $s \leftarrow \sD$
+ \item Scalar unknown: $u \leftarrow \uD$
+ \item Gradient unknown: $e \leftarrow \eD$
+\end{itemize}
+whereas for the dual fields we adopt
+\begin{itemize}
+ \item Mass balance constraint: $\lambda \leftarrow \lD$
+ \item Compatibility constraint: $\mu \leftarrow \mD$
+\end{itemize}
+
+
+Let us first recall the standard or reference formulation for this
+problem in its mixed form with pure Dirichlet
+boundary conditions: Find pressure $\uD$ and flux $\sD$ such that
+$$
+\left\lbrace
+\begin{array}{rcll}
+\nabla \cdot \sD &=& q & \mbox{in}~\Omega,\\
+\\
+\sD &=& -\dfrac{K}{\mu} \nabla{\uD} & \mbox{in}~\Omega,\\
+\\
+\uD &=& p_0(\mathbf{x}) & \mbox{on}~\partial\Omega
+\end{array}
+\right.
+$$
+and in variational form
+
+
+
+
+
 \subsection{Elasticity problem}
+
+With reference to the general formulation we have presented in the
+previous section, let us rewrite the elasticity problem with a more usual
+notation in solid mechanics problem by redefining the primal
+unknowns, namely the stress, the displacement and the deformation measure
+as follows
+\begin{itemize}
+ \item Stress unknown: $s \leftarrow \sE$
+ \item Displacement unknown: $u \leftarrow \uE$
+ \item Deformation unknown: $e \leftarrow \eE$
+\end{itemize}
+
+whereas for the dual fields we adopt
+\begin{itemize}
+ \item Equilibrium constraint: $\lambda \leftarrow \lE$
+ \item Compatibility constraint: $\mu \leftarrow \mE$
+\end{itemize}
+
