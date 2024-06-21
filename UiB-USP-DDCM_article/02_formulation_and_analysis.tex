@@ -1,0 +1,981 @@
+\section{Formulation and analysis}
+
+\subsection{Discrete-continuous optimization problem - DCNLP}
+
+Given a domain $\Omega \subset \mathbb{R}^{d_{\Omega}}$ such that $d_{\Omega}\in\{2,3\}$ (a bounded and connected open subset with Lipschitz-continuous boundary $\partial \Omega$), consider a physical body that occupies the closure $\bar{\Omega}$ and that is subjected to body sources/forces, i.e., $q: \Omega \to \mathbb{R}^d$ with $d = 1$ for the scalar case and $d = d_\Omega$ for the vector case. All necessary conditions $\Phi_{\lambda\mu}$ required (in a weak sense) to formulate the equilibrium state of such a physical body up to constitutive dependencies can be described with the help of: \textit{three primal fields}, e.g., the pressure $u: \Omega \to \mathbb{R}$, the pressure gradient $e: \Omega \to \mathbb{R}^d$ and the flux $s: \Omega \to \mathbb{R}^d$ in the context of the flow of a fluid in a porous medium or in the elasticity context, the displacement $u: \Omega \to \mathbb{R}^d$, the strain $e: \Omega \to \mathbb{S}^d$ and the stress $s: \Omega \to \mathbb{S}^d$ with $\mathbb{S}^d \subset \mathbb{R}^{d \times d}$ the set of symmetric matrices; and, \textit{two dual fields} $\lambda$ and $\mu$, where the first one corresponds to the enforcement of the equilibrium in itself and the second one to the enforcement of some compatibility condition between the primal fields $u$ and $e$. In this work, we consider only those conditions to formulate the equilibrium state up to constitutive dependencies that can be weakly formulated as
+\begin{multline}
+\Phi_{\lambda \mu}((\lambda, \mu), (u, e, s); q, \Omega) = \\
+\left\langle H (\nabla \lambda), s \right\rangle_{L^2(\Omega, \mathbb{F}^d)}-
+\left\langle \lambda, q \right\rangle_{L^2(\Omega,\mathbb{R}^d)}+
+\left\langle \mu, e- h(\nabla u) \right\rangle_{L^2(\Omega,\mathbb{F}^d)} = 0,
+\end{multline}
+where $\langle \cdot , \cdot \rangle$ represents a suitable dual pairing and the field $\mathbb{F}^d$ can be either $\mathbb{R}^d$ or $\mathbb{S}^d$. The operator $\nabla$ is either the standard gradient, for the case of the flow of a fluid in a porous medium, or the symmetric gradient, for the elasticity case. $h(\nabla u)$ is an objective and path-independent deformation measure and $H$ is its corresponding Fr\'echet derivative.   
+
+To include the constitutive dependencies, let us consider the set $\mathcal{N}_m = \lbrace n\rbrace_{n=1}^{N_m}$, where $N_m$ stands for the number of independent experimental measurements available and
+%
+\begin{equation}
+\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}
+\end{equation}
+%
+represents the set of all experimental pairs that lay, up to a certain tolerance, on the underlying constitutive manifold whose local or global representation is unknown. For $\mathcal{N}_a \subseteq \mathcal{N}_m$, the set that lists all ``active'' elements of $\mathfrak{D}_m$ (which are to be found subject to $\Phi_{\lambda\mu}((\lambda, \mu),(u, e, s); q, \Omega)$ vanishes identically) such that $|\mathcal{N}_a| \leq |\mathcal{N}_m|$, let $ P_a(\Omega) = \left\lbrace \Omega_n \right\rbrace_{n\in \mathcal{N}_a}$ be a partition of the domain $\Omega$ (which is also to be sought simultaneously) such that $(\tilde{e},\tilde{s})$ can be constructed, from the active constitutive pairs, over the whole domain in the form of a simple function, namely
+\begin{equation}
+(\tilde{e},\tilde{s})(\omega) = \sum_{n \in \mathcal{N}_a}\chi_{\Omega_n}(\omega)(\mathfrak{e}_n,\mathfrak{s}_n), \quad\forall\omega\in\Omega,
+\label{eq:approxsimple}
+\end{equation}
+where $\chi_{\Omega_n}:\Omega \to \mathbb{R}$ is the characteristic function of $\Omega_n$ defined as
+\begin{equation}
+\chi_{\Omega_n}(\omega) = 
+\left\lbrace
+\begin{array}{rl}
+1, & \omega \in \Omega_n,\\
+0, & \omega \notin \Omega_n .
+\end{array}
+\right.
+\end{equation}
+%
+The considered construction for $(\tilde{e},\tilde{s})$ is a good approximation in the $L^p(\Omega)$-sense for $1 \leq p < \infty$, a property that is going to be used later on.
+
+Finally, by choosing proximity measures $\varphi_e$ and $\varphi_s$ that satisfy $\varphi_e(0) = \varphi_s(0) = 0$, a possible realization of the DDCM approach relies on solving a DCNLP given by
+%
+\begin{equation}
+\inf_{(u,e,s,\mathcal{N}_a,P_a(\Omega))} \sup_{(\lambda, \mu)} \quad \varphi_e(e-\tilde{e})+\varphi_s(s-\tilde{s})+\Phi_{\lambda\mu}((\lambda, \mu), (u, e, s); q, \Omega).
+\label{eq:dcnlp}
+\end{equation}
+%
+Standard choices of the proximity measures are those induced by $p-$norms, where by sake of convenience, we consider only those corresponding to reflexive spaces and thus, $1 < p < \infty$.
+
+\begin{remark}
+This DCNLP is to be thought in the appropriate spaces, whose regularity will be dictated in principle by $\Phi_{\lambda\mu}$ when particularly analyzed. Therefore, we omit for now to specify them and will treat such rather generically.  
+\end{remark}
+
+\subsection{Four nonlinear optimization sub-problems - NLSPs}
+
+The proposed DCNLP results to be a functional/topological optimization problem, which of course is expensive to solve due to its NP-hardness and extremely difficult to analyze due to the complexity of the functional/topological aspects involved. Therefore and as a first step, we are going to set the focus on a sort of optimization sub-problems that arises when $\mathcal{N}_a$ and $P_a(\Omega)$ are fixed and given in advance and thus, we drop the sub-index $a$ for the remaining of this article. The optimization sub-problems to be introduced can eventually be used to speed up the solution process of the original DCNLP. Such a solution strategy will be comprenhensively addressed in future works.     
+
+In the following, we are going to introduce four optimization sub-problems. The first two ``nonlinear optimization sub-problems'' (NLSP) are formulated on a single domain, but relying on (\ref{eq:approxsimple}).  Meanwhile the last two are formulated by adopting two domain decomposition approaches, provided that each sub-domain is regular enough, i.e., their bourndaries are Lipschitz continuous. Moreover, all the proximity measures considered are those induced by $p-$norms on reflexive spaces. Lastly, the corresponding primal and dual indices are indicated by $p$ and $p'$, respectivelly, and are such that $1/p+1/p' = 1$.
+%
+\begin{problem}[NLSP0]
+\hspace{-2mm}``Given the active set $\mathcal{N}$, its corresponding partition $P(\Omega)$ and $(\tilde{e},\tilde{s})$ defined by (\ref{eq:approxsimple}). Let 
+\begin{equation}
+x := 
+(u, s)
+\in X
+\end{equation}
+be a set of two primal fields, $e(u)$ be the explicit dependence of $e$ on $u$, and
+\begin{equation}
+y :=
+\lambda
+\in Y
+\end{equation}
+be a single dual field. Then, find $(x^*, y^*)$ such that
+\begin{equation}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac{1}{p}\|e(u)-\tilde{e}\|^{p}_{L^p}+
+\frac{1}{p'}\|s-\tilde{s}\|^{p'}_{L^{p'}}+
+\Phi_0(y,x)
+\right\},
+\end{equation}
+where
+\begin{equation}
+    \Phi_0(y,x) := \Phi_{\lambda\mu}((\lambda, 0), (u, e(u), s); q, \Omega).\textrm{''}
+\end{equation}
+\end{problem}
+%
+\begin{problem}[NLSP1]
+\hspace{-2mm}``Given the active set $\mathcal{N}$, its corresponding partition 
+$P(\Omega)$ and $(\tilde{e},\tilde{s})$ given by (\ref{eq:approxsimple}). Let 
+\begin{equation}
+x := 
+(u, e, s)
+\in X
+\end{equation}
+be a set of three primal fields and
+\begin{equation}
+y :=
+(\lambda, \mu)
+\in Y
+\end{equation}
+be a set of two dual fields. Then, find $(x^*, y^*)$ such that
+\begin{equation}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac{1}{p}\|e-\tilde{e}\|^p_{L^p}+
+\frac{1}{p'}\|s-\tilde{s}\|^{p'}_{L^{p'}}+
+\Phi_1(y,x)
+\right\},
+\end{equation}
+where
+\begin{equation}
+\Phi_1(y,x) := \Phi_{\lambda\mu}((\lambda, \mu), (u, e, s); q, \Omega).\textrm{''}
+\end{equation}
+\end{problem}
+
+To present the formulations with domain decomposition, we need first to introduce two additional terms. Given the interface $\Gamma$ and its normal $\check{n}$. Let  $u_{\uparrow\check{n}}$ and $u_{\downarrow\check{n}}$ be the pressure/displacement fields of two adjacent partitions approaching $\Gamma$ positively and negatively along the normal direction, respectively. Let $r$ be the primal field associated to the normal flow/force on the interface and $\nu$ be the dual field associated to the continuity of the pressure/displacement fields across the interface. Then, we can introduce
+%
+\begin{equation}
+    \Phi_{\lambda}(\lambda, r;\Gamma) \quad\textrm{and}\quad \Phi_{\nu}(\nu, (u_{\uparrow\check{n}}, u_{\downarrow\check{n}});\Gamma),
+\end{equation}
+%
+where $\Phi_\lambda$ captures the virtual work done by the normal flow/force and $\Phi_\nu$ enforces the continuity of the pressure/displacement field.
+
+\begin{problem}[NLSP2]
+\hspace{-2mm}``Given the active set $\mathcal{N}$ and its corresponding partition $P(\Omega)$. Let 
+\begin{equation}
+x := 
+\left(
+\left\lbrace (u_n,e_n,s_n) \right\rbrace_{n\in\mathcal{N}},
+\left\lbrace r_{n_1 n_2} \right\rbrace_{\left(n_1, n_2 \in \mathcal{N}| n_1 < n_2, \partial \Omega_{n_1} \cap \partial \Omega_{n_2} \neq \emptyset\right)}
+\right) \in X
+\end{equation}
+be the set of primal fields and
+\begin{equation}
+y :=
+\left(
+\left\lbrace (\lambda_n,\mu_n) \right\rbrace_{n \in \mathcal{N}},
+\{\nu_{n_1 n_2}\}_{\left( n_1, n_2 \in \mathcal{N}| n_1 < n_2, \partial \Omega_{n_1} \cap \partial \Omega_{n_2} \neq \emptyset \right)}
+\right) \in Y
+\end{equation}
+be the set of dual fields. Then, find $(x^*, y^*)$ such that
+\begin{multline}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\sum_{n \in \mathcal{N}}
+\left(
+\frac{1}{p}\|e_n-\chi_{\Omega_n}\mathfrak{e}_n\|^{p}_{L^p_n}+
+\right.
+\right.
+\\
+\left.
+\left.
+\frac{1}{p'}\|s_n-\chi_{\Omega_n}\mathfrak{s}_n\|^{p'}_{L^{p'}_n}
+\right)+
+\Phi_2(y,x)
+\right\},
+\end{multline}
+where
+\begin{multline}
+\Phi_2(y,x) =   
+\sum_{n \in \mathcal{N}}
+\Phi_{\lambda\mu}((\lambda_n,\mu_n),(u_n,e_n,s_n);q_n,\Omega_n)
++\\
+\sum_{\left(n_1, n_2 \in \mathcal{N}| n_1 < n_2, \partial \Omega_{n_1} \cap \partial \Omega_{n_2} \neq \emptyset\right)} 
+\left(
+\Phi_{\lambda}(\lambda_{n_1}, r_{n_1 n_2};\partial \Omega_{n_1} \cap \partial \Omega_{n_2})+
+\right.
+\\
+\left.
+\Phi_{\nu}(\nu_{n_1 n_2},( u_{n_1}, u_{n_2});\partial \Omega_{n_1} \cap \partial \Omega_{n_2})
+\right).\textrm{''}
+\end{multline}
+\end{problem}
+
+For the last formulation, we need further information and a last additional term. Thus, let $t$ be the pressure/displacement field on $\Gamma$, $r_{\uparrow\check{n}}$ and $r_{\downarrow\check{n}}$ be the normal flows/forces on the interface of two
+adjacent partitions approaching $\Gamma$ positively and negatively along the normal direction, respectively. Lastly, let $\tau$ be the dual field associated to the equilibrium on the interface. Then, we can introduce
+\begin{equation}
+\Phi_{\tau}(\tau,r_{\uparrow \check{n}}+r_{\downarrow \check{n}};\Gamma),    
+\end{equation}
+where $\Phi_{\tau}$ enforces the equilibrium of normal flows/forces.
+
+\begin{problem}[NLSP3]
+\hspace{-2mm}``Given the active set $\mathcal{N}$ and its corresponding partition $P(\Omega)$ as well as the set $\mathcal{I} = \{i\}_{i=1}^I$, where $I$ stands for the number of interfaces, and the corresponding set of interfaces $\{\Gamma_i\}_{i \in \mathcal{I}}$. Let 
+\begin{equation}
+x = 
+\left(
+\left\lbrace (u_n,e_n,s_n) \right\rbrace_{n\in\mathcal{N}},
+\left\lbrace t_i \right\rbrace_{i \in \mathcal{I}},
+\left\lbrace r_{in} \right\rbrace_{\left(i \in \mathcal{I}, n \in \mathcal{N}| \Gamma_i \cap \partial \Omega_n \neq \emptyset \right)}
+\right) \in X
+\end{equation}
+be the set of primal fields and
+\begin{equation}
+y =
+\left(
+\left\lbrace (\lambda_n,\mu_n) \right\rbrace_{n \in \mathcal{N}},
+\{\tau_i\}_{i\in \mathcal{I}},
+\{\nu_{in}\}_{\left(i\in \mathcal{I}, n \in \mathcal{N}| \Gamma_i \cap \partial \Omega_n \neq \emptyset \right)}
+\right) \in Y
+\end{equation}
+be the set of dual fields.
+Then, find $(x^*, y^*)$ such that
+\begin{multline}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\sum_{n \in \mathcal{N}}
+\left(
+\frac{1}{p}\|e_n-\chi_{\Omega_n}\mathfrak{e}_n\|^{p}_{L^p_n}+
+\right.
+\right.
+\\
+\left.
+\left.
+\frac{1}{p'}\|s_n-\chi_{\Omega_n}\mathfrak{s}_n\|^{p'}_{L^{p'}_n}
+\right)+
+\Phi_3(y,x)
+\right\},
+\end{multline}
+where
+\begin{multline}
+\Phi_3(y,x) :=   
+\sum_{n \in \mathcal{N}}
+\Phi_{\lambda\mu}((\lambda_n,\mu_n),(u_n,e_n,s_n);q_n,\Omega_n)
++\\
+\sum_{\left( i \in \mathcal{I}, n \in \mathcal{N}| \Gamma_i \cap \partial \Omega_n \neq \emptyset \right)} 
+\left(
+\Phi_{\lambda}(\lambda_{n}, r_{i n};\Gamma_i)
++
+\Phi_{\nu}(\nu_{i n},(u_n, t_i);\Gamma_i)
++
+\right.
+\\
+\left.
+\Phi_{\tau}(\tau_i,r_{i n};\Gamma_i)
+\right). \textrm{''}
+\end{multline}
+\end{problem}
+
+\subsection{Solvability and equivalence in the linear setting}
+
+To gain deeper insight into the four formulations proposed, we proceed to simplify them to the form of a quadratic optimization problem subject to linear constraints (QPLC) on Hilbert spaces (Brezzi and Fortin 1991).  
+
+\begin{problem}[QPLC]
+\label{op:QPLC}
+``Let $\left(X, \|\cdot\|_X\right)$ and $\left(Y,\|\cdot\|_Y\right)$ be two Hilbert spaces on the real field. Let $a(\cdot, \cdot)$ be a continuous symmetric bilinear form on $X \times X$ and $b(\cdot, \cdot)$ be a continuous bilinear form on $Y \times X$. For $f \in X'$ and $g \in Y'$, find $x^* \in X$ and $y^* \in Y$ such that
+$$
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac12 a(x, x)+b(y,x)-f(x)-g(y)
+\right\}.
+$$
+Moreover, $(x^*,y^*)$ can be found by solving the optimality conditions given by
+$$
+\left\lbrace
+\begin{array}{rl}
+	a(x, \delta x) + b(y, \delta x) &= f(\delta x), \quad \forall \delta x \in X,\\
+	\\
+	b(\delta y, x) &= g(\delta y),\quad \forall \delta y \in Y.
+\end{array} 	
+\right. 
+$$
+The existence of a unique solution is warranted provided that:
+\begin{itemize}
+%\item $a(\cdot,\cdot)$, $b(\cdot,\cdot)$, $f(\cdot)$ and $g(\cdot)$ are bounded.
+\item[i)] $a(\cdot,\cdot)$ is coercive in $\ker(b(y, \cdot))\subset X$ for any $y\in Y$.
+\item[ii)] $b(\cdot,\cdot)$ satisfies the $\inf-\sup$ condition for $b(\cdot, x)$ with closed range.''
+\end{itemize}
+\end{problem}
+
+In the following, we analyze the four QPLCs derived from the NLSPs establishing that each one of them is indeed solvable and has a unique solution. Then, we conclude our analysis showing that all of them are equivalent. For such and end, we consider $|\mathcal{N}| = 2$, $P(\Omega) = \left\{\Omega_1, \Omega_2\right\}$, $|\mathcal{I}| = 1$, $\Gamma = \partial \Omega_1 \cap \Omega_2 \neq \emptyset$ and $\Gamma \cap \partial \Omega = \emptyset$. In addition, let us take $p = p' = 2$ and specialize the set of constraints as follows:
+\begin{multline}
+\Phi_{\lambda \mu}((\lambda, \mu), (u, e, s); q, \Omega) = \\
+\left\langle \nabla \lambda, s \right\rangle_{L^2(\Omega, \mathbb{F}^d)}-
+\left\langle \lambda, q \right\rangle_{L^2(\Omega,\mathbb{R}^d)}+
+\left\langle \mu, e - \nabla u \right\rangle_{L^2(\Omega,\mathbb{F}^d)},
+\end{multline}
+%
+\begin{equation}
+    \Phi_{\lambda}(\lambda, r;\Gamma) = \left \langle \lambda , r \right\rangle_{H^{\frac12}(\Gamma, \mathbb{R}^d)},
+\end{equation}
+%
+\begin{equation}
+    \Phi_{\nu}(\nu, (u_{\uparrow\check{n}}, u_{\downarrow\check{n}});\Gamma) = \left \langle \nu , u_{\uparrow\check{n}} - u_{\downarrow\check{n}} \right\rangle_{H^{\frac12}(\Gamma, \mathbb{R}^d)},
+\end{equation}
+\begin{equation}
+    \Phi_{\tau}(\tau,r_{\uparrow \check{n}}+r_{\downarrow \check{n}};\Gamma) =  \left \langle \tau , r_{\uparrow\check{n}} + r_{\downarrow\check{n}} \right\rangle_{H^{\frac12}(\Gamma, \mathbb{R}^d)}.
+\end{equation}
+Even when the simplifications with respect to domain partition seem to be very strong, they are such that we still retain the key elements to understand how the proposed formulations work. Considering data sets with a larger cardinality will essentially make the calculations more tedious, but not richer in concept.
+
+To introduce the first two QPLCs, we need to define the following spaces:
+$$L^2 := \left\{ f \in L^2(\Omega, \mathbb{R}^d) \right\},
+\tilde{L}^2 := \left\{ e \in L^2(\Omega, \mathbb{F}^d) \right\},
+H^1_{0} := \left\{ u \in H^1_0(\Omega, \mathbb{R}^d) \right\}.$$
+Moreover, the topological dual space of $X^k$, i.e., $\left(X^k\right)'$, is indicated as $X^{-k}$.
+
+Then, we can define the following QPLCs:
+
+\begin{problem}[QPLC0]
+\hspace{-2mm}
+``Given the data set $\{\!(\mathfrak{e}_1,\!\mathfrak{s}_1),\!(\mathfrak{e}_2,\!\mathfrak{s}_2)\!\}$,
+the partition $\left\{\Omega_1, \Omega_2 \right\}$,
+\begin{equation}
+    (\tilde{e},\tilde{s})(\omega) =
+    \chi_{\Omega_1}(\omega) (\mathfrak{e}_1,\mathfrak{s}_1)+
+    \chi_{\Omega_2}(\omega) (\mathfrak{e}_2,\mathfrak{s}_2),
+    \quad \forall \omega \in \Omega
+\end{equation}
+and $e(u) = \nabla u$.
+Let 
+\begin{equation}
+x := 
+(u, s)
+\in X \approx H^1_0 \times \tilde{L}^2
+\end{equation}
+and
+\begin{equation}
+y :=
+\lambda
+\in Y \approx H^1_0.
+\end{equation}
+Then, find $(x^*, y^*)$ such that
+\begin{equation}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac12\|\nabla u -\tilde{e}\|^2_{L^2}+
+\frac12\|s-\tilde{s}\|^2_{L^2}+
+\Phi_0(y,x)
+\right\},
+\end{equation}
+where
+\begin{equation}
+    \Phi_0(y,x) := 
+    \left\langle \nabla \lambda, s \right\rangle_{\tilde{L}^2}-
+\left\langle \lambda, q \right\rangle_{L^2}.\textrm{''}
+\end{equation}
+\end{problem}
+
+\begin{problem}[QPLC1]
+\hspace{-2mm}``Given the data set $\{\!(\mathfrak{e}_1,\!\mathfrak{s}_1),\!(\mathfrak{e}_2,\!\mathfrak{s}_2)\!\}$, the partition $\left\{\Omega_1, \Omega_2 \right\}$ and
+\begin{equation}
+    (\tilde{e},\tilde{s})(\omega) =
+    \chi_{\Omega_1}(\omega) (\mathfrak{e}_1,\mathfrak{s}_1)+
+    \chi_{\Omega_2}(\omega) (\mathfrak{e}_2,\mathfrak{s}_2),
+    \quad \forall \omega \in \Omega.
+\end{equation}
+Let 
+\begin{equation}
+x := 
+(u, e, s)
+\in X \approx H^1_0 \times \tilde{L}^2 \times \tilde{L}^2
+\end{equation}
+and
+\begin{equation}
+y :=
+(\lambda, \mu)
+\in Y \approx H^1_0 \times \tilde{L}^2.
+\end{equation}
+Then, find $(x^*, y^*)$ such that
+\begin{equation}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac12\|e -\tilde{e}\|^2_{L^2}+
+\frac12\|s-\tilde{s}\|^2_{L^2}+
+\Phi_1(y,x)
+\right\},
+\end{equation}
+where
+\begin{equation}
+    \Phi_1(y,x) := 
+    \left\langle \nabla \lambda, s \right\rangle_{\tilde{L}^2}-
+    \left\langle \lambda, q \right\rangle_{L^2}+
+    \left\langle \mu, e - \nabla u \right\rangle_{\tilde{L}^2}.\textrm{''}
+\end{equation}
+\end{problem}
+
+Now to introduce the two last QPLCs, we need to define the following spaces:
+$$L^2_n := \left\{ f \in L^2(\Omega_n, \mathbb{R}^d), n \in \{1,2\} \right\},$$
+$$\tilde{L}^2_n := \left\{ e \in L^2(\Omega_n, \mathbb{F}^d), n \in \{1,2\} \right\},$$
+$$H^1_{0n} := \left\{ u \in H^1_0(\Omega_n, \mathbb{R}^d), n \in \{1,2\} \right\},$$
+$$H^1_n := \left\{ u \in H^1(\Omega_n, \mathbb{R}^d) : \left. u \right|_{\partial \Omega_n \setminus \Gamma} = 0, n \in \{1,2\} \right\},$$
+$$H^\frac12:= \left\{ t \in L^2(\Gamma, \mathbb{R}^d): t = \left. u \right|_{\Gamma} \: \forall \: u \in H^1_n, n \in \{1,2\} \right\}.$$
+
+\begin{problem}[QPLC2]
+Given the data set $\{\!(\mathfrak{e}_1,\!\mathfrak{s}_1),\!(\mathfrak{e}_2,\!\mathfrak{s}_2)\!\}$, the partition $\left\{\Omega_1, \Omega_2 \right\}$ and the non-empty internal interface $\Gamma = \partial \Omega_1 \cap \partial \Omega_2$.
+Let
+\begin{multline}
+x := 
+(u_1, u_2, e_1, e_2, s_1, s_2, r)
+\in X \approx \\
+H^1_1 \times
+H^1_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+H^{-\frac12}
+\end{multline}
+and
+\begin{equation}
+y :=
+(\lambda_1, \lambda_2, \mu_1, \mu_2, \nu)
+\in Y \approx
+H^1_1 \times
+H^1_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+H^{-\frac12}.
+\end{equation}
+Then, find $(x^*, y^*)$ such that
+\begin{multline}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac12 \sum_{n=1}^{2}
+\left(
+\|e_n -\chi_{\Omega_n}\mathfrak{e}_n\|^2_{\tilde{L}^2_n}+
+\right.
+\right.
+\\
+\left.
+\left.
+\|s_n -\chi_{\Omega_n}\mathfrak{s}_n\|^2_{\tilde{L}^2_n}
+\right)+
+\Phi_2(y,x)
+\right\},
+\end{multline}
+where
+\begin{multline}
+    \Phi_2(y,x) :=
+    \sum_{n=1}^{2}
+    \left(
+    \left\langle \nabla \lambda_n, s_n \right\rangle_{\tilde{L}^2_n}-
+    \left\langle \lambda_n, q_n \right\rangle_{L^2_n}+
+    \left\langle \mu_n, e_n - \nabla u_n \right\rangle_{\tilde{L}^2_n}\right.+\\
+    \left. \alpha_{\Gamma n} \left \langle \lambda_n, r \right \rangle_{H^\frac12}
+    \right)+
+    \left\langle \nu, \alpha_{\Gamma 1} u_1+ \alpha_{\Gamma n} u_2\right\rangle_{H^\frac12}
+\end{multline}
+with $\alpha_{\Gamma n}:=\check{n}_\Gamma\cdot \check{n}_{\partial \Omega_n}$, where $\check{n}_\Gamma$, $\check{n}_{\partial \Omega_1}$ and $\check{n}_{\partial \Omega_2}$ stand for the normal unit vectors on $\Gamma$, $\partial \Omega_1$ and $\partial \Omega_2$, respectively.''
+\end{problem}
+
+\begin{problem}[QPLC3]
+Given the data set $\{\!(\mathfrak{e}_1,\!\mathfrak{s}_1),\!(\mathfrak{e}_2,\!\mathfrak{s}_2)\!\}$, the partition $\left\{\Omega_1, \Omega_2 \right\}$ and the non-empty internal interface $\Gamma = \partial \Omega_1 \cap \partial \Omega_2$.
+Let
+\begin{multline}
+x := 
+(u_1, u_2, e_1, e_2, s_1, s_2, r_1, r_2, t)
+\in X \approx \\
+H^1_1 \times
+H^1_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+H^{-\frac12} \times
+H^{-\frac12} \times
+H^\frac12
+\end{multline}
+and
+\begin{equation}
+y :=
+(\lambda_1, \lambda_2, \mu_1, \mu_2, \nu_1, \nu_2, \tau)
+\in Y \approx
+H^1_1 \times
+H^1_2 \times
+\tilde{L}^2_1 \times
+\tilde{L}^2_2 \times
+H^{-\frac12} \times
+H^{-\frac12} \times
+H^\frac12.
+\end{equation}
+Then, find $(x^*, y^*)$ such that
+\begin{multline}
+(x^*, y^*) =
+\arg
+\left\{
+\inf_{x \in X}
+\sup_{y \in Y}
+\frac12 \sum_{n=1}^{2}
+\left(
+\|e_n -\chi_{\Omega_n}\mathfrak{e}_n\|^2_{\tilde{L}^2_n}+
+\right.
+\right.
+\\
+\left.
+\left.
+\|s_n -\chi_{\Omega_n}\mathfrak{s}_n\|^2_{\tilde{L}^2_n}
+\right)+
+\Phi_3(y,x)
+\right\},
+\end{multline}
+where
+\begin{multline}
+    \Phi_3(y,x) :=
+    \sum_{n=1}^{2}
+    \left(
+    \left\langle \nabla \lambda_n, s_n \right\rangle_{\tilde{L}^2_n}-
+    \left\langle \lambda_n, q_n \right\rangle_{L^2_n}-
+    \left \langle \lambda_n, r_n \right \rangle_{H^\frac12}
+    \right.
+    +\\
+    \left.
+    \left\langle \mu_n, e_n - \nabla u_n \right\rangle_{\tilde{L}^2_n}+
+    \left\langle \nu_n, t-u_n\right\rangle_{H^\frac12}+
+    \left \langle \tau, r_n \right \rangle_{H^\frac12}    
+    \right).\textrm{''}
+\end{multline}
+\end{problem}
+
+\subsubsection{QPLC0}
+To analyze QPLC0, we need to introduce the following definitions:
+\begin{align}
+    a(x,x) &: = \|\nabla u\|^2_{\tilde{L}^2} + \|s\|^2_{\tilde{L}^2}, \\
+    b(y,x) &: = \left\langle \nabla \lambda, s\right\rangle_{\tilde{L}^2}, \\
+    f(x)   &: = \left( \nabla u , \tilde{e} \right)_{\tilde{L}^2} + \left( s , \tilde{s} \right)_{\tilde{L}^2} , \\
+    g(y)   &: = \left\langle \lambda , q \right\rangle_{L^2}.
+\end{align}
+%Where $\tilde{u}$ stands for the weak-solution of $\nabla \cdot (\nabla u) = \nabla \cdot \tilde{e}$ in $\Omega$ and $u = 0$ on $\partial \Omega$, see appendix A.
+
+\begin{remark}
+In general, we would not assume further regularity on $\tilde{e}$ since the dataset does not provide, in principle, sufficient information on the smoothness of the constitutive manifold.   
+\end{remark}
+
+We these at hand, we can rewrite QPLC0 in the form of a generic QPLC.
+
+\begin{proposition}
+QPLC0 is solvable and has a unique solution.
+\end{proposition}
+
+\begin{proof}
+By inspection, we confirm that $a(\cdot, \cdot)$, $b(\cdot, \cdot)$, $f(\cdot)$ and $g(\cdot)$ are bounded.
+
+Then, we identify $K$, the kernel of $b(y, \cdot)$, which has
+\begin{equation}
+\Span(K) := \left \{ (u_0, s_0) \right \} \subset X,
+\end{equation}
+where $0 \neq u_0 \in H^1_0$ and $0 \neq s_0 \in \tilde{L}^2$ such that $\nabla \cdot s_0 = 0$. Moreover, the kernel of $b(\cdot, x)$ only contains the $0$. The evaluation of $a(\cdot,\cdot)$ in $\Span(K)$ confirms that the coercivity condition is satisfied. Additionally, the coercivity condition on all $X$ is also given.
+
+To check the $\inf-\sup$ condition, let us take, for instance,
+\begin{equation}
+x(y) = (0, c_{P}^2\nabla \lambda),
+\end{equation}
+where
+\begin{equation}\|\lambda\|_{H^1_0} \leq c_P \|\nabla \lambda\|_{\tilde{L}^2}.
+\end{equation}
+The evaluation of $b(y, \cdot)$ in $x(y)$ confirms that the  $\inf-\sup$ condition is satisfied.
+\end{proof}
+
+Finally by considering further regularity on $u$ and $s$, we arrive to the following strong form of the optimally conditions: 
+\begin{equation}    
+\left\lbrace
+\begin{array}{c}
+\left.
+\begin{array}{rl}
+	\nabla \cdot (\nabla u)         &=-\tilde{u}, \\
+    \\
+    s+\nabla \lambda &= \tilde{s}, \\
+	\\
+	\nabla \cdot s   &=-q,
+\end{array}
+\right\rbrace \quad \textrm{in} \quad \Omega,
+\\
+\\
+\begin{array}{rl}
+u &= 0
+\quad \end{array}
+\textrm{on} \quad \partial\Omega.
+\end{array}
+\right. 
+\end{equation}
+
+\subsubsection{QPLC1}
+
+To analyze QPLC1, we need to introduce the following bilinear and linear forms:
+\begin{align}
+    a(x,x) & := \|e\|^2_{\tilde{L}^2} + \|s\|^2_{\tilde{L}^2}, \\
+    b(y,x) & := \left\langle \nabla \lambda, s\right\rangle_{\tilde{L}^2}+\left\langle \mu, e- \nabla u \right\rangle_{\tilde{L}^2}, \\
+    f(x)   & := \left( e , \tilde{e} \right)_{\tilde{L}^2} + \left( s , \tilde{s} \right)_{\tilde{L}^2} , \\
+    g(y)   & := \left\langle \lambda , q \right\rangle_{L^2}.
+\end{align}
+With these at hand, we can rewrite QPLC1 in the form of a generic QPLC.
+
+\begin{proposition}
+QPLC1 is solvable and has a unique solution.
+\end{proposition}
+
+\begin{proof}
+By inspection, we have that $a(\cdot, \cdot)$, $b(\cdot, \cdot)$, $f(\cdot)$ and $g(\cdot)$ are bounded.
+
+Then, we identify $K$, the kernel of $b(y, \cdot)$, which has
+\begin{equation}
+\Span(K) := \left \{ (u_0, \nabla u_0, 0),(0, 0, s_0) \right \} \subset X,
+\end{equation}
+where $0 \neq u_0 \in H^1_0$ and $0 \neq s_0 \in \tilde{L}^2$ such that $\nabla \cdot s_0 = 0$. Moreover, the kernel of $b(\cdot, x)$ only contains the $0$. The evaluation of $a(\cdot,\cdot)$ in $\Span(K)$ confirms that the coercivity condition is satisfied. 
+
+To check the $\inf-\sup$ condition, let us take, for instance,
+\begin{equation}
+x(y) = \left(0, \mu, c_P^2\nabla \lambda\right).    
+\end{equation}
+The evaluation of $b(y,\cdot)$ in $x(y)$ confirms that the $\inf-\sup$ condition is satisfied.
+\end{proof}
+
+Finally by considering further regularity on $s$ and $\mu$, we arrive to the following strong form of the optimally conditions:
+\begin{equation}    
+\left\lbrace
+\begin{array}{c}
+\left.
+\begin{array}{rl}
+	\nabla \cdot \mu &=0, \\
+    \\
+    e+\mu            &=\tilde{e}, \\
+    \\
+    s+\nabla \lambda &= \tilde{s}, \\
+	\\
+	\nabla \cdot s   &=-q, \\
+    \\
+    e-\nabla u       &= 0,
+\end{array}
+\right\rbrace \quad \textrm{in} \quad \Omega,
+\\
+\\
+\begin{array}{rl}
+u = \lambda = 0
+\quad \end{array}
+\textrm{on} \quad \partial\Omega.
+\end{array}
+\right. 
+\end{equation}
+
+\subsubsection{QPLC2}
+
+To analyze QPLC2, we need to introduce the following bilinear and linear forms:
+\begin{align}
+    a(x,x) & := \sum_{n=1}^2 \left( \|e_n\|^2_{\tilde{L}^2_n} + \|s_n\|^2_{\tilde{L}^2_n} \right), \\
+    b(y,x)    & := b_\Omega(y, x) + b_\Gamma(y, x), \\
+    b_\Omega(y,x) &:= \sum_{n=1}^2 \left(\left\langle \nabla \lambda_n, s_n\right\rangle_{\tilde{L}^2_n} + \left\langle \mu_n, e_n-\nabla u_n\right\rangle_{\tilde{L}^2_n} \right),\\
+    b_\Gamma(y,x) &:= \sum_{n=1}^2 \alpha_{\Gamma n} \left( \left\langle \Tr_n\lambda_n, r\right\rangle_{H^\frac12} + \left\langle \nu, \Tr_n u_n \right\rangle_{H^\frac12}\right),\\
+    f(x)   & := \sum_{n=1}^2 \left(\left( e_n , \tilde{e}_n \right)_{\tilde{L}^2_n} + \left( s_n , \tilde{s}_n \right)_{\tilde{L}^2_n} \right), \\
+    g(y)   & := \sum_{n=1}^2 \left\langle \lambda_n , q_n \right\rangle_{L^2_n}.
+\end{align}
+With these at hand, we can rewrite QPLC2 in the form of a generic QPLC.
+
+\begin{proposition}
+QPLC2 is solvable and has a unique solution.
+\end{proposition}
+
+\begin{proof}
+By inspection, we have that $a(\cdot, \cdot)$, $b(\cdot, \cdot)$, $f(\cdot)$ and $g(\cdot)$ are bounded. 
+Then, we identify $K$, the kernel of $b(y, \cdot)$, which has
+\begin{multline}
+\Span(K) :=\\
+            \left \{ (          u_{01},               0,                     \nabla u_{01},                                  0,      0,      0, 0),
+                     (               0,          u_{02},                                 0,                      \nabla u_{02},      0,      0, 0),
+                     (               0,               0,                                 0,                                  0, s_{01},      0, 0),\right.\\
+               \left.(               0,               0,                                 0,                                  0,      0, s_{02}, 0),
+                     ( \mathcal{E}_1 t, \mathcal{E}_2 t,\nabla\left(\mathcal{E}_1 t\right), \nabla\left(\mathcal{E}_2 t\right),      0,      0, 0)\right \} \subset X,
+\end{multline}
+where $0 \neq u_{0n} \in H^1_{0n}$, $0 \neq s_{0n} \in \tilde{L}^2_n$ such that $\nabla \cdot s_{0n} = 0$ and $n\cdot s_0 = 0$ at $\Gamma$, $\mathcal{E}_n : H^\frac12 \to H^1_n$ the extension operator, see appendix A, and $t \in H^\frac12$. Moreover, the kernel of $b(\cdot, x)$ only contains the $0$. The evaluation of $a(\cdot,\cdot)$ in $\Span(K)$ confirms that the coercivity condition is satisfied.
+
+To check the $\inf-\sup$ condition, let us take, for instance,
+\begin{equation}
+x(y) = \left(u_1(\nu), u_2(\nu), \mu_1+\nabla u_1(\nu), \mu_2+\nabla u_2(\nu),
+c_{P_1}^2\nabla \lambda_1, c_{P_2}^2\nabla \lambda_2, 0\right),    
+\end{equation}
+where
+\begin{equation}\|\lambda_n\|_{H^1_n} \leq c_{P_n} \|\nabla \lambda_n\|_{\tilde{L}^2_n}
+\end{equation}
+and
+\begin{equation}
+    u_n(\nu) = \alpha_{\Gamma n}\frac12 \Riesz_n \Tr\adj_n \nu
+\end{equation}
+with $\Tr\adj_n$ representing the adjoint trace operator, $\Riesz_n$ standing for the operator associated to the Riesz representation.
+The evaluation of $b(y, \cdot)$ in $x(y)$ yields
+\begin{equation}
+b(y, x(y)) = 
+c_{P_1}^2\|\nabla \lambda_1\|^2_{\tilde{L}^2_1}+
+c_{P_2}^2\|\nabla \lambda_2\|^2_{\tilde{L}^2_2}+
+\|\mu_1\|^2_{\tilde{L}^2_1}+\|\mu_2\|^2_{\tilde{L}^2_2}+\|\nu\|^2_{H^{-\frac12}} \gtrsim \|y\|^2_{Y}  
+\end{equation}
+which confirms that the $\inf-\sup$ condition is satisfied.
+\end{proof}
+
+Finally by considering further regularity on $s_n$ and $\mu_n$, we arrive to the following strong form of the optimally conditions:
+
+\begin{equation}
+\left\lbrace
+\begin{array}{c}
+\begin{array}{c c}
+\left.
+\begin{array}{rl}
+	\nabla \cdot \mu_n     &= 0,\\
+    \\
+    e_n + \mu_n            &= \tilde{e}_n,\\
+    \\
+    s_n + \nabla \lambda_n &= \tilde{s}_n,\\
+	  \\
+	\nabla \cdot s_n       &=-q_n,\\
+    \\
+    e_n - \nabla u_n       &= 0,
+\end{array}
+\right\rbrace \textrm{ in } \Omega_n,
+&
+\left.
+\begin{array}{rl}
+	  \mu_n\cdot\check{n}_n - \alpha_{\Gamma n} \nu        &= 0,\\
+    \\
+    \sum_{n = 1}^2 \alpha_{\Gamma n} \lambda_n &= 0,\\ 
+    \\
+    s_n\cdot\check{n}_n + \alpha_{\Gamma n} r            &= 0,\\
+    \\
+    \sum_{n = 1}^2 \alpha_{\Gamma n} u_n       &= 0, 
+\end{array}
+\right\rbrace \textrm{ on } \Gamma,
+\end{array}
+\\
+\\
+u_n = \lambda_n = 0 \quad \textrm{on} \quad \partial \Omega_n \setminus \Gamma, \quad n \in \{ 1,2\}.
+\end{array}
+\right. 
+\end{equation}
+
+\subsubsection{QPLC3}
+
+To analyze QPLC3, we need to introduce the following bilinear and linear forms:
+\begin{align}
+    a(x,x)    & := \sum_{n=1}^2 \left( \|e_n\|^2_{\tilde{L}^2_n} + \|s_n\|^2_{\tilde{L}^2_n} \right), \\
+    b(y,x)    & :=  b_\Omega(y, x) + b_\Gamma(y, x), \\
+    b_\Omega(y,x) &:= \sum_{n=1}^2 \left( \left\langle \nabla \lambda_n, s_n\right\rangle_{\tilde{L}^2_n} + \left\langle \mu_n, e_n-\nabla u_n\right\rangle_{\tilde{L}^2_n}\right),\\
+    b_\Gamma(y,x) &:= \sum_{n=1}^2 \left(- \left\langle \Tr_n \lambda_n, r_n\right\rangle_{H^\frac12} + \left\langle \nu_n, t - \Tr_n u_n \right\rangle_{H^\frac12} + \left\langle \tau, r_n\right\rangle_{H^\frac12}\right),\\
+    f(x)   & := \sum_{n=1}^2 \left(\left( e_n , \tilde{e}_n \right)_{\tilde{L}^2_n} + \left( s_n , \tilde{s}_n \right)_{\tilde{L}^2_n} \right), \\
+    g(y)   & := \sum_{n=1}^2 \left\langle \lambda_n , q_n \right\rangle_{L^2_n}.
+\end{align}
+With these at hand, we can rewrite QPLC3 in the form of a generic QPLC.
+
+\begin{proposition}
+QPLC3 is solvable and has a unique solution.
+\end{proposition}
+
+\begin{proof}
+By inspection, we have that $a(\cdot, \cdot)$, $b(\cdot, \cdot)$, $f(\cdot)$ and $g(\cdot)$ are bounded. %Moreover, $a(\cdot, \cdot)$ is coercive on $K$ and $b(\cdot, \cdot)$ satisfies the $\inf-\sup$ condition.
+
+Then, we identify $K$, the kernel of $b(y, \cdot)$, which has
+\begin{multline}
+\Span(K) :=
+            \left \{ (          u_{01},               0,                     \nabla u_{01},                                  0,      0,      0, 0, 0, 0),
+                     (               0,          u_{02},                                 0,                      \nabla u_{02},      0,      0, 0, 0, 0),\right.\\
+               \left.(               0,               0,                                 0,                                  0, s_{01},      0, 0, 0, 0),
+                     (               0,               0,                                 0,                                  0,      0, s_{02}, 0, 0, 0),\right.\\
+               \left.( \mathcal{E}_1 t, \mathcal{E}_2 t,\nabla\left(\mathcal{E}_1 t\right), \nabla\left(\mathcal{E}_2 t\right),      0,      0, 0, 0, t)\right \} \subset X,
+\end{multline}
+where $0 \neq u_{0n} \in H^1_{0n}$, $0 \neq s_{0n} \in \tilde{L}^2_n$ such that $\nabla \cdot s_{0n} = 0$ and $n\cdot s_0 = 0$ at $\Gamma$, $\mathcal{E}_n : H^\frac12 \to H^1_n$ and $t \in H^\frac12$. Moreover, the kernel of $b(\cdot, x)$ only contains the $0$.
+The evaluation of $a(\cdot, \cdot)$ in $\Span(K)$ confirms that the coercivity condition is satisfied.
+
+To check the $\inf-\sup$ condition, let us take, for instance,
+\begin{multline}
+x(y) =
+\Big(
+u_1(\nu_1, \nu_2), u_2(\nu_1, \nu_2), \mu_1+\nabla u_1(\nu_1, \nu_2), \mu_2+\nabla u_2(\nu_1, \nu_2),
+\\
+c_{P_1}^2(1+c_{T_1}^2)\nabla \lambda_1, c_{P_2}^2(1+c_{T_2}^2)\nabla \lambda_2, \Riesz\adj_\Gamma \tau + \Tr_1 \lambda_1, \Riesz\adj_\Gamma \tau + \Tr_2 \lambda_2, \frac13\Riesz_\Gamma(\nu_1+\nu_2)
+\Big),    
+\end{multline}
+where
+\begin{equation}
+\|\Tr_n \lambda_n\|_{H^\frac12} \leq c_{T_n} \|\lambda_n\|_{H^1_n},
+\end{equation}
+and
+\begin{equation}
+    u_1(\nu_1, \nu_2) = \frac13\Riesz_1 \Tr\adj_1 (\nu_2-2\nu_1)
+\end{equation}
+and
+\begin{equation}
+    u_2(\nu_1, \nu_2) = \frac13\Riesz_2 \Tr\adj_2 (\nu_1-2\nu_2).
+\end{equation}
+The evaluation of $b(y, \cdot)$ in $x(y)$ yields
+\begin{multline}
+b(y, x(y)) = 
+c_{P_1}^2(1+c_{T_1}^2)\|\nabla \lambda_1\|^2_{\tilde{L}^2_1}-\left\| \Tr_1 \lambda_1 \right\|^2_{H^\frac12}+\|\mu_1\|^2_{\tilde{L}^2_1}+
+\\
+c_{P_2}^2(1+c_{T_2}^2)\|\nabla \lambda_2\|^2_{\tilde{L}^2_2}-\left\| \Tr_2 \lambda_2 \right\|^2_{H^\frac12}+\|\mu_2\|^2_{\tilde{L}^2_2}+
+\\
+\|\nu_1\|^2_{H^{-\frac12}}+\|\nu_2\|^2_{H^{-\frac12}}+2\|\tau\|^2_{H^\frac12} \gtrsim \|y\|^2_{Y}    
+\end{multline}
+which confirms that the $\inf-\sup$ condition is satisfied.
+\end{proof}
+
+Finally by considering further regularity on $s_n$ and $\mu_n$, we arrive to the following strong form of the optimally conditions:
+\begin{equation}
+\left\lbrace
+\begin{array}{c}
+\begin{array}{c c}
+\left.
+\begin{array}{rl}
+	\nabla \cdot \mu_n     &= 0,\\
+    \\
+    e_n + \mu_n            &= \tilde{e}_n,\\
+    \\
+    s_n + \nabla \lambda_n &= \tilde{s}_n,\\
+	  \\
+	\nabla \cdot s_n       &=-q_n,\\
+    \\
+    e_n - \nabla u_n       &= 0,
+\end{array}
+\right\rbrace \textrm{ in } \Omega_n,
+&
+\left.
+\begin{array}{rl}
+	  \mu_n\cdot\check{n}_n + \nu_n  &= 0,\\
+    \\
+    \sum_{n = 1}^2 \nu_n &= 0,\\
+    \\
+    \tau-\lambda_n                 &= 0,\\ 
+    \\
+    s_n\cdot\check{n}_n - r_n      &= 0,\\
+    \\
+    \sum_{n = 1}^2 r_n   &= 0,\\
+    \\
+    t - u_n                        &= 0, 
+\end{array}
+\right\rbrace \textrm{ on } \Gamma,
+\end{array}
+\\
+\\
+u_n = \lambda_n = 0 \quad \textrm{on} \quad \partial \Omega_n \setminus \Gamma, \quad n \in \{ 1,2\}.
+\end{array}
+\right. 
+\end{equation}
+
+\subsubsection{Equivalence among the four QPLCs}
+
+\begin{proposition}
+    QPLC0-3 are equivalent provided that $\Omega_n$ are regular enough.     
+\end{proposition}
+
+To proof the equivalence, let us take the solution of any of the QPLCs. First, we are going map the chosen solution to the spaces on which the remaining QPLCs are defined and second, we are going to show that each one of these mapped solutions is indeed a solution of the corresponding QLPC. Finally by invoking uniqueness, the equivalence among all QLPCs is given, and thus, the claim is completed.
+
+Particularly for the second step, we need to show that the Lagrangian of the original problem $L_a$, which evaluated in $z_a \in Z_a $ is such that $L'_a(z_a) = 0$, and the Lagrangian $L_b$ of anyone of the remaining QPLCs, for which the chosen solution has been mapped, evaluated in  $z_b(z_a) \in Z_b$ differ only in a constant $C$, i.e., 
+\begin{equation}
+L_b(z_b(z_a))-L_a(z_a) = C.
+\label{eq:L_b-L_a}
+\end{equation}
+The variation of such should satisfy
+\begin{equation}
+\left(L_b'(z_b(z_a))\B_{a \to b}-L'(z_a)\right)\delta z_a = 0    
+\end{equation}
+for any $\delta z_a \in Z_a$, where $\B_{a \to b} \in L(Z_a, Z_b)$ stands for the operator that maps the solution $z_a \in Z_a$ into $Z_b$ provided that $Z_a \subseteq Z_b$. Thus,
+\begin{equation}
+L'(z_a) = 0 \rightarrow L_b'(z_b(z_a))\B_{a \to b} \delta z_a = 0 \rightarrow L_b'(z_b(z_a)) = 0.
+\end{equation}
+
+In summary, we need to show that (\ref{eq:L_b-L_a}) holds and that $\B_{a \to b}$ is injective, i.e.,$\|z_a\|_{Z_a} \lesssim \|\B_{a \to b} z_a\|_{Z_b}$ for any $z_a \in Z_a$.
+
+\begin{proof}
+Given the unique solution for QPLC0, i.e., $z_0 = (\bar{u},\bar{s},\bar{\lambda}) \in Z_0$,
+
+it is enough to show that: \textit{i}) QPLC0 $\iff$ QPLC1; \textit{ii}) QPLC0 $\iff$ QPLC3; and, \textit{iii}) QPLC0 $\iff$ QPLC3.
+
+\noindent \textit{i}) QPLC0$\iff$QPLC1: Let
+\begin{equation}
+\left\lbrace
+\begin{array}{rll}
+    u       &= \bar{u},\\
+    e       &= \nabla \bar{u},\\
+    s       &= \bar{s},\\
+    \lambda &= \bar{\lambda},\\
+    \mu     &= \bar{s},
+    \end{array}
+\right\rbrace \quad \textrm{in} \quad \Omega
+\end{equation}
+be such that $z_1(z_0) = \B_{0 \to 1} (z_0)$ is a mapped solution into $Z_1$
+and $a_1(\cdot,\cdot)$, $b_1(\cdot, \cdot)$, $f_1(\cdot)$ and $g_1(\cdot)$ be the bilinear and linear forms corresponding to QPLC1.
+Then, we have that
+\begin{align}
+a_1(x_1(z_0), x_1(z_0)) &= \|\nabla \bar{u}\|^2_{\tilde{L}^2}+\|\bar{s}\|^2_{\tilde{L}^2} = a_0(x_0, x_0),\\
+b_1(x_1(z_0), y_1(z_0)) &= \left\langle \nabla \bar{\lambda}, \bar{s} \right\rangle_{\tilde{L}^2} = b_0(y_0, x_0),\\
+f_1(x_1(z_0))   &= \left( \nabla \bar{u}, \tilde{e}\right)_{\tilde{L}^2} + \left( \bar{s}, \tilde{s}\right)_{\tilde{L}^2} = f_0(x_0), \\
+g_1(y_1(z_0))   &= \left\langle \bar{\lambda} , q \right\rangle_{L^2}  = g_0(y_0),
+\end{align}
+which implies that $C_1 = L_1(x_1(x_0))-L_0(x_0) = 0$.
+Moreover, we have as well that
+\begin{equation}
+\left\|z_0\right\|_{Z_0}
+\lesssim
+\left\|\B_{0 \to 1}(z_1)\right\|_{Z_1}
+\lesssim
+\left\|z_0\right\|_{Z_0}.
+\end{equation}
+As QPLC1 has a unique solution, the equivalence between QPLC0 and QPLC1 is established.\\ 
+
+\noindent \textit{ii}) QPLC0$\iff$QPLC2: Let
+\begin{equation}
+\left\lbrace
+\begin{array}{rll}
+    u_n       &= \bar{u}                                        & \quad \textrm{in} \quad \Omega_n,\\
+    e_n       &= \nabla \bar{u}                                 & \quad \textrm{in} \quad \Omega_n,\\
+    s_n       &= \bar{s}                                        & \quad \textrm{in} \quad \Omega_n,\\
+    r         &= (\alpha_{\Gamma 1}\bar{s}_1+\alpha_{\Gamma 2}\bar{s}_2) \cdot \check{n}_\Gamma = 0   & \quad \textrm{on} \quad \Gamma,\\
+    \lambda_n &= \bar{\lambda}                                  & \quad \textrm{in} \quad \Omega_n,\\
+    \mu_n     &= \bar{s}                                        & \quad \textrm{in} \quad \Omega_n,\\
+    \nu       &= (\alpha_{\Gamma 1}\bar{s}_1+\alpha_{\Gamma 2}\bar{s}_2) \cdot \check{n}_\Gamma = 0   & \quad \textrm{on} \quad \Gamma,\\
+    %\bar{s}_n &= \lim_{\varepsilon \to 0} \bar{s}(\gamma + \varepsilon \alpha_{\Gamma n} \check{n}) & \quad \forall \gamma \in \Gamma,
+\end{array}
+\right.
+\end{equation}
+be such that $z_2(z_0) = \B_{0 \to 2} (z_0)$ is a mapped solution into $Z_2$
+and $a_2(\cdot,\cdot)$, $b_2(\cdot, \cdot)$, $f_2(\cdot)$ and $g_2(\cdot)$ be the bilinear and linear forms corresponding to QPLC2.
+Then, we have that
+\begin{align}
+a_2(x_2(z_0), x_2(z_0)) &= \|\nabla \bar{u}\|^2_{\tilde{L}^2}+\|\bar{s}\|^2_{\tilde{L}^2} = a_0(x_0, x_0),\\
+b_2(x_2(z_0), y_2(z_0)) &= \left\langle \nabla \bar{\lambda}, \bar{s} \right\rangle_{\tilde{L}^2} = b_0(y_0, x_0),\\
+f_2(x_2(z_0))   &= \left( \nabla \bar{u}, \tilde{e}\right )_{\tilde{L}^2} + \left( \bar{s}, \tilde{s}\right)_{\tilde{L}^2} = f_0(x_0), \\
+g_2(y_2(z_0))   &= \left\langle \bar{\lambda} , q \right\rangle_{L^2}  = g_0(y_0),
+\end{align}
+which implies that $C_2 = L_2(x_2(x_0))-L_0(x_0) = 0$.
+Moreover, we have as well that
+\begin{equation}
+\left\|z_0\right\|_{Z_0}
+\lesssim
+\left\|\B_{0 \to 2}(z_0)\right\|_{Z_2}
+\lesssim
+\left\|z_0\right\|_{Z_0}.
+\end{equation}
+As QPLC2 has a unique solution, the equivalence between QPLC0 and QPLC2 is established.\\ 
+
+\noindent \textit{iii}) QPLC0$\iff$QPLC3: Let
+\begin{equation}
+\left\lbrace
+\begin{array}{rll}
+    u_n       &= \bar{u}                   & \quad \textrm{in} \quad \Omega_n,\\
+    e_n       &= \nabla \bar{u}            & \quad \textrm{in} \quad \Omega_n,\\
+    s_n       &= \bar{s}                   & \quad \textrm{in} \quad \Omega_n,\\
+    r_n       &= \bar{s} \cdot \check{n}_n & \quad \textrm{on} \quad \Gamma,\\
+    t         &= \bar{u}                   & \quad \textrm{on} \quad \Gamma,\\
+    \lambda_n &= \bar{\lambda}             & \quad \textrm{in} \quad \Omega_n,\\
+    \mu_n     &= \bar{s}                   & \quad \textrm{in} \quad \Omega_n,\\
+    \nu_n     &= \bar{s} \cdot \check{n}_n & \quad \textrm{on} \quad \Gamma,\\
+    \tau      &= \bar{\lambda}             & \quad \textrm{on} \quad \Gamma,
+\end{array}
+\right.
+\end{equation}
+be such that $z_3(z_0) = \B_{0 \to 3} (z_0)$ is a mapped solution into $Z_3$
+and $a_3(\cdot,\cdot)$, $b_3(\cdot, \cdot)$, $f_3(\cdot)$ and $g_3(\cdot)$ be the bilinear and linear forms corresponding to QPLC3.
+Then, we have that
+\begin{align}
+a_3(x_3(z_0), x_3(z_0)) &= \|\nabla \bar{u}\|^2_{\tilde{L}^2}+\|\bar{s}\|^2_{\tilde{L}^2} = a_0(x_0, x_0),\\
+b_3(x_3(z_0), y_3(z_0)) &= \left\langle \nabla \bar{\lambda}, \bar{s} \right\rangle_{L^2} = b_0(y_0, x_0),\\
+f_3(x_3(z_0))   &= \left( \nabla \bar{u}, \tilde{e}\right)_{\tilde{L}^2} + \left( \bar{s}, \tilde{s}\right)_{\tilde{L}^2} = f_0(x_0), \\
+g_3(y_3(z_0))   &= \left\langle \bar{\lambda} , q \right\rangle_{L^2}  = g_0(y_0),
+\end{align}
+which implies that $C_3 = L_3(x_3(x_0))-L_0(x_0) = 0$.
+Moreover, we have as well that
+\begin{equation}
+\left\|z_0\right\|_{Z_0}
+\lesssim
+\left\|\B_{0 \to 3}(z_0)\right\|_{Z_3}
+\lesssim
+\left\|z_0\right\|_{Z_0}.
+\end{equation}
+As QPLC3 has a unique solution, the equivalence between QPLC0 and QPLC3 is established. 
+\end{proof}

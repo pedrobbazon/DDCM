@@ -1,0 +1,63 @@
+\section{}
+
+\subsection{Riesz representation}
+
+$$\Riesz: H' \to H \quad \textnormal{and} \quad \Riesz\adj: H \to H'$$
+For $v \in H$ and $w \in H'$
+$$
+\left\langle w, v\right\rangle_{H}=
+( \Riesz w, v)_{H}=
+( \Riesz\adj v, w )_{H'}=
+\left\langle v, w\right\rangle_{H'}
+$$
+
+\subsection{Right inverse of the trace operator a.k.a. extension}
+
+$$\ext:H^\frac12(\Gamma) \to H^1(\Omega)$$
+
+$$\left(v,u\right)_{H^1(\Omega)} := 
+\int_{\Omega} \left( v \cdot u + \nabla v : \nabla u\right) d \Omega $$
+
+For $v \in H^1_0(\Omega)$, $u \in \left(H^1_0(\Omega)\right)^{\perp}$ and $\hat{u} \in H^\frac12(\Gamma)$ such that $u = \ext(\hat{u})$, then
+
+$$\left(v,u\right)_{H^1(\Omega)} = \int_{\Omega} v \cdot u \: d \Omega +\int_{\partial \Omega} v \cdot D_nu \: d\partial\Omega - \int_{\Omega} v \cdot \Delta u \: d \Omega = 0$$
+
+$$\int_{\Omega} v \cdot \left(-\Delta u + u \right) \: d \Omega = 0 $$
+
+$$
+\left\lbrace
+\begin{array}{rll}
+	-\Delta u + u & = 0       & \textrm{in} \quad \Omega,\\
+	\\
+	u             & = \hat{u} & \textrm{on} \quad \Gamma.
+\end{array} 	
+\right. 
+$$
+
+\subsection{Adjoint operator of the trace operator}
+
+$$\Tr\adj:(H^\frac12(\Gamma))' \to (H^1(\Omega))'$$
+
+$$\left\langle v, w \right\rangle_{H^1(\Omega)} = \left( v, \Riesz w \right)_{H^1(\Omega)}$$
+
+$$\left\langle \Tr v, w \right\rangle_{H^\frac12(\Gamma)} = \left( \Tr v, \Riesz_\Gamma w \right)_{H^\frac12(\Gamma)}$$
+
+
+$$\left( v, \Riesz w \right)_{H^1(\Omega)} = \int_{\Omega} \left( v \cdot u + \nabla v : \nabla u\right) d \Omega = \left( \Tr v, \Riesz_\Gamma \hat{w} \right)_{H^\frac12(\Gamma)} $$
+
+for $v \in H^1(\Omega)$, $w \in (H^1(\Omega))'$ and $\hat{w}\in (H^\frac12(\Gamma))'$ such that $w = \Tr\adj \hat{w}$ and $u = \Riesz w$, then
+
+$$\left( v, u\right)_{H^1(\Omega)} = \int_{\Omega} v \cdot u \: d \Omega +\int_{\partial \Omega} v \cdot D_n u \: d\partial\Omega - \int_{\Omega} v \cdot \Delta w \: d \Omega = \left(\Tr v, \Riesz_\Gamma\hat{w}\right)_{H^\frac12 (\Gamma)}$$
+
+$$\int_{\Omega} v \cdot \left(-\Delta u + u \right) \: d \Omega +
+\int_{\Gamma} v \cdot \left(D_n u -\Riesz_\Gamma\hat{w}\right)\: d\partial\Omega = 0 $$
+
+$$
+\left\lbrace
+\begin{array}{rll}
+	-\Delta u + u           & = 0       & \textrm{in} \quad \Omega,\\
+	\\
+	D_n u & = \Riesz_\Gamma \hat{w} & \textrm{on} \quad \Gamma.
+\end{array} 	
+\right. 
+$$

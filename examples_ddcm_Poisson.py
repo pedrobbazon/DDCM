@@ -593,8 +593,8 @@ def main_EX4_():
     # In this manufactured example, we create by hand fluxes and grads 
     # without actually solving a synthetic problem:
     ti = time.time()
-    Nbc, Nth = 2, 5
-    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    Nbc, Nth = 3, 4
+    bcvals = np.linspace(1.0+1.e-15, 3.2, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     count = 0
@@ -642,7 +642,7 @@ def main_EX4_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA_EQUOR, orders=[1,1])
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FC, orders=[1,0])
 
     ddcm_prob.solve("myddcmsol")
 
@@ -801,6 +801,6 @@ def main_EX5_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_EX1_()
+main_EX4_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))

@@ -336,7 +336,7 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     dL += -fd.inner(dq, fd.grad(l)) * fd.dx
     dL +=  fd.inner(du, fd.div(m)) * fd.dx
     dL +=  fd.inner(dg, m) * fd.dx
-    dL +=(-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl) * fd.dx
+    dL +=(-fd.inner(q, fd.grad(dl)) - volumetric_source(x) * dl) * fd.dx(degree=4)
     dL += (fd.inner(g, dm) + fd.inner(u, fd.div(dm))) * fd.dx
 
     # Jacobian
@@ -345,7 +345,7 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
-        dL += -boundary_vals(x) * fd.inner(dm,n) * fd.ds
+        dL += -boundary_vals(x) * fd.inner(dm,n) * fd.ds(degree=4)
 
         # Homogeneous boundary condition for scalar Lagrange multiplier
         bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
@@ -429,7 +429,7 @@ def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     dL +=  fd.inner(fd.div(dq),l) * fd.dx
     dL += -fd.inner(fd.grad(du),m) * fd.dx
     dL +=  fd.inner(dg, m) * fd.dx
-    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl ) * fd.dx
+    dL += (fd.inner(fd.div(q), dl) - volumetric_source(x) * dl ) * fd.dx(degree=4)
     dL += (fd.inner(g, dm) -  fd.inner(fd.grad(u), dm)) * fd.dx
 
     # Jacobian
