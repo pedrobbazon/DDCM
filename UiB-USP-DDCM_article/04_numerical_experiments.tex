@@ -35,12 +35,35 @@ $$
 \begin{array}{rcll}
 \nabla \cdot \sD &=& q & \mbox{in}~\Omega,\\
 \\
-\sD &=& -\dfrac{K}{\mu} \nabla{\uD} & \mbox{in}~\Omega,\\
+\eD &=& \nabla{p} & \mbox{in}~\Omega \\
+\\
+\boldsymbol{\mathcal{F}}(\sD,\eD) &=& 0 & \mbox{in}~\Omega \\
 \\
 \uD &=& p_0(\mathbf{x}) & \mbox{on}~\partial\Omega
 \end{array}
 \right.
 $$
+in which $\boldsymbol{\mathcal{F}}$ stands for a flux law.
+In the simplest case, we have the classical Darcy model
+$$
+\boldsymbol{\mathcal{F}}(\sD,\eD) = \sD  + \dfrac{\mathbf{K}}{\mu} \eD = 0\\
+$$
+being $\mathbf{K}$ the permeability tensor and $\mu$ the viscosity of the fluid.
+We choose to present the equation in this format to
+handle the more complicated non-linear case in which the flux
+can not be obtained in terms of the pressure gradient trivially,
+e.g., in the Forcheimer's model
+$$
+\boldsymbol{\mathcal{F}}(\sD,\eD) = \eD + \mu\,\mathbf{K}^{-1}\,\sD +
+\beta \,\|\sD \|\, \sD = 0
+$$
+other non-linear models can also be considered.
+
+
+
+
+
+
 and in variational form
 
 
