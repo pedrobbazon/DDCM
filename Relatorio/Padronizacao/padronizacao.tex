@@ -16,5 +16,57 @@
 	pdftitle={Overleaf Example},
 	pdfpagemode=FullScreen,
 }
+\usepackage{booktabs} % For better table rules
 \usepackage{caption,subcaption}
-\usepackage{geometry}
+\usepackage{amsfonts}
+\usepackage{algorithmic}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+
+%\usepackage[a4paper]{geometry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\propositionautorefname}{Proposição}% naming the autoref proposition
+\newcommand{\exempleautorefname}{Exemplo}       % naming the autoref exemple
+\newcommand{\corolaryautorefname}{Corolário}    % naming the autoref corolary
+\newcommand{\definitionautorefname}{Definição}  % naming the autoref definition
+\newcommand{\lemmaautorefname}{Lema}            % naming the autoref lemma
+\newcommand{\exerciseautorefname}{Exercício}    % naming the autoref lemma
+\renewcommand{\theoremautorefname}{Teorema}     % renaming the autoref theorem
+
+\renewcommand{\appendixname}{Apêndice}          % renaming the body "appendix"
+\renewcommand{\appendixautorefname}{Apêndice}   % renaming the autoref appendix
+\renewcommand*{\proofname}{Demonstração}        % renaming the body "proof"
+
+\setlength{\parskip}{0.2cm}                     % control the space between paragrhaphes
+
+\setlength{\skip\footins}{1.5\baselineskip}      % control the space over the line of footnote
+
+\newtheoremstyle{style-one}          % name of the style to be used
+{10pt}                             % measure of space to leave above the theorem
+{8pt}                              % measure of space to leave below the theorem 
+{\slshape}                         % name of font to use in the body of the theorem
+{15pt}                             % measure of space to indent
+{\bfseries}                        % name of head font
+{.}                                % punctuation between head and body
+{ }                                % space after theorem head
+{\thmname{#1}\thmnumber{ #2}{\thmnote{ (#3)}}}
+
+\theoremstyle{style-one}
+\newtheorem{definition}{Definição}[section]
+\newtheorem{proposition}{Proposição}[section]
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{exemple}{Exemplo}[section]
+\newtheorem{exercise}{Exercício}[section]
+\newtheorem{lemma}{Lema}[section]
+
+\newtheorem*{definition*}{Definição}
+\newtheorem*{corolary}{Corolário}
+
+\renewcommand\qedsymbol{$\blacksquare$}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

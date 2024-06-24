@@ -1,18 +1,43 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 
 \input{Padronizacao/padronizacao}
 
-\title{Relatório de Estudos e Desenvolvimentos: PhD}
-\author{Pedro Balbão Bazon}
-\date{\the \year}
+%\title{\MakeUppercase{\large \textbf{Data-driven computational mechanics in porous media fluid flow \\A modern finite element approach for numerical simulation of oil reservoirs}}\\{\Large Instituto de Ciências Matemáticas e de Computação}}
+%\author{Pedro Balbão Bazon }
+%\date{\the \year}
 
 
 \begin{document}
 	
-	\maketitle
-	\clearpage
+	% --- Capa --- %
+	\begin{titlepage}
+		\begin{center}            
+			{\Large\textbf{\MakeUppercase{Data-driven computational mechanics in porous media fluid flow}}}
+			
+			
+			\vspace{0.5cm}
+			
+			{\Large A modern finite element approach for numerical simulation of oil reservoirs}
+			
+			\vfill
+			
+			{\large \textbf{Orientador: Prof. Dr. Roberto Federico Ausas} \\ \textbf{Orientado: Pedro Balbão Bazon}}
+			
+			\vfill
+			
+			\includegraphics[width=0.3\textwidth]{Figuras/Gerais/logo_icmc.png}
+			
+			
+			{\large UNIVERSIDADE DE SÃO PAULO} \\
+			Instituto de Ciências Matemáticas e de Computação (ICMC)\\
+			Programa de Pós-graduação em Ciência de Computação e Matemática Computacional\\
+			\date{\today}
+			
+		\end{center}
+	\end{titlepage}
+	\newpage
 	
-	%---List of figures---%
+ 	%---List of figures---%
 	\pdfbookmark[0]{\listfigurename}{lof}
 	\listoffigures
 	\cleardoublepage
@@ -28,7 +53,6 @@
 	%---Introduction---%
 	\include{Textual/Resumo}
 	
-	
 	%---Introduction---%
 	\include{Textual/Introducao}
 	
@@ -37,6 +61,9 @@
 	
 	%---Porous media models---%
 	\include{Textual/MeiosPorosos}
+	
+	%---Fomrulation---%
+	\include{Textual/Formulacao}
 	
 	%---Results---%
 	\include{Textual/Resultados}
@@ -50,6 +77,7 @@
 	
 	%---Appendix---%
 	
+	\newpage
 	
 	%---Bibliography---%
 	\bibliographystyle{abbrv}
