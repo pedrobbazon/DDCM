@@ -1,4 +1,4 @@
-\babel@toc {portuguese}{}\relax 
+\babel@toc {portuguese}{}
 \contentsline {section}{\numberline {1}Resumo}{4}{section.1}%
 \contentsline {section}{\numberline {2}Introdução}{5}{section.2}%
 \contentsline {section}{\numberline {3}Revisão Bibliográfica}{8}{section.3}%

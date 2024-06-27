@@ -1,19 +1,23 @@
-\section{Numerical experiments}
+\section{Numerical method and experiments}
 
 Two different problems are used to illustrate the behavior
 of the data-driven formulation introduced in the previous section,
 namely, the prototypical elliptic second order Poisson's problem, that
 models flow in porous media or heat conduction, as an example of a problem
-with scalar unknown and on the other hand, the also classical
+with scalar unknown and on the other hand, the classical
 elasticity problem as an example of an elliptic problem with
-vector unknown.
+vector unknown. We present the particular form
+of the NLSP1 formulation presented above for these
+two problems and propose some discrete versions of it
+obtained by different choices of spaces associated
+to finite element partitions of the computational domain.
 
 \subsection{Darcy's problem}
 
 With reference to the general formulation we have presented in the
 previous section, let us rewrite Darcy's problem with a more usual
 notation specific of flow in porous media by redefining the primal
-unknowns, namely the flux, the potential and the gradient measure
+unknowns, namely the flux, the potential and the gradient
 as follows
 \begin{itemize}
  \item Flux unknown: $s \leftarrow \sD$
@@ -25,7 +29,6 @@ whereas for the dual fields we adopt
  \item Mass balance constraint: $\lambda \leftarrow \lD$
  \item Compatibility constraint: $\mu \leftarrow \mD$
 \end{itemize}
-
 
 Let us first recall the standard or reference formulation for this
 problem in its mixed form with pure Dirichlet
@@ -60,7 +63,21 @@ $$
 other non-linear models can also be considered. 
 The standard problem will be solved for comparison purposes
 and also to produce plausible synthetic data to be used in the 
-data-driven case. We consider 
+data-driven case. This problem will be solved by a suitable
+finite element formulation when needed throughout the article
+(COLOCO LA FORMULACION VARIACIONAL DISCRETA??)
+
+\subsection{Discrete formulations}
+
+In the first place we introduce a finite element partition of
+the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
+such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$.
+We take as starting point the formulation NLSP1 for which 
+
+
+
+\subsubsection{Convergence of the data-driven formulation}
+
 
 
 
