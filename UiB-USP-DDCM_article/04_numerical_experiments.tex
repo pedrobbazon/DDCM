@@ -43,28 +43,24 @@ $$
 \end{array}
 \right.
 $$
-in which $\boldsymbol{\mathcal{F}}$ stands for a flux law.
-In the simplest case, we have the classical Darcy model
+in which $\boldsymbol{\mathcal{F}}$ stands for the flux law.
+In the simplest case, we have the classical Darcy's model
 $$
 \boldsymbol{\mathcal{F}}(\sD,\eD) = \sD  + \dfrac{\mathbf{K}}{\mu} \eD = 0\\
 $$
 being $\mathbf{K}$ the permeability tensor and $\mu$ the viscosity of the fluid.
-We choose to present the equation in this format to
-handle the more complicated non-linear case in which the flux
-can not be obtained in terms of the pressure gradient trivially,
+We choose to write the formulation in this way to be able
+to handle more complicated non-linear cases in which the flux
+can not be obtained explicitly in terms of the pressure gradient,
 e.g., in the Forcheimer's model
 $$
 \boldsymbol{\mathcal{F}}(\sD,\eD) = \eD + \mu\,\mathbf{K}^{-1}\,\sD +
 \beta \,\|\sD \|\, \sD = 0
 $$
-other non-linear models can also be considered.
-
-
-
-
-
-
-and in variational form
+other non-linear models can also be considered. 
+The standard problem will be solved for comparison purposes
+and also to produce plausible synthetic data to be used in the 
+data-driven case. We consider 
 
 
 
@@ -74,7 +70,7 @@ and in variational form
 
 With reference to the general formulation we have presented in the
 previous section, let us rewrite the elasticity problem with a more usual
-notation in solid mechanics problem by redefining the primal
+notation in the solid mechanics context by redefining the primal
 unknowns, namely the stress, the displacement and the deformation measure
 as follows
 \begin{itemize}
@@ -82,8 +78,7 @@ as follows
  \item Displacement unknown: $u \leftarrow \uE$
  \item Deformation unknown: $e \leftarrow \eE$
 \end{itemize}
-
-whereas for the dual fields we adopt
+whereas for the dual fields
 \begin{itemize}
  \item Equilibrium constraint: $\lambda \leftarrow \lE$
  \item Compatibility constraint: $\mu \leftarrow \mE$
