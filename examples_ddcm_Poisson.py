@@ -456,7 +456,7 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 50, 4
+    Nbc, Nth = 10, 10
     bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
@@ -500,7 +500,7 @@ def main_EX3_():
             flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
             count += 1
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
@@ -801,6 +801,6 @@ def main_EX5_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_EX4_()
+main_EX3_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
