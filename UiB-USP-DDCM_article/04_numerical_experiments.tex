@@ -60,25 +60,42 @@ $$
 \boldsymbol{\mathcal{F}}(\sD,\eD) = \eD + \mu\,\mathbf{K}^{-1}\,\sD +
 \beta \,\|\sD \|\, \sD = 0
 $$
-other non-linear models can also be considered. 
+where $\| \sD \| = (\sD \cdot \sD)^{1/2}$. 
+Other non-linear models can also be considered. 
 The standard problem will be solved for comparison purposes
 and also to produce plausible synthetic data to be used in the 
 data-driven case. This problem will be solved by a suitable
 finite element formulation when needed throughout the article
-(COLOCO LA FORMULACION VARIACIONAL DISCRETA??)
+(COLOCO LA FORMULACION VARIACIONAL DISCRETA??).
 
 \subsection{Discrete formulations}
 
-In the first place we introduce a finite element partition of
-the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
-such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$.
 We take as starting point the formulation NLSP1 specialized for 
-Darcy's problem, 
+Darcy's problem: Find primal fields $\uD \in H_0^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
+and dual fields $\lD \in H_0^1(\Omega)$, $\mD \in L^2(\Omega)$ that minimizes
 \begin{multline}
-\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
-
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
+\frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2}+
+\frac{1}{2}\|\sD-\tilde{\sD}\|^{2}_{L^{2}} =  \\
+- \int_{\Omega} \sD \cdot \nabla \lD \, d\mathbf{x} - \int_{\Omega} \lD \, q \, d\mathbf{x} + \int_{\Omega} \mD \cdot (\eD -  \nabla \uD)\,d\mathbf{x}
++ \\
++ \frac{1}{2} \int_{\Omega} \left[ (\sD - \tilde{\sD}) \cdot (\sD - \tilde{\sD}) + (\eD - \tilde{\eD}) \cdot (\eD - \tilde{\eD}) \right] \, d\mathbf{x},
 \end{multline}
-
+The concrete problem to be solved in this case is obtained
+by taking variations of this functional with respect to all fields
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \sD \in  L^2(\Omega) \\
+                 - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \uD \in H_0^1(\Omega) \\
+                \int_{\Omega}  \delta \eD \cdot (\eD - \tilde{\eD}) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD \cdot \mD) \, d\mathbf{x} & = 0, &\quad \forall \delta \eD \in  L^2(\Omega) \\
+                -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lambda \big) \, d\mathbf{x} & = 0, &\quad \forall \delta \lD \in H_0^1(\Omega) \\
+                \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = 0, &\quad \forall \delta \mD \in  L^2(\Omega)
+        \end{aligned}
+\end{equation}
+The discrete variational formulation follows by introducing a finite element partition of
+the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
+such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$ and taking
+discretes spaces 
 
 
 \subsubsection{Convergence of the data-driven formulation}
