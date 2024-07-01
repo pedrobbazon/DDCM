@@ -1,4 +1,134 @@
 \section{Numerical method}
 
+Two different problems are used to illustrate the behavior
+of the data-driven formulation introduced in the previous section,
+namely, the prototypical elliptic second order Poisson's problem, that
+models flow in porous media or heat conduction, which is an example of 
+a problem with scalar unknown and on the other hand, the classical
+elasticity problem which is an example of an elliptic problem with
+vector unknown. We present the particular form
+of the NLSP1 formulation presented above for these
+two problems and propose some discrete versions of it
+obtained by making different choices of spaces associated
+to finite element partitions of the computational domain.
+
+\subsection{Darcy's problem}
+
+With reference to the general formulation we have presented in the
+previous section, let us rewrite Darcy's problem with a more usual
+notation specific of flow in porous media by redefining the primal
+unknowns, namely the flux, the potential and the gradient
+as follows
+\begin{itemize}
+ \item Flux unknown: $s \leftarrow \sD$
+ \item Scalar unknown: $u \leftarrow \uD$
+ \item Gradient unknown: $e \leftarrow \eD$
+\end{itemize}
+whereas for the dual fields we adopt
+\begin{itemize}
+ \item Mass balance constraint: $\lambda \leftarrow \lD$
+ \item Compatibility constraint: $\mu \leftarrow \mD$
+\end{itemize}
+
+Let us first recall the standard or reference formulation for this
+problem in its mixed form with pure Dirichlet
+boundary conditions: Find pressure $\uD$ and flux $\sD$ such that
+$$
+\left\lbrace
+\begin{array}{rcll}
+\nabla \cdot \sD &=& q & \mbox{in}~\Omega,\\
+\\
+\eD &=& \nabla{p} & \mbox{in}~\Omega \\
+\\
+\boldsymbol{\mathcal{F}}(\sD,\eD) &=& 0 & \mbox{in}~\Omega \\
+\\
+\uD &=& p_0(\mathbf{x}) & \mbox{on}~\partial\Omega
+\end{array}
+\right.
+$$
+in which $\boldsymbol{\mathcal{F}}$ stands for the flux law.
+In the simplest case, we have the classical Darcy's model
+$$
+\boldsymbol{\mathcal{F}}(\sD,\eD) = \sD  + \dfrac{\mathbf{K}}{\mu} \eD = 0\\
+$$
+being $\mathbf{K}$ the permeability tensor and $\mu$ the viscosity of the fluid.
+We choose to write the formulation in this way to be able
+to handle more complicated non-linear cases in which the flux
+can not be obtained explicitly in terms of the pressure gradient,
+e.g., in the Forcheimer's model
+$$
+\boldsymbol{\mathcal{F}}(\sD,\eD) = \eD + \mu\,\mathbf{K}^{-1}\,\sD +
+\beta \,\|\sD \|\, \sD = 0
+$$
+where $\| \sD \| = (\sD \cdot \sD)^{1/2}$. 
+Other non-linear models can also be considered. 
+The standard problem will be solved for comparison purposes
+and also to produce plausible synthetic data to be used in the 
+data-driven case. This problem will be solved by a suitable
+finite element formulation when needed throughout the article
+(COLOCO LA FORMULACION VARIACIONAL DISCRETA??).
+
+\subsection{Discrete data-driven formulations for Darcy's problem}
+
+Let us first recall the base formulation from which several discrete versions 
+will be derived. We take as starting point the formulation NLSP1 specialized for 
+Darcy's problem: Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
+find primal fields $\uD \in H_0^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$ and dual fields $\lD \in H_0^1(\Omega)$, $\mD \in L^2(\Omega)$ that minimize
+\begin{multline}
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
+\frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2}+
+\frac{1}{2}\|\sD-\tilde{\sD}\|^{2}_{L^{2}} =  \\
+- \int_{\Omega} \sD \cdot \nabla \lD \, d\mathbf{x} - \int_{\Omega} \lD \, q \, d\mathbf{x} + \int_{\Omega} \mD \cdot (\eD -  \nabla \uD)\,d\mathbf{x}
++ \\
++ \frac{1}{2} \int_{\Omega} \left[ (\sD - \tilde{\sD}) \cdot (\sD - \tilde{\sD}) + (\eD - \tilde{\eD}) \cdot (\eD - \tilde{\eD}) \right] \, d\mathbf{x},
+\end{multline}
+The concrete problem to be solved in this case is obtained
+by taking variations of this functional with respect to all fields
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \sD \in  L^2(\Omega) \\
+                 - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \uD \in H_0^1(\Omega) \\
+                \int_{\Omega}  \delta \eD \cdot (\eD - \tilde{\eD}) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD \cdot \mD) \, d\mathbf{x} & = 0, &\quad \forall \delta \eD \in  L^2(\Omega) \\
+                -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lambda \big) \, d\mathbf{x} & = 0, &\quad \forall \delta \lD \in H_0^1(\Omega) \\
+                \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = 0, &\quad \forall \delta \mD \in  L^2(\Omega)
+        \end{aligned}
+\end{equation}
+The discrete variational formulation follows by introducing a finite element partition of
+the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
+such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$ and taking
+discrete spaces $V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \in H_0^1(\Omega)$ and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
+
+\subsubsection{Data distribution}
+
+A discussion is in order as for the distribution of data over the domain.
+
+
+
+\subsection{Elasticity problem}
+
+With reference to the general formulation we have presented in the
+previous section, let us rewrite the elasticity problem with a more usual
+notation in the solid mechanics context by redefining the primal
+unknowns, namely the stress, the displacement and the deformation measure
+as follows
+\begin{itemize}
+ \item Stress unknown: $s \leftarrow \sE$
+ \item Displacement unknown: $u \leftarrow \uE$
+ \item Deformation unknown: $e \leftarrow \eE$
+\end{itemize}
+whereas for the dual fields
+\begin{itemize}
+ \item Equilibrium constraint: $\lambda \leftarrow \lE$
+ \item Compatibility constraint: $\mu \leftarrow \mE$
+\end{itemize}
+
+\subsection{Discrete data-driven formulations for elasticity problem}
+
+
 
 \subsection{Software: Firedrake implementation}
+
+
+
+
+
