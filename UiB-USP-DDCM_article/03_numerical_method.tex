@@ -96,11 +96,60 @@ by taking variations of this functional with respect to all fields
 The discrete variational formulation follows by introducing a finite element partition of
 the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
 such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$ and taking
-discrete spaces $V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \in H_0^1(\Omega)$ and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
+discrete spaces
+$V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \in H_0^1(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
+Let us introduce the following finite element spaces for further use:
+\begin{eqnarray}
+DG_k & = &\\
+CG_k & = &\\
+RT_k & = & \\
+BDM_k &= &
+\end{eqnarray}
+The corresposding space for $d$-vector valued functions will be
+$[DG_k]^d$ and $[CG_k]^d$.
 
-\subsubsection{Data distribution}
+\subsubsection{Distribution of Data over $\Omega$}
 
 A discussion is in order as for the distribution of data over the domain.
+This is a key step that impacts on the data-driven solution. In the global
+optimization problem we aim to solve ultimately, finding the right
+data distribution, i.e., the actual domain decomposition is part
+of the unknown and is actually a great challenge
+that will be discussed in future works. In this article instead, we fix the
+distribution of available data over the domain $\Omega$.
+To fix ideas, let us consider Darcy's problem as an example
+and follow the steps:
+
+\begin{itemize}
+ \item[1.] Compute a reference solution
+ $(\uD^{\text{ref}}, \sD^{\text{ref}}, \eD^{\text{ref}})$
+ by using a standard finite element discretization
+ assuming a known constitutive law. In practice, this constitutive
+ law may be a known function or a reconstructed constitutive manifold
+ from the available data;
+ \item[2.] Compute fields $(\sD_h,\eD_h)$ and project them onto the space
+ of elementwise constant functions, i.e., find $\sD_h$
+ $$
+\int_{\Omega} \tilde{{\sD}}_h \cdot {\mathbf{v}} \,{\dx} =
+\int_{\Omega} {{\sD}}^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in DG_0
+ $$
+ and similarly for $\eD_h$. Note that depending on the choice
+ of finite elements spaces to obtain the reference solution,
+ the projection above may be trivially obtained by sampling
+ the solution at the elements of the finite element partition.
+
+
+ \item
+\end{itemize}
+
+Note that in this case the skeleton of the associated domain decomposition
+ will conform to the element edges/faces
+
+
+
+
+
 
 
 
