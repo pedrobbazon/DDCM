@@ -128,7 +128,7 @@ In this article, we establish a fixed distribution of the available data over th
  \item[2.] Compute elementwise constant functions 
  $\hat{\sD}_h$ and $\hat{\eD}_h$ 
  by projecting $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$
- onto $\DG_0$, i.e., find $\hat{\sD}_h$
+ onto $\DG_0$, i.e., find $\hat{\sD}_h$ such that
  $$
 \int_{\Omega} \hat{{\sD}}_h \cdot {\mathbf{v}} \,{\dx} =
 \int_{\Omega} {{\sD}}_h^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in DG_0
@@ -137,17 +137,17 @@ In this article, we establish a fixed distribution of the available data over th
  of finite element spaces to obtain the reference solution
  (e.g. $\uD_h^{\text{ref}} \in \CG_1,~\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}} \in \DG_0$), the projection above is trivially obtained.
 
- \item[3.] Compute elementwise constant functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$
+ \item[3.] Compute functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$ in $\DG_0$
  by minimizing the Euclidean distance in $\mathbb{R}^{2d}$ from the available data
- $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$ to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e.,
- 
- $$
- a
- $$
+ $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$ 
+ to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e., for $K_n \in \mathcal{T}_h$
+ %if we define $\hat{\mathbf{D}} = \left \{ (\hat{\sD}_h, \hat{\eD}_h) \right \}_{n=1}^{n_\text{el}}$ $\in \mathbb{R}^{n_{\text{el}} \times 2d}$ to be the matrix whose line $n$ is formed by the numerical values of  $(\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}),$ then, for $K_n \in \mathcal{T}_h$
+ \begin{equation}
+ (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) = \mathfrak{D}_k,~~~~k = \argminA_{1 \le k \le m} \, \text{dist}(\hat{D}_{n} \, , \, \mathfrak{D}_k)~~~~
+\end{equation}
  Note that with these choices, the skeleton of the associated domain decomposition
  is conforming to the element edges/faces of the mesh.
 \end{itemize}
-
 The procedure is similar for the elasticity problem, except that the functions
 belong to a higher dimensional spaces.
 
