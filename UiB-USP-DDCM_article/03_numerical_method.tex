@@ -101,50 +101,55 @@ $V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Ome
 and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
-DG_k & = &\\
-CG_k & = &\\
+DG_k & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
+CG_k(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = v_D~\mbox{em}~\partial{\Omega} \right \}\\
 RT_k & = & \\
 BDM_k &= &
 \end{eqnarray}
 The corresposding space for $d$-vector valued functions will be
 $[DG_k]^d$ and $[CG_k]^d$.
 
-\subsubsection{Distribution of Data over $\Omega$}
+\subsubsection{Distribution of data over $\Omega$}
 
-A discussion is in order as for the distribution of data over the domain.
-This is a key step that impacts on the data-driven solution. In the global
-optimization problem we aim to solve ultimately, finding the right
-data distribution, i.e., the actual domain decomposition is part
-of the unknown and is actually a great challenge
-that will be discussed in future works. In this article instead, we fix the
-distribution of available data over the domain $\Omega$.
-To fix ideas, let us consider Darcy's problem as an example
-and follow the steps:
+A discussion on the distribution of data across the domain is in order. 
+This step is crucial as it significantly influences the data-driven solution. In our ultimate goal of solving the global optimization problem, determining the appropriate data distribution, specifically the domain decomposition, remains an unknown and significant challenge. This issue will be addressed in future works.
+In this article, we establish a fixed distribution of the available data over the domain $\Omega$. To illustrate our approach, we will consider Darcy's problem as an example and follow these steps:
 
 \begin{itemize}
  \item[1.] Compute a reference solution
- $(\uD^{\text{ref}}, \sD^{\text{ref}}, \eD^{\text{ref}})$
- by using a standard finite element discretization
- assuming a known constitutive law. In practice, this constitutive
- law may be a known function or a reconstructed constitutive manifold
+ $(\uD_h^{\text{ref}}, \sD_h^{\text{ref}}, \eD_h^{\text{ref}})$
+ by using a standard finite element discretization and
+ assuming a known constitutive law. 
+ Depending on the discretization, $\sD_h^{\text{ref}}$ 
+ and $\eD_h^{\text{ref}}$ are obtained as a post-processing
+ of $\uD_h^{\text{ref}}$. In practice, the constitutive law may be a known function or a reconstructed constitutive manifold
  from the available data;
- \item[2.] Compute fields $(\sD_h,\eD_h)$ and project them onto the space
- of elementwise constant functions, i.e., find $\sD_h$
+ 
+ \item[2.] Compute elementwise constant functions 
+ $\hat{\sD}_h$ and $\hat{\eD}_h$ 
+ by projecting $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$
+ onto $\DG_0$, i.e., find $\hat{\sD}_h$
  $$
-\int_{\Omega} \tilde{{\sD}}_h \cdot {\mathbf{v}} \,{\dx} =
-\int_{\Omega} {{\sD}}^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in DG_0
+\int_{\Omega} \hat{{\sD}}_h \cdot {\mathbf{v}} \,{\dx} =
+\int_{\Omega} {{\sD}}_h^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in DG_0
  $$
- and similarly for $\eD_h$. Note that depending on the choice
- of finite elements spaces to obtain the reference solution,
- the projection above may be trivially obtained by sampling
- the solution at the elements of the finite element partition.
+ and similarly for $\hat{\eD}_h$. Note that depending on the choice
+ of finite element spaces to obtain the reference solution
+ (e.g. $\uD_h^{\text{ref}} \in \CG_1,~\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}} \in \DG_0$), the projection above is trivially obtained.
 
-
- \item
+ \item[3.] Compute elementwise constant functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$
+ by minimizing the Euclidean distance in $\mathbb{R}^{2d}$ from the available data
+ $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$ to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e.,
+ 
+ $$
+ a
+ $$
+ Note that with these choices, the skeleton of the associated domain decomposition
+ is conforming to the element edges/faces of the mesh.
 \end{itemize}
 
-Note that in this case the skeleton of the associated domain decomposition
- will conform to the element edges/faces
+The procedure is similar for the elasticity problem, except that the functions
+belong to a higher dimensional spaces.
 
 
 
