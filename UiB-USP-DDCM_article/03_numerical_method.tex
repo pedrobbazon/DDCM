@@ -62,18 +62,22 @@ $$
 $$
 where $\| \sD \| = (\sD \cdot \sD)^{1/2}$. 
 Other non-linear models can also be considered. 
-The standard problem will be solved for comparison purposes
-and also to produce plausible synthetic data to be used in the 
+The standard problem will be solved for comparison purposes,
+to produce reference solutions
+and also to obtain plausible synthetic data to be used in the
 data-driven case. This problem will be solved by a suitable
-finite element formulation when needed throughout the article
-(COLOCO LA FORMULACION VARIACIONAL DISCRETA??).
+finite element formulation when needed throughout the article.
+(COLOCO LA FORMULACION VARIACIONAL DISCRETA??)
 
 \subsection{Discrete data-driven formulations for Darcy's problem}
 
 Let us first recall the base formulation from which several discrete versions 
 will be derived. We take as starting point the formulation NLSP1 specialized for 
 Darcy's problem: Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
-find primal fields $\uD \in H_0^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$ and dual fields $\lD \in H_0^1(\Omega)$, $\mD \in L^2(\Omega)$ that minimize
+find primal fields
+$\uD \in H_0^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
+and dual fields $\lD \in H_0^1(\Omega)$, $\mD \in L^2(\Omega)$
+that minimize
 \begin{multline}
 \Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
 \frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2}+
@@ -101,17 +105,21 @@ $V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Ome
 and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
-DG_k & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
+DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
 CG_k(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = v_D~\mbox{em}~\partial{\Omega} \right \}\\
-RT_k & = & \\
-BDM_k &= &
+RT_k(\mathcal{T}_h) & = & \\
+BDM_k(\mathcal{T}_h) &= &
 \end{eqnarray}
-The corresposding space for $d$-vector valued functions will be
-$[DG_k]^d$ and $[CG_k]^d$.
+The corresponding space for $d$-vector valued functions will be
+$[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$.
+For simplicity of notation,
+in the forthcoming parts we ommit the dependence of these
+spaces with respect to the mesh $\mathcal{T}_h$.
 
 \subsubsection{Distribution of data over $\Omega$}
 
-A discussion on the distribution of data across the domain is in order. 
+Prior to presenting some discrete versions of the previous
+formulation, a discussion on the distribution of data across the domain is in order.
 This step is crucial as it significantly influences the data-driven solution. In our ultimate goal of solving the global optimization problem, determining the appropriate data distribution, specifically the domain decomposition, remains an unknown and significant challenge. This issue will be addressed in future works.
 In this article, we establish a fixed distribution of the available data over the domain $\Omega$. To illustrate our approach, we will consider Darcy's problem as an example and follow these steps:
 
@@ -140,24 +148,46 @@ In this article, we establish a fixed distribution of the available data over th
 
  \item[3.] Compute functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$ in $\DG_0$
  by minimizing the Euclidean distance in $\mathbb{R}^{2d}$ from the available data
- $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$ 
+ $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$
  to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e., for $K_n \in \mathcal{T}_h$
  %if we define $\hat{\mathbf{D}} = \left \{ (\hat{\sD}_h, \hat{\eD}_h) \right \}_{n=1}^{n_\text{el}}$ $\in \mathbb{R}^{n_{\text{el}} \times 2d}$ to be the matrix whose line $n$ is formed by the numerical values of  $(\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}),$ then, for $K_n \in \mathcal{T}_h$
  \begin{equation*}
- (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) = \mathfrak{D}_k,~~~~k = \argminA_{1 \le k \le m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \mathfrak{D}_k \right )~~~~
+ (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) =
+ \argminA_{\left(\mathfrak{g}_k,\mathfrak{s}_k\right) \in \mathfrak{D}_m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \left(\mathfrak{g}_k,\mathfrak{s}_k\right) \right )
 \end{equation*}
- Note that with such choices, the skeleton of the associated domain decomposition
- is conforming to the element edges/faces of the mesh.
+ Note that with such choices, the skeleton of the associated domain
+ decomposition ´is conforming to the element edges/faces of the mesh.
 \end{itemize}
 The procedure is illustrated in figure \ref{fig:datadistproc}. 
 
 The procedure is similar for the elasticity problem, except that the functions
 belong to higher dimensional spaces.
 
+\subsubsection{A first discrete data-driven formulation}
 
-
-
-
+The first discrete formulation comes from a natural choice
+of finite element spaces for the different fields, namely,
+$\CG_1 \subset H^1(\Omega)$ for the scalar fields $\uD$ and $\lD$
+and $[\DG_0]^d \subset L^2(\Omega)$ for the vector-valued
+fields $\eD$, $\sD$ and $\mD$. Once the data have been
+distributed over the domain according to the previous
+procedure so as to produce fields $\tilde{\sD}_h$
+and $\tilde{\eD}_h$, the discrete formulation can be stated as:
+Find primal fields
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
+\times \CG_1 \times [\DG]^d$ such that
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} -
+                \int_{\Omega}(\delta \sD_h \cdot \nabla \lD_h ) \, d\mathbf{x} & = 0, & \\
+                 - \int_{\Omega}( \mD_h \cdot  \nabla \delta \uD_h ) \, d\mathbf{x} & = 0, &\\
+                \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
+                -\int_{\Omega} \big(\sD_h \cdot \nabla \delta \lD_h + q \, \delta \lambda_h \big) \, d\mathbf{x} & = 0, & \\
+                \int_{\Omega} \delta \mD_h \cdot (\eD_h -  \nabla \uD_h) \, d\mathbf{x} & = 0, &
+        \end{aligned}
+\end{equation}
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
+\times \CG_1 \times [\DG]^d$.
 
 
 
