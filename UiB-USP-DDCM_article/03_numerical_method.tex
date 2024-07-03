@@ -118,12 +118,13 @@ In this article, we establish a fixed distribution of the available data over th
 \begin{itemize}
  \item[1.] Compute a reference solution
  $(\uD_h^{\text{ref}}, \sD_h^{\text{ref}}, \eD_h^{\text{ref}})$
- by using a standard finite element discretization and
- assuming a known constitutive law. 
+ by using a standard finite element discretization of the governing
+ equations. For this step, assume a known constitutive law. 
+ In practice, the constitutive law may be a known function or a 
+ reconstructed constitutive manifold from the available data.
  Depending on the discretization, $\sD_h^{\text{ref}}$ 
- and $\eD_h^{\text{ref}}$ are obtained as a post-processing
- of $\uD_h^{\text{ref}}$. In practice, the constitutive law may be a known function or a reconstructed constitutive manifold
- from the available data;
+ and $\eD_h^{\text{ref}}$ are obtained by post-processing
+ of $\uD_h^{\text{ref}}$.;
  
  \item[2.] Compute elementwise constant functions 
  $\hat{\sD}_h$ and $\hat{\eD}_h$ 
@@ -142,14 +143,16 @@ In this article, we establish a fixed distribution of the available data over th
  $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{e}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$ 
  to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e., for $K_n \in \mathcal{T}_h$
  %if we define $\hat{\mathbf{D}} = \left \{ (\hat{\sD}_h, \hat{\eD}_h) \right \}_{n=1}^{n_\text{el}}$ $\in \mathbb{R}^{n_{\text{el}} \times 2d}$ to be the matrix whose line $n$ is formed by the numerical values of  $(\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}),$ then, for $K_n \in \mathcal{T}_h$
- \begin{equation}
- (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) = \mathfrak{D}_k,~~~~k = \argminA_{1 \le k \le m} \, \text{dist}(\hat{D}_{n} \, , \, \mathfrak{D}_k)~~~~
-\end{equation}
- Note that with these choices, the skeleton of the associated domain decomposition
+ \begin{equation*}
+ (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) = \mathfrak{D}_k,~~~~k = \argminA_{1 \le k \le m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \mathfrak{D}_k \right )~~~~
+\end{equation*}
+ Note that with such choices, the skeleton of the associated domain decomposition
  is conforming to the element edges/faces of the mesh.
 \end{itemize}
+The procedure is illustrated in figure \ref{fig:datadistproc}. 
+
 The procedure is similar for the elasticity problem, except that the functions
-belong to a higher dimensional spaces.
+belong to higher dimensional spaces.
 
 
 
