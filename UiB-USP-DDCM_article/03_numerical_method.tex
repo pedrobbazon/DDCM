@@ -165,15 +165,15 @@ belong to higher dimensional spaces.
 
 \subsubsection{A first discrete data-driven formulation}
 
-The first discrete formulation comes from a natural choice
+The first discrete formulation results from a natural choice
 of finite element spaces for the different fields, namely,
 $\CG_1 \subset H^1(\Omega)$ for the scalar fields $\uD$ and $\lD$
 and $[\DG_0]^d \subset L^2(\Omega)$ for the vector-valued
 fields $\eD$, $\sD$ and $\mD$. Once the data have been
-distributed over the domain according to the previous
-procedure so as to produce fields $\tilde{\sD}_h$
-and $\tilde{\eD}_h$, the discrete formulation can be stated as:
-Find primal fields
+distributed over the domain according to the procedure
+explained above so as to produce fields $\tilde{\sD}_h$
+and $\tilde{\eD}_h$, the discrete formulation can be stated
+as: Find primal fields
 $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
 \times \CG_1 \times [\DG]^d$ such that
 \begin{equation}
@@ -188,7 +188,8 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
 \end{equation}
 $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
 \times \CG_1 \times [\DG]^d$.
-
+This formulation is easily solved in the open source finite element platform
+Firedrake \cite{firedrake} we have choosen for implementation.
 
 
 \subsection{Elasticity problem}
