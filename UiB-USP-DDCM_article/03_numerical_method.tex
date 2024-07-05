@@ -158,7 +158,23 @@ In this article, we establish a fixed distribution of the available data over th
  Note that with such choices, the skeleton of the associated domain
  decomposition ´is conforming to the element edges/faces of the mesh.
 \end{itemize}
-The procedure is illustrated in figure \ref{fig:datadistproc}. 
+Let us illustrate with an example the procedure described above.
+Suppose we have the discrete data relating flux and pressure gradient
+obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
+We make also the assumption of isotropy in this case.
+As shown in the figure, the data presents some noise around the mean curve
+shown in red. By a prior knowledge of the problem, the Forcheimer's model
+introduced above is expected to be applicable to this problem
+such that we can make a linear regression of the experimental data,
+so for this 1D setting we adjust the coefficients $\mu/k$ and $beta$
+in
+$$
+g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0
+$$
+where $g = \|g\|$ and $s = \|s\|$ are the magnitude of the
+pressure gradient and flux, respectively.
+If not such prior information is available the user must
+propose a suitable model though.
 
 The procedure is similar for the elasticity problem, except that the functions
 belong to higher dimensional spaces.

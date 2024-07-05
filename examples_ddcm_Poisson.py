@@ -800,6 +800,94 @@ def main_EX5_():
     return npoints_data, hsize, L2error_u, H1error_u, L2error_s
 
 #----------------------------------------------------------------------------
+# Example to illustrate in the paper the workflow of the data distribution
+def main_EX6_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    def mysource(x):
+        return fd.Constant(100.0)
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(100.0)}
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    # 1. The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    # Note in this case, I've made the data associated to the same domain (and mesh)
+    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
+    ddcm_data = PoissonDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 5]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    # Let us suppose we do some continuation to compute the data:
+    Nbc, Nth = 10, 10
+    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
+    for bcvs in bcvals:
+
+        print('----')
+        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
+        def mysynbcvals(x):
+            return fd.Constant(bcvs)
+        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
+        
+        # They could be the same parameters as in the reference solution or we may add some perturbation
+        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(1.0)}
+        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+        synth_prob.solve(bcvs, "mysynthsol")
+
+        # Sample the synthetic solution: Program this according to your problem
+        Nsampx, Nsampy  = 1, 1
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+        std_sol = synth_prob.std_solution
+        #- Pay attention: this is a concious decision
+        # and it may change in other situations
+        g = fd.project(std_sol.g, synth_domain.VDG0)
+        s = fd.project(std_sol.s, synth_domain.VDG0)
+        gradu_sampled_vals = np.array(g.at(xs))[0]
+        flux_sampled_vals = np.array(s.at(xs))[0]
+
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+
+
+    return 0
+
+#----------------------------------------------------------------------------
 #--- Run
 main_EX3_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
