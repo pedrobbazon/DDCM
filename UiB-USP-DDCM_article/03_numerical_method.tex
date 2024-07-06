@@ -66,8 +66,7 @@ The standard problem will be solved for comparison purposes,
 to produce reference solutions
 and also to obtain plausible synthetic data to be used in the
 data-driven case. This problem will be solved by a suitable
-finite element formulation when needed throughout the article.
-(COLOCO LA FORMULACION VARIACIONAL DISCRETA??)
+finite element formulation when needed throughout the article. 
 
 \subsection{Discrete data-driven formulations for Darcy's problem}
 
@@ -113,7 +112,7 @@ BDM_k(\mathcal{T}_h) &= &
 The corresponding space for $d$-vector valued functions will be
 $[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$.
 For simplicity of notation,
-in the forthcoming parts we ommit the dependence of these
+in the forthcoming parts we omit the dependence of these
 spaces with respect to the mesh $\mathcal{T}_h$.
 
 \subsubsection{Distribution of data over $\Omega$}
@@ -156,28 +155,44 @@ In this article, we establish a fixed distribution of the available data over th
  \argminA_{\left(\mathfrak{g}_k,\mathfrak{s}_k\right) \in \mathfrak{D}_m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \left(\mathfrak{g}_k,\mathfrak{s}_k\right) \right )
 \end{equation*}
  Note that with such choices, the skeleton of the associated domain
- decomposition ´is conforming to the element edges/faces of the mesh.
+ decomposition ends up being conforming to the element edges/faces 
+ of the mesh.
 \end{itemize}
 Let us illustrate with an example the procedure described above.
 Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
-We make also the assumption of isotropy in this case.
-As shown in the figure, the data presents some noise around the mean curve
-shown in red. By a prior knowledge of the problem, the Forcheimer's model
-introduced above is expected to be applicable to this problem
-such that we can make a linear regression of the experimental data,
-so for this 1D setting we adjust the coefficients $\mu/k$ and $beta$
-in
+We also make the assumption that the medium is isotropic in this example,
+so the permeability tensor can be written as $\mathbf{K} = k \, \mathbf{I}_{d\times d}$.
+As illustrated in the figure, the data exhibits some noise around the mean curve, which is depicted in red. Based on prior knowledge of the problem, Forchheimer's model, introduced earlier, is expected to be applicable. Therefore, we can perform a linear regression on the experimental data. For this 1D setting we adjust the coefficients 
+$\mu/k$ and $beta$ in
 $$
 g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0
 $$
 where $g = \|g\|$ and $s = \|s\|$ are the magnitude of the
-pressure gradient and flux, respectively.
-If not such prior information is available the user must
-propose a suitable model though.
+pressure gradient and flux, respectively. However, if such prior 
+information is not available, the user must propose a suitable model.
+With this reconstructed manifold we may solve Darcy's problem. 
+To that end we consider the following finite element formulation 
+to solve the problem: Find $\uD_h^{\text{ref}} \in \CG_{k}$ and
+$\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
+\begin{equation}
+        \begin{aligned}
+\int_{\Omega} { \left ( \eD + \mu\,\mathbf{K}^{-1}\,\sD +
+\beta \,r(\|\sD \|)\, \sD \right )} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1} \\
+\int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
+ \end{aligned}
+\end{equation}
+where 
+$$
+r(\|\sD \|) = \eta \left (  \left (1 + \dfrac{\sD \cdot \sD}{\eta^2}\right )^{\frac12} - 1 \right)
+$$
+is a regularization we introduce to avoid a singular Jacobian
+in the Newton-Raphson method used for solving such that 
+$r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. In practice
+we take $\eta = 10^{-12}$. 
 
-The procedure is similar for the elasticity problem, except that the functions
-belong to higher dimensional spaces.
+The procedure described and illustrated above is similar for the elasticity problem, 
+except that the functions belong to higher dimensional spaces.
 
 \subsubsection{A first discrete data-driven formulation}
 
@@ -205,7 +220,7 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
 $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
 \times \CG_1 \times [\DG]^d$.
 This formulation is easily solved in the open source finite element platform
-Firedrake \cite{firedrake} we have choosen for implementation.
+Firedrake \cite{firedrake} we have chosen for implementation.
 
 
 \subsection{Elasticity problem}
