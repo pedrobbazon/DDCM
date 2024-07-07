@@ -127,10 +127,10 @@ In this article, we establish a fixed distribution of the available data over th
  $(\uD_h^{\text{ref}}, \sD_h^{\text{ref}}, \eD_h^{\text{ref}})$
  by using a standard finite element discretization of the governing
  equations. For this step, assume a known constitutive law. 
- In practice, the constitutive law may be a known function or a 
+ In practice, the law may be a known function or a 
  reconstructed constitutive manifold from the available data.
- Depending on the discretization, $\sD_h^{\text{ref}}$ 
- and $\eD_h^{\text{ref}}$ are obtained by post-processing
+ Depending on the discretization adopted, $\sD_h^{\text{ref}}$ 
+ and $\eD_h^{\text{ref}}$ may be obtained by post-processing
  of $\uD_h^{\text{ref}}$.;
  
  \item[2.] Compute elementwise constant functions 
@@ -143,7 +143,8 @@ In this article, we establish a fixed distribution of the available data over th
  $$
  and similarly for $\hat{\eD}_h$. Note that depending on the choice
  of finite element spaces to obtain the reference solution
- (e.g. $\uD_h^{\text{ref}} \in \CG_1,~\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}} \in \DG_0$), the projection above is trivially obtained.
+ (e.g. $\uD_h^{\text{ref}} \in \CG_1,~\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}} \in \DG_0$), 
+ the projection above may be trivially obtained.
 
  \item[3.] Compute functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$ in $\DG_0$
  by minimizing the Euclidean distance in $\mathbb{R}^{2d}$ from the available data
@@ -154,9 +155,8 @@ In this article, we establish a fixed distribution of the available data over th
  (\left. \tilde{\sD}_h\right |_{K_n}, \left. \tilde{\eD}_h\right |_{K_n}) =
  \argminA_{\left(\mathfrak{g}_k,\mathfrak{s}_k\right) \in \mathfrak{D}_m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \left(\mathfrak{g}_k,\mathfrak{s}_k\right) \right )
 \end{equation*}
- Note that with such choices, the skeleton of the associated domain
- decomposition ends up being conforming to the element edges/faces 
- of the mesh.
+Note that with these choices, the skeleton of the associated 
+domain decomposition conforms to the element edges and faces of the mesh.
 \end{itemize}
 Let us illustrate with an example the procedure described above.
 Suppose we have the discrete data relating flux and pressure gradient
@@ -177,14 +177,14 @@ to solve the problem: Find $\uD_h^{\text{ref}} \in \CG_{k}$ and
 $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
-\int_{\Omega} { \left ( \eD + \mu\,\mathbf{K}^{-1}\,\sD +
-\beta \,r(\|\sD \|)\, \sD \right )} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1} \\
+\int_{\Omega} { \left [ \eD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
+\beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1} \\
 \int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
 \end{equation}
 where 
 $$
-r(\|\sD \|) = \eta \left (  \left (1 + \dfrac{\sD \cdot \sD}{\eta^2}\right )^{\frac12} - 1 \right)
+r( \sD ) = \eta \left [  \left (1 + \dfrac{\sD \cdot \sD}{\eta^2}\right )^{\frac12} - 1 \right ]
 $$
 is a regularization we introduce to avoid a singular Jacobian
 in the Newton-Raphson method used for solving such that 
