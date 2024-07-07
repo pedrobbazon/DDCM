@@ -127,8 +127,8 @@ In this article, we establish a fixed distribution of the available data over th
  $(\uD_h^{\text{ref}}, \sD_h^{\text{ref}}, \eD_h^{\text{ref}})$
  by using a standard finite element discretization of the governing
  equations. For this step, assume a known constitutive law. 
- In practice, the law may be a known function or a 
- reconstructed constitutive manifold from the available data.
+ In practice, the law may be a known analytical function that fits, i.e.,
+ a reconstructed constitutive manifold from the available data.
  Depending on the discretization adopted, $\sD_h^{\text{ref}}$ 
  and $\eD_h^{\text{ref}}$ may be obtained by post-processing
  of $\uD_h^{\text{ref}}$.;
@@ -156,24 +156,24 @@ In this article, we establish a fixed distribution of the available data over th
  \argminA_{\left(\mathfrak{g}_k,\mathfrak{s}_k\right) \in \mathfrak{D}_m} \, \text{dist} \left ( (\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}) \, , \, \left(\mathfrak{g}_k,\mathfrak{s}_k\right) \right )
 \end{equation*}
 Note that with these choices, the skeleton of the associated 
-domain decomposition conforms to the element edges and faces of the mesh.
+domain decomposition conforms to the element edges/faces of the mesh.
 \end{itemize}
 Let us illustrate with an example the procedure described above.
 Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
-We also make the assumption that the medium is isotropic in this example,
-so the permeability tensor can be written as $\mathbf{K} = k \, \mathbf{I}_{d\times d}$.
-As illustrated in the figure, the data exhibits some noise around the mean curve, which is depicted in red. Based on prior knowledge of the problem, Forchheimer's model, introduced earlier, is expected to be applicable. Therefore, we can perform a linear regression on the experimental data. For this 1D setting we adjust the coefficients 
-$\mu/k$ and $beta$ in
+As illustrated in the figure, the data exhibits some noise around the mean curve, which is depicted in red. Based on prior knowledge of the problem, Forchheimer's model, introduced earlier, is expected to be applicable. Therefore, we can perform a linear regression on the experimental data. For this 1D setting, we adjust the coefficients 
+$\mu/k$ and $\beta$ in
 $$
 g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0
 $$
-where $g = \|g\|$ and $s = \|s\|$ are the magnitude of the
-pressure gradient and flux, respectively. However, if such prior 
-information is not available, the user must propose a suitable model.
-With this reconstructed manifold we may solve Darcy's problem. 
-To that end we consider the following finite element formulation 
-to solve the problem: Find $\uD_h^{\text{ref}} \in \CG_{k}$ and
+where $g = \|\eD\|$ and $s = \|\sD\|$ are the magnitude of the
+pressure gradient and flux, respectively. 
+However, if such prior informations are not available, a suitable model
+must be proposed. With this reconstructed manifold we may solve Darcy's problem. 
+To that end we also make the assumption that the medium is isotropic in this example,
+so the permeability tensor can be written as $\mathbf{K} = k \, \mathbf{I}_{d\times d}$ 
+and consider the following finite element formulation to solve the reference
+(non linear) problem: Find $\uD_h^{\text{ref}} \in \CG_{k}$ and
 $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
@@ -182,16 +182,17 @@ $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
 \end{equation}
-where 
+where
 $$
 r( \sD ) = \eta \left [  \left (1 + \dfrac{\sD \cdot \sD}{\eta^2}\right )^{\frac12} - 1 \right ]
 $$
-is a regularization we introduce to avoid a singular Jacobian
-in the Newton-Raphson method used for solving such that 
-$r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. In practice
-we take $\eta = 10^{-12}$. 
+is a regularization of $\| \sD \|$ introduced to avoid a singular Jacobian
+during the Newton-Raphson iterations used for solving the nonlinearites. 
+This regularization $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. 
+In practice, we take $\eta = 10^{-12}$. The reference solution is shown 
+in figure \ref{fig:refsol}. 
 
-The procedure described and illustrated above is similar for the elasticity problem, 
+The procedure illustrated above is similar for the elasticity problem, 
 except that the functions belong to higher dimensional spaces.
 
 \subsubsection{A first discrete data-driven formulation}
