@@ -105,7 +105,7 @@ and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
 DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
-CG_k(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = v_D~\mbox{em}~\partial{\Omega} \right \}\\
+CG_k^D(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = v_D~\mbox{em}~\partial{\Omega} \right \}\\
 RT_k(\mathcal{T}_h) & = & \\
 BDM_k(\mathcal{T}_h) &= &
 \end{eqnarray}
@@ -158,6 +158,8 @@ In this article, we establish a fixed distribution of the available data over th
 Note that with these choices, the skeleton of the associated 
 domain decomposition conforms to the element edges/faces of the mesh.
 \end{itemize}
+The procedure illustrated above is similar for the elasticity problem, 
+except that the functions belong to higher dimensional spaces.
 Let us illustrate with an example the procedure described above.
 Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
@@ -178,7 +180,7 @@ $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
 \int_{\Omega} { \left [ \eD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
-\beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1} \\
+\beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in [\RT_{k+1}]^{\text{disc}} \\
 \int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
 \end{equation}
@@ -190,10 +192,19 @@ is a regularization of $\| \sD \|$ introduced to avoid a singular Jacobian
 during the Newton-Raphson iterations used for solving the nonlinearites. 
 This regularization $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. 
 In practice, we take $\eta = 10^{-12}$. The reference solution is shown 
-in figure \ref{fig:refsol}. 
-
-The procedure illustrated above is similar for the elasticity problem, 
-except that the functions belong to higher dimensional spaces.
+in figure \ref{fig:refsol}, namely, the pressure field, the gradient and
+the flux field. Figure \ref{fig:domains} shows the associated 
+domain decomposition emanating from the data distribution procedure
+described. Each color corresponds to a given data point
+in $\mathfrak{D}_m$. Finally, figure \ref{fig:soldd} shows the corresponding 
+data-driven solution which was obtained with the discrete formulation 
+to be presented in the next section. As shown in the figure the behavior
+of the data-driven solution reflects the sparsity of the available data.
+This changes drastically if we increase the number of points in the data set
+as shown in figure \ref{fig:solddmorepoints}. This initial example already
+illustrates some of the ingredients involved in the data-driven computational
+paradigm. Now, we embark in the task of formulating discrete versions
+of NLSP1.
 
 \subsubsection{A first discrete data-driven formulation}
 
