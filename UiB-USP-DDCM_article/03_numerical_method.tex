@@ -1,16 +1,14 @@
 \section{Numerical method}
 
-Two different problems are used to illustrate the behavior
-of the data-driven formulation introduced in the previous section,
-namely, the prototypical elliptic second order Poisson's problem, that
-models flow in porous media or heat conduction, which is an example of 
-a problem with scalar unknown and on the other hand, the classical
-elasticity problem which is an example of an elliptic problem with
-vector unknown. We present the particular form
-of the NLSP1 formulation presented above for these
-two problems and propose some discrete versions of it
-obtained by making different choices of spaces associated
-to finite element partitions of the computational domain.
+Two different problems are used to illustrate the behavior of the data-driven 
+formulation introduced in the previous section. The first problem is the 
+prototypical elliptic second-order Poisson problem, which models Darcy's flow 
+in porous media or heat conduction and serves as an example of a problem with a 
+scalar unknown. The second problem is the classical elasticity problem, 
+which is an example of an elliptic problem with a vector unknown. We present the 
+specific form of the NLSP1 formulation for these two problems and propose some 
+discrete versions of it, obtained by making different choices of spaces associated 
+with finite element partitions of the computational domain.
 
 \subsection{Darcy's problem}
 
@@ -18,18 +16,8 @@ With reference to the general formulation we have presented in the
 previous section, let us rewrite Darcy's problem with a more usual
 notation specific of flow in porous media by redefining the primal
 unknowns, namely the flux, the potential and the gradient
-as follows
-\begin{itemize}
- \item Flux unknown: $s \leftarrow \sD$
- \item Scalar unknown: $u \leftarrow \uD$
- \item Gradient unknown: $e \leftarrow \eD$
-\end{itemize}
-whereas for the dual fields we adopt
-\begin{itemize}
- \item Mass balance constraint: $\lambda \leftarrow \lD$
- \item Compatibility constraint: $\mu \leftarrow \mD$
-\end{itemize}
-
+as $(u, s, e) \leftarrow (\uD, \sD, \eD)$, whereas for the dual fields,
+the mass balance and compatibility constraint $(\lambda, \mu) \leftarrow (\lD, \mD)$.
 Let us first recall the standard or reference formulation for this
 problem in its mixed form with pure Dirichlet
 boundary conditions: Find pressure $\uD$ and flux $\sD$ such that
@@ -68,7 +56,7 @@ and also to obtain plausible synthetic data to be used in the
 data-driven case. This problem will be solved by a suitable
 finite element formulation when needed throughout the article. 
 
-\subsection{Discrete data-driven formulations for Darcy's problem}
+\subsubsection{Data-driven formulations for Darcy's problem}
 
 Let us first recall the base formulation from which several discrete versions 
 will be derived. We take as starting point the formulation NLSP1 specialized for 
@@ -96,6 +84,9 @@ by taking variations of this functional with respect to all fields
                 \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = 0, &\quad \forall \delta \mD \in  L^2(\Omega)
         \end{aligned}
 \end{equation}
+
+\subsection{Discrete formulation for Darcy's problem}
+
 The discrete variational formulation follows by introducing a finite element partition of
 the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
 such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$ and taking
@@ -110,17 +101,23 @@ RT_k(\mathcal{T}_h) & = & \\
 BDM_k(\mathcal{T}_h) &= &
 \end{eqnarray}
 The corresponding space for $d$-vector valued functions will be
-$[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$.
-For simplicity of notation,
+$[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$
+and the space with for homogeneous Dirichlet condition by
+$\CG_k^0(\mathcal{T}_h)$. For simplicity of notation,
 in the forthcoming parts we omit the dependence of these
 spaces with respect to the mesh $\mathcal{T}_h$.
+Prior to presenting some discrete versions of formulation the NLSP1
+formulation, a discussion on the distribution of data across
+the domain is in order.
 
-\subsubsection{Distribution of data over $\Omega$}
+\subsubsection{Distribution of data over $\Omega$} \label{sec:datadist}
 
-Prior to presenting some discrete versions of the previous
-formulation, a discussion on the distribution of data across the domain is in order.
-This step is crucial as it significantly influences the data-driven solution. In our ultimate goal of solving the global optimization problem, determining the appropriate data distribution, specifically the domain decomposition, remains an unknown and significant challenge. This issue will be addressed in future works.
-In this article, we establish a fixed distribution of the available data over the domain $\Omega$. To illustrate our approach, we will consider Darcy's problem as an example and follow these steps:
+This step is crucial as it significantly influences the data-driven solution. 
+In our ultimate goal of solving the global optimization problem, determining
+the appropriate data distribution, specifically the domain decomposition, 
+remains an unknown and significant challenge. This issue will be addressed in future works.
+In this article, we establish a fixed distribution of the available data over the domain $\Omega$. 
+To illustrate our approach, we will consider Darcy's problem as an example and follow these steps:
 
 \begin{itemize}
  \item[1.] Compute a reference solution
@@ -158,7 +155,7 @@ In this article, we establish a fixed distribution of the available data over th
 Note that with these choices, the skeleton of the associated 
 domain decomposition conforms to the element edges/faces of the mesh.
 \end{itemize}
-The procedure illustrated above is similar for the elasticity problem, 
+The previous procedure can be applied similarly to the elasticity problem, 
 except that the functions belong to higher dimensional spaces.
 Let us illustrate with an example the procedure described above.
 Suppose we have the discrete data relating flux and pressure gradient
@@ -168,8 +165,8 @@ $\mu/k$ and $\beta$ in
 $$
 g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0
 $$
-where $g = \|\eD\|$ and $s = \|\sD\|$ are the magnitude of the
-pressure gradient and flux, respectively. 
+where $\eD = g \, \check{\mathbf{e}_y}$ and $\sD = s \, \check{\mathbf{e}_y}$,
+with $g$ and $s$ being the magnitudes of the pressure gradient and flux, respectively. 
 However, if such prior informations are not available, a suitable model
 must be proposed. With this reconstructed manifold we may solve Darcy's problem. 
 To that end we also make the assumption that the medium is isotropic in this example,
@@ -180,7 +177,7 @@ $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
 \int_{\Omega} { \left [ \eD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
-\beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in [\RT_{k+1}]^{\text{disc}} \\
+\beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1}^{\text{disc}} \\
 \int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
 \end{equation}
@@ -188,15 +185,16 @@ where
 $$
 r( \sD ) = \eta \left [  \left (1 + \dfrac{\sD \cdot \sD}{\eta^2}\right )^{\frac12} - 1 \right ]
 $$
-is a regularization of $\| \sD \|$ introduced to avoid a singular Jacobian
-during the Newton-Raphson iterations used for solving the nonlinearites. 
-This regularization $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. 
-In practice, we take $\eta = 10^{-12}$. The reference solution is shown 
+is a regularization of $\| \sD \|$, such that 
+$r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. The regularization is
+introduced to ensure convergence of the Newton-Raphson iterations 
+used for solving the nonlinearites. In practice, we take $\eta = 10^{-12}$. 
+The reference solution is shown 
 in figure \ref{fig:refsol}, namely, the pressure field, the gradient and
-the flux field. Figure \ref{fig:domains} shows the associated 
-domain decomposition emanating from the data distribution procedure
-described. Each color corresponds to a given data point
-in $\mathfrak{D}_m$. Finally, figure \ref{fig:soldd} shows the corresponding 
+the flux. Figure \ref{fig:domains} shows the associated 
+domain decomposition resulting from the data distribution procedure
+described in \ref{sec:datadist}. Each color corresponds to a specific point in the data
+set $\mathfrak{D}_m$. Finally, figure \ref{fig:soldd} shows the corresponding 
 data-driven solution which was obtained with the discrete formulation 
 to be presented in the next section. As shown in the figure the behavior
 of the data-driven solution reflects the sparsity of the available data.
@@ -206,7 +204,7 @@ illustrates some of the ingredients involved in the data-driven computational
 paradigm. Now, we embark in the task of formulating discrete versions
 of NLSP1.
 
-\subsubsection{A first discrete data-driven formulation}
+\subsection{Discrete data-driven formulations for Darcy's problem}
 
 The first discrete formulation results from a natural choice
 of finite element spaces for the different fields, namely,
@@ -217,8 +215,8 @@ distributed over the domain according to the procedure
 explained above so as to produce fields $\tilde{\sD}_h$
 and $\tilde{\eD}_h$, the discrete formulation can be stated
 as: Find primal fields
-$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
-\times \CG_1 \times [\DG]^d$ such that
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_{k+1}\times [\DG]_k^d \times [\DG]_k^d
+\times \CG_{k+1} \times [\DG]_k^d$, $k \ge 0$, such that
 \begin{equation}
         \begin{aligned}
                 \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} -
@@ -229,11 +227,55 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
                 \int_{\Omega} \delta \mD_h \cdot (\eD_h -  \nabla \uD_h) \, d\mathbf{x} & = 0, &
         \end{aligned}
 \end{equation}
-$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_1\times [\DG]^d \times [\DG]^d
-\times \CG_1 \times [\DG]^d$.
-This formulation is easily solved in the open source finite element platform
-Firedrake \cite{firedrake} we have chosen for implementation.
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_{k+1}\times \VDG_{k} \times \VDG_{k}
+\times \CG_k \times \VDG_{k}$.
+This discrete formulation will be termed DNLSP1-A. This is 
+the formulation we have used to solve the example above.
 
+Another natural choice of spaces for this problem is to take
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_{k+1 }\times \VCG_{k+1} \times \VCG_{k+1}
+\times \CG_{k+1} \times \VCG_{k+1}$, which is an equal order formulation, which
+we expect to fail by looking at the structure of the saddle point problems being solved.
+This equal order case will be named DNLSP1-Aeqo.
+
+\subsection{Some variants of the discrete data-driven formulation}
+
+We can derive other formulations by integrating by parts some 
+of the terms in the base formulation NLSP1and by making suitable 
+choices of discrete finite element spaces. 
+
+This problem will be solved with help of the open source finite element platform
+Firedrake \cite{firedrake} we have chosen for implementation which we describe later on.
+A clear advantages of using the Firedrake platform for implementation is the simplicity 
+to test these different options.
+
+\subsubsection{Formulation DNLSP1-B}
+
+\subsubsection{Formulation DNLSP1-C}
+
+\subsubsection{Formulation DNLSP1-D}
+
+The different variants of finite element spaces for each 
+case are summarized in table \ref{tab:spaces}.
+\begin{table}[h!]
+	\centering
+	\caption{Finite element spaces for the different discrete data-driven
+	formulations (DNLSP1-) proposed to solve Darcy's problem.
+	In all cases $k \ge 0$.}
+	\label{tab:spaces}
+	\vspace{0.25cm}
+	\begin{tabular}{cccccc}
+		\hline
+		\textbf{Field} & \textbf{A}         & \textbf{Aeqo}         & \textbf{B}          & \textbf{C}            & \textbf{D} \\
+		\hline
+		$\uD_h$   & $\CG_{k+1}^D$   & $\CG_{k+1}^{D}$  & $\DG_k$           & $\DG_k$            & $\CG_{k+1}$ \\
+		$\sD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\Hdiv_{k+1}$   & $\VDG_k$         & $\Hdiv_{k+1}$ \\
+		$\eD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\Hdiv_{k+1}$   & $\Hdiv_{k+1}$   & $\VDG_{k}$ \\
+		$\mD_h$  & $\VDG_k$           & $\VDG_{k+1}$       &  $\Hdiv_{k+1}$  & $\Hdiv_{k+1}$   & $\VDG_{k}$  \\
+		$\lD_h$    & $\CG_{k+1}^0$    & $\CG_{k+1}^{0}$   &  $\DG_k$          & $\CG_{k+1}^0$  & $\DG_k$ \\
+		\hline
+	\end{tabular}
+\end{table}
 
 \subsection{Elasticity problem}
 
