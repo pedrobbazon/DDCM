@@ -89,6 +89,14 @@ by taking variations of this functional with respect to all fields
                 \text{d}_{\mD}\mathcal{L} & = \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mD \in  L^2(\Omega).
         \end{aligned}
 \end{equation*}
+\begin{remark}
+We adopt a less abstract notation at this point since this will help to
+establish the connection with the implementation in the 
+open-source finite element platform Firedrake \cite{firedrake}.
+The implementation details are provided later on. 
+A notable feature of the Firedrake platform is its simplicity, which allows for 
+straightforward testing of the different formulations to be presented.
+\end{remark}
 
 \subsection{Discrete formulation for Darcy's problem}
 
@@ -96,8 +104,8 @@ The discrete variational formulation follows by introducing a finite element par
 the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
 such that $\overline{\Omega} \subseteq \bigcup_{i=1}^{N} \overline{K}_i$ and taking
 discrete spaces
-$V_{\uD}(\mathcal{T}_h) \in H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \in L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \in H_0^1(\Omega)$
-and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
+$V_{\uD}(\mathcal{T}_h) \subset H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H_0^1(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \subset L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
 DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
@@ -247,33 +255,86 @@ in the results section to compare with other variants.
 
 \subsection{Some variants of the discrete data-driven formulation}
 
-We can derive other formulations by integrating by parts some 
+We can derive three other formulations by integrating by parts some 
 of the terms in the base formulation NLSP1 and making suitable 
 choices of discrete finite element spaces. 
 
 \subsubsection{Formulation DNLSP1-B}
 
-Let us begin with the functional $\Phi$ and integrate
+Let us begin with the functional $\Phi_{\lD \mD}$ and integrate
 both terms in the balance and compatibility constraint, i.e.,
 \begin{multline}
 \Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
-+ \int_{\Omega}  \lD \left ( \nabla \cdot \sD - q \right ) \, d\mathbf{x} + 
+ \int_{\Omega}  \lD \left ( \nabla \cdot \sD - q \right ) \, d\mathbf{x} + 
 \int_{\Omega} \mD \cdot \eD\,d\mathbf{x}  + \int_{\Omega} \uD \, \nabla \cdot \mD \,d\mathbf{x}
 - \int_{\partial{\Omega}} {\uD_D (\mD \cdot \check{\mathbf{n}})} \, d\Gamma \label{eq:Phi5B}
 \end{multline}
 where $\uD_D$ is the Dirichlet data for $\uD$ and $\lD = 0$ on $\partial{\Omega}$.
 Note that the latter conditions are imposed weakly in (\ref{eq:Phi5B}).
-Now, natural choices for the spaces are 
-The discrete variational problem to be solved reads:
-
-
+Natural choices for the spaces are now
+$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset L^2(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+Hence, the discrete variational problem we propose for this case reads:
+Find primal fields
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$, $k \ge 0$, such that
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} +
+                \int_{\Omega} {\lD_h \nabla \cdot \delta \sD_h } \, d\mathbf{x} & = 0, & \\
+                 \int_{\Omega}(\delta \uD_h \nabla \cdot \mD_h  ) \, d\mathbf{x} & = 0, &\\
+                \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
+                \int_{\Omega} \delta \lD_h \left ( \nabla \cdot  \sD_h  -  q \right ) \, d\mathbf{x} & = 0, & \\
+                \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x}  - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
+        \end{aligned}
+\end{equation}
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$.
+This discrete formulation will be termed DNLSP1-B. 
 
 \subsubsection{Formulation DNLSP1-C}
 
+The third option corresponds to integrate by parts only the compatibility term,
+resulting the functional $\Phi_{\lD \mD}$
+\begin{multline}
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
+- \int_{\Omega} \sD \cdot \nabla \lD \, d\mathbf{x} - \int_{\Omega} \lD \, q \, d\mathbf{x} + 
+\int_{\Omega} \mD \cdot \eD\,d\mathbf{x}  + \int_{\Omega} \uD \, \nabla \cdot \mD \,d\mathbf{x}
+- \int_{\partial{\Omega}} {\uD_D (\mD \cdot \check{\mathbf{n}})} \, d\Gamma \label{eq:Phi5C}
+\end{multline}
+We choose discrete spaces 
+$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+Hence, the discrete variational problem we propose for this case reads:
+Find primal fields
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$, $k \ge 0$, such that
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} +
+                \int_{\Omega} {\lD_h \nabla \cdot \delta \sD_h } \, d\mathbf{x} & = 0, & \\
+                 \int_{\Omega}(\delta \uD_h \nabla \cdot \mD_h  ) \, d\mathbf{x} & = 0, &\\
+                \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
+                \int_{\Omega} \delta \lD_h \left ( \nabla \cdot  \sD_h  -  q \right ) \, d\mathbf{x} & = 0, & \\
+                \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x}  - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
+        \end{aligned}
+\end{equation}
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$.
+This discrete formulation will be termed DNLSP1-C. 
+
 \subsubsection{Formulation DNLSP1-D}
 
-The different variants of finite element spaces for each 
-case are summarized in table \ref{tab:spaces}.
+The final variant consists in integrating by parts only the balance term in 
+the original functional $\Phi_{\lD \mD}$ giving
+\begin{multline}
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
+ \int_{\Omega}  \lD \left ( \nabla \cdot \sD - q \right ) \, d\mathbf{x} + 
+\int_{\Omega} \mD \cdot \left ( \eD - \nabla {\uD} \right )\,d\mathbf{x}   \label{eq:Phi5D}
+\end{multline}
+
+Table \ref{tab:spaces} summarizes the different variants of finite element spaces for each 
+formulation.
 \begin{table}[h!]
 	\centering
 	\caption{Finite element spaces for the different discrete data-driven
@@ -293,10 +354,6 @@ case are summarized in table \ref{tab:spaces}.
 		\hline
 	\end{tabular}
 \end{table}
-The different formulations are solved using the open-source finite element platform 
-Firedrake \cite{firedrake}. The implementation details are provided later on. 
-A notable feature of the Firedrake platform is its simplicity, which allows for 
-straightforward testing of these different options.
 
 \subsection{Elasticity problem}
 
