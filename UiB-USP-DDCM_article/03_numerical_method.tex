@@ -60,30 +60,35 @@ finite element formulation when needed throughout the article.
 
 Let us first recall the base formulation from which several discrete versions 
 will be derived. We take as starting point the formulation NLSP1 specialized for 
-Darcy's problem: Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
+Darcy's problem. For the proximity measures we take the $L^2(\Omega)$-norm, i.e.,
+$$
+\varphi_{\eD}(\eD - \tilde{\eD}) = \frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2},~~~
+\varphi_{\sD}(\sD - \tilde{\sD}) = \frac{1}{2}\|\sD-\tilde{\sD}\|^2_{L^2}
+$$
+Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
 find primal fields
-$\uD \in H_0^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
-and dual fields $\lD \in H_0^1(\Omega)$, $\mD \in L^2(\Omega)$
+$\uD \in H^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
+and dual fields $\lD \in H^1(\Omega)$, $\mD \in L^2(\Omega)$,
+$\uD = \uD_D$ and $\lD = 0$ $\mathbf{x} \in \partial{\Omega}$,
 that minimize
 \begin{multline}
-\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
-\frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2}+
-\frac{1}{2}\|\sD-\tilde{\sD}\|^{2}_{L^{2}} =  \\
+\mathcal{L} = \Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
+\varphi_{\eD}(\eD - \tilde{\eD}) + \varphi_{\sD}(\sD - \tilde{\sD}) =  \\
 - \int_{\Omega} \sD \cdot \nabla \lD \, d\mathbf{x} - \int_{\Omega} \lD \, q \, d\mathbf{x} + \int_{\Omega} \mD \cdot (\eD -  \nabla \uD)\,d\mathbf{x}
 + \\
 + \frac{1}{2} \int_{\Omega} \left[ (\sD - \tilde{\sD}) \cdot (\sD - \tilde{\sD}) + (\eD - \tilde{\eD}) \cdot (\eD - \tilde{\eD}) \right] \, d\mathbf{x},
 \end{multline}
 The concrete problem to be solved in this case is obtained
 by taking variations of this functional with respect to all fields
-\begin{equation}
+\begin{equation*}
         \begin{aligned}
-                \int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \sD \in  L^2(\Omega) \\
-                 - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = 0, &\quad \forall \delta \uD \in H_0^1(\Omega) \\
-                \int_{\Omega}  \delta \eD \cdot (\eD - \tilde{\eD}) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD \cdot \mD) \, d\mathbf{x} & = 0, &\quad \forall \delta \eD \in  L^2(\Omega) \\
-                -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lambda \big) \, d\mathbf{x} & = 0, &\quad \forall \delta \lD \in H_0^1(\Omega) \\
-                \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = 0, &\quad \forall \delta \mD \in  L^2(\Omega)
+               \text{d}_{\sD}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x}}_{\text{d}\varphi_{\sD}(\sD,\tilde{\sD}; \delta{\sD})} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sD \in  L^2(\Omega), \\
+                 \text{d}_{\eD}\mathcal{L} & = - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uD \in H_0^1(\Omega), \\
+                \text{d}_{\eD}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eD \cdot (\eD - \tilde{\eD}) \, d\mathbf{x}}_{\text{d}\varphi_{\eD}(\eD,\tilde{\eD}; \delta{\eD})}  + \int_{\Omega} (\delta \eD \cdot \mD) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eD \in  L^2(\Omega), \\
+                \text{d}_{\lD}\mathcal{L} & = -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lambda \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lD \in H_0^1(\Omega), \\
+                \text{d}_{\mD}\mathcal{L} & = \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mD \in  L^2(\Omega).
         \end{aligned}
-\end{equation}
+\end{equation*}
 
 \subsection{Discrete formulation for Darcy's problem}
 
@@ -96,17 +101,17 @@ and $V_{\mD}(\mathcal{T}_h) \in L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
 DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
-CG_k^D(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = v_D~\mbox{em}~\partial{\Omega} \right \}\\
+CG_k^D(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = u_D~\mbox{on}~\partial{\Omega} \right \}~~~~\\
 RT_k(\mathcal{T}_h) & = & \\
 BDM_k(\mathcal{T}_h) &= &
 \end{eqnarray}
 The corresponding space for $d$-vector valued functions will be
-$[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$
-and the space with for homogeneous Dirichlet condition by
+denoted by $[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$
+and the space with homogeneous Dirichlet data by
 $\CG_k^0(\mathcal{T}_h)$. For simplicity of notation,
 in the forthcoming parts we omit the dependence of these
 spaces with respect to the mesh $\mathcal{T}_h$.
-Prior to presenting some discrete versions of formulation the NLSP1
+Prior to presenting some discrete versions of the NLSP1
 formulation, a discussion on the distribution of data across
 the domain is in order.
 
@@ -172,7 +177,7 @@ must be proposed. With this reconstructed manifold we may solve Darcy's problem.
 To that end we also make the assumption that the medium is isotropic in this example,
 so the permeability tensor can be written as $\mathbf{K} = k \, \mathbf{I}_{d\times d}$ 
 and consider the following finite element formulation to solve the reference
-(non linear) problem: Find $\uD_h^{\text{ref}} \in \CG_{k}$ and
+(non linear) problem: Find $\uD_h^{\text{ref}} \in \CG^D_{k}$ and
 $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
@@ -215,8 +220,8 @@ distributed over the domain according to the procedure
 explained above so as to produce fields $\tilde{\sD}_h$
 and $\tilde{\eD}_h$, the discrete formulation can be stated
 as: Find primal fields
-$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_{k+1}\times [\DG]_k^d \times [\DG]_k^d
-\times \CG_{k+1} \times [\DG]_k^d$, $k \ge 0$, such that
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG^D_{k+1}\times [\DG]_k^d \times [\DG]_k^d
+\times \CG^0_{k+1} \times [\DG]_k^d$, $k \ge 0$, such that
 \begin{equation}
         \begin{aligned}
                 \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} -
@@ -227,29 +232,41 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_{k+1}\times [\DG]_k^d \times [\DG]_
                 \int_{\Omega} \delta \mD_h \cdot (\eD_h -  \nabla \uD_h) \, d\mathbf{x} & = 0, &
         \end{aligned}
 \end{equation}
-$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG_{k+1}\times \VDG_{k} \times \VDG_{k}
-\times \CG_k \times \VDG_{k}$.
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in \CG^0_{k+1}\times \VDG_{k} \times \VDG_{k}
+\times \CG^0_k \times \VDG_{k}$.
 This discrete formulation will be termed DNLSP1-A. This is 
 the formulation we have used to solve the example above.
 
-Another natural choice of spaces for this problem is to take
+Another natural choice of spaces we can consider for this problem is to use 
+the same interpolation for all fields, i.e., 
 $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \CG_{k+1 }\times \VCG_{k+1} \times \VCG_{k+1}
-\times \CG_{k+1} \times \VCG_{k+1}$, which is an equal order formulation, which
-we expect to fail by looking at the structure of the saddle point problems being solved.
-This equal order case will be named DNLSP1-Aeqo.
+\times \CG_{k+1} \times \VCG_{k+1}$, resulting in an equal order formulation. 
+We expect this formulation to fail due to the structure of the saddle point problems 
+being solved. This equal order case will be named DNLSP1-Aeqo and will be assessed 
+in the results section to compare with other variants.
 
 \subsection{Some variants of the discrete data-driven formulation}
 
 We can derive other formulations by integrating by parts some 
-of the terms in the base formulation NLSP1and by making suitable 
+of the terms in the base formulation NLSP1 and making suitable 
 choices of discrete finite element spaces. 
 
-This problem will be solved with help of the open source finite element platform
-Firedrake \cite{firedrake} we have chosen for implementation which we describe later on.
-A clear advantages of using the Firedrake platform for implementation is the simplicity 
-to test these different options.
-
 \subsubsection{Formulation DNLSP1-B}
+
+Let us begin with the functional $\Phi$ and integrate
+both terms in the balance and compatibility constraint, i.e.,
+\begin{multline}
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
++ \int_{\Omega}  \lD \left ( \nabla \cdot \sD - q \right ) \, d\mathbf{x} + 
+\int_{\Omega} \mD \cdot \eD\,d\mathbf{x}  + \int_{\Omega} \uD \, \nabla \cdot \mD \,d\mathbf{x}
+- \int_{\partial{\Omega}} {\uD_D (\mD \cdot \check{\mathbf{n}})} \, d\Gamma \label{eq:Phi5B}
+\end{multline}
+where $\uD_D$ is the Dirichlet data for $\uD$ and $\lD = 0$ on $\partial{\Omega}$.
+Note that the latter conditions are imposed weakly in (\ref{eq:Phi5B}).
+Now, natural choices for the spaces are 
+The discrete variational problem to be solved reads:
+
+
 
 \subsubsection{Formulation DNLSP1-C}
 
@@ -276,6 +293,10 @@ case are summarized in table \ref{tab:spaces}.
 		\hline
 	\end{tabular}
 \end{table}
+The different formulations are solved using the open-source finite element platform 
+Firedrake \cite{firedrake}. The implementation details are provided later on. 
+A notable feature of the Firedrake platform is its simplicity, which allows for 
+straightforward testing of these different options.
 
 \subsection{Elasticity problem}
 
@@ -283,17 +304,8 @@ With reference to the general formulation we have presented in the
 previous section, let us rewrite the elasticity problem with a more usual
 notation in the solid mechanics context by redefining the primal
 unknowns, namely the stress, the displacement and the deformation measure
-as follows
-\begin{itemize}
- \item Stress unknown: $s \leftarrow \sE$
- \item Displacement unknown: $u \leftarrow \uE$
- \item Deformation unknown: $e \leftarrow \eE$
-\end{itemize}
-whereas for the dual fields
-\begin{itemize}
- \item Equilibrium constraint: $\lambda \leftarrow \lE$
- \item Compatibility constraint: $\mu \leftarrow \mE$
-\end{itemize}
+as $(u, s, e) \leftarrow (\uE, \sE, \eE)$, whereas for the dual fields, namely
+the equilibrium constraint and compatibility constraint $(\lambda, \mu) \leftarrow (\lE, \mE)$.
 
 \subsection{Discrete data-driven formulations for elasticity problem}
 
