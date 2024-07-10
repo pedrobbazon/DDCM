@@ -1,0 +1,30 @@
+\babel@toc {portuguese}{}\relax 
+\contentsline {section}{\numberline {1}Resumo}{5}{section.1}%
+\contentsline {section}{\numberline {2}Introdução}{6}{section.2}%
+\contentsline {section}{\numberline {3}Revisão Bibliográfica}{9}{section.3}%
+\contentsline {section}{\numberline {4}Meios Porosos}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Definição}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Propriedades físicas dos meios porosos}{13}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Porosidade}{13}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Permeabilidade}{14}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Saturação}{15}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Propriedades físicas dos fluidos}{15}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Volumes elementares representativos}{15}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Leis constitutivas para escoamento em meios porosos}{15}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Lineares}{15}{subsubsection.4.5.1}%
+\contentsline {paragraph}{Modelo de Darcy}{15}{section*.3}%
+\contentsline {subsubsection}{\numberline {4.5.2}Não lineares}{18}{subsubsection.4.5.2}%
+\contentsline {paragraph}{Modelo de Forchheimer}{18}{section*.6}%
+\contentsline {section}{\numberline {5}Formulação de Elementos Finitos para Escoamentos em Meios Porosos}{19}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Formulação clássica do problema de escoamento em meios porosos}{19}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Formulação variacional contínua}{19}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Formulação variacional discreta}{22}{subsubsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.2}Formulação \textit {data-driven computing} do problema de escoamento em meios porosos}{22}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Resultados}{28}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Análise de convergência com respeito à solução manufaturada}{28}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Geração de dados sintéticos}{35}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}Comparativo de soluções}{38}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}Convergência nas diferentes formulações}{39}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}Efeito do ruído na solução}{43}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Conclusão}{48}{section.7}%
+\contentsline {section}{\numberline {A}Apêndice}{49}{appendix.A}%

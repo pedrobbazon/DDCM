@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Relatorio.aux
+A level-1 auxiliary file: Textual/Resumo.aux
+A level-1 auxiliary file: Textual/Introducao.aux
+A level-1 auxiliary file: Textual/RevisaoBibliografica.aux
+A level-1 auxiliary file: Textual/MeiosPorosos.aux
+A level-1 auxiliary file: Textual/Formulacao.aux
+A level-1 auxiliary file: Textual/Resultados.aux
+A level-1 auxiliary file: Textual/Conclusao.aux
+A level-1 auxiliary file: Textual/Apendice.aux
+The style file: abbrv.bst
+Database file #1: Bibliografia/Bibliografia.bib
+You've used 29 entries,
+            2118 wiz_defined-function locations,
+            718 strings with 9508 characters,
+and the built_in function-call counts, 8714 in all, are:
+= -- 847
+> -- 393
+< -- 6
++ -- 156
+- -- 126
+* -- 593
+:= -- 1507
+add.period$ -- 96
+call.type$ -- 29
+change.case$ -- 140
+chr.to.int$ -- 0
+cite$ -- 29
+duplicate$ -- 353
+empty$ -- 695
+format.name$ -- 126
+if$ -- 1806
+int.to.chr$ -- 0
+int.to.str$ -- 29
+missing$ -- 39
+newline$ -- 155
+num.names$ -- 61
+pop$ -- 153
+preamble$ -- 1
+purify$ -- 121
+quote$ -- 0
+skip$ -- 217
+stack$ -- 0
+substring$ -- 439
+swap$ -- 52
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 86
+warning$ -- 0
+while$ -- 79
+width$ -- 31
+write$ -- 343
