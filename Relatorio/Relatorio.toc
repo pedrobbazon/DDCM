@@ -1,4 +1,4 @@
-\babel@toc {portuguese}{}
+\babel@toc {portuguese}{}\relax 
 \contentsline {section}{\numberline {1}Resumo}{4}{section.1}%
 \contentsline {section}{\numberline {2}Introdução}{5}{section.2}%
 \contentsline {section}{\numberline {3}Revisão Bibliográfica}{8}{section.3}%
@@ -25,5 +25,6 @@
 \contentsline {subsubsection}{\numberline {6.1.1}Geração de dados sintéticos}{34}{subsubsection.6.1.1}%
 \contentsline {subsubsection}{\numberline {6.1.2}Comparativo de soluções}{37}{subsubsection.6.1.2}%
 \contentsline {subsubsection}{\numberline {6.1.3}Convergência nas diferentes formulações}{38}{subsubsection.6.1.3}%
-\contentsline {section}{\numberline {7}Conclusão}{40}{section.7}%
-\contentsline {section}{\numberline {A}Apêndice}{41}{appendix.A}%
+\contentsline {subsection}{\numberline {6.2}Efeito do ruído na solução}{41}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Conclusão}{42}{section.7}%
+\contentsline {section}{\numberline {A}Apêndice}{43}{appendix.A}%
