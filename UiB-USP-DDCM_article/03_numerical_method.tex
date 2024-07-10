@@ -1,11 +1,11 @@
-\section{Numerical method}
+\section{Numerical method and Implementation}
 
 Two different problems are used to illustrate the behavior of the data-driven 
-formulation introduced in the previous section. The first problem is the 
+formulation introduced in the previous section. The first one is the 
 prototypical elliptic second-order Poisson problem, which models Darcy's flow 
-in porous media or heat conduction and serves as an example of a problem with a 
-scalar unknown. The second problem is the classical elasticity problem, 
-which is an example of an elliptic problem with a vector unknown. We present the 
+in porous media or heat conduction and serves as an example of a problem with 
+scalar unknown. The second one is the classical elasticity problem, 
+as an example of an elliptic problem with vector unknown. We present the 
 specific form of the NLSP1 formulation for these two problems and propose some 
 discrete versions of it, obtained by making different choices of spaces associated 
 with finite element partitions of the computational domain.
@@ -59,17 +59,18 @@ finite element formulation when needed throughout the article.
 \subsubsection{Data-driven formulations for Darcy's problem}
 
 Let us first recall the base formulation from which several discrete versions 
-will be derived. We take as starting point the formulation NLSP1 specialized for 
+will be derived. We take as starting point formulation NLSP1 specialized for 
 Darcy's problem. For the proximity measures we take the $L^2(\Omega)$-norm, i.e.,
 $$
 \varphi_{\eD}(\eD - \tilde{\eD}) = \frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2},~~~
 \varphi_{\sD}(\sD - \tilde{\sD}) = \frac{1}{2}\|\sD-\tilde{\sD}\|^2_{L^2}
 $$
+For simplicity we present the case with pure Dirichlet boundary conditions.
 Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
 find primal fields
 $\uD \in H^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
 and dual fields $\lD \in H^1(\Omega)$, $\mD \in L^2(\Omega)$,
-$\uD = \uD_D$ and $\lD = 0$ $\mathbf{x} \in \partial{\Omega}$,
+$\uD = \uD_D(\mathbf{x})$ and $\lD = 0$ for $\mathbf{x} \in \partial{\Omega}$,
 that minimize
 \begin{multline}
 \mathcal{L} = \Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) +
@@ -90,12 +91,11 @@ by taking variations of this functional with respect to all fields
         \end{aligned}
 \end{equation*}
 \begin{remark}
-We adopt a less abstract notation at this point since this will help to
-establish the connection with the implementation in the 
-open-source finite element platform Firedrake \cite{firedrake}.
-The implementation details are provided later on. 
-A notable feature of the Firedrake platform is its simplicity, which allows for 
-straightforward testing of the different formulations to be presented.
+In this part of the article, we have adopted a less abstract notation to better establish 
+the connection with the implementation in the open-source finite element platform
+Firedrake \cite{firedrake}. The implementation details are provided later on. 
+A notable feature of the Firedrake platform is its simplicity, which allows
+for straightforward testing of the different formulations presented.
 \end{remark}
 
 \subsection{Discrete formulation for Darcy's problem}
@@ -108,11 +108,13 @@ $V_{\uD}(\mathcal{T}_h) \subset H_0^1(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset 
 and $V_{\mD}(\mathcal{T}_h) \subset L^2(\Omega)$.
 Let us introduce the following finite element spaces for further use:
 \begin{eqnarray}
-DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
-CG_k^D(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = u_D~\mbox{on}~\partial{\Omega} \right \}~~~~\\
-RT_k(\mathcal{T}_h) & = & \\
-BDM_k(\mathcal{T}_h) &= &
+\DG_k(\mathcal{T}_h) & = &  \left \{ v \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
+\CG_k^D(\mathcal{T}_h) & = &  \left \{ v \in H^1(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h,~v = u_D~\mbox{on}~\partial{\Omega} \right \}~~~~\\
+\RT_k(\mathcal{T}_h) & = & \left \{ \mathbf{v} \in \Hdiv(\text{div};\Omega) : \mathbf{v} |_{E} \in RT_k (K)~\forall K \in \mathcal{T}_h \right \},\\
+\BDM_k(\mathcal{T}_h) &= & \left \{ \mathbf{v} \in \Hdiv(\text{div};\Omega) : \mathbf{v} |_{E} \in BDM_k (K)~\forall K \in \mathcal{T}_h \right \}
 \end{eqnarray}
+where $RT_k(K)$ is the local Raviart-Thomas space and $BDM_k (K)$ 
+is the local Brezzi-Douglas-Marini space of order $k$ (see \cite{RT,BDM}).
 The corresponding space for $d$-vector valued functions will be
 denoted by $[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$
 and the space with homogeneous Dirichlet data by
@@ -149,7 +151,7 @@ To illustrate our approach, we will consider Darcy's problem as an example and f
  onto $\DG_0$, i.e., find $\hat{\sD}_h$ such that
  $$
 \int_{\Omega} \hat{{\sD}}_h \cdot {\mathbf{v}} \,{\dx} =
-\int_{\Omega} {{\sD}}_h^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in DG_0
+\int_{\Omega} {{\sD}}_h^{\text{ref}} \cdot {\mathbf{v}} \,{\dx} ~~\forall {\mathbf{v}} \in \DG_0
  $$
  and similarly for $\hat{\eD}_h$. Note that depending on the choice
  of finite element spaces to obtain the reference solution
@@ -168,9 +170,14 @@ To illustrate our approach, we will consider Darcy's problem as an example and f
 Note that with these choices, the skeleton of the associated 
 domain decomposition conforms to the element edges/faces of the mesh.
 \end{itemize}
+\begin{remark}
 The previous procedure can be applied similarly to the elasticity problem, 
-except that the functions belong to higher dimensional spaces.
-Let us illustrate with an example the procedure described above.
+except that the functions belong to higher dimensional spaces. 
+In particular $u \leftarrow \uE$ is a $d$-vector valued function and
+$e \leftarrow \eD$ and $s \leftarrow \sE$ are $d\times d$-tensor
+valued functions.
+\end{remark}
+Let us illustrate with an example the procedure described above for Darcy's problem.
 Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
 As illustrated in the figure, the data exhibits some noise around the mean curve, which is depicted in red. Based on prior knowledge of the problem, Forchheimer's model, introduced earlier, is expected to be applicable. Therefore, we can perform a linear regression on the experimental data. For this 1D setting, we adjust the coefficients 
@@ -202,12 +209,14 @@ is a regularization of $\| \sD \|$, such that
 $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. The regularization is
 introduced to ensure convergence of the Newton-Raphson iterations 
 used for solving the nonlinearites. In practice, we take $\eta = 10^{-12}$. 
-The reference solution is shown 
-in figure \ref{fig:refsol}, namely, the pressure field, the gradient and
-the flux. Figure \ref{fig:domains} shows the associated 
+The reference solution, namely, the pressure, gradient and
+flux fields are shown in figure \ref{fig:refsol}. Figure \ref{fig:domains} shows the associated 
 domain decomposition resulting from the data distribution procedure
 described in \ref{sec:datadist}. Each color corresponds to a specific point in the data
-set $\mathfrak{D}_m$. Finally, figure \ref{fig:soldd} shows the corresponding 
+set $\mathfrak{D}_m$. This simply means that in all elements $K \in \mathcal{T}_h$ marked with
+the same color, the corresponding point in the data set will be used to compute
+the data driven solution.
+Finally, figure \ref{fig:soldd} shows the corresponding 
 data-driven solution which was obtained with the discrete formulation 
 to be presented in the next section. As shown in the figure the behavior
 of the data-driven solution reflects the sparsity of the available data.
@@ -285,7 +294,8 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+
                  \int_{\Omega}(\delta \uD_h \nabla \cdot \mD_h  ) \, d\mathbf{x} & = 0, &\\
                 \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
                 \int_{\Omega} \delta \lD_h \left ( \nabla \cdot  \sD_h  -  q \right ) \, d\mathbf{x} & = 0, & \\
-                \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x}  - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
+                \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x} +  \int_{\Omega}{\uD_h \nabla  \cdot \delta \mD_h}\, d\mathbf{x}
+              - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
         \end{aligned}
 \end{equation}
 $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
@@ -303,7 +313,7 @@ resulting the functional $\Phi_{\lD \mD}$
 - \int_{\partial{\Omega}} {\uD_D (\mD \cdot \check{\mathbf{n}})} \, d\Gamma \label{eq:Phi5C}
 \end{multline}
 We choose discrete spaces 
-$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
+$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
 and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
 Hence, the discrete variational problem we propose for this case reads:
 Find primal fields
@@ -311,12 +321,13 @@ $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+
 \times \DG_{k} \times \RT_{k+1}$, $k \ge 0$, such that
 \begin{equation}
         \begin{aligned}
-                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} +
-                \int_{\Omega} {\lD_h \nabla \cdot \delta \sD_h } \, d\mathbf{x} & = 0, & \\
+                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} -
+                \int_{\Omega}(\delta \sD_h \cdot \nabla \lD_h ) \, d\mathbf{x} & = 0, & \\
                  \int_{\Omega}(\delta \uD_h \nabla \cdot \mD_h  ) \, d\mathbf{x} & = 0, &\\
                 \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
-                \int_{\Omega} \delta \lD_h \left ( \nabla \cdot  \sD_h  -  q \right ) \, d\mathbf{x} & = 0, & \\
-                \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x}  - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
+ -\int_{\Omega} \big(\sD_h \cdot \nabla \delta \lD_h + q \, \delta \lambda_h \big) \, d\mathbf{x} & = 0, & \\
+                 \int_{\Omega}{ \delta \mD_h \cdot \eD_h}\, d\mathbf{x}  + \int_{\Omega}{\uD_h \nabla  \cdot \delta \mD_h}\, d\mathbf{x}
+               - \int_{\partial{\Omega}}{ \uD_D (\delta{\mD}_h \cdot \check{\mathbf{n}})}\,d\Gamma & = 0, &
         \end{aligned}
 \end{equation}
 $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
@@ -328,10 +339,31 @@ This discrete formulation will be termed DNLSP1-C.
 The final variant consists in integrating by parts only the balance term in 
 the original functional $\Phi_{\lD \mD}$ giving
 \begin{multline}
-\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) =  \\
+\Phi_{\lD \mD}((\lD, \mD), (\uD, \eD, \sD); q, \Omega) = 
  \int_{\Omega}  \lD \left ( \nabla \cdot \sD - q \right ) \, d\mathbf{x} + 
 \int_{\Omega} \mD \cdot \left ( \eD - \nabla {\uD} \right )\,d\mathbf{x}   \label{eq:Phi5D}
 \end{multline}
+We choose discrete spaces 
+$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+Hence, the discrete variational problem we propose for this case reads:
+Find primal fields
+$(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$, $k \ge 0$, such that
+\begin{equation}
+        \begin{aligned}
+                \int_{\Omega}  \delta \sD_h \cdot (\sD_h - \tilde{\sD}_h) \, d\mathbf{x} +
+              \int_{\Omega} {\lD_h \nabla \cdot \delta \sD_h } \, d\mathbf{x} & = 0, & \\
+              \int_{\Omega}(\delta \uD_h \nabla \cdot \mD_h  ) \, d\mathbf{x} & = 0, &\\
+              \int_{\Omega}  \delta \eD_h \cdot (\eD_h - \tilde{\eD}_h) \, d\mathbf{x}  + \int_{\Omega} (\delta \eD_h \cdot \mD_h) \, d\mathbf{x} & = 0, &\\
+	      \int_{\Omega} \delta \lD_h \left ( \nabla \cdot  \sD_h  -  q \right ) \, d\mathbf{x} & = 0, & \\
+               \int_{\Omega} \delta \mD_h \cdot (\eD_h -  \nabla \uD_h) \, d\mathbf{x} & = 0, &
+        \end{aligned}
+\end{equation}
+$\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
+\times \DG_{k} \times \RT_{k+1}$.
+This discrete formulation will be termed DNLSP1-D. 
+
 
 Table \ref{tab:spaces} summarizes the different variants of finite element spaces for each 
 formulation.
