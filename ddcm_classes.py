@@ -309,9 +309,36 @@ class PoissonDDCMData():
             np.savetxt(data_file, np.hstack((gradu_vals, flux_vals)))
         return 0
     
-    def AddNoisetoData(self, noise_parameters: dict):
-        #self.sampled_gradu += GaussianNoise()
-        #self.sampled_gradu += GaussianNoise()
+    def AddNoisetoData(self, noise_parameters: dict) -> int:
+        """
+        Adds noise to the sampled data.
+
+        Parameters:
+        - noise_parameters (dict): Parameters for the noise generation.
+
+        Returns:
+        - 0 (int): Success flag.
+        """
+        noise_type = noise_parameters.get('type')
+        if noise_type == 'gaussian':
+            mean = noise_parameters.get('mean')
+            std = noise_parameters.get('std')
+            noise_grad = np.random.normal(mean, std, self.sampled_grad.shape)
+            noise_flux = np.random.normal(mean, std, self.sampled_flux.shape)
+        elif noise_type == 'poisson':
+            lam = noise_parameters.get('lam')
+            noise_grad = np.random.poisson(lam, self.sampled_grad.shape) - lam
+            noise_flux = np.random.poisson(lam, self.sampled_flux.shape) - lam
+        elif noise_type == 'exponential':
+            scale = noise_parameters.get('scale')
+            noise_grad = np.random.exponential(scale, self.sampled_grad.shape) - scale
+            noise_flux = np.random.exponential(scale, self.sampled_flux.shape) - scale
+        else:
+            raise ValueError(f"Noise type '{noise_type}' not recognized")
+
+        self.sampled_grad += noise_grad
+        self.sampled_flux += noise_flux
+
         return 0
 
     def Distribute(self, ref_solution, flag_project='Project-VDG0', flag_plot=False):
