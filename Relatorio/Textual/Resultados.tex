@@ -456,154 +456,453 @@ Essa manipulação adicionar visa a aumentar a variabilidade de pontos no espaç
 \subsubsection{Convergência nas diferentes formulações}
 
 
-% Convergencia de u na norma L2
+% Convergência de u na norma L2
 \begin{figure}[h!]
 	\centering
 	\caption{Convergência de $ u $ na norma $ ||\cdot||_{L^{2}} $.}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.png}
-		\caption{NLSP5FA.}
+		\caption*{(a) NLSP5FA}
 		\label{fig:NLSP5FA_L2_error_u}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_u.png}
-		\caption{NLSP5FA-EQUOR.}
+		\caption*{(b) NLSP5FA-EQUOR}
 		\label{fig:NLSP5FA_EQUOR_L2_error_u}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\vfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_u.png}
-		\caption{NLSP5FB.}
+		\caption*{(c) NLSP5FB}
 		\label{fig:NLSP5FB_L2_error_u}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_u.png}
-		\caption{NLSP5FC.}
+		\caption*{(d) NLSP5FC}
 		\label{fig:NLSP5FC_L2_error_u}
-	\end{subfigure}
+	\end{minipage}
 	\label{fig:convergence_L2_error_u}
 \end{figure}
 
 
-% Convergencia de u na norma H1
+
+% Convergência de u na norma H1
 \begin{figure}[h!]
 	\centering
 	\caption{Convergência de $ u $ na norma $ ||\cdot||_{H^{1}} $.}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/H1_error_u.png}
-		\caption{NLSP5FA.}
+		\caption*{(a) NLSP5FA}
 		\label{fig:NLSP5FA_H1_error_u}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/H1_error_u.png}
-		\caption{NLSP5FA-EQUOR.}
+		\caption*{(b) NLSP5FA-EQUOR}
 		\label{fig:NLSP5FA_EQUOR_H1_error_u}
-	\end{subfigure}
+	\end{minipage}
 	\label{fig:convergence_H1_error_u}
 \end{figure}
 
 
-% Convergencia de s na norma L2
+
+% Convergência de s na norma L2
 \begin{figure}[h!]
 	\centering
 	\caption{Convergência de $ \mathbf{s} $ na norma $ ||\cdot||_{L^{2}} $.}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_s.png}
-		\caption{NLSP5FA.}
+		\caption*{(a) NLSP5FA}
 		\label{fig:NLSP5FA_L2_error_s}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_s.png}
-		\caption{NLSP5FA-EQUOR.}
+		\caption*{(b) NLSP5FA-EQUOR}
 		\label{fig:NLSP5FA_EQUOR_L2_error_s}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\vfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_s.png}
-		\caption{NLSP5FB.}
+		\caption*{(c) NLSP5FB}
 		\label{fig:NLSP5FB_L2_error_s}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_s.png}
-		\caption{NLSP5FC.}
+		\caption*{(d) NLSP5FC}
 		\label{fig:NLSP5FC_L2_error_s}
-	\end{subfigure}
+	\end{minipage}
 	\label{fig:convergence_L2_error_s}
 \end{figure}
 
-% Convergencia de lambda na norma L2
+% Convergência de s na norma Hdiv
+\begin{figure}[h!]
+	\centering
+	\caption{Convergência de $ \mathbf{s} $ na norma $ ||\cdot||_{\text{Hdiv}} $.}
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/Hdiv_error_s.png}
+		\caption*{(a) NLSP5FB}
+		\label{fig:NLSP5FB_Hdiv_error_s}
+	\end{minipage}
+\end{figure}
+
+
+% Convergência de lambda na norma L2
 \begin{figure}[h!]
 	\centering
 	\caption{Convergência de $ \lambda $ na norma $ ||\cdot||_{L^{2}} $.}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_lambda.png}
-		\caption{NLSP5FA.}
+		\caption*{(a) NLSP5FA}
 		\label{fig:NLSP5FA_L2_error_lambda}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_lambda.png}
-		\caption{NLSP5FA-EQUOR.}
+		\caption*{(b) NLSP5FA-EQUOR}
 		\label{fig:NLSP5FA_EQUOR_L2_error_lambda}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\vfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_lambda.png}
-		\caption{NLSP5FB.}
+		\caption*{(c) NLSP5FB}
 		\label{fig:NLSP5FB_L2_error_lambda}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_lambda.png}
-		\caption{NLSP5FC.}
+		\caption*{(d) NLSP5FC}
 		\label{fig:NLSP5FC_L2_error_lambda}
-	\end{subfigure}
+	\end{minipage}
 	\label{fig:convergence_L2_error_lambda}
 \end{figure}
 
-% Convergencia de mu na norma H1
+
+% Convergência de mu na norma L2
 \begin{figure}[h!]
 	\centering
 	\caption{Convergência de $ \boldsymbol{\mu} $ na norma $ ||\cdot||_{L^{2}} $.}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_mu.png}
-		\caption{NLSP5FA.}
+		\caption*{(a) NLSP5FA}
 		\label{fig:NLSP5FA_L2_error_mu}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_mu.png}
-		\caption{NLSP5FA-EQUOR.}
+		\caption*{(b) NLSP5FA-EQUOR}
 		\label{fig:NLSP5FA_EQUOR_L2_error_mu}
-	\end{subfigure}
-%	\begin{subfigure}{0.45\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_mu.png}
-%		\caption{NLSP5FB.}
-%		\label{fig:NLSP5FB_L2_error_mu}
-%	\end{subfigure}
-%	\begin{subfigure}{0.45\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_mu.png}
-%		\caption{NLSP5FC.}
-%		\label{fig:NLSP5FC_L2_error_mu}
-%	\end{subfigure}
+	\end{minipage}
+	\vfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_mu.png}
+		\caption*{(c) NLSP5FB}
+		\label{fig:NLSP5FB_L2_error_mu}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_mu.png}
+		\caption*{(d) NLSP5FC}
+		\label{fig:NLSP5FC_L2_error_mu}
+	\end{minipage}
 	\label{fig:convergence_L2_error_mu}
 \end{figure}
 
 
+
 \clearpage
 \subsection{Efeito do ruído na solução}
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_4.png}
+		\caption*{(a) $ \text{N}_{sp} = 4 \times 4 $ }
+		\label{fig:flux_grad_without_noise_4}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_8.png}
+		\caption*{(b) $ \text{N}_{sp} = 8 \times 8 $ }
+		\label{fig:flux_grad_without_noise_8}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_16.png}
+		\caption*{(c) $ \text{N}_{sp} = 16 \times 16 $ }
+		\label{fig:flux_grad_without_noise_16}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_32.png}
+		\caption*{(d) $ \text{N}_{sp} = 32 \times 32 $ }
+		\label{fig:flux_grad_without_noise_32}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_64.png}
+		\caption*{(e) $ \text{N}_{sp} = 64 \times 64 $ }
+		\label{fig:flux_grad_without_noise_64}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_without_noise_128.png}
+		\caption*{(f) $ \text{N}_{sp} = 128 \times 128 $ }
+		\label{fig:flux_grad_without_noise_128}
+	\end{minipage}
+	\label{fig:flux_grad_without_noise}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_4.png}
+		\caption*{(a) $ \text{N}_{sp} = 4 \times 4 $ }
+		\label{fig:flux_grad_gaussian_noise_4}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_8.png}
+		\caption*{(b) $ \text{N}_{sp} = 8 \times 8 $ }
+		\label{fig:flux_grad_gaussian_noise_8}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_16.png}
+		\caption*{(c) $ \text{N}_{sp} = 16 \times 16 $ }
+		\label{fig:flux_grad_gaussian_noise_16}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_32.png}
+		\caption*{(d) $ \text{N}_{sp} = 32 \times 32 $ }
+		\label{fig:flux_grad_gaussian_noise_32}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_64.png}
+		\caption*{(e) $ \text{N}_{sp} = 64 \times 64 $ }
+		\label{fig:flux_grad_gaussian_noise_64}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/flux_grad_gaussian_noise_128.png}
+		\caption*{(f) $ \text{N}_{sp} = 128 \times 128 $ }
+		\label{fig:flux_grad_gaussian_noise_128}
+	\end{minipage}
+	\label{fig:flux_grad_gaussian_noise}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_without_noise.png}
+		\caption*{(a)  }
+		\label{fig:u_without_noise}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_without_noise.png}
+		\caption*{(b) }
+		\label{fig:s_without_noise}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_without_noise.png}
+		\caption*{(c) }
+		\label{fig:g_without_noise}
+	\end{minipage}
+	\label{fig:fields_without_noise}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_4.png}
+		\caption*{(a) $ \text{N}_{sp} = 4 \times 4 $ }
+		\label{fig:u_gaussian_noise_4}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_8.png}
+		\caption*{(b) $ \text{N}_{sp} = 8 \times 8 $ }
+		\label{fig:u_gaussian_noise_8}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_16.png}
+		\caption*{(c) $ \text{N}_{sp} = 16 \times 16 $ }
+		\label{fig:u_gaussian_noise_16}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_32.png}
+		\caption*{(d) $ \text{N}_{sp} = 32 \times 32 $ }
+		\label{fig:u_gaussian_noise_32}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_64.png}
+		\caption*{(e) $ \text{N}_{sp} = 64 \times 64 $ }
+		\label{fig:u_gaussian_noise_64}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/u_gaussian_noise_128.png}
+		\caption*{(f) $ \text{N}_{sp} = 128 \times 128 $ }
+		\label{fig:u_gaussian_noise_128}
+	\end{minipage}
+	\label{fig:u_gaussian_noise}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_4.png}
+		\caption*{(a) $ \text{N}_{sp} = 4 \times 4 $ }
+		\label{fig:s_gaussian_noise_4}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_8.png}
+		\caption*{(b) $ \text{N}_{sp} = 8 \times 8 $ }
+		\label{fig:s_gaussian_noise_8}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_16.png}
+		\caption*{(c) $ \text{N}_{sp} = 16 \times 16 $ }
+		\label{fig:s_gaussian_noise_16}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_32.png}
+		\caption*{(d) $ \text{N}_{sp} = 32 \times 32 $ }
+		\label{fig:s_gaussian_noise_32}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_64.png}
+		\caption*{(e) $ \text{N}_{sp} = 64 \times 64 $ }
+		\label{fig:s_gaussian_noise_64}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/s_gaussian_noise_128.png}
+		\caption*{(f) $ \text{N}_{sp} = 128 \times 128 $ }
+		\label{fig:s_gaussian_noise_128}
+	\end{minipage}
+	\label{fig:s_gaussian_noise}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{}
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_4.png}
+		\caption*{(a) $ \text{N}_{sp} = 4 \times 4 $ }
+		\label{fig:g_gaussian_noise_4}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_8.png}
+		\caption*{(b) $ \text{N}_{sp} = 8 \times 8 $ }
+		\label{fig:g_gaussian_noise_8}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_16.png}
+		\caption*{(c) $ \text{N}_{sp} = 16 \times 16 $ }
+		\label{fig:g_gaussian_noise_16}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_32.png}
+		\caption*{(d) $ \text{N}_{sp} = 32 \times 32 $ }
+		\label{fig:g_gaussian_noise_32}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_64.png}
+		\caption*{(e) $ \text{N}_{sp} = 64 \times 64 $ }
+		\label{fig:g_gaussian_noise_64}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figuras/Ruido/g_gaussian_noise_128.png}
+		\caption*{(f) $ \text{N}_{sp} = 128 \times 128 $ }
+		\label{fig:g_gaussian_noise_128}
+	\end{minipage}
+	\label{fig:g_gaussian_noise}
+\end{figure}
+
+
 
 
 

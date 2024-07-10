@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  10 JUL 2024 09:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  10 JUL 2024 10:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -856,16 +856,16 @@ Overfull \hbox (10.8973pt too wide) in paragraph at lines 6--6
 ~ao de da-dos sint^^Seticos 
  []
 
-)
-\tf@lof=\write5
-\openout5 = `Relatorio.lof'.
-
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.43 	\cleardoublepage
-                       [1] (./Relatorio.toc
+l.20 ...orespaces \relax }}{46}{figure.caption.24}
+                                                  % [1])
+\tf@lof=\write5
+\openout5 = `Relatorio.lof'.
+
+ [2] (./Relatorio.toc
 Overfull \hbox (3.26083pt too wide) in paragraph at lines 18--18
  [] [][][]\OT1/cmr/bx/n/12 Formula^^Xc~ao de Ele-men-tos Fi-ni-tos para Es-co-a
 -men-tos em Meios 
@@ -877,67 +877,67 @@ Overfull \hbox (1.50098pt too wide) in paragraph at lines 22--22
 ting \OT1/cmr/m/n/12 do pro-blema de es-co-a-mento 
  []
 
-[2
+[3
 
 ])
 \tf@toc=\write6
 \openout6 = `Relatorio.toc'.
 
- [3]
+ [4]
 \openout2 = `Textual/Resumo.aux'.
 
- (./Textual/Resumo.tex) [4
+ (./Textual/Resumo.tex) [5
 
 
 ]
 \openout2 = `Textual/Introducao.aux'.
 
- (./Textual/Introducao.tex [5
+ (./Textual/Introducao.tex [6
 
 
 
-] [6]) [7]
+] [7]) [8]
 \openout2 = `Textual/RevisaoBibliografica.aux'.
 
 
-(./Textual/RevisaoBibliografica.tex [8
+(./Textual/RevisaoBibliografica.tex [9
 
 
 
-] [9]) [10]
+] [10]) [11]
 \openout2 = `Textual/MeiosPorosos.aux'.
 
  (./Textual/MeiosPorosos.tex
-[11
+[12
 
 
 
-] [12] [13]
-<Figuras/Gerais/Darcy_experiment.png, id=342, 869.2475pt x 824.07875pt>
+] [13] [14]
+<Figuras/Gerais/Darcy_experiment.png, id=358, 869.2475pt x 824.07875pt>
 File: Figuras/Gerais/Darcy_experiment.png Graphic file (type png)
 <use Figuras/Gerais/Darcy_experiment.png>
 Package pdftex.def Info: Figuras/Gerais/Darcy_experiment.png  used on input lin
 e 81.
 (pdftex.def)             Requested size: 155.99762pt x 147.88766pt.
- [14] [15 <./Figuras/Gerais/Darcy_experiment.png>] [16]
-<Figuras/Gerais/Darcy_law_graph.png, id=381, 501.875pt x 376.40625pt>
+ [15] [16 <./Figuras/Gerais/Darcy_experiment.png>] [17]
+<Figuras/Gerais/Darcy_law_graph.png, id=397, 501.875pt x 376.40625pt>
 File: Figuras/Gerais/Darcy_law_graph.png Graphic file (type png)
 <use Figuras/Gerais/Darcy_law_graph.png>
 Package pdftex.def Info: Figuras/Gerais/Darcy_law_graph.png  used on input line
  133.
 (pdftex.def)             Requested size: 155.99762pt x 117.00061pt.
-) [17 <./Figuras/Gerais/Darcy_law_graph.png>]
+) [18 <./Figuras/Gerais/Darcy_law_graph.png>]
 \openout2 = `Textual/Formulacao.aux'.
 
- (./Textual/Formulacao.tex [18
+ (./Textual/Formulacao.tex [19
 
 
 
-] [19]
-[20] [21] [22] [23] [24] [25]) [26]
+] [20]
+[21] [22] [23] [24] [25] [26]) [27]
 \openout2 = `Textual/Resultados.aux'.
 
- (./Textual/Resultados.tex [27
+ (./Textual/Resultados.tex [28
 
 
 
@@ -947,14 +947,14 @@ Overfull \hbox (2.96754pt too wide) detected at line 47
 OT1/cmr/m/n/12 ) = 0 \OMS/cmsy/m/n/12 ) [] , []
  []
 
-[28]
-<Figuras/Gerais/3d_pressure.png, id=509, 363.759pt x 349.305pt>
+[29]
+<Figuras/Gerais/3d_pressure.png, id=525, 363.759pt x 349.305pt>
 File: Figuras/Gerais/3d_pressure.png Graphic file (type png)
 <use Figuras/Gerais/3d_pressure.png>
 Package pdftex.def Info: Figuras/Gerais/3d_pressure.png  used on input line 121
 .
 (pdftex.def)             Requested size: 175.49881pt x 168.52794pt.
-<Figuras/Gerais/contour_pressure.png, id=510, 479.8728pt x 382.3083pt>
+<Figuras/Gerais/contour_pressure.png, id=526, 479.8728pt x 382.3083pt>
 File: Figuras/Gerais/contour_pressure.png Graphic file (type png)
 <use Figuras/Gerais/contour_pressure.png>
 Package pdftex.def Info: Figuras/Gerais/contour_pressure.png  used on input lin
@@ -964,22 +964,22 @@ e 128.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[29] [30 <./Figuras/Gerais/3d_pressure.png> <./Figuras/Gerais/contour_pressure.
-png>] [31]
+[30] [31 <./Figuras/Gerais/3d_pressure.png> <./Figuras/Gerais/contour_pressure.
+png>] [32]
 Overfull \hbox (6.0758pt too wide) in paragraph at lines 229--230
 []\OT1/cmr/m/n/12 Observando-se que para $(\OML/cmm/m/it/12 x; y\OT1/cmr/m/n/12
  ) \OMS/cmsy/m/n/12 2 \OT1/cmr/m/n/12 (0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 1)$ 
 o de-no-mi-na-dor de am-bas as equa^^Xc~oes
  []
 
-[32]
-<Figuras/Gerais/3d_grad_pressure.png, id=556, 360.1455pt x 349.305pt>
+[33]
+<Figuras/Gerais/3d_grad_pressure.png, id=573, 360.1455pt x 349.305pt>
 File: Figuras/Gerais/3d_grad_pressure.png Graphic file (type png)
 <use Figuras/Gerais/3d_grad_pressure.png>
 Package pdftex.def Info: Figuras/Gerais/3d_grad_pressure.png  used on input lin
 e 297.
 (pdftex.def)             Requested size: 175.49881pt x 170.21753pt.
-<Figuras/Gerais/contour_grad_pressure.png, id=557, 477.9456pt x 382.3083pt>
+<Figuras/Gerais/contour_grad_pressure.png, id=574, 477.9456pt x 382.3083pt>
 File: Figuras/Gerais/contour_grad_pressure.png Graphic file (type png)
 <use Figuras/Gerais/contour_grad_pressure.png>
 Package pdftex.def Info: Figuras/Gerais/contour_grad_pressure.png  used on inpu
@@ -989,28 +989,28 @@ t line 304.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[33]
+[34]
 Overfull \hbox (11.61528pt too wide) in paragraph at lines 314--315
 \OT1/cmr/m/n/12 Para o pro-blema de es-co-a-mento em meios po-ro-sos, a gera^^X
 c~ao de da-dos num^^Sericos
  []
 
-[34 <./Figuras/Gerais/3d_grad_pressure.png> <./Figuras/Gerais/contour_grad_pres
-sure.png>] [35]
-<Figuras/Gerais/gradu_samples.png, id=580, 423.5022pt x 351.9549pt>
+[35 <./Figuras/Gerais/3d_grad_pressure.png> <./Figuras/Gerais/contour_grad_pres
+sure.png>] [36]
+<Figuras/Gerais/gradu_samples.png, id=597, 423.5022pt x 351.9549pt>
 File: Figuras/Gerais/gradu_samples.png Graphic file (type png)
 <use Figuras/Gerais/gradu_samples.png>
 Package pdftex.def Info: Figuras/Gerais/gradu_samples.png  used on input line 3
 80.
 (pdftex.def)             Requested size: 175.49881pt x 145.8491pt.
-<Figuras/Gerais/flux_samples.png, id=581, 423.5022pt x 351.9549pt>
+<Figuras/Gerais/flux_samples.png, id=598, 423.5022pt x 351.9549pt>
 File: Figuras/Gerais/flux_samples.png Graphic file (type png)
 <use Figuras/Gerais/flux_samples.png>
 Package pdftex.def Info: Figuras/Gerais/flux_samples.png  used on input line 38
 6.
 (pdftex.def)             Requested size: 175.49881pt x 145.8491pt.
- [36 <./Figuras/Gerais/gradu_samples.png> <./Figuras/Gerais/flux_samples.png>]
-<Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.png, id=589, 955.57pt x 10
+ [37 <./Figuras/Gerais/gradu_samples.png> <./Figuras/Gerais/flux_samples.png>]
+<Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.png, id=605, 955.57pt x 10
 57.9525pt>
 File: Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.png Graphic file (typ
 e png)
@@ -1018,7 +1018,7 @@ e png)
 Package pdftex.def Info: Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.pn
 g  used on input line 404.
 (pdftex.def)             Requested size: 124.80286pt x 138.16823pt.
-<Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA_EQUOR.png, id=590, 949.547
+<Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA_EQUOR.png, id=606, 949.547
 5pt x 1048.91875pt>
 File: Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA_EQUOR.png Graphic fil
 e (type png)
@@ -1026,7 +1026,7 @@ e (type png)
 Package pdftex.def Info: Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA_EQ
 UOR.png  used on input line 411.
 (pdftex.def)             Requested size: 124.80286pt x 137.8527pt.
-<Figuras/Solucao_manufaturada/potential_ddcm_reference.png, id=591, 965.6075pt 
+<Figuras/Solucao_manufaturada/potential_ddcm_reference.png, id=607, 965.6075pt 
 x 1042.89626pt>
 File: Figuras/Solucao_manufaturada/potential_ddcm_reference.png Graphic file (t
 ype png)
@@ -1034,7 +1034,7 @@ ype png)
 Package pdftex.def Info: Figuras/Solucao_manufaturada/potential_ddcm_reference.
 png  used on input line 418.
 (pdftex.def)             Requested size: 124.80286pt x 134.7856pt.
-<Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA.png, id=592, 965.6075pt x 1042.
+<Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA.png, id=608, 965.6075pt x 1042.
 89626pt>
 File: Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA.png Graphic file (type png
 )
@@ -1042,7 +1042,7 @@ File: Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA.png Graphic file (type png
 Package pdftex.def Info: Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA.png  us
 ed on input line 432.
 (pdftex.def)             Requested size: 124.80286pt x 134.7856pt.
-<Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA_EQUOR.png, id=593, 965.6075pt x
+<Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA_EQUOR.png, id=609, 965.6075pt x
  1042.89626pt>
 File: Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA_EQUOR.png Graphic file (ty
 pe png)
@@ -1050,7 +1050,7 @@ pe png)
 Package pdftex.def Info: Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA_EQUOR.p
 ng  used on input line 439.
 (pdftex.def)             Requested size: 124.80286pt x 134.7856pt.
-<Figuras/Solucao_manufaturada/flux_ddcm_reference.png, id=594, 964.60374pt x 10
+<Figuras/Solucao_manufaturada/flux_ddcm_reference.png, id=610, 964.60374pt x 10
 42.89626pt>
 File: Figuras/Solucao_manufaturada/flux_ddcm_reference.png Graphic file (type p
 ng)
@@ -1058,13 +1058,13 @@ ng)
 Package pdftex.def Info: Figuras/Solucao_manufaturada/flux_ddcm_reference.png  
 used on input line 446.
 (pdftex.def)             Requested size: 124.80286pt x 134.92882pt.
- [37 <./Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.png> <./Figuras/Sol
+ [38 <./Figuras/Solucao_manufaturada/potential_ddcm_NLSP5FA.png> <./Figuras/Sol
 ucao_manufaturada/potential_ddcm_NLSP5FA_EQUOR.png> <./Figuras/Solucao_manufatu
 rada/potential_ddcm_reference.png> <./Figuras/Solucao_manufaturada/flux_ddcm_NL
 SP5FA.png> <./Figuras/Solucao_manufaturada/flux_ddcm_NLSP5FA_EQUOR.png> <./Figu
 ras/Solucao_manufaturada/flux_ddcm_reference.png>]
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.png, i
-d=605, 569.0058pt x 425.9112pt>
+d=621, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.pn
@@ -1073,244 +1073,498 @@ Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
 LSP5FA/L2_error_u.png  used on input line 465.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_u.
-png, id=606, 569.0058pt x 425.9112pt>
+png, id=622, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_err
 or_u.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_erro
 r_u.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA_EQUOR/L2_error_u.png  used on input line 471.
+LSP5FA_EQUOR/L2_error_u.png  used on input line 472.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_u.png, i
-d=607, 578.16pt x 433.62pt>
+d=623, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_u.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_u.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FB/L2_error_u.png  used on input line 477.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FB/L2_error_u.png  used on input line 479.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_u.png, i
-d=608, 578.16pt x 433.62pt>
+d=624, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_u.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_u.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FC/L2_error_u.png  used on input line 483.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FC/L2_error_u.png  used on input line 486.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/H1_error_u.png, i
-d=609, 569.0058pt x 425.9112pt>
+d=625, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/H1_error_u.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/H1_error_u.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA/H1_error_u.png  used on input line 497.
+LSP5FA/H1_error_u.png  used on input line 501.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/H1_error_u.
-png, id=610, 569.0058pt x 425.9112pt>
+png, id=626, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/H1_err
 or_u.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/H1_erro
 r_u.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA_EQUOR/H1_error_u.png  used on input line 503.
+LSP5FA_EQUOR/H1_error_u.png  used on input line 508.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_s.png, i
-d=611, 569.0058pt x 425.9112pt>
+d=627, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_s.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_s.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA/L2_error_s.png  used on input line 517.
+LSP5FA/L2_error_s.png  used on input line 523.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_s.
-png, id=612, 569.0058pt x 425.9112pt>
+png, id=628, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_err
 or_s.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_erro
 r_s.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA_EQUOR/L2_error_s.png  used on input line 523.
+LSP5FA_EQUOR/L2_error_s.png  used on input line 530.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_s.png, i
-d=613, 578.16pt x 433.62pt>
+d=629, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_s.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_s.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FB/L2_error_s.png  used on input line 529.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FB/L2_error_s.png  used on input line 537.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_s.png, i
-d=614, 578.16pt x 433.62pt>
+d=630, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_s.p
 ng Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_s.pn
 g>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FC/L2_error_s.png  used on input line 535.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FC/L2_error_s.png  used on input line 544.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/Hdiv_error_s.png,
+ id=631, 569.0058pt x 425.9112pt>
+File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/Hdiv_error_s
+.png Graphic file (type png)
+<use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/Hdiv_error_s.
+png>
+Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
+LSP5FB/Hdiv_error_s.png  used on input line 557.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_lambda.p
-ng, id=615, 569.0058pt x 425.9112pt>
+ng, id=632, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_lam
 bda.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_lamb
 da.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA/L2_error_lambda.png  used on input line 548.
+LSP5FA/L2_error_lambda.png  used on input line 570.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_la
-mbda.png, id=616, 569.0058pt x 425.9112pt>
+mbda.png, id=633, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_err
 or_lambda.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_erro
 r_lambda.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA_EQUOR/L2_error_lambda.png  used on input line 554.
+LSP5FA_EQUOR/L2_error_lambda.png  used on input line 577.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_lambda.p
-ng, id=617, 578.16pt x 433.62pt>
+ng, id=634, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_lam
 bda.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_lamb
 da.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FB/L2_error_lambda.png  used on input line 560.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FB/L2_error_lambda.png  used on input line 584.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_lambda.p
-ng, id=618, 578.16pt x 433.62pt>
+ng, id=635, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_lam
 bda.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_lamb
 da.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FC/L2_error_lambda.png  used on input line 566.
-(pdftex.def)             Requested size: 175.49881pt x 131.62202pt.
+LSP5FC/L2_error_lambda.png  used on input line 591.
+(pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_mu.png, 
-id=619, 569.0058pt x 425.9112pt>
+id=636, 569.0058pt x 425.9112pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_mu.
 png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_mu.p
 ng>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA/L2_error_mu.png  used on input line 579.
+LSP5FA/L2_error_mu.png  used on input line 605.
 (pdftex.def)             Requested size: 175.49881pt x 131.36171pt.
 <Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_mu
-.png, id=620, 569.0058pt x 424.9476pt>
+.png, id=637, 569.0058pt x 424.7067pt>
 File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_err
 or_mu.png Graphic file (type png)
 <use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_erro
 r_mu.png>
 Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FA_EQUOR/L2_error_mu.png  used on input line 585.
-(pdftex.def)             Requested size: 175.49881pt x 131.06451pt.
+LSP5FA_EQUOR/L2_error_mu.png  used on input line 612.
+(pdftex.def)             Requested size: 175.49881pt x 130.99022pt.
+<Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_mu.png, 
+id=638, 569.0058pt x 424.7067pt>
+File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_mu.
+png Graphic file (type png)
+<use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_mu.p
+ng>
+Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
+LSP5FB/L2_error_mu.png  used on input line 619.
+(pdftex.def)             Requested size: 175.49881pt x 130.99022pt.
+<Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_mu.png, 
+id=639, 569.0058pt x 424.7067pt>
+File: Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_mu.
+png Graphic file (type png)
+<use Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_mu.p
+ng>
+Package pdftex.def Info: Figuras/Convergencia_manufaturada/Graphs_Convergence_N
+LSP5FC/L2_error_mu.png  used on input line 626.
+(pdftex.def)             Requested size: 175.49881pt x 130.99022pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[38 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.
+[39 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_u.
 png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_e
 rror_u.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_
 error_u.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2
-_error_u.png>]
+_error_u.png>] [40 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP
+5FA/H1_error_u.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLS
+P5FA_EQUOR/H1_error_u.png> <./Figuras/Convergencia_manufaturada/Graphs_Converge
+nce_NLSP5FA/L2_error_s.png> <./Figuras/Convergencia_manufaturada/Graphs_Converg
+ence_NLSP5FA_EQUOR/L2_error_s.png> <./Figuras/Convergencia_manufaturada/Graphs_
+Convergence_NLSP5FB/L2_error_s.png> <./Figuras/Convergencia_manufaturada/Graphs
+_Convergence_NLSP5FC/L2_error_s.png>] [41 <./Figuras/Convergencia_manufaturada/
+Graphs_Convergence_NLSP5FB/Hdiv_error_s.png> <./Figuras/Convergencia_manufatura
+da/Graphs_Convergence_NLSP5FA/L2_error_lambda.png> <./Figuras/Convergencia_manu
+faturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_error_lambda.png> <./Figuras/Conve
+rgencia_manufaturada/Graphs_Convergence_NLSP5FB/L2_error_lambda.png> <./Figuras
+/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC/L2_error_lambda.png>]
+[42 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_mu
+.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/L2_
+error_mu.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FB/L
+2_error_mu.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FC
+/L2_error_mu.png>]
+<Figuras/Ruido/flux_grad_without_noise_4.png, id=676, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_4.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_4.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_4.png  used on i
+nput line 643.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_without_noise_8.png, id=677, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_8.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_8.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_8.png  used on i
+nput line 650.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_without_noise_16.png, id=678, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_16.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_16.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_16.png  used on 
+input line 657.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_without_noise_32.png, id=679, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_32.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_32.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_32.png  used on 
+input line 664.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_without_noise_64.png, id=680, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_64.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_64.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_64.png  used on 
+input line 671.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_without_noise_128.png, id=681, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_without_noise_128.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_without_noise_128.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_without_noise_128.png  used on
+ input line 678.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_4.png, id=682, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_gaussian_noise_4.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_4.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_4.png  used on 
+input line 692.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_8.png, id=683, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_gaussian_noise_8.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_8.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_8.png  used on 
+input line 699.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_16.png, id=684, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_gaussian_noise_16.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_16.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_16.png  used on
+ input line 706.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_32.png, id=685, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_gaussian_noise_32.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_32.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_32.png  used on
+ input line 713.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_64.png, id=686, 426.393pt x 281.853pt>
+File: Figuras/Ruido/flux_grad_gaussian_noise_64.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_64.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_64.png  used on
+ input line 720.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/flux_grad_gaussian_noise_128.png, id=687, 426.393pt x 281.853pt>
 
-LaTeX Warning: Text page 39 contains only floats.
+File: Figuras/Ruido/flux_grad_gaussian_noise_128.png Graphic file (type png)
+<use Figuras/Ruido/flux_grad_gaussian_noise_128.png>
+Package pdftex.def Info: Figuras/Ruido/flux_grad_gaussian_noise_128.png  used o
+n input line 727.
+(pdftex.def)             Requested size: 124.80286pt x 82.4965pt.
+<Figuras/Ruido/u_without_noise.png, id=688, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_without_noise.png Graphic file (type png)
+<use Figuras/Ruido/u_without_noise.png>
+Package pdftex.def Info: Figuras/Ruido/u_without_noise.png  used on input line 
+740.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_without_noise.png, id=689, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_without_noise.png Graphic file (type png)
+<use Figuras/Ruido/s_without_noise.png>
+Package pdftex.def Info: Figuras/Ruido/s_without_noise.png  used on input line 
+747.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_without_noise.png, id=690, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_without_noise.png Graphic file (type png)
+<use Figuras/Ruido/g_without_noise.png>
+Package pdftex.def Info: Figuras/Ruido/g_without_noise.png  used on input line 
+754.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
 
-[39 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/H1_error_u.
-png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR/H1_e
-rror_u.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_
-error_s.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQ
-UOR/L2_error_s.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLS
-P5FB/L2_error_s.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NL
-SP5FC/L2_error_s.png>]
 
-LaTeX Warning: Text page 40 contains only floats.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[40 <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA/L2_error_la
-mbda.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_NLSP5FA_EQUOR
-/L2_error_lambda.png> <./Figuras/Convergencia_manufaturada/Graphs_Convergence_N
-LSP5FB/L2_error_lambda.png> <./Figuras/Convergencia_manufaturada/Graphs_Converg
-ence_NLSP5FC/L2_error_lambda.png> <./Figuras/Convergencia_manufaturada/Graphs_C
-onvergence_NLSP5FA/L2_error_mu.png> <./Figuras/Convergencia_manufaturada/Graphs
-_Convergence_NLSP5FA_EQUOR/L2_error_mu.png>]) [41
+<Figuras/Ruido/u_gaussian_noise_4.png, id=691, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_4.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_4.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_4.png  used on input li
+ne 767.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/u_gaussian_noise_8.png, id=692, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_8.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_8.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_8.png  used on input li
+ne 774.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/u_gaussian_noise_16.png, id=693, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_16.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_16.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_16.png  used on input l
+ine 781.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/u_gaussian_noise_32.png, id=694, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_32.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_32.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_32.png  used on input l
+ine 788.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/u_gaussian_noise_64.png, id=695, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_64.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_64.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_64.png  used on input l
+ine 795.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/u_gaussian_noise_128.png, id=696, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/u_gaussian_noise_128.png Graphic file (type png)
+<use Figuras/Ruido/u_gaussian_noise_128.png>
+Package pdftex.def Info: Figuras/Ruido/u_gaussian_noise_128.png  used on input 
+line 802.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
 
-]
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Figuras/Ruido/s_gaussian_noise_4.png, id=697, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_4.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_4.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_4.png  used on input li
+ne 816.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_gaussian_noise_8.png, id=698, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_8.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_8.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_8.png  used on input li
+ne 823.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_gaussian_noise_16.png, id=699, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_16.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_16.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_16.png  used on input l
+ine 830.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_gaussian_noise_32.png, id=700, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_32.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_32.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_32.png  used on input l
+ine 837.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_gaussian_noise_64.png, id=701, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_64.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_64.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_64.png  used on input l
+ine 844.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/s_gaussian_noise_128.png, id=702, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/s_gaussian_noise_128.png Graphic file (type png)
+<use Figuras/Ruido/s_gaussian_noise_128.png>
+Package pdftex.def Info: Figuras/Ruido/s_gaussian_noise_128.png  used on input 
+line 851.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<Figuras/Ruido/g_gaussian_noise_4.png, id=703, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_4.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_4.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_4.png  used on input li
+ne 863.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_gaussian_noise_8.png, id=704, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_8.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_8.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_8.png  used on input li
+ne 870.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_gaussian_noise_16.png, id=705, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_16.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_16.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_16.png  used on input l
+ine 877.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_gaussian_noise_32.png, id=706, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_32.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_32.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_32.png  used on input l
+ine 884.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_gaussian_noise_64.png, id=707, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_64.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_64.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_64.png  used on input l
+ine 891.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+<Figuras/Ruido/g_gaussian_noise_128.png, id=708, 697.60625pt x 803.0pt>
+File: Figuras/Ruido/g_gaussian_noise_128.png Graphic file (type png)
+<use Figuras/Ruido/g_gaussian_noise_128.png>
+Package pdftex.def Info: Figuras/Ruido/g_gaussian_noise_128.png  used on input 
+line 898.
+(pdftex.def)             Requested size: 124.80286pt x 143.65157pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+) [43
+
+ <./Figuras/Ruido/flux_grad_without_noise_4.png> <./Figuras/Ruido/flux_grad_wit
+hout_noise_8.png> <./Figuras/Ruido/flux_grad_without_noise_16.png> <./Figuras/R
+uido/flux_grad_without_noise_32.png> <./Figuras/Ruido/flux_grad_without_noise_6
+4.png> <./Figuras/Ruido/flux_grad_without_noise_128.png> <./Figuras/Ruido/flux_
+grad_gaussian_noise_4.png> <./Figuras/Ruido/flux_grad_gaussian_noise_8.png> <./
+Figuras/Ruido/flux_grad_gaussian_noise_16.png> <./Figuras/Ruido/flux_grad_gauss
+ian_noise_32.png> <./Figuras/Ruido/flux_grad_gaussian_noise_64.png> <./Figuras/
+Ruido/flux_grad_gaussian_noise_128.png>] [44 <./Figuras/Ruido/u_without_noise.p
+ng> <./Figuras/Ruido/s_without_noise.png> <./Figuras/Ruido/g_without_noise.png>
+] [45 <./Figuras/Ruido/u_gaussian_noise_4.png> <./Figuras/Ruido/u_gaussian_nois
+e_8.png> <./Figuras/Ruido/u_gaussian_noise_16.png> <./Figuras/Ruido/u_gaussian_
+noise_32.png> <./Figuras/Ruido/u_gaussian_noise_64.png> <./Figuras/Ruido/u_gaus
+sian_noise_128.png>] [46 <./Figuras/Ruido/s_gaussian_noise_4.png> <./Figuras/Ru
+ido/s_gaussian_noise_8.png> <./Figuras/Ruido/s_gaussian_noise_16.png> <./Figura
+s/Ruido/s_gaussian_noise_32.png> <./Figuras/Ruido/s_gaussian_noise_64.png> <./F
+iguras/Ruido/s_gaussian_noise_128.png>] [47 <./Figuras/Ruido/g_gaussian_noise_4
+.png> <./Figuras/Ruido/g_gaussian_noise_8.png> <./Figuras/Ruido/g_gaussian_nois
+e_16.png> <./Figuras/Ruido/g_gaussian_noise_32.png> <./Figuras/Ruido/g_gaussian
+_noise_64.png> <./Figuras/Ruido/g_gaussian_noise_128.png>]
 \openout2 = `Textual/Conclusao.aux'.
 
- (./Textual/Conclusao.tex)
-[42
+
+(./Textual/Conclusao.tex) [48
 
 
 
 ]
 \openout2 = `Textual/Apendice.aux'.
 
- (./Textual/Apendice.tex [43
+ (./Textual/Apendice.tex [49
 
 
 
-]) [44] (./Relatorio.bbl [45
+]) [50]
+(./Relatorio.bbl [51
 
 
-] [46]) [47]
-(./Relatorio.aux (./Textual/Resumo.aux) (./Textual/Introducao.aux)
-(./Textual/RevisaoBibliografica.aux) (./Textual/MeiosPorosos.aux)
-(./Textual/Formulacao.aux) (./Textual/Resultados.aux) (./Textual/Conclusao.aux)
-(./Textual/Apendice.aux))
+] [52]) [53] (./Relatorio.aux (./Textual/Resumo.aux)
+(./Textual/Introducao.aux) (./Textual/RevisaoBibliografica.aux)
+(./Textual/MeiosPorosos.aux) (./Textual/Formulacao.aux)
+(./Textual/Resultados.aux) (./Textual/Conclusao.aux) (./Textual/Apendice.aux))
 Package rerunfilecheck Info: File `Relatorio.out' has not changed.
 (rerunfilecheck)             Checksum: D120ABFD02999355DE97FEC3B97BBE5F;5781.
  ) 
 Here is how much of TeX's memory you used:
- 33312 strings out of 478287
- 784821 string characters out of 5849289
+ 33600 strings out of 478287
+ 796708 string characters out of 5849289
  1196839 words of memory out of 5000000
- 50692 multiletter control sequences out of 15000+600000
+ 50933 multiletter control sequences out of 15000+600000
  484037 words of font info for 82 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  89i,16n,83p,1826b,759s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{figure.caption.19} has been referenced but does n
-ot exist, replaced by a fixed one
-
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib
-10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib
-8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsl12.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
-i12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm
-10.pfb>
-Output written on Relatorio.pdf (48 pages, 5725876 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmm
+ib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmm
+ib8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmsl12.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/ms
+bm10.pfb>
+Output written on Relatorio.pdf (54 pages, 7465784 bytes).
 PDF statistics:
- 835 PDF objects out of 1000 (max. 8388607)
- 666 compressed objects within 7 object streams
- 210 named destinations out of 1000 (max. 500000)
- 400 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 950 PDF objects out of 1000 (max. 8388607)
+ 702 compressed objects within 8 object streams
+ 222 named destinations out of 1000 (max. 500000)
+ 580 words of extra memory for PDF output out of 10000 (max. 10000000)
 
