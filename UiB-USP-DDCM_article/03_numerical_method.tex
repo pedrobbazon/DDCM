@@ -60,7 +60,8 @@ finite element formulation when needed throughout the article.
 
 Let us first recall the base formulation from which several discrete versions 
 will be derived. We take as starting point formulation NLSP1 specialized for 
-Darcy's problem. For the proximity measures we take the $L^2(\Omega)$-norm, i.e.,
+Darcy's problem. For the proximity measures we take as a particular
+case the $L^2(\Omega)$-norm, i.e.,
 $$
 \varphi_{\eD}(\eD - \tilde{\eD}) = \frac{1}{2}\|\eD-\tilde{\eD}\|^2_{L^2},~~~
 \varphi_{\sD}(\sD - \tilde{\sD}) = \frac{1}{2}\|\sD-\tilde{\sD}\|^2_{L^2}
@@ -68,8 +69,8 @@ $$
 For simplicity we present the case with pure Dirichlet boundary conditions.
 Given the data fields $(\tilde{\eD}, \tilde{\sD})$ we seek to
 find primal fields
-$\uD \in H^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in L^2(\Omega)$
-and dual fields $\lD \in H^1(\Omega)$, $\mD \in L^2(\Omega)$,
+$\uD \in H^1(\Omega)$, $\sD \in L^2(\Omega)$, $\eD \in [L^2(\Omega)]^d$
+and dual fields $\lD \in H^1(\Omega)$, $\mD \in [L^2(\Omega)]^2$,
 $\uD = \uD_D(\mathbf{x})$ and $\lD = 0$ for $\mathbf{x} \in \partial{\Omega}$,
 that minimize
 \begin{multline}
@@ -81,6 +82,7 @@ that minimize
 \end{multline}
 The concrete problem to be solved in this case is obtained
 by taking variations of this functional with respect to all fields
+and writing the optimality conditions as we have done in Section \ref{sec:solvability}
 \begin{equation*}
         \begin{aligned}
                \text{d}_{\sD}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x}}_{\text{d}\varphi_{\sD}(\sD,\tilde{\sD}; \delta{\sD})} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sD \in  L^2(\Omega), \\
@@ -159,7 +161,8 @@ To illustrate our approach, we will consider Darcy's problem as an example and f
  the projection above may be trivially obtained.
 
  \item[3.] Compute functions $\tilde{\sD}_h$ and $\tilde{\eD}_h$ in $\DG_0$
- by minimizing the Euclidean distance in $\mathbb{R}^{2d}$ from the available data
+ by minimizing the distance (e.g., the Euclidean distance)
+ in $\mathbb{R}^{2d}$ from the available data
  $\mathfrak{D}_m =\left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m}$
  to the reference elementwise constant solution $(\hat{\sD}_h, \hat{\eD}_h)$, i.e., for $K_n \in \mathcal{T}_h$
  %if we define $\hat{\mathbf{D}} = \left \{ (\hat{\sD}_h, \hat{\eD}_h) \right \}_{n=1}^{n_\text{el}}$ $\in \mathbb{R}^{n_{\text{el}} \times 2d}$ to be the matrix whose line $n$ is formed by the numerical values of  $(\left. \hat{\sD}_h\right |_{K_n}, \left. \hat{\eD}_h\right |_{K_n}),$ then, for $K_n \in \mathcal{T}_h$
@@ -175,7 +178,8 @@ The previous procedure can be applied similarly to the elasticity problem,
 except that the functions belong to higher dimensional spaces. 
 In particular $u \leftarrow \uE$ is a $d$-vector valued function and
 $e \leftarrow \eD$ and $s \leftarrow \sE$ are $d\times d$-tensor
-valued functions.
+valued functions. 
+Therefore, we minimize the distance in $\mathbb{R}^{n},~n = d\,(d+1)$.
 \end{remark}
 Let us illustrate with an example the procedure described above for Darcy's problem.
 Suppose we have the discrete data relating flux and pressure gradient
