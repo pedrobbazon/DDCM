@@ -281,8 +281,8 @@ both terms in the balance and compatibility constraint, i.e.,
 where $\uD_D$ is the Dirichlet data for $\uD$ and $\lD = 0$ on $\partial{\Omega}$.
 Note that the latter conditions are imposed weakly in (\ref{eq:Phi5B}).
 Natural choices for the spaces are now
-$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset L^2(\Omega)$
-and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+$V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset \Hdiv(\text{div};\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset \Hdiv(\text{div};\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset L^2(\Omega)$
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\text{div};\Omega)$.
 Hence, the discrete variational problem we propose for this case reads:
 Find primal fields
 $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
@@ -314,7 +314,7 @@ resulting the functional $\Phi_{\lD \mD}$
 \end{multline}
 We choose discrete spaces 
 $V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
-and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\text{div};\Omega)$.
 Hence, the discrete variational problem we propose for this case reads:
 Find primal fields
 $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
@@ -345,7 +345,7 @@ the original functional $\Phi_{\lD \mD}$ giving
 \end{multline}
 We choose discrete spaces 
 $V_{\uD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\sD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\eD}(\mathcal{T}_h) \subset L^2(\Omega)$, $V_{\lD}(\mathcal{T}_h) \subset H^1_0(\Omega)$
-and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\Omega)$.
+and $V_{\mD}(\mathcal{T}_h) \subset \Hdiv(\text{div};\Omega)$.
 Hence, the discrete variational problem we propose for this case reads:
 Find primal fields
 $(\uD_h,\eD_h, \sD_h, \lD_h, \mD_h ) \in \DG_{k} \times \RT_{k+1} \times \RT_{k+1}
@@ -379,9 +379,9 @@ formulation.
 		\textbf{Field} & \textbf{A}         & \textbf{Aeqo}         & \textbf{B}          & \textbf{C}            & \textbf{D} \\
 		\hline
 		$\uD_h$   & $\CG_{k+1}^D$   & $\CG_{k+1}^{D}$  & $\DG_k$           & $\DG_k$            & $\CG_{k+1}$ \\
-		$\sD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\Hdiv_{k+1}$   & $\VDG_k$         & $\Hdiv_{k+1}$ \\
-		$\eD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\Hdiv_{k+1}$   & $\Hdiv_{k+1}$   & $\VDG_{k}$ \\
-		$\mD_h$  & $\VDG_k$           & $\VDG_{k+1}$       &  $\Hdiv_{k+1}$  & $\Hdiv_{k+1}$   & $\VDG_{k}$  \\
+		$\sD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\RT_{k+1}$   & $\VDG_k$         & $RT_{k+1}$ \\
+		$\eD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\RT_{k+1}$   & $\RT_{k+1}$   & $\VDG_{k}$ \\
+		$\mD_h$  & $\VDG_k$           & $\VDG_{k+1}$       &  $\RT_{k+1}$  & $\RT_{k+1}$   & $\VDG_{k}$  \\
 		$\lD_h$    & $\CG_{k+1}^0$    & $\CG_{k+1}^{0}$   &  $\DG_k$          & $\CG_{k+1}^0$  & $\DG_k$ \\
 		\hline
 	\end{tabular}
