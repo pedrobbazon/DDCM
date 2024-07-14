@@ -141,7 +141,7 @@ To illustrate our approach, we will consider Darcy's problem as an example and f
  $(\uD_h^{\text{ref}}, \sD_h^{\text{ref}}, \eD_h^{\text{ref}})$
  by using a standard finite element discretization of the governing
  equations. For this step, assume a known constitutive law. 
- In practice, the law may be a known analytical function that fits, i.e.,
+ In practice, the law may be a known analytical function that fits the data, i.e.,
  a reconstructed constitutive manifold from the available data.
  Depending on the discretization adopted, $\sD_h^{\text{ref}}$ 
  and $\eD_h^{\text{ref}}$ may be obtained by post-processing
@@ -177,8 +177,8 @@ domain decomposition conforms to the element edges/faces of the mesh.
 The previous procedure can be applied similarly to the elasticity problem, 
 except that the functions belong to higher dimensional spaces. 
 In particular $u \leftarrow \uE$ is a $d$-vector valued function and
-$e \leftarrow \eD$ and $s \leftarrow \sE$ are $d\times d$-tensor
-valued functions. 
+$e \leftarrow \eE$ and $s \leftarrow \sE$ are symmetric
+$d\times d$-tensor valued functions. 
 Therefore, we minimize the distance in $\mathbb{R}^{n},~n = d\,(d+1)$.
 \end{remark}
 Let us illustrate with an example the procedure described above for Darcy's problem.
@@ -225,10 +225,12 @@ data-driven solution which was obtained with the discrete formulation
 to be presented in the next section. As shown in the figure the behavior
 of the data-driven solution reflects the sparsity of the available data.
 This changes drastically if we increase the number of points in the data set
-as shown in figure \ref{fig:solddmorepoints}. This initial example already
-illustrates some of the ingredients involved in the data-driven computational
-paradigm. Now, we embark in the task of formulating discrete versions
-of NLSP1.
+as shown in figure \ref{fig:solddmorepoints}. 
+This initial example already illustrates some of the key components 
+involved in the data-driven computational paradigm. 
+The procedure outlined above can serve as an effective method for initializing
+the global optimization problem that we ultimately aim to solve. 
+Now, we proceed to formulate discrete versions of NLSP1.
 
 \subsection{Discrete data-driven formulations for Darcy's problem}
 
