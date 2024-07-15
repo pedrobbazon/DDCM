@@ -436,11 +436,11 @@ in the linear elasticity case, we have
 $$
 H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right ) = \nabla^S{\uE}
 $$
-From the virtual work principle, the variational formulation for the reference problem in such 
-case reads:
-Therefore, we only need to formulate the principle of virtual work
+From the virtual work principle, the primal variational formulation for the reference problem in such 
+case reads: Find $\uE \in H_0^1(\Omega)$, $\uE = \uE_0(\mathbf{x}),~~\mathbf{x} \in \partial{\Omega}_D$
+such that
 $$
-\int_{\Omega} {\sE(\uE)} : \nabla^{S}{\mathbf{v}} \, d{\mathbf{x}} = \int_{\Omega} \mathbf{f} \cdot {\mathbf{v}}\,dx + \int_{\Gamma_N} {\boldsymbol{\mathcal{F}}\cdot \mathbf{v}}\,d\Gamma~~~\forall \mathbf{v} \in [H_0^1(\Omega)]^d
+\int_{\Omega} {\sE(\uE)} : \nabla^{S}{\mathbf{v}} \, d{\mathbf{x}} = \int_{\Omega} \mathbf{f} \cdot {\mathbf{v}}\, d{\mathbf{x}}  + \int_{\Gamma_N} {\boldsymbol{\mathcal{F}}\cdot \mathbf{v}}\,d\Gamma~~~\forall \mathbf{v} \in [H_0^1(\Omega)]^d
 $$
 
 
