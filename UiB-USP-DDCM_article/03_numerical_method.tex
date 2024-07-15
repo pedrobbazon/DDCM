@@ -401,6 +401,16 @@ notation in the solid mechanics context by redefining the primal
 unknowns, namely, the displacement, the stress and the deformation measure
 as $(u, s, e) \leftarrow (\uE, \sE, \eE)$, whereas for the dual fields, namely
 the equilibrium constraint and compatibility constraint $(\lambda, \mu) \leftarrow (\lE, \mE)$.
+For this problem we begin by defining an energy function
+\begin{equation}
+\mathcal{W} = \frac{\mu_L}{2} \left [ \mbox{tr}({\mathbb{C}}) - 2 - 2\mbox{ln}J \right ] + \frac{\lambda_L}{2} \left (J - 1 \right)
+\end{equation}
+where $\mu_L$ and $\lambda_L$ stand for the the Lam\'e parameters
+and 
+$$
+\mathbb{C} = \mathbb{F}^{\intercal}\mathbb{F} = {I} + \nabla^{\intercal} \uE + \nabla \uE + \nabla^{\intercal} \uE \, \nabla \uE,~~~~
+\mathbb{F} = \mathbb{I} + \nabla \uE,~~~J = \mbox{det}(\mathbb{F})
+$$
 The standard or reference formulation for this
 problem in its mixed form with Dirichlet and Neumann
 boundary conditions: Find displacement $\uE$ and 
@@ -419,32 +429,6 @@ $$
 \sE \cdot \check{\mathbf{n}} &=& \boldsymbol{\mathcal{F}} & \mbox{on}~\partial\Omega_{\sE}
 \end{array}
 \right.
-$$
-
-$$
-F = {I} + \nabla_{\mathbf{X}} \mathbf{u}
-$$
-
-and
-
-$$
-J = \mbox{det}({F})
-$$
-
-$$
-{C} = {F}^{\intercal}{F} = {I} + \nabla_{\mathbf{X}}^{\intercal} \mathbf{u} + \nabla_{\mathbf{X}} \mathbf{u} + \nabla_{\mathbf{X}}^{\intercal} \mathbf{u} \, \nabla_{\mathbf{X}} \mathbf{u}
-$$
-
-and the energy function
-
-\begin{equation}
-\mathcal{W} = \frac{\mu}{2} \left [ \mbox{tr}({C}) - 2 - 2\mbox{ln}J \right ] + \frac{\lambda}{2} \left (J - 1 \right)
-\end{equation}
-being $\mu_L$ and $\lambda_L$ the Lam\'e parameters, such that the stress
-tensor can be written as
-
-$$
-\boldsymbol{\sigma} = J^{-1} \, {P} \, {F}^{\intercal}
 $$
 
 with ${P} = \dfrac{\partial{\mathcal{W}}}{\partial{{F}}}$ the
