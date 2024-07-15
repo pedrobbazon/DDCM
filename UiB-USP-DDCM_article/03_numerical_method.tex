@@ -401,26 +401,16 @@ notation in the solid mechanics context by redefining the primal
 unknowns, namely, the displacement, the stress and the deformation measure
 as $(u, s, e) \leftarrow (\uE, \sE, \eE)$, whereas for the dual fields, namely
 the equilibrium constraint and compatibility constraint $(\lambda, \mu) \leftarrow (\lE, \mE)$.
-For this problem we begin by defining an energy function
-\begin{equation}
-\mathcal{W} = \frac{\mu_L}{2} \left [ \mbox{tr}({\mathbb{C}}) - 2 - 2\mbox{ln}J \right ] + \frac{\lambda_L}{2} \left (J - 1 \right)
-\end{equation}
-where $\mu_L$ and $\lambda_L$ stand for the the Lam\'e parameters
-and 
-$$
-\mathbb{C} = \mathbb{F}^{\intercal}\mathbb{F} = {I} + \nabla^{\intercal} \uE + \nabla \uE + \nabla^{\intercal} \uE \, \nabla \uE,~~~~
-\mathbb{F} = \mathbb{I} + \nabla \uE,~~~J = \mbox{det}(\mathbb{F})
-$$
 The standard or reference formulation for this
 problem in its mixed form with Dirichlet and Neumann
-boundary conditions: Find displacement $\uE$ and 
+boundary conditions reads: Find displacement $\uE$ and 
 stress $\sE$ such that
 $$
 \left\lbrace
 \begin{array}{rcll}
 \nabla \cdot \sE &=& \mathbf{f} & \mbox{in}~\Omega,\\
 \\
-\sE &=& J^{-1} \, \mathbb{P} \, \mathbb{F}^{\intercal}  \\ %2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
+\sE &=&  2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
 \\
 \eE &=& H(\nabla{\uE})  & \mbox{in}~\Omega \\
 \\
@@ -430,20 +420,63 @@ $$
 \end{array}
 \right.
 $$
+in which the function $H$ stands for some deformation measure, e.g.,
+$$
+H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} +  \nabla{\uE}^{\intercal} \nabla{\uE} \right )
+$$ 
+The model corresponds to a material with a strain-energy density 
+$$
+\mathcal{W} = \frac{\lambda_L}{2} \, \mbox{tr}^2(\eE) + \mu_L \,  \mbox{tr}(\eE^2)
+$$
+More complicated energy functions that depend on the invariants of the Cauchy strain 
+tensor can be defined; however, in this article, we restrict ourselves to the linear 
+elasticity case, which corresponds to the limit of infinitesimal strains. 
+The nonlinear case will be addressed in future works. Moreover,
+in the linear elasticity case, we have
+$$
+H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right ) = \nabla^S{\uE}
+$$
+From the virtual work principle, the variational formulation for the reference problem in such 
+case reads:
+Therefore, we only need to formulate the principle of virtual work
+$$
+\int_{\Omega} {\sE(\uE)} : \nabla^{S}{\mathbf{v}} \, d{\mathbf{x}} = \int_{\Omega} \mathbf{f} \cdot {\mathbf{v}}\,dx + \int_{\Gamma_N} {\boldsymbol{\mathcal{F}}\cdot \mathbf{v}}\,d\Gamma~~~\forall \mathbf{v} \in [H_0^1(\Omega)]^d
+$$
 
-with ${P} = \dfrac{\partial{\mathcal{W}}}{\partial{{F}}}$ the
-1st Piola-Kirchhoff stress tensor.
 
-In this article we will restrict ourselves to the geometrically linear case, i.e.,
-the deformation measure is
-$$
-H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right )
-$$
-The non-linear case 
-$$
-H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} -  \nabla{\uE} \nabla{\uE}^{\intercal} \right )
-$$
-will be addressed in future works. 
+%
+%For this problem we begin by defining an energy function that depends
+%on invariants of the Cauchy strain tensor, e.g.,
+%\begin{equation}
+%\mathcal{W} = \frac{\mu_L}{2} \left [ \mbox{tr}({\mathbb{C}}) - 2 - 2\,\mbox{ln}J \right ] + \frac{\lambda_L}{2} \left (J - 1 \right)
+%\end{equation}
+%where $\mu_L$ and $\lambda_L$ stand for the the Lam\'e parameters
+%and 
+%$$
+%\mathbb{C} = \mathbb{F}^{\intercal}\mathbb{F} = \mathbb{I} + \nabla^{\intercal} \uE + \nabla \uE + \nabla^{\intercal} \uE \, \nabla \uE,~~~~
+%\mathbb{F} = \mathbb{I} + \nabla \uE,~~~J = \mbox{det}(\mathbb{F})
+%$$
+%The standard or reference formulation for this
+%problem in its mixed form with Dirichlet and Neumann
+%boundary conditions reads: Find displacement $\uE$ and 
+%stress $\sE$ such that
+%$$
+%\left\lbrace
+%\begin{array}{rcll}
+%\nabla \cdot \sE &=& \mathbf{f} & \mbox{in}~\Omega,\\
+%\\
+%\sE &=& J^{-1} \, \mathbb{P} \, \mathbb{F}^{\intercal}  \\ %2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
+%\\
+%\eE &=& H(\nabla{\uE})  & \mbox{in}~\Omega \\
+%\\
+%\uE &=& \uE_0(\mathbf{x}) & \mbox{on}~\partial\Omega_{\uE} \\
+%\\
+%\sE \cdot \check{\mathbf{n}} &=& \boldsymbol{\mathcal{F}} & \mbox{on}~\partial\Omega_{\sE}
+%\end{array}
+%\right.
+%$$
+%being $\mathbb{P} = \dfrac{\partial{\mathcal{W}}}{\partial{\mathbb{F}}}$ the
+%1st Piola-Kirchhoff stress tensor.
 
 \subsection{Discrete data-driven formulations for elasticity problem}
 
