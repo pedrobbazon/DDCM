@@ -30,7 +30,7 @@ $$
 \\
 \boldsymbol{\mathcal{F}}(\sD,\eD) &=& 0 & \mbox{in}~\Omega \\
 \\
-\uD &=& p_0(\mathbf{x}) & \mbox{on}~\partial\Omega
+\uD &=& \uD_0(\mathbf{x}) & \mbox{on}~\partial\Omega
 \end{array}
 \right.
 $$
@@ -398,9 +398,68 @@ formulation.
 With reference to the general formulation we have presented in the
 previous section, let us rewrite the elasticity problem with a more usual
 notation in the solid mechanics context by redefining the primal
-unknowns, namely the stress, the displacement and the deformation measure
+unknowns, namely, the displacement, the stress and the deformation measure
 as $(u, s, e) \leftarrow (\uE, \sE, \eE)$, whereas for the dual fields, namely
 the equilibrium constraint and compatibility constraint $(\lambda, \mu) \leftarrow (\lE, \mE)$.
+The standard or reference formulation for this
+problem in its mixed form with Dirichlet and Neumann
+boundary conditions: Find displacement $\uE$ and 
+stress $\sE$ such that
+$$
+\left\lbrace
+\begin{array}{rcll}
+\nabla \cdot \sE &=& \mathbf{f} & \mbox{in}~\Omega,\\
+\\
+\sE &=& J^{-1} \, \mathbb{P} \, \mathbb{F}^{\intercal}  \\ %2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
+\\
+\eE &=& H(\nabla{\uE})  & \mbox{in}~\Omega \\
+\\
+\uE &=& \uE_0(\mathbf{x}) & \mbox{on}~\partial\Omega_{\uE} \\
+\\
+\sE \cdot \check{\mathbf{n}} &=& \boldsymbol{\mathcal{F}} & \mbox{on}~\partial\Omega_{\sE}
+\end{array}
+\right.
+$$
+
+$$
+F = {I} + \nabla_{\mathbf{X}} \mathbf{u}
+$$
+
+and
+
+$$
+J = \mbox{det}({F})
+$$
+
+$$
+{C} = {F}^{\intercal}{F} = {I} + \nabla_{\mathbf{X}}^{\intercal} \mathbf{u} + \nabla_{\mathbf{X}} \mathbf{u} + \nabla_{\mathbf{X}}^{\intercal} \mathbf{u} \, \nabla_{\mathbf{X}} \mathbf{u}
+$$
+
+and the energy function
+
+\begin{equation}
+\mathcal{W} = \frac{\mu}{2} \left [ \mbox{tr}({C}) - 2 - 2\mbox{ln}J \right ] + \frac{\lambda}{2} \left (J - 1 \right)
+\end{equation}
+being $\mu_L$ and $\lambda_L$ the Lam\'e parameters, such that the stress
+tensor can be written as
+
+$$
+\boldsymbol{\sigma} = J^{-1} \, {P} \, {F}^{\intercal}
+$$
+
+with ${P} = \dfrac{\partial{\mathcal{W}}}{\partial{{F}}}$ the
+1st Piola-Kirchhoff stress tensor.
+
+In this article we will restrict ourselves to the geometrically linear case, i.e.,
+the deformation measure is
+$$
+H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right )
+$$
+The non-linear case 
+$$
+H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} -  \nabla{\uE} \nabla{\uE}^{\intercal} \right )
+$$
+will be addressed in future works. 
 
 \subsection{Discrete data-driven formulations for elasticity problem}
 
