@@ -124,17 +124,19 @@ $\CG_k^0(\mathcal{T}_h)$. For simplicity of notation,
 in the forthcoming parts we omit the dependence of these
 spaces with respect to the mesh $\mathcal{T}_h$.
 Prior to presenting some discrete versions of the NLSP1
-formulation, a discussion on the distribution of data across
+formulation, a discussion on the distribution of the data across
 the domain is in order.
 
 \subsubsection{Distribution of data over $\Omega$} \label{sec:datadist}
 
 This step is crucial as it significantly influences the data-driven solution. 
 In our ultimate goal of solving the global optimization problem, determining
-the appropriate data distribution, specifically the domain decomposition, 
-remains an unknown and significant challenge. This issue will be addressed in future works.
-In this article, we establish a fixed distribution of the available data over the domain $\Omega$. 
-To illustrate our approach, we will consider Darcy's problem as an example and follow these steps:
+the appropriate data distribution, which amounts to
+find the optimal domain decomposition $P(\Omega)$, remains an unknown
+and significant challenge. This issue will be addressed in future works.
+In this article, we establish a fixed distribution of the available
+data over the domain $\Omega$. To illustrate our approach,
+we will consider Darcy's problem as an example and follow these steps:
 
 \begin{itemize}
  \item[1.] Compute a reference solution

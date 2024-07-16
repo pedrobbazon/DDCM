@@ -432,7 +432,7 @@ def main_EX3_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(100.0)}
+    params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(100.0)}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -456,8 +456,8 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 10, 10
-    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    Nbc, Nth = 15, 1
+    bcvals = np.linspace(1.0+1.e-15, 14.0, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     count = 0
@@ -470,7 +470,7 @@ def main_EX3_():
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         # They could be the same parameters as in the reference solution or we may add some perturbation
-        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(1.0)}
+        params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(1.0)}
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
 
@@ -500,7 +500,10 @@ def main_EX3_():
             flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
             count += 1
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
+
+    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.075 }
+    ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 
