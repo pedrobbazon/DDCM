@@ -112,7 +112,7 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         VTKFile(filename).write(w.sub(3))
 
         filename = dir_outs+'/m.pvd'
-        w.sub(3).rename('DDCM.mu')
+        w.sub(4).rename('DDCM.mu')
         VTKFile(filename).write(w.sub(4))
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
@@ -286,7 +286,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         VTKFile(filename).write(w.sub(3))
 
         filename = dir_outs+'/m.pvd'
-        w.sub(3).rename('DDCM.mu')
+        w.sub(4).rename('DDCM.mu')
         VTKFile(filename).write(w.sub(4))
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
@@ -379,7 +379,7 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         VTKFile(filename).write(w.sub(3))
 
         filename = dir_outs+'/m.pvd'
-        w.sub(3).rename('DDCM.mu')
+        w.sub(4).rename('DDCM.mu')
         VTKFile(filename).write(w.sub(4))
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
@@ -469,7 +469,120 @@ def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         VTKFile(filename).write(w.sub(3))
 
         filename = dir_outs+'/m.pvd'
-        w.sub(3).rename('DDCM.mu')
+        w.sub(4).rename('DDCM.mu')
         VTKFile(filename).write(w.sub(4))
     
+    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
+
+
+def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_quads,
+                 flag_setting, body_force, boundary_force, boundary_vals, boundary_tags,
+                 orders, dir_outs):
+    
+    mesh = domain.msh
+    
+    orderF, orderU = orders
+
+    DGtype = 'DG'
+    if(flag_quads):
+        DGtype = 'DQ'
+    VCG  = fd.VectorFunctionSpace(mesh, family="CG", degree=orderU)
+    TDG = fd.TensorFunctionSpace(mesh, family=DGtype, degree=orderF)
+
+    # Mixed space: In this formulation we assume all scalar fields 
+    # are approximated in the same space, the same for all vector fields 
+    #  stress  u  strain  lambda  mu
+    W = TDG * VCG * TDG * VCG *  TDG
+
+    x = fd.SpatialCoordinate(mesh)
+
+    n = FacetNormal(mesh)
+
+    # Unknown field
+    w = fd.Function(W)
+    si, u, g, l, m = fd.split(w)
+
+    # Test functions
+    dsi, du, dg, dl, dm = fd.TestFunctions(W)
+
+    # Functional to be minimized
+    J = ObjFunc(g, graddata, q, fluxdata)
+
+    # First variations
+    if(der_ObjFunc == None):
+        dsiJ = fd.inner(dsi, si-stressdata)*dx
+        dgJ  = fd.inner(dg, g-symgraddata)*dx
+    
+    # Residual
+    NL_model = 'SmallDef'
+    if(NL_model == 'SmallDef'):
+        Hofu = fd.sym(fd.grad(u))
+        duHofu = fd.sym(fd.grad(du))
+        hoflu = fd.sym(fd.grad(l))
+        duhoflu = fd.as_tensor([[fd.Constant(0.0), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(0.0)]])
+        dlhoflu = fd.sym(fd.grad(dl))
+    elif(NL_model == 'LargeDef'):
+        raise ValueError('Large deformations not implemented yet')
+    
+    tag_left = boundary_tags['Left']
+    tag_bottom = boundary_tags['Bottom']
+    tag_top = boundary_tags['Top']
+
+    dsiL = fd.inner(dsi, hoflu) * fd.dx
+    duL = -fd.inner(si, duhoflu) * fd.dx - inner(m, duHofu) * fd.dx
+    dgL = fd.inner(dg, m) * fd.dx
+    dlL = (-fd.inner(si, dlhoflu) + fd.inner(BodyForce(x), dl) ) * fd.dx
+    dmL = fd.inner((g - Hofu), dm) * fd.dx
+
+    # Residual, put all together 
+    dL = dsiJ + dgJ + dsiL + duL + dgL + dlL + dmL
+
+    bc_lst = []
+    if(flag_setting == 'Indent-Block'):
+        # By definition an indentation problem corresponds to:
+        # x restricted in the left, y restricted in the bottom
+        # No force on the right and a force distribution on the top
+
+        bc_lst = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
+                 fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
+        
+        fs = boundary_force['Top'](x)
+        dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
+        dL -= fd.inner(fd.dot(si, n) - fs, dl)*fd.ds(tag_top, degree=4)
+
+    else:
+        raise ValueError('Setting option not recognized')
+    
+    # Jacobian
+    Jac = fd.derivative(dL, w)
+
+    # Non-linear solve (see solver parameters above)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+    
+    if(dir_outs != None):
+
+        # Split the solution for post-processing
+        #qpl, ppl, gpl, lpl, mpl = split(w)
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('DDCM.Stress')
+        VTKFile(filename).write(w.sub(0))
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('DDCM.Displ')
+        VTKFile(filename).write(w.sub(1))
+        
+        filename = dir_outs+'/g.pvd'
+        w.sub(2).rename('DDCM.SymGrad(u)')
+        VTKFile(filename).write(w.sub(2))
+
+        filename = dir_outs+'/l.pvd'
+        w.sub(3).rename('DDCM.lambda')
+        VTKFile(filename).write(w.sub(3))
+
+        filename = dir_outs+'/m.pvd'
+        w.sub(4).rename('DDCM.mu')
+        VTKFile(filename).write(w.sub(4))
+
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
