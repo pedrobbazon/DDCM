@@ -520,14 +520,11 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         Hofu = fd.sym(fd.grad(u))
         duHofu = fd.sym(fd.grad(du))
         hoflu = fd.sym(fd.grad(l))
-        duhoflu = fd.as_tensor([[fd.Constant(0.0), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(0.0)]])
+        duhoflu = fd.as_tensor([[fd.Constant(0.0), fd.Constant(0.0)], 
+                                [fd.Constant(0.0), fd.Constant(0.0)]])
         dlhoflu = fd.sym(fd.grad(dl))
     elif(NL_model == 'LargeDef'):
         raise ValueError('Large deformations not implemented yet')
-    
-    tag_left = boundary_tags['Left']
-    tag_bottom = boundary_tags['Bottom']
-    tag_top = boundary_tags['Top']
 
     dsiL = fd.inner(dsi, hoflu) * fd.dx
     duL  = -fd.inner(si, duhoflu) * fd.dx - fd.inner(m, duHofu) * fd.dx
@@ -544,15 +541,19 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         # x restricted in the left, y restricted in the bottom
         # No force on the right and a force distribution on the top
 
-        f = body_force(x)
-        dL += fd.inner(f, dl) * fd.dx
+        tag_left = boundary_tags['Left']
+        tag_bottom = boundary_tags['Bottom']
+        tag_top = boundary_tags['Top']
 
-        bc_lst = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
-                 fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
+        fb = body_force(x)
+        dL += fd.inner(fb, dl) * fd.dx
         
         fs = boundary_force['Top'](x)
         dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
         dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
+
+        bc_lst = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
+                  fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
 
     else:
         raise ValueError('Setting option not recognized')
