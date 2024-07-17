@@ -530,10 +530,10 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     tag_top = boundary_tags['Top']
 
     dsiL = fd.inner(dsi, hoflu) * fd.dx
-    duL = -fd.inner(si, duhoflu) * fd.dx - inner(m, duHofu) * fd.dx
-    dgL = fd.inner(dg, m) * fd.dx
-    dlL = (-fd.inner(si, dlhoflu) + fd.inner(BodyForce(x), dl) ) * fd.dx
-    dmL = fd.inner((g - Hofu), dm) * fd.dx
+    duL  = -fd.inner(si, duhoflu) * fd.dx - fd.inner(m, duHofu) * fd.dx
+    dgL  =  fd.inner(dg, m) * fd.dx
+    dlL  = -fd.inner(si, dlhoflu) * fd.dx
+    dmL  =  fd.inner((g - Hofu), dm) * fd.dx
 
     # Residual, put all together 
     dL = dsiJ + dgJ + dsiL + duL + dgL + dlL + dmL
@@ -544,12 +544,15 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         # x restricted in the left, y restricted in the bottom
         # No force on the right and a force distribution on the top
 
+        f = body_force(x)
+        dL += fd.inner(f, dl) * fd.dx
+
         bc_lst = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
                  fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
         
         fs = boundary_force['Top'](x)
         dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
-        dL -= fd.inner(fd.dot(si, n) - fs, dl)*fd.ds(tag_top, degree=4)
+        dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
 
     else:
         raise ValueError('Setting option not recognized')
