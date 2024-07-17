@@ -63,3 +63,35 @@ def RotateData2D(angi, angf, Nang, EP, gradu_sampled_vals, flux_sampled_vals, gr
         flux_samples.append(flux_rot_values)
     
     return gradu_samples, flux_samples
+
+def FitForcheimerParams(data_file):
+    
+    data = np.loadtxt(data_file)
+    nc = data.shape[1]
+    nsd = int(nc/2)
+
+    gradu = data[:,0:nsd]
+    flux  = data[:,nsd:2*nsd]
+    modgrad = np.linalg.norm(gradu,axis=1)
+    modflux = np.linalg.norm(flux,axis=1)
+    
+
+    n = np.size(modgrad)
+    degree = 2
+    A = np.zeros(shape=(n,2), dtype=np.float64)
+    A[:,0] = modflux
+    A[:,1] = modflux**2
+
+    if(False):
+        p = np.polyfit(modflux, modgrad, degree)
+    else:
+        paux = np.linalg.lstsq(A, modgrad)[0]
+        p = np.array([paux[1], paux[0], 0.0])
+
+    fluxeval = np.linspace(min(modflux),max(modflux))
+    gradeval = np.polyval(p, fluxeval)
+    plt.plot(gradeval, fluxeval, '-r', modgrad, modflux, 'ob')
+    print(p)
+    plt.show()
+
+    return 0

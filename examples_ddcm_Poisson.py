@@ -432,7 +432,7 @@ def main_EX3_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(100.0)}
+    params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -470,7 +470,7 @@ def main_EX3_():
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         # They could be the same parameters as in the reference solution or we may add some perturbation
-        params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(1.0)}
+        params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
 
@@ -502,7 +502,7 @@ def main_EX3_():
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
 
-    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.075 }
+    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.03 }
     ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)

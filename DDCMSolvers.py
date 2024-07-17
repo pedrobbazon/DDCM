@@ -511,8 +511,8 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
 
     # First variations
     if(der_ObjFunc == None):
-        dsiJ = fd.inner(dsi, si-stressdata)*dx
-        dgJ  = fd.inner(dg, g-symgraddata)*dx
+        dsiJ = fd.inner(dsi, si-stressdata) * fd.dx
+        dgJ  = fd.inner(dg, g-symgraddata) * fd.dx
     
     # Residual
     NL_model = 'SmallDef'
