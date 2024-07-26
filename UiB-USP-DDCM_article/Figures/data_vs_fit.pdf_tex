@@ -1,0 +1,89 @@
+%% Creator: Inkscape 1.1.2 (0a00cf5339, 2022-02-04), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'data_vs_fit.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{648bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.66666667)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{data_vs_fit.pdf}}%
+    \put(0.15896696,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{data_vs_fit.pdf}}%
+    \put(0.26747508,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}2\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{data_vs_fit.pdf}}%
+    \put(0.37598318,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}4\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{data_vs_fit.pdf}}%
+    \put(0.48449128,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}6\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{data_vs_fit.pdf}}%
+    \put(0.5929994,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}8\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{data_vs_fit.pdf}}%
+    \put(0.70150752,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{data_vs_fit.pdf}}%
+    \put(0.81001564,0.04376927){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}12\end{tabular}}}}%
+    \put(0.51250001,0.00900947){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$g$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.07325208){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.0\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.1624105){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.2\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.25156892){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.4\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.34072732){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.6\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.42988572){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}0.8\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=13]{data_vs_fit.pdf}}%
+    \put(0.11419753,0.51904415){\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}1.0\end{tabular}}}}%
+    \put(0.06233893,0.33){\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}$s$\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=14]{data_vs_fit.pdf}}%
+    \put(0.21635802,0.54568287){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textbf{Linear regression}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=15]{data_vs_fit.pdf}}%
+    \put(0.21635802,0.50944059){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textbf{Experimenal data}$\end{tabular}}}}%
+  \end{picture}%
+\endgroup%
