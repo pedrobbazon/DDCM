@@ -497,7 +497,7 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
 
     x = fd.SpatialCoordinate(mesh)
 
-    n = FacetNormal(mesh)
+    n = fd.FacetNormal(mesh)
 
     # Unknown field
     w = fd.Function(W)

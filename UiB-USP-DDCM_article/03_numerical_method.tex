@@ -188,9 +188,9 @@ Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
 As illustrated in the figure, the data exhibits some noise around the mean curve, which is depicted in red. Based on prior knowledge of the problem, Forchheimer's model, introduced earlier, is expected to be applicable. Therefore, we can perform a linear regression on the experimental data. For this 1D setting, we adjust the coefficients 
 $\mu/k$ and $\beta$ in
-$$
-g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0
-$$
+\begin{equation}
+g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0 \label{eq:forchscalar}
+\end{equation}
 where $\eD = g \, \check{\mathbf{e}_y}$ and $\sD = s \, \check{\mathbf{e}_y}$,
 with $g$ and $s$ being the magnitudes of the pressure gradient and flux, respectively. 
 However, if such prior informations are not available, a suitable model
@@ -233,6 +233,15 @@ involved in the data-driven computational paradigm.
 The procedure outlined above can serve as an effective method for initializing
 the global optimization problem that we ultimately aim to solve. 
 Now, we proceed to formulate discrete versions of NLSP1.
+
+\begin{figure}[ht!!]
+  \def\svgwidth{13cm}
+  \centering
+  \input{Figures/data_vs_fit.pdf_tex}
+  \caption{Experimental data and a linear regression to adjust
+    the coefficients of the constitutive manifold of Eq. (\ref{eq:forchscalar})
+    to illustrate the data distribution procudure adopted.}
+\end{figure}
 
 \subsection{Discrete data-driven formulations for Darcy's problem}
 
