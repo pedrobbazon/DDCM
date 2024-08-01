@@ -1,0 +1,110 @@
+%% Creator: Inkscape 1.1.2 (0a00cf5339, 2022-02-04), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'compound_ddcm_example.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{595.27559055bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,1.41428571)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{compound_ddcm_example.pdf}}%
+    \put(0.31671677,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.00\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{compound_ddcm_example.pdf}}%
+    \put(0.36027661,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.05\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{compound_ddcm_example.pdf}}%
+    \put(0.40383644,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{compound_ddcm_example.pdf}}%
+    \put(0.44739626,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.15\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{compound_ddcm_example.pdf}}%
+    \put(0.49095611,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.20\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{compound_ddcm_example.pdf}}%
+    \put(0.53451595,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.25\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{compound_ddcm_example.pdf}}%
+    \put(0.57807577,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.30\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{compound_ddcm_example.pdf}}%
+    \put(0.62163562,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.35\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{compound_ddcm_example.pdf}}%
+    \put(0.66519544,0.95155759){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}0.40\end{tabular}}}}%
+    \put(0.49470077,0.93448781){\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}gradient $g$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,0.9641312){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.00\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,0.99526894){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.02\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.0264067){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.04\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=13]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.05754446){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.06\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=14]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.08868221){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.08\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=15]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.11981996){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=16]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.15095771){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.12\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=17]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.18209547){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.14\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=18]{compound_ddcm_example.pdf}}%
+    \put(0.29910318,1.21323322){\makebox(0,0)[rt]{\lineheight{0}\smash{\begin{tabular}[t]{r}0.16\end{tabular}}}}%
+    \put(0.2495617,1.0930022){\rotatebox{90}{\makebox(0,0)[t]{\lineheight{0}\smash{\begin{tabular}[t]{c}Flux $s$\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=19]{compound_ddcm_example.pdf}}%
+    \put(0.34927195,1.19803632){\makebox(0,0)[lt]{\lineheight{0}\smash{\begin{tabular}[t]{l}$\textbf{Linear regression}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=20]{compound_ddcm_example.pdf}}%
+    \put(0.34927195,1.18023853){\makebox(0,0)[lt]{\lineheight{0}\smash{\begin{tabular}[t]{l}$\textbf{Experimenal data}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=21]{compound_ddcm_example.pdf}}%
+    \put(0.30882659,0.73567665){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{DDDCM Pressure}$\end{tabular}}}}%
+    \put(0.50882656,0.73567548){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{DDDCM Flux}$\end{tabular}}}}%
+    \put(0.30882659,1.40250408){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Reference Pressure}$\end{tabular}}}}%
+    \put(0.12882518,1.04806465){\color[rgb]{0,0,0}\rotatebox{89.028142}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Uniaxial test}$\end{tabular}}}}}%
+    \put(0.50882656,1.40250483){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Reference Flux}$\end{tabular}}}}%
+    \put(0.52188801,0.97895276){\color[rgb]{0,0,0}\rotatebox{90.423451}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Data distribution}$\end{tabular}}}}}%
+    \put(0.15403762,1.2259558){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$p_{\mbox{\tiny inlet}}$\end{tabular}}}}%
+    \put(0.16007643,1.11864006){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}{Flux}\end{tabular}}}}%
+    \put(0.15272662,0.9604239){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$p_{\mbox{\tiny outlet}}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=22]{compound_ddcm_example.pdf}}%
+  \end{picture}%
+\endgroup%
