@@ -456,7 +456,7 @@ def main_EX3_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 15, 1
+    Nbc, Nth = 15, 5
     bcvals = np.linspace(1.0+1.e-15, 14.0, Nbc)
     gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
@@ -502,7 +502,7 @@ def main_EX3_():
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
 
-    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.03 }
+    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.03}
     ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
@@ -535,6 +535,154 @@ def main_EX3_():
     print('----------------------------------------------------------')
 
     return 0
+
+# Example using Forcheimer's nonlinear model to generate the synthetic data
+def main_EX31_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    def mysource(x):
+        return fd.Constant(1.0)
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    # Note in this case, I've made the data associated to the same domain (and mesh)
+    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
+    ddcm_data = PoissonDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 5]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    # Let us suppose we do some continuation to compute the data:
+    Nbc, Nth = 15, 1
+    bcvals = np.linspace(1.0+1.e-15, 1.4, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
+    for bcvs in bcvals:
+
+        print('----')
+        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
+        def mysynbcvals(x):
+            return fd.Constant(bcvs)
+        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
+        
+        # They could be the same parameters as in the reference solution or we may add some perturbation
+        params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+        synth_prob.solve(bcvs, "mysynthsol")
+
+        # Sample the synthetic solution: Program this according to your problem
+        Nsampx, Nsampy  = 1, 1
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+        std_sol = synth_prob.std_solution
+        #- Pay attention: this is a concious decision
+        # and it may change in other situations
+        g = fd.project(std_sol.g, synth_domain.VDG0)
+        s = fd.project(std_sol.s, synth_domain.VDG0)
+        gradu_sampled_vals = np.array(g.at(xs))[0]
+        flux_sampled_vals = np.array(s.at(xs))[0]
+        #-------------------------------------------  
+        
+        # Apply any manipulation/transformation you need to define
+        # the synthetic data (rotations, scalings, removing outliers, etc)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
+            gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
+            flux_samples[count,0] = ct * flux_sampled_vals[0] - st * flux_sampled_vals[1]
+            flux_samples[count,1] = st * flux_sampled_vals[0] + ct * flux_sampled_vals[1]
+            count += 1
+
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
+
+    noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 0.005}
+    ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
+
+    Nth = 5
+    gradu_samples_new = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples_new = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    auxgrad = ddcm_data.sampled_grad
+    auxflux = ddcm_data.sampled_flux
+    count = 0
+    for ibc, bcvs in enumerate(bcvals):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples_new[count,0] = ct * auxgrad[ibc,0] - st * auxgrad[ibc,1]
+            gradu_samples_new[count,1] = st * auxgrad[ibc,0] + ct * auxgrad[ibc,1]
+            flux_samples_new[count,0] = ct * auxflux[ibc,0] - st * auxflux[ibc,1]
+            flux_samples_new[count,1] = st * auxflux[ibc,0] + ct * auxflux[ibc,1]
+            count += 1
+    
+    ddcm_data.SetSampledData(gradu_samples_new, flux_samples_new, add_origin=False, data_file='myDATA.txt')
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
+
+#----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 
@@ -892,6 +1040,6 @@ def main_EX6_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_EX3_()
+main_EX31_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))

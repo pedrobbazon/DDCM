@@ -291,7 +291,7 @@ class PoissonDDCMData():
         dataset = np.loadtxt(datafile)
         # We expect the data in this format:
         dim = self.domain.dim
-        self.sampled_gradu = dataset[:,0:dim] 
+        self.sampled_grad  = dataset[:,0:dim] 
         self.sampled_flux  = dataset[:,dim:2*dim] 
         return 0
 
