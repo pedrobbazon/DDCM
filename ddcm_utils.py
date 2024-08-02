@@ -93,6 +93,7 @@ def FitForcheimerParams(data_file):
 
     plt.figure(figsize= (9,6))
     plt.rcParams['font.size'] = '16'
+    plt.rcParams['axes.linewidth'] = 2.5
     plt.axes(facecolor = "lightgray")
     plt.xlabel('\$g\$',fontsize=20)
     plt.ylabel('\$s\$', fontsize=20)
