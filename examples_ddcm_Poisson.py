@@ -641,7 +641,7 @@ def main_EX31_():
     auxflux = ddcm_data.sampled_flux
     count = 0
     for ibc, bcvs in enumerate(bcvals):
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples_new[count,0] = ct * auxgrad[ibc,0] - st * auxgrad[ibc,1]
             gradu_samples_new[count,1] = st * auxgrad[ibc,0] + ct * auxgrad[ibc,1]
