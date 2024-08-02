@@ -227,7 +227,7 @@ def main_EX1_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
             gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
@@ -363,7 +363,7 @@ def main_EX2_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             for s in range(Nsampx*Nsampy):
                 gradu_samples[count,0] = ct * gradu_sampled_vals[s,0] - st * gradu_sampled_vals[s,1]
@@ -492,7 +492,7 @@ def main_EX3_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
             gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
@@ -621,7 +621,7 @@ def main_EX31_():
         
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
             gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
@@ -764,7 +764,7 @@ def main_EX4_():
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
         # This implementation is much faster
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
             gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
@@ -897,7 +897,7 @@ def main_EX5_():
         # Apply any manipulation/transformation you need to define
         # the synthetic data (rotations, scalings, removing outliers, etc)
         # This implementation is much faster
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=True):
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
             ct, st = np.cos(angle), np.sin(angle)
             gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
             gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
