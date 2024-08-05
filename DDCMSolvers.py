@@ -507,7 +507,7 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     dsi, du, dg, dl, dm = fd.TestFunctions(W)
 
     # Functional to be minimized
-    J = ObjFunc(g, graddata, q, fluxdata)
+    J = ObjFunc(g, symgraddata, q, stressdata)
 
     # First variations
     if(der_ObjFunc == None):

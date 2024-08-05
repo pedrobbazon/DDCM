@@ -1979,26 +1979,6 @@
     <text
        fill="#000000"
        x="58.2341"
-       y="112.70023"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1447"
-       style="stroke-width:0.0192123">0.14</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="111.91252"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1449"
-       style="stroke-width:0.0192123">0.15</text>
-    <text
-       fill="#000000"
-       x="58.2341"
        y="111.14403"
        font-size="0.614794px"
        text-anchor="start"
@@ -2009,83 +1989,15 @@
     <text
        fill="#000000"
        x="58.2341"
-       y="110.37553"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1453"
-       style="stroke-width:0.0192123">0.17</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="109.58783"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1455"
-       style="stroke-width:0.0192123">0.18</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="108.81934"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1457"
-       style="stroke-width:0.0192123">0.19</text>
-    <text
-       fill="#000000"
-       x="58.2341"
        y="108.03163"
        font-size="0.614794px"
        text-anchor="start"
        dy="0.3073968"
        font-family="Helvetica"
        id="text1459"
-       style="stroke-width:0.0192123">0.2</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="107.26315"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1461"
-       style="stroke-width:0.0192123">0.21</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="106.49465"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1463"
-       style="stroke-width:0.0192123">0.22</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="105.70695"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1465"
-       style="stroke-width:0.0192123">0.23</text>
-    <text
-       fill="#000000"
-       x="58.2341"
-       y="104.93845"
-       font-size="0.614794px"
-       text-anchor="start"
-       dy="0.3073968"
-       font-family="Helvetica"
-       id="text1467"
-       style="stroke-width:0.0192123">0.24</text>
+       style="stroke-width:0.0192123;-inkscape-font-specification:'Helvetica, Normal';font-family:Helvetica;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:0.614794px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000;stroke-linecap:butt;stroke-linejoin:round"><tspan
+         sodipodi:role="line"
+         id="tspan3196">0.20</tspan></text>
     <polyline
        fill="none"
        stroke="#000000"
@@ -2113,26 +2025,6 @@
        stroke-linecap="butt"
        stroke-linejoin="miter"
        stroke-dasharray="16, 0"
-       points="1890.91,576.866 1867.65,576.866"
-       id="polyline1473"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,535.839 1867.65,535.839"
-       id="polyline1475"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
        points="1890.91,495.814 1867.65,495.814"
        id="polyline1477"
        transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
@@ -2143,78 +2035,8 @@
        stroke-linecap="butt"
        stroke-linejoin="miter"
        stroke-dasharray="16, 0"
-       points="1890.91,455.789 1867.65,455.789"
-       id="polyline1479"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,414.763 1867.65,414.763"
-       id="polyline1481"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,374.737 1867.65,374.737"
-       id="polyline1483"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
        points="1890.91,333.711 1867.65,333.711"
        id="polyline1485"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,293.686 1867.65,293.686"
-       id="polyline1487"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,253.661 1867.65,253.661"
-       id="polyline1489"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,212.635 1867.65,212.635"
-       id="polyline1491"
-       transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
-    <polyline
-       fill="none"
-       stroke="#000000"
-       stroke-width="0.714286"
-       stroke-linecap="butt"
-       stroke-linejoin="miter"
-       stroke-dasharray="16, 0"
-       points="1890.91,172.609 1867.65,172.609"
-       id="polyline1493"
        transform="matrix(0.0192123,0,0,0.0192123,21.69,101.73)" />
   </g>
 </svg>

@@ -21,7 +21,7 @@ the mass balance and compatibility constraint $(\lambda, \mu) \leftarrow (\lD, \
 Let us first recall the standard or reference formulation for this
 problem in its mixed form with pure Dirichlet
 boundary conditions: Find pressure $\uD$ and flux $\sD$ such that
-$$
+\begin{equation}
 \left\lbrace
 \begin{array}{rcll}
 \nabla \cdot \sD &=& q & \mbox{in}~\Omega,\\
@@ -32,8 +32,8 @@ $$
 \\
 \uD &=& \uD_0(\mathbf{x}) & \mbox{on}~\partial\Omega
 \end{array}
-\right.
-$$
+\right. \label{eq:poisson_general}
+\end{equation}
 in which $\boldsymbol{\mathcal{F}}$ stands for the flux law.
 In the simplest case, we have the classical Darcy's model
 $$
@@ -187,10 +187,10 @@ Let us illustrate with an example the procedure described above for Darcy's prob
 Suppose we have the discrete data relating flux and pressure gradient
 obtained from a typical uniaxial test shown in Figure \ref{fig:datadistproc}.
 As illustrated in the figure, the data exhibits some noise around
-the mean curve, which is depicted in red. Based on prior knowledge of the
-problem, Forchheimer's model, introduced earlier,
-is expected to be applicable. Therefore, we can perform a linear regression
-on the experimental data. For this 1D setting, we adjust the coefficients 
+an adjusted curve, which is depicted in red. This adjusted function is
+based on some prior knowledge of the problem, from which Forchheimer's model,
+introduced earlier, is likely to be applicable. Therefore, we can perform a linear
+regression on the experimental data. For this 1D setting, we adjust the coefficients 
 $\mu/k$ and $\beta$ in
 \begin{equation}
 g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0 \label{eq:forchscalar}
@@ -198,34 +198,14 @@ g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0 \label{eq:forchscalar}
 where $\eD = g \, \check{\mathbf{e}}_y$ and $\sD = s \, \check{\mathbf{e}}_y$,
 such that we can write $g$ (the magnitude of the pressure gradient)
 as a function of $s$ (the magnitude of the flux). The resulting
-plot is shown in part (b) of figure \ref{fig:datadistproc}, where,
+plot is shown in part (b) of figure \ref{fig:datadistproc}, however,
 for custom we plot $s$ vs. $g$.
-However, if such prior informations are not available, a suitable model
-must be proposed. With this reconstructed manifold we may solve Darcy's problem. 
-To that end we also make the assumption that the medium is isotropic in this example,
+If such prior informations are not available, a suitable model
+must be proposed. With this reconstructed manifold we may solve Darcy's problem.
+We consider the computational domain $[0,1]^2$, a source term $q = 1$ and boundary condition
+$p_0 = 0.123456789$ on $\partial{\Omega}$ in (\ref{eq:poisson_general}).
+We also make the assumption that the medium is isotropic in this example,
 so the permeability tensor can be written as $\mathbf{K} = k \, \mathbf{I}_{d\times d}$.
-With such assumption we can take the one dimensional data shown in part (b)
-of figure \ref{fig:datadistproc} (blue dots) associated to each
-measured data sample from the experiment $(g_j,s_j),~j=1,\dots, N_g$ and
-generate additional data samples by simple rotation,
-i.e., for each pair $(g,s)$, we generate the data set
-\begin{equation}
-  \begin{array}{l}
-    \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m},\\
-    ~\\
-    
-\mathfrak{g}_n = \mathsf{R}_{\theta_i} \, g_j \, \check{\mathbf{e}}_y,~~
-\mathfrak{s}_n = \mathsf{R}_{\theta_i} \, s_j \, \check{\mathbf{e}}_y,~~
-\mathsf{R}_{\theta_i} = \begin{bmatrix}
-  \sin{\theta_i} & -\cos{\theta_i}\\
-  \cos{\theta_i} & \sin{\theta_i}
-  \end{bmatrix}\\
-~\\
-i=1,\dots, N_{\theta},~~j=1,\dots,N_g,~~N_m =N_g \times N_{\theta} 
-\end{array}
-\end{equation}
-being $\mathsf{R}_{\theta_i}$ a 2D rotation matrix. For the example at hand
-we have $N_m = N_g \times N_{\theta} = 15 \times 5 = 75$ data samples.
 Next, let us consider the following finite element formulation to solve the reference
 (non linear) problem: Find $\uD_h^{\text{ref}} \in \CG^D_{k}$ and
 $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
@@ -245,18 +225,43 @@ $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. The regularization i
 introduced to ensure convergence of the Newton-Raphson iterations 
 used for solving the nonlinearites. In practice, we take $\eta = 10^{-12}$. 
 The reference pressure and flux fields are shown in part (c) of
-figure \ref{fig:datadistproc}. The figure also shows the finite element
-partition and the associated domain decomposition
-resulting from the data distribution procedure described above.
-Each one of the $75$ colors corresponds to a specific point in the data
+figure \ref{fig:datadistproc}. In order to solve the data driven problem,
+we must first distribute the data over the domain. With the isotropic medium
+assumption, we can take the one dimensional data shown in part (b)
+of figure \ref{fig:datadistproc} (blue dots) associated to the
+experimentally measured data $(g_j,s_j),~j=1,\dots, N_g$ and
+generate additional data samples by simple rotation,
+i.e., for each pair $(g_j,s_j)$, we generate the data set
+\begin{equation}
+  \begin{array}{l}
+    \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m},\\
+    ~\\
+    
+\mathfrak{g}_n = \mathsf{R}_{\theta_i} \, g_j \, \check{\mathbf{e}}_y,~~
+\mathfrak{s}_n = \mathsf{R}_{\theta_i} \, s_j \, \check{\mathbf{e}}_y,~~
+\mathsf{R}_{\theta_i} = \begin{bmatrix}
+  \sin{\theta_i} & -\cos{\theta_i}\\
+  \cos{\theta_i} & \sin{\theta_i}
+  \end{bmatrix}\\
+~\\
+i=1,\dots, N_{\theta},~~j=1,\dots,N_g,~~N_m =N_g \times N_{\theta} 
+\end{array}
+\end{equation}
+being $\mathsf{R}_{\theta_i}$ a 2D rotation matrix. For the example at hand
+we have $N_m = N_g \times N_{\theta} = 15 \times 4 = 60$ data samples.
+Part (d) of figure \ref{fig:datadistproc} also shows the finite element
+partition made of triangles and the associated domain decomposition
+resulting from the procedure.
+Each one of the $60$ colors corresponds to a specific point in the data
 set $\mathfrak{D}_m$. This means that in all elements $K \in \mathcal{T}_h$ marked with
 the same color, the corresponding point in the data set will be used to compute
-the data driven solution.
-Finally, figure \ref{fig:datadistproc} shows in part (d) the corresponding 
-data-driven solution obtained using the discrete formulation 
+the data driven solution. Finally, part (e) of figure \ref{fig:datadistproc} shows
+the corresponding data-driven solution obtained using the discrete formulation 
 to be presented in the next section. Note that the behavior
 of the data-driven solution reflects the sparsity of the available data.
-This changes significantly if we increase the number of points in the data set
+In this specific example, since we rotated the 1D data only by 4 different
+angles $0,~\pi/2, \pi, 3\pi/2$, the data-driven solution exhibits this particular pattern.
+The solution changes significantly if we increase or alter the data set,
 as we will see later on. 
 This initial example already illustrates some of the components 
 involved in the data-driven computing framework. 
