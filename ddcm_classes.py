@@ -173,7 +173,7 @@ class MechanicalDDCMData():
         # The DDCM data is associated to a domain
         self.domain = domain
         # The complete sampled data set 
-        self.sampled_grad = None
+        self.sampled_symgradu = None
         self.sampled_stress = None
         '''
         Data distributed over the domain to be used by the DDCM solver:
@@ -182,7 +182,7 @@ class MechanicalDDCMData():
         this way, the induced domain decompostion from the data
         will conform to the element edges
         '''
-        self.graddata = fd.Function(domain.VDG0)
+        self.symgraddata = fd.Function(domain.VDG0)
         self.stressdata = fd.Function(domain.VDG0)
 
     #----------------------------------------------------------------------------
@@ -192,21 +192,20 @@ class MechanicalDDCMData():
         dataset = np.loadtxt(datafile)
         dim = self.domain.dim
         # We expect the data in this format:
-        self.sampled_gradu = dataset[:,0:3*dim] 
-        self.sampled_flux  = dataset[:,3*dim:6*dim] 
+        self.sampled_symgradu = dataset[:,0:int(dim*(dim+1)/2)] 
+        self.sampled_stress  = dataset[:,int(dim*(dim+1)/2):int(dim*(dim+1))] 
         return 0
 
-    def SetSampledData(self, gradu_vals, stress_vals, add_origin=False, data_file=None):
-        self.sampled_grad   = gradu_vals 
+    def SetSampledData(self, symgradu_vals, stress_vals, add_origin=False, data_file=None):
+        self.sampled_symgradu  = symgradu_vals 
         self.sampled_stress = stress_vals
         if(add_origin):
             if(self.domain.dim == 2):
-                self.sampled_grad = np.append(self.sampled_grad, [[0.0, 0.0, 0.0, 0.0]], axis=0)
-                self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0, 0.0, 0.0]], axis=0)
+                raise Exception('2D not implemented yet')
             elif(self.domain.dim == 3):
                 raise Exception('3D not implemented yet')
         if(data_file != None):
-            np.savetxt(data_file, np.hstack((gradu_vals, stress_vals)))
+            np.savetxt(data_file, np.hstack((symgradu_vals, stress_vals)))
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):

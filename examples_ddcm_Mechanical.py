@@ -45,7 +45,7 @@ def main_Elas_EX0_():
     def mybodyforce(x):
         return fd.as_vector([fd.Constant(0.0),fd.Constant(0.0)]) 
     def mysurfaceforceTop(x):
-        return fd.as_vector([fd.Constant(0.0), -5.0*exp(-5.0*(x[0])**2)])
+        return fd.as_vector([fd.Constant(0.0), -0.05*exp(-5.0*(x[0])**2)])
     mysurfaceforce = {'Top': mysurfaceforceTop}
     boundary_tags = {'Left': 1 , 'Right': 2, 'Bottom': 3, 'Top': 4}
     forcings = MechanicalForcingData(mybodyforce, mysurfaceforce, None, boundary_tags)
@@ -56,8 +56,6 @@ def main_Elas_EX0_():
     ref_prob = MechanicalStdProblem(domain, params, 'Indent-Block', forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
 
     ref_prob.solve(0.0, "myrefsol")
-
-    raise Exception('hhhhhhhhhhhhh')
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -72,20 +70,20 @@ def main_Elas_EX0_():
 
     # Note in this case, I've made the data associated to the same domain (and mesh)
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
-    ddcm_data = PoissonDDCMData(domain)
+    ddcm_data = MechanicalDDCMData(domain)
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    synth_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    synth_forcings = forcings
         
-    params = {'kappa': fd.Constant(1.0)}
-    synth_prob = PoissonStdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    params = {'YoungMod': fd.Constant(1.0), 'PoissonRat': fd.Constant(0.3)}
+    synth_prob = MechanicalStdProblem(domain, params, 'Indent-Block', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
     synth_prob.solve(0.0, "mysynthsol")
 
     # Sample the synthetic solution: Program this according to your problem
 
-    one_sample_per_element = False
+    one_sample_per_element = True
     if(one_sample_per_element == True): # One point per element centroid
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
@@ -100,18 +98,20 @@ def main_Elas_EX0_():
     #- Pay attention: this is a concious decision
     # and it may change in other situations
     stdsyn_sol = synth_prob.std_solution
-    g = fd.project(stdsyn_sol.g, synth_domain.VDG0)
-    s = fd.project(stdsyn_sol.s, synth_domain.VDG0)
-    gradu_sampled_vals = np.array(g.at(xs))
-    flux_sampled_vals = np.array(s.at(xs))
+    g = fd.project(stdsyn_sol.g, synth_domain.TDG0)
+    s = fd.project(stdsyn_sol.s, synth_domain.TDG0)
+    symgradu_sampled_vals = np.array(g.at(xs))
+    sigma_sampled_vals = np.array(s.at(xs))
     #-------------------------------------------  
         
     # Apply any manipulation/transformation you need to define
     # the synthetic data (rotations, scalings, removing outliers, etc)
-    gradu_samples = gradu_sampled_vals
-    flux_samples  = flux_sampled_vals
+    symgradu_samples = symgradu_sampled_vals
+    sigma_samples  = sigma_sampled_vals
 
-    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
+
+    raise Exception('kkdkdkddkdkdk')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
 

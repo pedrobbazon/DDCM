@@ -482,13 +482,13 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     
     mesh = domain.msh
     
-    orderF, orderU = orders
+    orderS, orderU = orders
 
     DGtype = 'DG'
     if(flag_quads):
         DGtype = 'DQ'
     VCG  = fd.VectorFunctionSpace(mesh, family="CG", degree=orderU)
-    TDG = fd.TensorFunctionSpace(mesh, family=DGtype, degree=orderF)
+    TDG = fd.TensorFunctionSpace(mesh, family=DGtype, degree=orderS)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
@@ -507,7 +507,7 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     dsi, du, dg, dl, dm = fd.TestFunctions(W)
 
     # Functional to be minimized
-    J = ObjFunc(g, symgraddata, q, stressdata)
+    J = ObjFunc(g, symgraddata, si, stressdata)
 
     # First variations
     if(der_ObjFunc == None):
