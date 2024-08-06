@@ -490,3 +490,41 @@ class DDCMProblem():
         self.ddcm_solution.mu  = mu 
     
         return self.ddcm_solution
+    
+class DDCMMechProblem():
+
+    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation, orders):
+        self.ddcm_data = ddcm_data
+        self.J = ObjF        # Function to be minimized
+        self.dJ = dObjF      # Jacobian of function to be minimized (can be given or compute by the program)
+        self.setting_type = setting_type_flag
+        self.ddcm_formulation = ddcm_formulation
+        self.forcings = forcings
+        self.orders = orders
+        self.ddcm_solution = DDCMSolution()
+
+    def solve(self, dir_outs=None):
+
+        print("|> Solving with:\n   - %s() DDCM-formulation" %(self.ddcm_formulation.__name__))
+        print("   - Setting type: %s" %(self.setting_type))
+        print("   ... Solving ...")
+
+        s, u, g, lmd, mu = self.ddcm_formulation(self.ddcm_data.domain,
+                                                 self.J, self.dJ,
+                                                 self.ddcm_data.symgraddata, self.ddcm_data.stressdata,
+                                                 self.ddcm_data.domain.flag_quads, 
+                                                 self.setting_type, 
+                                                 self.forcings.body_force,
+                                                 self.forcings.boundary_force,
+                                                 self.forcings.boundary_vals,
+                                                 self.forcings.boundary_tags,
+                                                 self.orders,
+                                                 dir_outs)
+        
+        self.ddcm_solution.u   = u
+        self.ddcm_solution.s   = s 
+        self.ddcm_solution.g   = g
+        self.ddcm_solution.lmd = lmd
+        self.ddcm_solution.mu  = mu 
+    
+        return self.ddcm_solution

@@ -83,12 +83,12 @@ def main_Elas_EX0_():
 
     # Sample the synthetic solution: Program this according to your problem
 
-    one_sample_per_element = True
+    one_sample_per_element = False
     if(one_sample_per_element == True): # One point per element centroid
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
     else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 5, 5
+        Nsampx, Nsampy  = 3, 3
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
@@ -113,10 +113,8 @@ def main_Elas_EX0_():
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-TDG0', flag_plot=True)
 
-    raise Exception('kkdkdkddkdkdk')
-
     print('----------------------------------------------------------')
-    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_stress.shape[0]))
     print('----------------------------------------------------------')
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -128,8 +126,10 @@ def main_Elas_EX0_():
 
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+    def myDerObjFunc(g, gdata, dg, s, sdata, ds):
+        return [fd.inner(ds, s-sdata)*fd.dx, fd.inner(dg, g-gdata)*fd.dx]
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+    ddcm_prob = DDCMMechProblem(ddcm_data, myObjFunc, myDerObjFunc, 'Indent-Block', forcings, NLSP5FA_MECH, orders=[0,1])
 
     ddcm_prob.solve("myddcmsol")
 

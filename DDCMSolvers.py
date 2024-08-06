@@ -475,7 +475,6 @@ def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
 
-
 def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_quads,
                  flag_setting, body_force, boundary_force, boundary_vals, boundary_tags,
                  orders, dir_outs):
@@ -487,13 +486,13 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     DGtype = 'DG'
     if(flag_quads):
         DGtype = 'DQ'
-    VCG  = fd.VectorFunctionSpace(mesh, family="CG", degree=orderU)
+    VCG = fd.VectorFunctionSpace(mesh, family="CG", degree=orderU)
     TDG = fd.TensorFunctionSpace(mesh, family=DGtype, degree=orderS)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
-    #  stress  u  strain  lambda  mu
-    W = TDG * VCG * TDG * VCG *  TDG
+    #  stress  u  strain lambda  mu
+    W = TDG * VCG * TDG * VCG * TDG
 
     x = fd.SpatialCoordinate(mesh)
 
@@ -511,9 +510,13 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
 
     # First variations
     if(der_ObjFunc == None):
-        dsiJ = fd.inner(dsi, si-stressdata) * fd.dx
-        dgJ  = fd.inner(dg, g-symgraddata) * fd.dx
-    
+        dgJ = fd.derivative(J, g, dg)
+        dsiJ = fd.derivative(J, si, dsi)        
+    else:
+        aux = der_ObjFunc(g, symgraddata, dg, si, stressdata, dsi)
+        dgJ  = aux[0]
+        dsiJ = aux[1]
+
     # Residual
     NL_model = 'SmallDef'
     if(NL_model == 'SmallDef'):
@@ -552,8 +555,8 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
         dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
 
-        bc_lst = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left), 
-                  fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom)]
+        bc_lst = [fd.DirichletBC(W.sub(1).sub(0), fd.Constant(0.0), tag_left), 
+                  fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom)]
 
     else:
         raise ValueError('Setting option not recognized')
