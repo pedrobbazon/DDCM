@@ -169,9 +169,10 @@ from DDCMSolvers import *
 #
 # Discrete data to be used in the DDCM problem (Mechanical problem)
 class MechanicalDDCMData():
-    def __init__(self, domain):
+    def __init__(self, domain, flag_Rn='R6'):
         # The DDCM data is associated to a domain
         self.domain = domain
+        self.flag_Rn = flag_Rn
         # The complete sampled data set 
         self.sampled_symgradu = None
         self.sampled_stress = None
@@ -182,8 +183,8 @@ class MechanicalDDCMData():
         this way, the induced domain decompostion from the data
         will conform to the element edges
         '''
-        self.symgraddata = fd.Function(domain.VDG0)
-        self.stressdata = fd.Function(domain.VDG0)
+        self.symgraddata = fd.Function(domain.TDG0)
+        self.stressdata = fd.Function(domain.TDG0)
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in
@@ -195,17 +196,36 @@ class MechanicalDDCMData():
         self.sampled_symgradu = dataset[:,0:int(dim*(dim+1)/2)] 
         self.sampled_stress  = dataset[:,int(dim*(dim+1)/2):int(dim*(dim+1))] 
         return 0
-
+    
     def SetSampledData(self, symgradu_vals, stress_vals, add_origin=False, data_file=None):
-        self.sampled_symgradu  = symgradu_vals 
-        self.sampled_stress = stress_vals
+        s00 = stress_vals[:,0,0]
+        s01 = stress_vals[:,0,1]
+        s10 = stress_vals[:,1,0]
+        s11 = stress_vals[:,1,1]
+        g00 = symgradu_vals[:,0,0]
+        g01 = symgradu_vals[:,0,1]
+        g10 = symgradu_vals[:,1,0]
+        g11 = symgradu_vals[:,1,1]
+
+        if(self.flag_Rn == 'R6'):
+            self.sampled_symgradu = np.dstack([g00, g01, g11])[0]
+            self.sampled_stress   = np.dstack([s00, s01, s11])[0]
+        elif(self.flag_Rn == 'R8'):
+            self.sampled_symgradu = np.dstack([g00, g01, g10, g11])[0]
+            self.sampled_stress   = np.dstack([s00, s01, s10, s11])[0]
+
         if(add_origin):
             if(self.domain.dim == 2):
-                raise Exception('2D not implemented yet')
+                if(self.flag_Rn == 'R6'):
+                    self.sampled_symgrad = np.append(self.sampled_symgradu, [[0.0, 0.0, 0.0]], axis=0)
+                    self.sampled_stress  = np.append(self.sampled_stress, [[0.0, 0.0, 0.0]], axis=0)
+                elif(self.flag_Rn == 'R8'):
+                    self.sampled_symgrad = np.append(self.sampled_symgradu, [[0.0, 0.0, 0.0, 0.0]], axis=0)
+                    self.sampled_stress  = np.append(self.sampled_stress, [[0.0, 0.0, 0.0, 0.0]], axis=0)
             elif(self.domain.dim == 3):
                 raise Exception('3D not implemented yet')
         if(data_file != None):
-            np.savetxt(data_file, np.hstack((symgradu_vals, stress_vals)))
+            np.savetxt(data_file, np.hstack((self.sampled_symgradu, self.sampled_stress)))
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict):
@@ -217,25 +237,43 @@ class MechanicalDDCMData():
 
         ti = time.time()
         # Something reasonable would be to ask that g and s to be in the same space
-        if(flag_project == 'Project-VDG0'):
-            refgrad = fd.project(ref_solution.g, self.domain.VDG0).dat.data
-            refflux = fd.project(ref_solution.s, self.domain.VDG0).dat.data
-        elif(flag_project == 'Interpolate-VDG0'): 
+        if(flag_project == 'Project-TDG0'):
+            refsymgrad = fd.project(ref_solution.g, self.domain.TDG0).dat.data
+            refstress = fd.project(ref_solution.s, self.domain.TDG0).dat.data
+        elif(flag_project == 'Interpolate-TDG0'): 
             x = fd.SpatialCoordinate(self.domain.msh)
             # This is typically used to intepolate a manufactured solution onto a vector DG0 space
-            refgrad = fd.assemble(interpolate(ref_solution.g, self.domain.VDG0)).dat.data
-            refflux = fd.assemble(interpolate(ref_solution.s(x), self.domain.VDG0)).dat.data
+            refsymgrad = fd.assemble(interpolate(ref_solution.g, self.domain.VDG0)).dat.data
+            refstress = fd.assemble(interpolate(ref_solution.s(x), self.domain.VDG0)).dat.data
         else:
             raise ValueError(flag_project+' option not recognized in method Distribuite()')
         
-        reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
+        s00 = refstress[:,0,0]
+        s01 = refstress[:,0,1]
+        s10 = refstress[:,1,0]
+        s11 = refstress[:,1,1]
+        g00 = refsymgrad[:,0,0]
+        g01 = refsymgrad[:,0,1]
+        g10 = refsymgrad[:,1,0]
+        g11 = refsymgrad[:,1,1]
+
+        if(self.flag_Rn == 'R6'):
+            reference_state = np.dstack([g00, g01, g11, s00, s01, s11])[0]
+        elif(self.flag_Rn == 'R8'):
+            reference_state = np.dstack([g00, g01, g10, g11, s00, s01, s10, s11])[0]
+
+        print(reference_state)
 
         # These are only vectors with data, not associated yet to any domain
-        sampgrad = self.sampled_grad
-        sampflux = self.sampled_flux
+        sampsymgrad = self.sampled_symgrad
+        sampstress = self.sampled_stress
         if(self.domain.dim == 2):
-            sampled_state = np.dstack([sampgrad[:,0], sampgrad[:,1], sampgrad[:,2], sampgrad[:,3],
-                                       sampflux[:,0], sampflux[:,1], sampflux[:,2], sampflux[:,3]])[0]
+            if(self.flag_Rn == 'R6'):
+                sampled_state = np.dstack([sampsymgrad[:,0], sampsymgrad[:,1], sampsymgrad[:,2], 
+                                           sampstress[:,0], sampstress[:,1], sampstress[:,2]])[0]
+            elif(self.flag_Rn == 'R8'):
+                sampled_state = np.dstack([sampsymgrad[:,0], sampsymgrad[:,1], sampsymgrad[:,2], sampsymgrad[:,3],
+                                           sampstress[:,0], sampstress[:,1], sampstress[:,2], sampstress[:,3]])[0]
         elif(self.domain.dim == 3):
             raise Exception('3D not implemented yet')
 
@@ -246,10 +284,11 @@ class MechanicalDDCMData():
         ti = time.time()
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
-        self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        self.fluxdata.rename('GradDataDistrib')
-        self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
-        self.fluxdata.rename('FluxDataDistrib')
+        self.symgraddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        SymGradudata.dat.data[:,0,0:2] = observed_data[indexes,0:2]
+        self.symgraddata.rename('SymGradDataDistrib')
+        self.stressdata.dat.data[:] = self.sampled_flux[indexes,0:2]
+        self.stressdata.rename('StressDataDistrib')
         print(' . KDTree and query= ', time.time() - ti)
 
         if(flag_plot):
@@ -377,7 +416,7 @@ class PoissonDDCMData():
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
         self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        self.fluxdata.rename('GradDataDistrib')
+        self.graddata.rename('GradDataDistrib')
         self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
         self.fluxdata.rename('FluxDataDistrib')
         print(' . KDTree and query= ', time.time() - ti)

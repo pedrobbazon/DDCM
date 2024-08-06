@@ -78,7 +78,7 @@ def main_Elas_EX0_():
     synth_forcings = forcings
         
     params = {'YoungMod': fd.Constant(1.0), 'PoissonRat': fd.Constant(0.3)}
-    synth_prob = MechanicalStdProblem(domain, params, 'Indent-Block', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
+    synth_prob = MechanicalStdProblem(synth_domain, params, 'Indent-Block', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
     synth_prob.solve(0.0, "mysynthsol")
 
     # Sample the synthetic solution: Program this according to your problem
@@ -111,9 +111,9 @@ def main_Elas_EX0_():
 
     ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
 
-    raise Exception('kkdkdkddkdkdk')
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-TDG0', flag_plot=True)
 
-    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
+    raise Exception('kkdkdkddkdkdk')
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))

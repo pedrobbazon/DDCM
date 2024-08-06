@@ -139,5 +139,3 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         VTKFile(filename, mode=mode).write(gpl, time=tt)
 
     return sigma, u, g
-
-    return 
