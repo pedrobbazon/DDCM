@@ -556,7 +556,9 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
 
         bc_lst = [fd.DirichletBC(W.sub(1).sub(0), fd.Constant(0.0), tag_left), 
-                  fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom)]
+                  fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom),
+                  fd.DirichletBC(W.sub(3).sub(0), fd.Constant(0.0), tag_left), 
+                  fd.DirichletBC(W.sub(3).sub(1), fd.Constant(0.0), tag_bottom)]
 
     else:
         raise ValueError('Setting option not recognized')
