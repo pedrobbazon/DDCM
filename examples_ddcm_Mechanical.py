@@ -126,8 +126,8 @@ def main_Elas_EX0_():
 
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
-    def myDerObjFunc(g, gdata, dg, s, sdata, ds):
-        return [fd.inner(ds, s-sdata)*fd.dx, fd.inner(dg, g-gdata)*fd.dx]
+    def myDerObjFunc(g, gdata, dg, s, sdata, dsi):
+        return [fd.inner(dsi, s-sdata)*fd.dx, fd.inner(dg, g-gdata)*fd.dx]
 
     ddcm_prob = DDCMMechProblem(ddcm_data, myObjFunc, myDerObjFunc, 'Indent-Block', forcings, NLSP5FA_MECH, orders=[0,1])
 

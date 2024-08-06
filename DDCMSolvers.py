@@ -529,8 +529,8 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     elif(NL_model == 'LargeDef'):
         raise ValueError('Large deformations not implemented yet')
 
-    dsiL = fd.inner(dsi, hoflu) * fd.dx
-    duL  = -fd.inner(si, duhoflu) * fd.dx - fd.inner(m, duHofu) * fd.dx
+    dsiL =  fd.inner(dsi, hoflu) * fd.dx
+    duL  = -fd.inner(m, duHofu) * fd.dx # -fd.inner(si, duhoflu) * fd.dx 
     dgL  =  fd.inner(dg, m) * fd.dx
     dlL  = -fd.inner(si, dlhoflu) * fd.dx
     dmL  =  fd.inner((g - Hofu), dm) * fd.dx
