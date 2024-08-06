@@ -262,10 +262,8 @@ class MechanicalDDCMData():
         elif(self.flag_Rn == 'R8'):
             reference_state = np.dstack([g00, g01, g10, g11, s00, s01, s10, s11])[0]
 
-        print(reference_state)
-
         # These are only vectors with data, not associated yet to any domain
-        sampsymgrad = self.sampled_symgrad
+        sampsymgrad = self.sampled_symgradu
         sampstress = self.sampled_stress
         if(self.domain.dim == 2):
             if(self.flag_Rn == 'R6'):
@@ -284,10 +282,21 @@ class MechanicalDDCMData():
         ti = time.time()
         mytree = scipy.spatial.KDTree(sampled_state)
         distances, indexes = mytree.query(reference_state)
-        self.symgraddata.dat.data[:] = self.sampled_grad[indexes,0:2]
-        SymGradudata.dat.data[:,0,0:2] = observed_data[indexes,0:2]
+
+        if(self.flag_Rn == 'R6'):
+            self.symgraddata.dat.data[:, 0,0:2] = self.sampled_symgradu[indexes,0:2]
+            self.symgraddata.dat.data[:, 1,0]   = self.sampled_symgradu[indexes,1]
+            self.symgraddata.dat.data[:, 1,1]   = self.sampled_symgradu[indexes,2]
+            self.stressdata.dat.data[:, 0,0:2]  = self.sampled_stress[indexes,0:2]
+            self.stressdata.dat.data[:, 1,0]    = self.sampled_stress[indexes,1]
+            self.stressdata.dat.data[:, 1,1]    = self.sampled_stress[indexes,2]            
+        elif(self.flag_Rn == 'R8'):
+            self.symgraddata.dat.data[:, 0,0:2] = self.sampled_symgradu[indexes,0:2]
+            self.symgraddata.dat.data[:, 1,0:2] = self.sampled_symgradu[indexes,2:4]
+            self.stressdata.dat.data[:, 0,0:2] = self.sampled_stress[indexes,0:2]
+            self.stressdata.dat.data[:, 1,0:2] = self.sampled_stress[indexes,2:4]
+        
         self.symgraddata.rename('SymGradDataDistrib')
-        self.stressdata.dat.data[:] = self.sampled_flux[indexes,0:2]
         self.stressdata.rename('StressDataDistrib')
         print(' . KDTree and query= ', time.time() - ti)
 
@@ -297,8 +306,8 @@ class MechanicalDDCMData():
             index_field.dat.data[:] = indexes.astype(float)
             index_field.rename('IndexDataDistrib')
             VTKFile('mydatafields/indexdata.pvd').write(index_field)
-            VTKFile('mydatafields/graddata.pvd').write(self.graddata)
-            VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
+            VTKFile('mydatafields/symgraddata.pvd').write(self.symgraddata)
+            VTKFile('mydatafields/stressdata.pvd').write(self.stressdata)
             print(' . Plot= ', time.time() - ti)
 
         return 0
