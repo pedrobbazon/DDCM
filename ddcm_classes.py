@@ -367,6 +367,8 @@ class PoissonDDCMData():
         - 0 (int): Success flag.
         """
         noise_type = noise_parameters.get('type')
+        magnitude_factor = noise_parameters.get('magnitude')
+
         if noise_type == 'gaussian':
             mean = noise_parameters.get('mean')
             std = noise_parameters.get('std')
@@ -382,6 +384,22 @@ class PoissonDDCMData():
             noise_flux = np.random.exponential(scale, self.sampled_flux.shape) - scale
         else:
             raise ValueError(f"Noise type '{noise_type}' not recognized")
+
+        # Scale noise_grad
+        min_grad = np.min(self.sampled_grad)
+        max_grad = np.max(self.sampled_grad)
+        noise_grad = (noise_grad - np.min(noise_grad)) / (np.max(noise_grad) - np.min(noise_grad))
+        noise_grad = noise_grad * (max_grad - min_grad) + min_grad
+
+        # Scale noise_flux
+        min_flux = np.min(self.sampled_flux)
+        max_flux = np.max(self.sampled_flux)
+        noise_flux = (noise_flux - np.min(noise_flux)) / (np.max(noise_flux) - np.min(noise_flux))
+        noise_flux = noise_flux * (max_flux - min_flux) + min_flux
+
+        # Adjust the magnitude factor
+        noise_grad *= magnitude_factor
+        noise_flux *= magnitude_factor
 
         self.sampled_grad += noise_grad
         self.sampled_flux += noise_flux
