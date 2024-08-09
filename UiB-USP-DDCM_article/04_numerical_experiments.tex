@@ -4,6 +4,133 @@
 
 \subsubsection{Convergence of the data-driven formulation}
 
+Adding some figures, still to be complete
+
+\begin{figure}[h!]
+	\centering
+	\caption{....}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FA_L2_error_u.png}
+		\caption{NLSP5FA}
+		\label{fig:NLSP5FA_L2_error_u}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FAeqo_L2_error_u.png}
+		\caption{NLSP5FAeqo}
+		\label{fig:NLSP5FAeqo_L2_error_u}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FB_L2_error_u.png}
+		\caption{NLSP5FB}
+		\label{fig:NLSP5FB_L2_error_u}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FC_L2_error_u.png}
+		\caption{NLSP5FC}
+		\label{fig:NLSP5FC_L2_error_u}
+	\end{subfigure}
+	\label{fig:}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{....}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FA_L2_error_s.png}
+		\caption{NLSP5FA}
+		\label{fig:NLSP5FA_L2_error_s}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FAeqo_L2_error_s.png}
+		\caption{NLSP5FAeqo}
+		\label{fig:NLSP5FAeqo_L2_error_s}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FB_L2_error_s.png}
+		\caption{NLSP5FB}
+		\label{fig:NLSP5FB_L2_error_s}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FC_L2_error_s.png}
+		\caption{NLSP5FC}
+		\label{fig:NLSP5FC_L2_error_s}
+	\end{subfigure}
+	\label{fig:}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{....}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FA_L2_error_lambda.png}
+		\caption{NLSP5FA}
+		\label{fig:NLSP5FA_L2_error_lambda}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FAeqo_L2_error_lambda.png}
+		\caption{NLSP5FAeqo}
+		\label{fig:NLSP5FAeqo_L2_error_lambda}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FB_L2_error_lambda.png}
+		\caption{NLSP5FB}
+		\label{fig:NLSP5FB_L2_error_lambda}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FC_L2_error_lambda.png}
+		\caption{NLSP5FC}
+		\label{fig:NLSP5FC_L2_error_lambda}
+	\end{subfigure}
+	\label{fig:}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{....}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FA_L2_error_mu.png}
+		\caption{NLSP5FA}
+		\label{fig:NLSP5FA_L2_error_mu}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FAeqo_L2_error_mu.png}
+		\caption{NLSP5FAeqo}
+		\label{fig:NLSP5FAeqo_L2_error_mu}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FB_L2_error_mu.png}
+		\caption{NLSP5FB}
+		\label{fig:NLSP5FB_L2_error_mu}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/NLSP5FC_L2_error_mu.png}
+		\caption{NLSP5FC}
+		\label{fig:NLSP5FC_L2_error_mu}
+	\end{subfigure}
+	\label{fig:}
+\end{figure}
+
+\clearpage
+
 \subsubsection{Effect of noise on the input data}
 
 So far, we have studied convergence aspects regarding the data-driven formulation without introducing noise into the given data field $(\tilde{\eD}, \tilde{\sD})$. In the present section, in light of the proposed manufactured solution to Darcy's problem, we introduce a noise distribution in the original data field; in particular, a simple normal (or Gaussian) distribution was selected to introduce the random noise in to the data. The characteristics of the standard normal distribution will be defined by its mean and standard deviation, which will be denoted by $\mu_{\text{gn}} $ and $\sigma_{\text{gn}} $, respectively\footnote{The subscript $gn$ stands for Gaussian noise and is justified to avoid confusion with both the parameters $\mu$ - used to denote the viscosity of the fluid - and $\mD$ - used to denote the dual field of the  compatibility equation.}. 
@@ -20,27 +147,27 @@ As the maximum and minimum values of both $(\tilde{\eD}, \tilde{\sD})$ are compl
 where, $ \mathbf{g}_{\text{gn}} $ and $ \mathbf{s}_{\text{gn}} $ are vectors whose components $ g_{i} $ and $ s_{i} $ respectively, are independently drawn from a univariate normal distribution, i.e. $ g_{i} \sim \mathcal{N}(\mu_{\text{gn}},\sigma_{\text{gn}})$ and $ s_{i} \sim \mathcal{N}(\mu_{\text{gn}},\sigma_{\text{gn}}), \forall i \in \{1,\dots,d\}$. Finally, in order to control the magnitude of generated noisy data, we introduce a scalar parameter, $ \alpha \in \mathbb{R}$, which multiplies $ \tilde{\eD}|_{\text{noise }} $ and $ \tilde{\sD}|_{\text{noise}} $, so from now on we'll denote $ \alpha $ as a noise control factor. 
 
 
-In the first experiment with noisy data fields, three different values of the pair $ (N_{m},N_{\theta}) $ were considered, and the following parameters $ \mu_{\text{gn}} = 0.0 $, $ \sigma_{\text{gn}} = 1.0 $ and $ \alpha = 2.5 \times 10^{-2} $ were adopted to introduce the random normal noise data. Figure \ref{fig:orig_flux_grad_samples} illustrates the relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the three selected values of $ (N_{m},N_{\theta}) $. The choice for those values intends to characterize distinct data scenarios: the first one (figure \ref{fig:orig_flux_grad_samples_NbcNth_4}) should represent absence (or lack) of data; the second one (figure \ref{fig:orig_flux_grad_samples_NbcNth_8}) should represent an intermediate case, where an reasonable number os points is provided, and the last one (figure \ref{fig:orig_flux_grad_samples_NbcNth_16}) should depict an ideal case, where a large amount of data is given. 
+In the first experiment with noisy data fields, three different values of the pair $ (N_{g},N_{\theta}) $ were considered, and the following parameters $ \mu_{\text{gn}} = 0.0 $, $ \sigma_{\text{gn}} = 1.0 $ and $ \alpha = 2.5 \times 10^{-2} $ were adopted to introduce the random normal noise data. Figure \ref{fig:orig_flux_grad_samples} illustrates the relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the three selected values of $ (N_{g},N_{\theta}) $. The choice for those values intends to characterize distinct data scenarios: the first one (figure \ref{fig:orig_flux_grad_samples_NbcNth_4}) should represent absence (or lack) of data; the second one (figure \ref{fig:orig_flux_grad_samples_NbcNth_8}) should represent an intermediate case, where an reasonable number os points is provided, and the last one (figure \ref{fig:orig_flux_grad_samples_NbcNth_16}) should depict an ideal case, where a large amount of data is given. 
 
 \begin{figure}[h!]
 	\centering
-	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the original data fields, considering three different values of the pair $ (N_{m},N_{\theta}) $.}
+	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the original data fields, considering three different values of the pair $ (N_{g},N_{\theta}) $.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:orig_flux_grad_samples_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:orig_flux_grad_samples_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:orig_flux_grad_samples_NbcNth_16}
 	\end{subfigure}
 	\label{fig:orig_flux_grad_samples}
@@ -51,23 +178,23 @@ The figure \ref{fig:noisy_flux_grad_samples}, on the other hand, presents the re
 
 \begin{figure}[h!]
 	\centering
-	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the noisy data fields, considering three different values of the pair $ (N_{m},N_{\theta}) $.}
+	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the noisy data fields, considering three different values of the pair $ (N_{g},N_{\theta}) $.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:noisy_flux_grad_samples_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:noisy_flux_grad_samples_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:noisy_flux_grad_samples_NbcNth_16}
 	\end{subfigure}
 	\label{fig:noisy_flux_grad_samples}
@@ -77,7 +204,7 @@ Once we've defined the new data fields we'll deal with, we should be able to ana
 
 
 \begin{itemize}
-	\item \textcolor{red}{Aqui assumimos que o os parâmetros $ (N_{m},N_{\theta}) $ foram previamente definidos e explicados.}
+	\item \textcolor{red}{Aqui assumimos que o os parâmetros $ (N_{g},N_{\theta}) $ foram previamente definidos e explicados.}
 	\item \textcolor{red}{Explicar o motivo pelo qual não apresenta-se as soluções manufaturadas para os duais}
 	\item \textcolor{red}{Explicar o motivo pelo qual não apresenta-se as soluções manufaturadas para os duais}
 \end{itemize}
@@ -109,115 +236,115 @@ Once we've defined the new data fields we'll deal with, we should be able to ana
 
 \begin{figure}[h!]
 	\centering
-	\caption{Data-driven finite element solution for the pressure, $ p_{h} $, considering the three different values of the pair $ (N_{m},N_{\theta}) $ and the noisy data fields.}
+	\caption{Data-driven finite element solution for the pressure, $ p_{h} $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:u_noise_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:u_noise_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:u_noise_NbcNth_16}
 	\end{subfigure}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\caption{Data-driven finite element solution for the flux, $ \sD_h $, considering the three different values of the pair $ (N_{m},N_{\theta}) $ and the noisy data fields.}
+	\caption{Data-driven finite element solution for the flux, $ \sD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:s_noise_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:s_noise_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:s_noise_NbcNth_16}
 	\end{subfigure}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\caption{Data-driven finite element solution for the pressure gradient, $ \eD_h $, considering the three different values of the pair $ (N_{m},N_{\theta}) $ and the noisy data fields.}
+	\caption{Data-driven finite element solution for the pressure gradient, $ \eD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:g_noise_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:g_noise_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:g_noise_NbcNth_16}
 	\end{subfigure}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\caption{Data-driven finite element solution for the balance Lagrangian multiplier, $ \lD_h $, considering the three different values of the pair $ (N_{m},N_{\theta}) $ and the noisy data fields.}
+	\caption{Data-driven finite element solution for the balance Lagrangian multiplier, $ \lD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:l_noise_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:l_noise_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:l_noise_NbcNth_16}
 	\end{subfigure}
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
-	\caption{Data-driven finite element solution for the constraint Lagrangian multiplier, $ \mD_h $, considering the three different values of the pair $ (N_{m},N_{\theta}) $ and the noisy data fields.}
+	\caption{Data-driven finite element solution for the constraint Lagrangian multiplier, $ \mD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_4.png}
-		\caption{$ N_{m} \times N_{\theta} = 4 \times 4 $}
+		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
 		\label{fig:m_noise_NbcNth_4}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_8.png}
-		\caption{$ N_{m} \times N_{\theta} = 8 \times 8 $}
+		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
 		\label{fig:m_noise_NbcNth_8}
 	\end{subfigure}
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_16.png}
-		\caption{$ N_{m} \times N_{\theta} = 16 \times 16 $}
+		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
 		\label{fig:m_noise_NbcNth_16}
 	\end{subfigure}
 \end{figure}
