@@ -532,7 +532,7 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
     dsiL =  fd.inner(dsi, hoflu) * fd.dx
     duL  = -fd.inner(m, duHofu) * fd.dx # -fd.inner(si, duhoflu) * fd.dx 
     dgL  =  fd.inner(dg, m) * fd.dx
-    dlL  = -fd.inner(si, dlhoflu) * fd.dx
+    dlL  =  fd.inner(si, dlhoflu) * fd.dx # check this sign
     dmL  =  fd.inner((g - Hofu), dm) * fd.dx
 
     # Residual, put all together 
@@ -550,11 +550,12 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
         tag_right = boundary_tags['Right']
 
         fb = body_force(x)
-        dL += fd.inner(fb, dl) * fd.dx
+        dL -= fd.inner(fb, dl) * fd.dx # check this sign
         
         fs = boundary_force['Top'](x)
-        dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
-        dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
+        #dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
+        #dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
+        dL -= fd.inner(fs, dl) * fd.ds(tag_top, degree=4)
 
         bc_lst = [fd.DirichletBC(W.sub(1).sub(0), fd.Constant(0.0), tag_left), 
                   fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom),
