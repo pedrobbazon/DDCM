@@ -43,7 +43,7 @@ def main_Elas_EX0_():
     #________________________________
     # These are the only things I need to specify for an Indent-Block
     def mybodyforce(x):
-        return fd.as_vector([fd.Constant(0.0),fd.Constant(0.05)]) 
+        return fd.as_vector([fd.Constant(0.0),fd.Constant(-0.05)]) 
     def mysurfaceforceTop(x):
         return fd.as_vector([fd.Constant(0.0), -0.05*exp(-5.0*(x[0])**2)])
     mysurfaceforce = {'Top': mysurfaceforceTop}
@@ -87,7 +87,7 @@ def main_Elas_EX0_():
         X = interpolate(domain.msh.coordinates, domain.VDG0)
         xs = fd.assemble(X).dat.data
     else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 2, 2
+        Nsampx, Nsampy  = 3, 3
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
