@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{595.27559055bp}%
+    \setlength{\unitlength}{594.11601389bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,14 +50,14 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.41428571)%
+  \begin{picture}(1,1.245106)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{DNSLP1_conv_mu_L2.pdf}}%
-    \put(0.65189151,0.91726252){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNSLP1-Aeqo\\\end{tabular}}}}%
-    \put(0.16931944,0.50309441){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNSLP1-B\end{tabular}}}}%
-    \put(0.6731478,0.50114993){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) DNSLP1-C\end{tabular}}}}%
-    \put(0.42079577,0.08890323){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) DNSLP1-D\end{tabular}}}}%
-    \put(0.16770599,0.91739259){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNSLP1-A\end{tabular}}}}%
+    \put(0.65218797,0.83308284){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNSLP1-Aeqo\\\end{tabular}}}}%
+    \put(0.16867404,0.41810637){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNSLP1-B\end{tabular}}}}%
+    \put(0.67348575,0.41615809){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) DNSLP1-C\end{tabular}}}}%
+    \put(0.42064119,0.00310678){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) DNSLP1-D\end{tabular}}}}%
+    \put(0.16705744,0.83321316){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNSLP1-A\end{tabular}}}}%
   \end{picture}%
 \endgroup%
