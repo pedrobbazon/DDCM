@@ -2,8 +2,28 @@
 
 \subsection{Results for Darcy's problem}
 
-\subsubsection{Convergence of the data-driven formulation}
+In this section, we present the numerical results obtained using a data-driven approach to solve Darcy's fluid flow problem in porous media. To assess the accuracy of the proposed methodology, we employ a manufactured solution as a benchmark for comparison. So, we've select scalar potential field -- which in the Darcy's problem stands for the pressure, $ \uD $ -- consisting of: 
 
+$$ 
+\uD:\Omega \rightarrow \mathbb{R} \mid p(x,y) = \cos(\pi x)\cos(\pi y),
+$$
+
+where $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1] $. Thus, in light of equation \ref{eq:poisson_general} and the classical Darcy's model, quantities such as flux, $ \sD $, gradient, $ \eD $, and source term, $q$, can be easily derived by symbolic programming. By doing so and also assuming an unitary, uniform and constant porosity, $ \frac{\mathbf{K}}{\mu} $, one can conclude that, for the selected pressure scalar function, the corresponding flux, gradient and source term are given by:
+
+
+\begin{equation*}
+	\begin{aligned}
+		&\sD:\Omega \rightarrow \mathbb{R}^{2} &&\mid \sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&\eD:\Omega \rightarrow \mathbb{R}^{2} &&\mid \eD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&q:\Omega \rightarrow \mathbb{R} &&\mid q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
+	\end{aligned}
+\end{equation*}
+
+respectively. 
+
+
+
+\subsubsection{Convergence of the data-driven formulation}
 
 
 \begin{figure}[h!]
