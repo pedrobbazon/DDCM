@@ -5,24 +5,59 @@
 In this section, we present the numerical results obtained using a data-driven approach to solve Darcy's fluid flow problem in porous media. To assess the accuracy of the proposed methodology, we employ a manufactured solution as a benchmark for comparison. So, we've select scalar potential field -- which in the Darcy's problem stands for the pressure, $ \uD $ -- consisting of: 
 
 $$ 
-\uD:\Omega \rightarrow \mathbb{R} \mid p(x,y) = \cos(\pi x)\cos(\pi y),
+\uD:\Omega \to \mathbb{R} \mid p(x,y) = \cos(\pi x)\cos(\pi y),
 $$
 
-where $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1] $. Thus, in light of equation \ref{eq:poisson_general} and the classical Darcy's model, quantities such as flux, $ \sD $, gradient, $ \eD $, and source term, $q$, can be easily derived by symbolic programming. By doing so and also assuming an unitary, uniform and constant porosity, $ \frac{\mathbf{K}}{\mu} $, one can conclude that, for the selected pressure scalar function, the corresponding flux, gradient and source term are given by:
+where $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1] $. Thus, in light of equation \ref{eq:poisson_general} and the classical Darcy's model, quantities such as flux, $ \sD $, gradient, $ \eD $, and source term, $q$, can be easily derived by symbolic programming. By doing so and also assuming an isotropic medium with unitary constant porosity, $ \frac{k}{\mu} = 1 $, one can conclude that, for the selected pressure scalar function, the corresponding flux, pressure gradient and source term are given by:
 
 
 \begin{equation*}
 	\begin{aligned}
-		&\sD:\Omega \rightarrow \mathbb{R}^{2} &&\mid \sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
-		&\eD:\Omega \rightarrow \mathbb{R}^{2} &&\mid \eD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
-		&q:\Omega \rightarrow \mathbb{R} &&\mid q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
+		&\sD:\Omega \to \mathbb{R}^{2} &&\mid \sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&\eD:\Omega \to \mathbb{R}^{2} &&\mid \eD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&q:\Omega \to \mathbb{R} &&\mid q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
 	\end{aligned}
 \end{equation*}
 
-respectively. 
+respectively. To obtain the discrete data-driven solutions, we set the total number of data samples as  $ N_{m} = N_{g} \times N_{\theta} = 2250 \times 2250 $, which theoretically represents the limit $ N_{m} \rightarrow \infty $. It should be noted that, since the relationship between  $ (\sD,\eD) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed. Regarding the finite element mesh, we used an intermediate fine mesh consisting of $ 200 \times 200 $ elements, i.e $ 200 $ elements per coordinate direction.    
 
 
 
+Figures (a) to (e) in \ref{fig:DNSLP1_sol_plt_over_line_u} illustrate the numerical solutions for the pressure field, $ \uD_h $, according to all the proposed data-driven formulations and the expected analytical solution is shown in figure (f). Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that: the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
+
+$$
+\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \text{ and } \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)}
+$$
+
+are minimized. Thus,  $ \hat{\sD}_h $  and  $ \hat{\eD}_h $  are the closest elementwise constant functions in  $ \text{DG}_0 $ to  $\sD_h^{\text{ref}} $  and  $ \eD_h^{\text{ref}} $ , respectively. Addionally, as  $ N_{m} \to \infty  $, the data  $ \mathfrak{D}_m $ becomes dense in the solution space, which means that the discrete data points   $ \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $ will densely sample the range of  $ (\hat{\sD}_h, \hat{\eD}_h) $ . Consequently, the optimization problem ensures that:
+
+$$
+\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty
+$$
+
+So,
+
+\begin{equation*}
+	\begin{aligned}
+		\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &= \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) + (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|    \\
+		&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|
+	\end{aligned}
+\end{equation*}
+
+as $ N_{m} \to \infty $,  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0  $, and \( \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \) is already minimized. Thus, the total error  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ also approaches zero.
+
+\textcolor{red}{Confirmar com o professor se está razoável}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (a) to (f) compare the numerical solution  $ \uD_h  $ with the exact solution  $ \uD $  for the scalar pressure field across various formulations. Figure (g) presents a comparison of these solutions along the diagonal coordinate, while figure (h) provides a zoomed-in view of this comparison.
+	}
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/DNSLP1_sol_plt_over_line_u.pdf_tex}  
+	\label{fig:DNSLP1_sol_plt_over_line_u}  
+\end{figure}
+
+\newpage
 \subsubsection{Convergence of the data-driven formulation}
 
 
@@ -75,14 +110,7 @@ respectively.
 	\label{fig:DNSLP1_conv_mu_L2}  
 \end{figure}
 
-\begin{figure}[h!]
-	\centering
-	\caption{Figures (a) to (f) compare the numerical solution  $ \uD_h  $ with the exact solution  $ \uD $  for the scalar pressure field across various formulations. Figure (g) presents a comparison of these solutions along the diagonal coordinate, while Figure (h) provides a zoomed-in view of this comparison.
-	}
-	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_sol_plt_over_line_u.pdf_tex}  
-	\label{fig:DNSLP1_sol_plt_over_line_u}  
-\end{figure}
+
 
 
 \clearpage
