@@ -561,7 +561,33 @@ def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_qua
                   fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom),
                   fd.DirichletBC(W.sub(3).sub(0), fd.Constant(0.0), tag_left), 
                   fd.DirichletBC(W.sub(3).sub(1), fd.Constant(0.0), tag_bottom)
-                  ]
+                  ] 
+    elif(flag_setting == 'Stretch-Block'):
+        # By definition an indentation problem corresponds to:
+        # x restricted in the left, y restricted in the bottom
+        # and stretching displacements on the other sides
+
+        tag_left = boundary_tags['Left']
+        tag_bottom = boundary_tags['Bottom']
+        tag_top = boundary_tags['Top']
+        tag_right = boundary_tags['Right']
+
+        fb = body_force(x)
+        dL -= fd.inner(fb, dl) * fd.dx # check this sign
+        
+        #dL += fd.inner(fd.dot(dsi,n),l) * fd.ds(tag_top)
+        #dL -= fd.inner(fd.dot(si, n) - fs, dl) * fd.ds(tag_top, degree=4)
+
+        bc_lst = [fd.DirichletBC(W.sub(1).sub(0), fd.Constant(0.0), tag_left), 
+                  fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.0), tag_bottom),
+                  fd.DirichletBC(W.sub(1).sub(0), fd.Constant(0.1), tag_right), 
+                  fd.DirichletBC(W.sub(1).sub(1), fd.Constant(0.1), tag_top), 
+                  fd.DirichletBC(W.sub(3).sub(0), fd.Constant(0.0), tag_left), 
+                  fd.DirichletBC(W.sub(3).sub(1), fd.Constant(0.0), tag_bottom),
+                  fd.DirichletBC(W.sub(3).sub(0), fd.Constant(0.0), tag_right), 
+                  fd.DirichletBC(W.sub(3).sub(1), fd.Constant(0.0), tag_top)
+                  ] 
+
     elif(flag_setting == 'Beam'):
         # Restricted at both ends
 

@@ -100,7 +100,7 @@ A notable feature of the Firedrake platform is its simplicity, which allows
 for straightforward testing of different formulations and finite element spaces.
 \end{remark}
 
-\subsection{Discrete formulation for Darcy's problem}
+\subsection{Discrete data-driven formulations for Darcy's problem}
 
 The discrete variational formulation follows by introducing a finite element partition of
 the computational domain $\Omega$, the mesh, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
@@ -283,7 +283,7 @@ Now, we proceed to formulate discrete versions of NLSP1.
   \end{center}
 \end{figure}
 
-\subsection{Discrete data-driven formulations for Darcy's problem}
+\subsubsection{A first discrete NSLP1 formulation for Darcy's problem}
 
 The first discrete formulation results from a natural choice
 of finite element spaces for the different fields, namely,
@@ -319,13 +319,11 @@ We expect this formulation to fail due to the structure of the saddle point prob
 being solved. This equal order case will be named DNLSP1-Aeqo and will be assessed 
 in the results section to compare with other variants.
 
-\subsection{Some variants of the discrete data-driven formulation}
-
 We can derive three other formulations by integrating by parts some 
 of the terms in the base formulation NLSP1 and making suitable 
 choices of discrete finite element spaces. 
 
-\subsubsection{Formulation DNLSP1-B}
+\subsubsection{Variant 1: Formulation DNLSP1-B}
 
 Let us begin with the functional $\Phi_{\lD \mD}$ and integrate
 both terms in the balance and compatibility constraint, i.e.,
@@ -359,7 +357,7 @@ $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  
 \times \DG_{k} \times \RT_{k+1}$.
 This discrete formulation will be termed DNLSP1-B. 
 
-\subsubsection{Formulation DNLSP1-C}
+\subsubsection{Variant 2: Formulation DNLSP1-C}
 
 The third option corresponds to integrate by parts only the compatibility term,
 resulting the functional $\Phi_{\lD \mD}$
@@ -391,7 +389,7 @@ $\forall (\delta\uD_h,\delta\eD_h, \delta\sD_h, \delta\lD_h, \delta\mD_h ) \in  
 \times \DG_{k} \times \RT_{k+1}$.
 This discrete formulation will be termed DNLSP1-C. 
 
-\subsubsection{Formulation DNLSP1-D}
+\subsubsection{Variant 3: Formulation DNLSP1-D}
 
 The final variant consists in integrating by parts only the balance term in 
 the original functional $\Phi_{\lD \mD}$ giving
@@ -463,7 +461,7 @@ $$
 \\
 \sE &=&  2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
 \\
-\eE &=& H(\nabla{\uE})  & \mbox{in}~\Omega \\
+\eE &=& h(\nabla{\uE})  & \mbox{in}~\Omega \\
 \\
 \uE &=& \uE_0(\mathbf{x}) & \mbox{on}~\partial\Omega_{\uE} \\
 \\
@@ -471,29 +469,31 @@ $$
 \end{array}
 \right.
 $$
-in which the function $H$ stands for some deformation measure, e.g.,
+in which the function $h$ stands for some deformation measure, e.g.,
 $$
-H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} +  \nabla{\uE}^{\intercal} \nabla{\uE} \right )
+h(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} +  \nabla{\uE}^{\intercal} \nabla{\uE} \right )
 $$ 
 The model corresponds to a material with a strain-energy density 
 $$
 \mathcal{W} = \frac{\lambda_L}{2} \, \mbox{tr}^2(\eE) + \mu_L \,  \mbox{tr}(\eE^2)
 $$
+where $\lambda_L$ and $\mu_L$ are the Lam\'e parameters.
 More complicated energy functions that depend on the invariants of the Cauchy strain 
 tensor can be defined; however, in this article, we restrict ourselves to the linear 
 elasticity case, which corresponds to the limit of infinitesimal strains. 
 The nonlinear case will be addressed in future works. Moreover,
 in the linear elasticity case, we have
 $$
-H(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right ) = \nabla^S{\uE}
+h(\eE) = \frac12 \left ( \nabla{\uE} + \nabla^{\intercal}{\uE} \right ) = \nabla^S{\uE}
 $$
 From the virtual work principle, the primal variational formulation for the reference problem in such 
 case reads: Find $\uE \in H_0^1(\Omega)$, $\uE = \uE_0(\mathbf{x}),~~\mathbf{x} \in \partial{\Omega}_D$
 such that
 $$
-\int_{\Omega} {\sE(\uE)} : \nabla^{S}{\mathbf{v}} \, d{\mathbf{x}} = \int_{\Omega} \mathbf{f} \cdot {\mathbf{v}}\, d{\mathbf{x}}  + \int_{\Gamma_N} {\boldsymbol{\mathcal{F}}\cdot \mathbf{v}}\,d\Gamma~~~\forall \mathbf{v} \in [H_0^1(\Omega)]^d
+\int_{\Omega} {\sE(\uE)} : \nabla^{S}{\mathbf{v}} \, d{\mathbf{x}} = \int_{\Omega} \mathbf{f} \cdot {\mathbf{v}}\, d{\mathbf{x}}  + \int_{\partial{\Omega}_N} {\boldsymbol{\mathcal{F}}\cdot \mathbf{v}}\,d\Gamma~~~\forall \mathbf{v} \in [H_0^1(\Omega)]^d
 $$
-
+in which $\mathbf{f}$ and $\boldsymbol{\mathcal{F}}$ stand for the known body forces and
+surface force distribution, respectively.
 
 %
 %For this problem we begin by defining an energy function that depends
@@ -518,7 +518,7 @@ $$
 %\\
 %\sE &=& J^{-1} \, \mathbb{P} \, \mathbb{F}^{\intercal}  \\ %2\mu_L \,\eE + \lambda_L \nabla \cdot \eE& \mbox{in}~\Omega \\
 %\\
-%\eE &=& H(\nabla{\uE})  & \mbox{in}~\Omega \\
+%\eE &=& h(\nabla{\uE})  & \mbox{in}~\Omega \\
 %\\
 %\uE &=& \uE_0(\mathbf{x}) & \mbox{on}~\partial\Omega_{\uE} \\
 %\\
@@ -529,7 +529,41 @@ $$
 %being $\mathbb{P} = \dfrac{\partial{\mathcal{W}}}{\partial{\mathbb{F}}}$ the
 %1st Piola-Kirchhoff stress tensor.
 
-\subsection{Discrete data-driven formulations for elasticity problem}
+\subsubsection{Discrete data-driven formulations for elasticity problem}
+
+Let us recall the base formulation NLSP1 specialized for 
+the elasticity problem. For the proximity measures we take as a particular
+case the $L^2(\Omega)$-norm, i.e.,
+$$
+\varphi_{\eE}(\eE - \tilde{\eE}) = \frac{1}{2}\|\eE-\tilde{\eE}\|^2_{L^2},~~~
+\varphi_{\sE}(\sE - \tilde{\sE}) = \frac{1}{2}\|\sE-\tilde{\sE}\|^2_{L^2}
+$$
+Given the data fields $(\tilde{\eE}, \tilde{\sE})$ we seek to
+find primal fields
+$\uE \in [H^1(\Omega)]^d$ (the displacement), $\sE \in [L^2(\Omega)]^{d\times d}$ (the stress),
+$\eE \in [L^2(\Omega)]^{d \times d}$ (the Cauchy strain tensor)
+and dual fields $\lE \in [H^1(\Omega)]^d$ , $\mE \in [L^2(\Omega)]^{d \times d}$,
+$\uE = \uE_D(\mathbf{x})$ and $\lE = 0$ for $\mathbf{x} \in \partial{\Omega}_D$,
+that minimize
+\begin{multline}
+\mathcal{L} = \Phi_{\lE \mE}((\lE, \mE), (\uE, \eE, \sE); \mathbf{f}, \Omega) +
+\varphi_{\eE}(\eE - \tilde{\eE}) + \varphi_{\sE}(\sE - \tilde{\sE}) =  \\
+- \int_{\Omega} \sE : \nabla^S \lE \, d\mathbf{x} - \int_{\Omega} \lE \cdot \mathbf{f} \, d\mathbf{x} + \int_{\Omega} \mE : (\eE -  \nabla^S \uE)\,d\mathbf{x}
++ \\
++ \frac{1}{2} \int_{\Omega} \left[ (\sE - \tilde{\sE}) : (\sE - \tilde{\sE}) + (\eE - \tilde{\eE}) : (\eE - \tilde{\eE}) \right] \, d\mathbf{x},
+\end{multline}
+The concrete problem to be solved in this case is obtained
+by taking variations of this functional with respect to all fields
+and writing the optimality conditions as we have done in Section \ref{sec:solvability}
+\begin{equation*}
+        \begin{aligned}
+               \text{d}_{\sE}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sE : (\sE - \tilde{\sE}) \, d\mathbf{x}}_{\text{d}\varphi_{\sE}(\sE,\tilde{\sE}; \delta{\sE})} - \int_{\Omega}(\delta \sE : \nabla \lE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sE \in  L^2(\Omega), \\
+                 \text{d}_{\eE}\mathcal{L} & = - \int_{\Omega}( \mE \cdot  \nabla \delta \uE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uE \in H_0^1(\Omega), \\
+                \text{d}_{\eE}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eE \cdot (\eE - \tilde{\eE}) \, d\mathbf{x}}_{\text{d}\varphi_{\eE}(\eE,\tilde{\eE}; \delta{\eE})}  + \int_{\Omega} (\delta \eE \cdot \mE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eE \in  L^2(\Omega), \\
+                \text{d}_{\lE}\mathcal{L} & = -\int_{\Omega} \big(\sE \cdot \nabla \delta \lE + q \, \delta \lambda \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lE \in H_0^1(\Omega), \\
+                \text{d}_{\mE}\mathcal{L} & = \int_{\Omega} \delta \mE \cdot (\eE -  \nabla \uE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mE \in  L^2(\Omega).
+        \end{aligned}
+\end{equation*}
 
 
 

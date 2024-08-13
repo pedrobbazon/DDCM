@@ -146,6 +146,126 @@ def main_Elas_EX0_():
 #----------------------------------------------------------------------------
 
 # Example using the simple linear Elasticity model to generate the reference solution and sample the data from it
+def main_Elas_EX01_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These are the only things I need to specify for an Indent-Block
+    def mybodyforce(x):
+        return fd.as_vector([fd.Constant(0.0),fd.Constant(-0.05)]) 
+    def mysurfaceforceTop(x):
+        return fd.as_vector([fd.Constant(0.0), -0.05*exp(-5.0*(x[0])**2)])
+    mysurfaceforce = {'Top': mysurfaceforceTop}
+    boundary_tags = {'Left': 1 , 'Right': 2, 'Bottom': 3, 'Top': 4}
+    forcings = MechanicalForcingData(mybodyforce, mysurfaceforce, None, boundary_tags)
+    #________________________________
+
+    params = {'YoungMod': fd.Constant(1.0), 'PoissonRat': fd.Constant(0.475)}
+
+    ref_prob = MechanicalStdProblem(domain, params, 'Stretch-Block', forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    # Note in this case, I've made the data associated to the same domain (and mesh)
+    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
+    ddcm_data = MechanicalDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    synth_forcings = forcings
+        
+    synth_prob = MechanicalStdProblem(synth_domain, params, 'Stretch-Block', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
+    synth_prob.solve(0.0, "mysynthsol")
+
+    # Sample the synthetic solution: Program this according to your problem
+
+    one_sample_per_element = False
+    if(one_sample_per_element == True): # One point per element centroid
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+    else: # Sample points one a regular grid
+        Nsampx, Nsampy  = 2, 2
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
+    #- Pay attention: this is a concious decision
+    # and it may change in other situations
+    stdsyn_sol = synth_prob.std_solution
+    g = fd.project(stdsyn_sol.g, synth_domain.TDG0)
+    s = fd.project(stdsyn_sol.s, synth_domain.TDG0)
+    symgradu_sampled_vals = np.array(g.at(xs))
+    sigma_sampled_vals = np.array(s.at(xs))
+    #-------------------------------------------  
+        
+    # Apply any manipulation/transformation you need to define
+    # the synthetic data (rotations, scalings, removing outliers, etc)
+    symgradu_samples = symgradu_sampled_vals
+    sigma_samples  = sigma_sampled_vals
+
+    ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-TDG0', flag_plot=True)
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_stress.shape[0]))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+    def myDerObjFunc(g, gdata, dg, s, sdata, dsi):
+        return [fd.inner(dsi, s-sdata)*fd.dx, fd.inner(dg, g-gdata)*fd.dx]
+
+    ddcm_prob = DDCMMechProblem(ddcm_data, myObjFunc, myDerObjFunc, 'Indent-Block', forcings, NLSP5FA_MECH, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
+
+#----------------------------------------------------------------------------
+
+# Example using the simple linear Elasticity model to generate the reference solution and sample the data from it
 def main_Elas_EX1_():
 
     ti = time.time()
