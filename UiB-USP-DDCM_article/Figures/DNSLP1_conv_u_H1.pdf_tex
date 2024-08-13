@@ -54,8 +54,8 @@
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{DNSLP1_conv_u_H1.pdf}}%
-    \put(0.16692744,0.4177332){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNSLP1-A\end{tabular}}}}%
-    \put(0.6524586,0.41771021){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNSLP1-Aeqo\end{tabular}}}}%
-    \put(0.42047445,0.00310421){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNSLP1-D\end{tabular}}}}%
+    \put(0.16692744,0.4177332){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNLSP1-A\end{tabular}}}}%
+    \put(0.6524586,0.41771021){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNLSP1-Aeqo\end{tabular}}}}%
+    \put(0.42047445,0.00310421){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNLSP1-D\end{tabular}}}}%
   \end{picture}%
 \endgroup%
