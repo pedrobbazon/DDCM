@@ -19,11 +19,11 @@ where $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1] $. Thus, in
 	\end{aligned}
 \end{equation*}
 
-respectively. To obtain the discrete data-driven solutions, we set the total number of data samples as  $ N_{m} = N_{g} \times N_{\theta} = 2250 \times 2250 $, which theoretically represents the limit $ N_{m} \rightarrow \infty $. It should be noted that, since the relationship between  $ (\sD,\eD) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed. Regarding the finite element mesh, we used an intermediate fine mesh consisting of $ 200 \times 200 $ elements, i.e $ 200 $ elements per coordinate direction.    
+respectively. To obtain the discrete data-driven solutions, we set the total number of data samples as  $ N_{m} = N_{g} \times N_{\theta} = 2250 \times 2250 $, which theoretically represents the limit $ N_{m} \rightarrow \infty $. It should be noted that, since the relationship between  $ (\sD_h^{\text{ref}},\eD_h^{\text{ref}}) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed. Regarding the finite element mesh, we used an intermediate fine mesh consisting of $ 200 \times 200 $ elements, i.e $ 200 $ elements per coordinate direction.    
 
 
 
-Figures (a) to (e) in \ref{fig:DNSLP1_sol_plt_over_line_u} illustrate the numerical solutions for the pressure field, $ \uD_h $, according to all the proposed data-driven formulations and the expected analytical solution is shown in figure (f). Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that: the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
+Figures (\ref{fig:DNSLP1_sol_plt_over_line_u}a) to (\ref{fig:DNSLP1_sol_plt_over_line_u}e) illustrate the numerical solutions for the pressure field, $ \uD_h $, according to all the proposed data-driven formulations and the expected analytical solution is shown in figure (\ref{fig:DNSLP1_sol_plt_over_line_u}f). Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
 
 $$
 \| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \text{ and } \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)}
@@ -41,12 +41,10 @@ So,
 	\begin{aligned}
 		\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &= \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) + (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|    \\
 		&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|
-	\end{aligned}
+	\end{aligned}.
 \end{equation*}
 
-as $ N_{m} \to \infty $,  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0  $, and \( \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \) is already minimized. Thus, the total error  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ also approaches zero.
-
-\textcolor{red}{Confirmar com o professor se está razoável}
+Then, as $ N_{m} \to \infty $, $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0  $ and considering that  $ \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ is already minimized, we conclude that the total error  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ also approaches zero.
 
 \begin{figure}[h!]
 	\centering
@@ -56,6 +54,11 @@ as $ N_{m} \to \infty $,  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \h
 	\input{Figures/DNSLP1_sol_plt_over_line_u.pdf_tex}  
 	\label{fig:DNSLP1_sol_plt_over_line_u}  
 \end{figure}
+
+To analyze the effect of the finite element space choice, we plotted the solution for each data-driven formulation along the diagonal of the square. The results are shown in Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}g). To provide a clearer view of the differences between the formulations, Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}h) presents an enlarged view of the rectangular region defined in (\ref{fig:DNSLP1_sol_plt_over_line_u}g). As expected, the formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D yielded coincident numerical pressure field solutions, \( \uD_h \), since the same finite element space was selected for these formulations (cf. Table~\ref{tab:spaces}). Similarly, formulations DNLSP1-B and DNLSP1-C produced numerical solutions for the pressure field that are coincident with each other but distinct from the former group. It is also noteworthy that the numerical solutions obtained with formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D demonstrate better accuracy compared to those obtained with formulations DNLSP1-B and DNLSP1-C. The latter solutions exhibit a staircase behavior, which is a natural consequence of the selected finite element space (cf. Table~\ref{tab:spaces}).
+
+
+
 
 \newpage
 \subsubsection{Convergence of the data-driven formulation}
