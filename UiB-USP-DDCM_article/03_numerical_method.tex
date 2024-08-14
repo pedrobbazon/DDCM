@@ -86,9 +86,9 @@ and writing the optimality conditions as we have done in Section \ref{sec:solvab
 \begin{equation*}
         \begin{aligned}
                \text{d}_{\sD}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sD \cdot (\sD - \tilde{\sD}) \, d\mathbf{x}}_{\text{d}\varphi_{\sD}(\sD,\tilde{\sD}; \delta{\sD})} - \int_{\Omega}(\delta \sD \cdot \nabla \lD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sD \in  L^2(\Omega), \\
-                 \text{d}_{\eD}\mathcal{L} & = - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uD \in H_0^1(\Omega), \\
+                 \text{d}_{\uD}\mathcal{L} & = - \int_{\Omega}( \mD \cdot  \nabla \delta \uD ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uD \in H_0^1(\Omega), \\
                 \text{d}_{\eD}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eD \cdot (\eD - \tilde{\eD}) \, d\mathbf{x}}_{\text{d}\varphi_{\eD}(\eD,\tilde{\eD}; \delta{\eD})}  + \int_{\Omega} (\delta \eD \cdot \mD) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eD \in  L^2(\Omega), \\
-                \text{d}_{\lD}\mathcal{L} & = -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lambda \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lD \in H_0^1(\Omega), \\
+                \text{d}_{\lD}\mathcal{L} & = -\int_{\Omega} \big(\sD \cdot \nabla \delta \lD + q \, \delta \lD \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lD \in H_0^1(\Omega), \\
                 \text{d}_{\mD}\mathcal{L} & = \int_{\Omega} \delta \mD \cdot (\eD -  \nabla \uD) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mD \in  L^2(\Omega).
         \end{aligned}
 \end{equation*}
@@ -213,7 +213,7 @@ $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
         \begin{aligned}
 \int_{\Omega} { \left [ \eD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
 \beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1}^{\text{disc}} \\
-\int_{\Omega} {\sD^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
+\int_{\Omega} {\sD_h^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
 \end{equation}
 where
@@ -558,13 +558,27 @@ by taking variations of this functional with respect to all fields
 and writing the optimality conditions as we have done in Section \ref{sec:solvability}
 \begin{equation*}
         \begin{aligned}
-               \text{d}_{\sE}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sE : (\sE - \tilde{\sE}) \, d\mathbf{x}}_{\text{d}\varphi_{\sE}(\sE,\tilde{\sE}; \delta{\sE})} - \int_{\Omega}(\delta \sE : \nabla \lE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sE \in  L^2(\Omega), \\
-                 \text{d}_{\eE}\mathcal{L} & = - \int_{\Omega}( \mE \cdot  \nabla \delta \uE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uE \in H_0^1(\Omega), \\
-                \text{d}_{\eE}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eE \cdot (\eE - \tilde{\eE}) \, d\mathbf{x}}_{\text{d}\varphi_{\eE}(\eE,\tilde{\eE}; \delta{\eE})}  + \int_{\Omega} (\delta \eE \cdot \mE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eE \in  L^2(\Omega), \\
-                \text{d}_{\lE}\mathcal{L} & = -\int_{\Omega} \big(\sE \cdot \nabla \delta \lE + q \, \delta \lambda \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lE \in H_0^1(\Omega), \\
-                \text{d}_{\mE}\mathcal{L} & = \int_{\Omega} \delta \mE \cdot (\eE -  \nabla \uE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mE \in  L^2(\Omega).
+               \text{d}_{\sE}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sE : (\sE - \tilde{\sE}) \, d\mathbf{x}}_{\text{d}\varphi_{\sE}(\sE,\tilde{\sE}; \delta{\sE})} - \int_{\Omega}(\delta \sE : \nabla \lE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sE \in  [L^2(\Omega)]^{d\times d}, \\
+               \text{d}_{\uE}\mathcal{L} & = - \int_{\Omega}( \mE : \nabla \delta \uE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uE \in [H_0^1(\Omega)]^d, \\
+                \text{d}_{\eE}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eE : (\eE - \tilde{\eE}) \, d\mathbf{x}}_{\text{d}\varphi_{\eE}(\eE,\tilde{\eE}; \delta{\eE})}  + \int_{\Omega} (\delta \eE : \mE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eE \in  [L^2(\Omega)]^{d\times d}, \\
+                \text{d}_{\lE}\mathcal{L} & = -\int_{\Omega} \big(\sE : \nabla \delta \lE + \mathbf{f} \cdot \delta \lE \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lE \in [H_0^1(\Omega)]^d, \\
+                \text{d}_{\mE}\mathcal{L} & = \int_{\Omega} \delta \mE : (\eE -  \nabla^S \uE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mE \in  [L^2(\Omega)]^{d\times d}.
         \end{aligned}
 \end{equation*}
+As in the previous case, the discrete version of it is obtained by assuming a
+finite element partition of the computational domain $\Omega$, $\mathcal{T}_h = \{K_i\}_{i=1}^N$
+and taking discrete spaces 
+$V_{\uE}(\mathcal{T}_h) \subset [H_0^1(\Omega)]^{d}$, $V_{\sE}(\mathcal{T}_h) \subset [L^2(\Omega)]^{d \times d}$,
+$V_{\eE}(\mathcal{T}_h) \subset [L^2(\Omega)]^{d\times d}$, $V_{\lE}(\mathcal{T}_h) \subset [H_0^1(\Omega)]^d$
+and $V_{\mE}(\mathcal{T}_h) \subset [L^2(\Omega)]^{d\times d}$.
+For this problem we consider the simplest discrete formulation, which amounts to taking
+the following finite element spaces:
+\begin{eqnarray}
+  V_{\sE} = V_{\eE} = V_{\mE} = [\DG_k(\mathcal{T}_h)]^{d \times d} & = & \left \{  \in L^2(\Omega),~ v|_K \in P_k(K)~\forall K \in \mathcal{T}_h \right \}\\
+  V_{\uE} = V_{\lE} = [\CG_k^D(\mathcal{T}_h)]^d & = & \left \{ \mathbf{v} \in [H^1(\Omega)]^d,~ {v_i}|_K \in P_k(K)~\forall K \in \mathcal{T}_h, \right . \nonumber \\
+  && \left. ~\mathbf{v} = \mathbf{u}_D~\mbox{on}~\partial{\Omega} \right \}
+\end{eqnarray}
+
 
 
 
