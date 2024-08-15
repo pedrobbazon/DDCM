@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{593.16124143bp}%
+    \setlength{\unitlength}{595.27559055bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,15 +50,14 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.24670342)%
+  \begin{picture}(1,1.28853149)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
+    \put(0.64909886,0.86545843){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNLSP1-Aeqo\end{tabular}}}}%
+    \put(0.17211211,0.43429108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNLSP1-B\end{tabular}}}}%
+    \put(0.67035508,0.43426812){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) DNLSP1-C\end{tabular}}}}%
+    \put(0.41979817,0.00310059){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) DNLSP1-D\end{tabular}}}}%
+    \put(0.17049866,0.86548135){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNLSP1-A\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{DNSLP1_conv_lambda_L2.pdf}}%
-    \put(0.6516282,0.83381396){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNLSP1-Aeqo\end{tabular}}}}%
-    \put(0.16894551,0.41911289){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) DNLSP1-B\end{tabular}}}}%
-    \put(0.67296019,0.41911289){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) DNLSP1-C\end{tabular}}}}%
-    \put(0.4192818,0.0031117){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) DNLSP1-D\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=2]{DNSLP1_conv_lambda_L2.pdf}}%
-    \put(0.16732631,0.83383704){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNLSP1-A\end{tabular}}}}%
   \end{picture}%
 \endgroup%
