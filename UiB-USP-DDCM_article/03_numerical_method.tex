@@ -549,10 +549,12 @@ that minimize
 \begin{multline}
 \mathcal{L} = \Phi_{\lE \mE}((\lE, \mE), (\uE, \eE, \sE); \mathbf{f}, \Omega) +
 \varphi_{\eE}(\eE - \tilde{\eE}) + \varphi_{\sE}(\sE - \tilde{\sE}) =  \\
-- \int_{\Omega} \sE : \nabla^S \lE \, d\mathbf{x} - \int_{\Omega} \lE \cdot \mathbf{f} \, d\mathbf{x} + \int_{\Omega} \mE : (\eE -  \nabla^S \uE)\,d\mathbf{x}
-+ \\
-+ \frac{1}{2} \int_{\Omega} \left[ (\sE - \tilde{\sE}) : (\sE - \tilde{\sE}) + (\eE - \tilde{\eE}) : (\eE - \tilde{\eE}) \right] \, d\mathbf{x},
+- \int_{\Omega} \sE : \nabla^S \lE \, d\mathbf{x} - \int_{\Omega} \lE \cdot \mathbf{f} \, d\mathbf{x} + \int_{\Omega} \mE : (\eE -  \nabla^S \uE)\,d\mathbf{x} + \int_{\partial{\Omega}_N} {\boldsymbol{\mathcal{F}}\cdot \lE}\,d\Gamma + \\
++ \frac{1}{2} \int_{\Omega} \left[ (\sE - \tilde{\sE}) : (\sE - \tilde{\sE}) + (\eE - \tilde{\eE}) : (\eE - \tilde{\eE}) \right] \, d\mathbf{x},\label{eq:lagrangian_elas}
 \end{multline}
+Note that we have included the boundary term in (\ref{eq:lagrangian_elas}) which
+has been omited in Section \ref{sec:solvability}
+when presenting the continous data-driven formulation and its analysis. 
 The concrete problem to be solved in this case is obtained
 by taking variations of this functional with respect to all fields
 and writing the optimality conditions as we have done in Section \ref{sec:solvability}
@@ -561,7 +563,7 @@ and writing the optimality conditions as we have done in Section \ref{sec:solvab
                \text{d}_{\sE}\mathcal{L}  & = \underbrace{\int_{\Omega}  \delta \sE : (\sE - \tilde{\sE}) \, d\mathbf{x}}_{\text{d}\varphi_{\sE}(\sE,\tilde{\sE}; \delta{\sE})} - \int_{\Omega}(\delta \sE : \nabla \lE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \sE \in  [L^2(\Omega)]^{d\times d}, \\
                \text{d}_{\uE}\mathcal{L} & = - \int_{\Omega}( \mE : \nabla \delta \uE ) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \uE \in [H_0^1(\Omega)]^d, \\
                 \text{d}_{\eE}\mathcal{L} & = \underbrace{\int_{\Omega}  \delta \eE : (\eE - \tilde{\eE}) \, d\mathbf{x}}_{\text{d}\varphi_{\eE}(\eE,\tilde{\eE}; \delta{\eE})}  + \int_{\Omega} (\delta \eE : \mE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \eE \in  [L^2(\Omega)]^{d\times d}, \\
-                \text{d}_{\lE}\mathcal{L} & = -\int_{\Omega} \big(\sE : \nabla \delta \lE + \mathbf{f} \cdot \delta \lE \big) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \lE \in [H_0^1(\Omega)]^d, \\
+                \text{d}_{\lE}\mathcal{L} & = -\int_{\Omega} \big(\sE : \nabla \delta \lE + \mathbf{f} \cdot \delta \lE \big) \, d\mathbf{x} + \int_{\partial{\Omega}_N} {\boldsymbol{\mathcal{F}}\cdot \delta\lE}\,d\Gamma & = & ~0 &\quad \forall \delta \lE \in [H_0^1(\Omega)]^d, \\
                 \text{d}_{\mE}\mathcal{L} & = \int_{\Omega} \delta \mE : (\eE -  \nabla^S \uE) \, d\mathbf{x} & = & ~0 &\quad \forall \delta \mE \in  [L^2(\Omega)]^{d\times d}.
         \end{aligned}
 \end{equation*}
