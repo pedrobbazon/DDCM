@@ -58,6 +58,6 @@
     \put(0.67035508,0.43426812){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) DNLSP1-C\end{tabular}}}}%
     \put(0.41979817,0.00310059){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) DNLSP1-D\end{tabular}}}}%
     \put(0.17049866,0.86548135){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNLSP1-A\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNSLP1_conv_lambda_L2.pdf}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNLSP1_conv_lambda_L2.pdf}}%
   \end{picture}%
 \endgroup%

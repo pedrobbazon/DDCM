@@ -23,7 +23,7 @@ respectively. To obtain the discrete data-driven solutions, we set the total num
 
 
 
-Figures (\ref{fig:DNSLP1_sol_plt_over_line_u}a) to (\ref{fig:DNSLP1_sol_plt_over_line_u}e) illustrate the numerical solutions for the pressure field, $ \uD_h $, according to all the proposed data-driven formulations and the expected analytical solution is shown in figure (\ref{fig:DNSLP1_sol_plt_over_line_u}f). Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
+%Figures (\ref{fig:DNLSP1_sol_plt_over_line_u}a) to (\ref{fig:DNLSP1_sol_plt_over_line_u}e) illustrate the numerical solutions for the pressure field, $ \uD_h $, according to all the proposed data-driven formulations and the expected analytical solution is shown in figure (\ref{fig:DNSLP1_sol_plt_over_line_u}f). Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
 
 $$
 \| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \text{ and } \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)}
@@ -48,52 +48,51 @@ Then, as $ N_{m} \to \infty $, $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figures (a) to (f) compare the numerical solution  $ \uD_h  $ with the exact solution  $ \uD $  for the scalar pressure field across various formulations. Figure (g) presents a comparison of these solutions along the diagonal coordinate, while figure (h) provides a zoomed-in view of this comparison.
-	}
-	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_sol_plt_over_line_u.pdf_tex}  
-	\label{fig:DNSLP1_sol_plt_over_line_u}  
+	\caption{...}
+	\fontsize{6pt}{10pt}\selectfont % Adjust font size and line spacing here
+	\def\svgwidth{\columnwidth}
+	\input{Figures/DNLSP1_A_plt_over_line_u.pdf_tex}
+	\label{fig:DNLSP1_A_plt_over_line_u}
 \end{figure}
 
-To analyze the effect of the finite element space choice, we plotted the solution for each data-driven formulation along the diagonal of the square. The results are shown in Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}g). To provide a clearer view of the differences between the formulations, Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}h) presents an enlarged view of the rectangular region defined in (\ref{fig:DNSLP1_sol_plt_over_line_u}g). As expected, the formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D yielded coincident numerical pressure field solutions, \( \uD_h \), since the same finite element space was selected for these formulations (cf. Table~\ref{tab:spaces}). Similarly, formulations DNLSP1-B and DNLSP1-C produced numerical solutions for the pressure field that are coincident with each other but distinct from the former group. It is also noteworthy that the numerical solutions obtained with formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D demonstrate better accuracy compared to those obtained with formulations DNLSP1-B and DNLSP1-C. The latter solutions exhibit a staircase behavior, which is a natural consequence of the selected finite element space (cf. Table~\ref{tab:spaces}).
+%To analyze the effect of the finite element space choice, we plotted the solution for each data-driven formulation along the diagonal of the square. The results are shown in Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}g). To provide a clearer view of the differences between the formulations, Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}h) presents an enlarged view of the rectangular region defined in (\ref{fig:DNSLP1_sol_plt_over_line_u}g). As expected, the formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D yielded coincident numerical pressure field solutions, \( \uD_h \), since the same finite element space was selected for these formulations (cf. Table~\ref{tab:spaces}). Similarly, formulations DNLSP1-B and DNLSP1-C produced numerical solutions for the pressure field that are coincident with each other but distinct from the former group. It is also noteworthy that the numerical solutions obtained with formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D demonstrate better accuracy compared to those obtained with formulations DNLSP1-B and DNLSP1-C. The latter solutions exhibit a staircase behavior, which is a natural consequence of the selected finite element space (cf. Table~\ref{tab:spaces}).
 
 
 
 
-\newpage
 \subsubsection{Convergence of the data-driven formulation}
 
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) to (e) depict the $ L^{2} $-norm convergence error of the scalar pressure field in Darcy's problem, $ \|\uD-\uD_h\|_{L^{2}} $, for each data-driven formulation. Figure (f) presents the reference solution for the scalar pressure field in the manufactured Darcy problem.}
-	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_u_L2.pdf_tex}  
-	\label{fig:DNSLP1_conv_u_L2}  
+	\def\svgwidth{1,0\linewidth}  
+	\input{Figures/DNLSP1_conv_u_L2.pdf_tex}  
+	\label{fig:DNLSP1_conv_u_L2}  
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) to (c) depict the $ H^{1} $-norm convergence error of the scalar pressure field in Darcy's problem, $ \|\uD-\uD_h\|_{H^{1}} $, for each data-driven formulation, whose finite element space for $ \uD_h $ consists of $ \text{CG}_{k+1}^{D} $.}
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_u_H1.pdf_tex}  
-	\label{fig:DNSLP1_conv_u_H1}  
+	\input{Figures/DNLSP1_conv_u_H1.pdf_tex}  
+	\label{fig:DNLSP1_conv_u_H1}  
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) to (e) depict the $ L^{2}$-norm convergence error of the vector flux field in Darcy's problem, $ \|\sD-\sD_h\|_{L^{2}} $, for each data-driven formulation. Figure (f) presents the reference solution for the vector flux field in the manufactured Darcy problem.}
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_s_L2.pdf_tex}  
-	\label{fig:DNSLP1_conv_s_L2}  
+	\input{Figures/DNLSP1_conv_s_L2.pdf_tex}  
+	\label{fig:DNLSP1_conv_s_L2}  
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) and (b) depict the $Hdiv$-norm convergence error of the scalar pressure field in Darcy's problem, $ \|\sD-\sD_h\|_{Hdiv} $, for each data-driven formulation, whose finite element space for $ \sD_h $ consists of $ \text{RT}_{k+1} $.}
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_s_Hdiv.pdf_tex}  
-	\label{fig:DNSLP1_conv_s_Hdiv}  
+	\input{Figures/DNLSP1_conv_s_Hdiv.pdf_tex}  
+	\label{fig:DNLSP1_conv_s_Hdiv}  
 \end{figure}
 
 
@@ -101,16 +100,16 @@ To analyze the effect of the finite element space choice, we plotted the solutio
 	\centering
 	\caption{Figures (a) to (e) depict the $ L^{2}$-norm convergence error of scalar dual field in Darcy's problem, $ \|\lambda-\lambda_h\|_{L^{2}} $, for each data-driven formulation.}
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_lambda_L2.pdf_tex}  
-	\label{fig:DNSLP1_conv_lambda_L2}  
+	\input{Figures/DNLSP1_conv_lambda_L2.pdf_tex}  
+	\label{fig:DNLSP1_conv_lambda_L2}  
 \end{figure}
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) to (e) depict the $ L^{2}$-norm convergence error of vector dual field in Darcy's problem, $ \|\boldsymbol{\mu}-\boldsymbol{\mu}_h\|_{L^{2}} $, for each data-driven formulation.}
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/DNSLP1_conv_mu_L2.pdf_tex}  
-	\label{fig:DNSLP1_conv_mu_L2}  
+	\input{Figures/DNLSP1_conv_mu_L2.pdf_tex}  
+	\label{fig:DNLSP1_conv_mu_L2}  
 \end{figure}
 
 

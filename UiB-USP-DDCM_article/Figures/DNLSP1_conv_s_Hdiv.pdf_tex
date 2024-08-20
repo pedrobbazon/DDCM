@@ -55,6 +55,6 @@
     \setlength\tabcolsep{0pt}%
     \put(0.17137141,0.00312358){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) DNLSP1-B\end{tabular}}}}%
     \put(0.66956845,0.00310062){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) DNLSP1-D\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNSLP1_conv_s_Hdiv.pdf}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNLSP1_conv_s_Hdiv.pdf}}%
   \end{picture}%
 \endgroup%
