@@ -1,0 +1,85 @@
+%% Creator: Inkscape 1.3.2 (1:1.3.2+202311252150+091e20ef0f), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'DNLSP1_A_plt_over_line_lm.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{465.59530904bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.45661629)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.09494856,0.23409345){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) $2\times2$\end{tabular}}}}%
+    \put(0.09539392,0.00294145){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) $8\times8$\end{tabular}}}}%
+    \put(0.30621107,0.00294145){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) $16\times16$\end{tabular}}}}%
+    \put(0.31520807,0.23409345){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) $4\times4$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNLSP1_A_plt_over_line_lm.pdf}}%
+    \put(0.01243333,0.06859707){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-3.2e-02\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{DNLSP1_A_plt_over_line_lm.pdf}}%
+    \put(0.01243333,0.41110144){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}3.1e-02\end{tabular}}}}}%
+    \put(0.01243333,0.13380188){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-0.02\end{tabular}}}}}%
+    \put(0.01243333,0.1875421){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-0.01\end{tabular}}}}}%
+    \put(0.01243333,0.24128232){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}}%
+    \put(0.01243333,0.29502261){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.01\end{tabular}}}}}%
+    \put(0.01243333,0.34876283){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.02\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{DNLSP1_A_plt_over_line_lm.pdf}}%
+    \put(0.98750964,0.41839855){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.1e-14\end{tabular}}}}}%
+    \put(0.98750964,0.06787723){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.5e+00\end{tabular}}}}}%
+    \put(0.98750964,0.36732593){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.2\end{tabular}}}}}%
+    \put(0.98750964,0.32269659){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.4\end{tabular}}}}}%
+    \put(0.98750964,0.27806724){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.6\end{tabular}}}}}%
+    \put(0.98750964,0.23343781){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.8\end{tabular}}}}}%
+    \put(0.98750964,0.18808859){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1\end{tabular}}}}}%
+    \put(0.98750964,0.14345944){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.2\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{DNLSP1_A_plt_over_line_lm.pdf}}%
+    \put(0.57818411,0.23409349){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) $2\times2$\end{tabular}}}}%
+    \put(0.57862956,0.0029415){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g) $8\times8$\end{tabular}}}}%
+    \put(0.79063677,0.0029415){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(h) $16\times16$\end{tabular}}}}%
+    \put(0.79963383,0.23409349){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f) $4\times4$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{DNLSP1_A_plt_over_line_lm.pdf}}%
+  \end{picture}%
+\endgroup%

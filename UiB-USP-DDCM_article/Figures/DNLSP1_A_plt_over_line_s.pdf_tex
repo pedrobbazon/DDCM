@@ -1,0 +1,73 @@
+%% Creator: Inkscape 1.3.2 (1:1.3.2+202311252150+091e20ef0f), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'DNLSP1_A_plt_over_line_s.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{479.32000108bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.43545508)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.09274862,0.22284144){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) $2\times2$\end{tabular}}}}%
+    \put(0.09317416,0.00198578){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) $8\times8$\end{tabular}}}}%
+    \put(0.29460083,0.00198578){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) $16\times16$\end{tabular}}}}%
+    \put(0.30319707,0.22284144){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) $4\times4$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{DNLSP1_A_plt_over_line_s.pdf}}%
+    \put(0.01318302,0.061761){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.1e-15\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{DNLSP1_A_plt_over_line_s.pdf}}%
+    \put(0.01318302,0.38929163){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}3.2e+00\end{tabular}}}}}%
+    \put(0.01318302,0.11166362){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.5\end{tabular}}}}}%
+    \put(0.01318302,0.16226926){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1\end{tabular}}}}}%
+    \put(0.01318302,0.2128748){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.5\end{tabular}}}}}%
+    \put(0.01318302,0.26348023){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}2\end{tabular}}}}}%
+    \put(0.01318302,0.31408608){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}2.5\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{DNLSP1_A_plt_over_line_s.pdf}}%
+    \put(0.54441661,0.06586005){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) Plot over line\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{DNLSP1_A_plt_over_line_s.pdf}}%
+  \end{picture}%
+\endgroup%

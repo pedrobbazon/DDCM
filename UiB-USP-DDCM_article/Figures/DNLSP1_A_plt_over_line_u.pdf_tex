@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{486.30401852bp}%
+    \setlength{\unitlength}{478.63802692bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,21 +50,21 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.44413238)%
+  \begin{picture}(1,0.44417375)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{DNLSP1_A_plt_over_line_u.pdf}}%
-    \put(0.01132157,0.09738496){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{-1.0e+00}\end{tabular}}}}}%
-    \put(0.01132157,0.36981193){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{1.0e+00}\end{tabular}}}}}%
-    \put(0.01132157,0.16532993){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{-0.5}\end{tabular}}}}}%
-    \put(0.01132157,0.2332749){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0}\end{tabular}}}}}%
-    \put(0.01132157,0.30121987){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.5}\end{tabular}}}}}%
+    \put(0.01122946,0.09739408){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-1.0e+00\end{tabular}}}}}%
+    \put(0.01122946,0.36984641){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}1.0e+00\end{tabular}}}}}%
+    \put(0.01122946,0.16534538){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}-0.5\end{tabular}}}}}%
+    \put(0.01122946,0.23329667){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0\end{tabular}}}}}%
+    \put(0.01122946,0.30124796){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}0.5\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{DNLSP1_A_plt_over_line_u.pdf}}%
-    \put(0.09398553,0.22893046){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) $2\times2$\end{tabular}}}}%
-    \put(0.09440474,0.00891781){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) $8\times8$\end{tabular}}}}%
-    \put(0.29330374,0.00891781){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) $16\times16$\end{tabular}}}}%
-    \put(0.30177675,0.22893046){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) $4\times4$\end{tabular}}}}%
+    \put(0.09390115,0.22895181){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) $2\times2$\end{tabular}}}}%
+    \put(0.09432039,0.00891869){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) $8\times8$\end{tabular}}}}%
+    \put(0.29323793,0.00891869){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) $16\times16$\end{tabular}}}}%
+    \put(0.30171172,0.22895181){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) $4\times4$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=3]{DNLSP1_A_plt_over_line_u.pdf}}%
-    \put(0.50925629,0.06704053){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) Plot over line\end{tabular}}}}%
+    \put(0.54337084,0.06704682){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) Plot over line\end{tabular}}}}%
   \end{picture}%
 \endgroup%
