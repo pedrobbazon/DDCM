@@ -119,8 +119,8 @@ where $RT_k(K)$ is the local Raviart-Thomas space and $BDM_k (K)$
 is the local Brezzi-Douglas-Marini space of order $k$ (see \cite{RT,BDM}).
 The corresponding space for $d$-vector valued functions will be
 denoted by $[DG_k(\mathcal{T}_h)]^d$ and $[CG_k(\mathcal{T}_h)]^d$
-and the space with homogeneous Dirichlet data by
-$\CG_k^0(\mathcal{T}_h)$. For simplicity of notation,
+(in the unrestricted case) and the space with homogeneous Dirichlet
+data by $\CG_k^0(\mathcal{T}_h)$. For simplicity of notation,
 in the forthcoming parts we omit the dependence of these
 spaces with respect to the mesh $\mathcal{T}_h$.
 Prior to presenting some discrete versions of the NLSP1
@@ -434,9 +434,9 @@ formulation.
 		\textbf{Field} & \textbf{A}         & \textbf{Aeqo}         & \textbf{B}          & \textbf{C}            & \textbf{D} \\
 		\hline
 		$\uD_h$   & $\CG_{k+1}^D$   & $\CG_{k+1}^{D}$  & $\DG_k$           & $\DG_k$            & $\CG_{k+1}$ \\
-		$\sD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\RT_{k+1}$   & $\VDG_k$         & $RT_{k+1}$ \\
-		$\eD_h$   & $\VDG_k$           & $\VDG_{k+1}$       & $\RT_{k+1}$   & $\RT_{k+1}$   & $\VDG_{k}$ \\
-		$\mD_h$  & $\VDG_k$           & $\VDG_{k+1}$       &  $\RT_{k+1}$  & $\RT_{k+1}$   & $\VDG_{k}$  \\
+		$\sD_h$   & $\VDG_k$           & $\VCG_{k+1}$       & $\RT_{k+1}$   & $\VDG_k$         & $RT_{k+1}$ \\
+		$\eD_h$   & $\VDG_k$           & $\VCG_{k+1}$       & $\RT_{k+1}$   & $\RT_{k+1}$   & $\VDG_{k}$ \\
+		$\mD_h$  & $\VDG_k$           & $\VCG_{k+1}$       &  $\RT_{k+1}$  & $\RT_{k+1}$   & $\VDG_{k}$  \\
 		$\lD_h$    & $\CG_{k+1}^0$    & $\CG_{k+1}^{0}$   &  $\DG_k$          & $\CG_{k+1}^0$  & $\DG_k$ \\
 		\hline
 	\end{tabular}
