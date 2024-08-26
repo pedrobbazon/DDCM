@@ -191,36 +191,46 @@ def main_Elas_EX02_():
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = MechanicalDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [3, 15]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    synth_forcings = forcings
+
+    # Let us suppose we do some continuation to compute the data:
+    Nbc, Nth = 4, 5
+    bcvals = np.linspace(1.0+1.e-15, 2.0, Nbc)
+    symgradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    sigma_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
+
+    for bcvs in bcvals:
+
+        print('----')
+        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
+        def mysynbcvals(x):
+            return fd.Constant(bcvs)
+
+        synth_forcings = MechanicalForcingData(None, None, mysynbcvals, boundary_tags)
         
-    synth_prob = MechanicalStdProblem(synth_domain, params, 'Indent-Block', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
-    synth_prob.solve(0.0, "mysynthsol")
+        synth_prob = MechanicalStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
+        synth_prob.solve(0.0, "mysynthsol")
 
-    # Sample the synthetic solution: Program this according to your problem
-
-    one_sample_per_element = False
-    if(one_sample_per_element == True): # One point per element centroid
-        X = interpolate(domain.msh.coordinates, domain.VDG0)
-        xs = fd.assemble(X).dat.data
-    else: # Sample points one a regular grid
-        Nsampx, Nsampy  = 3, 3
+        # Sample the synthetic solution: Program this according to your problem
+        Nsampx, Nsampy  = 1, 1
         Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
         xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
         yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
         xlsg, ylsg = np.meshgrid(xls, yls)
         xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
 
-    #- Pay attention: this is a concious decision
-    # and it may change in other situations
-    stdsyn_sol = synth_prob.std_solution
-    g = fd.project(stdsyn_sol.g, synth_domain.TDG0)
-    s = fd.project(stdsyn_sol.s, synth_domain.TDG0)
-    symgradu_sampled_vals = np.array(g.at(xs))
-    sigma_sampled_vals = np.array(s.at(xs))
-    #-------------------------------------------  
+        #- Pay attention: this is a concious decision
+        # and it may change in other situations
+        stdsyn_sol = synth_prob.std_solution
+        g = fd.project(stdsyn_sol.g, synth_domain.TDG0)
+        s = fd.project(stdsyn_sol.s, synth_domain.TDG0)
+        symgradu_sampled_vals = np.array(g.at(xs))
+        sigma_sampled_vals = np.array(s.at(xs))
+        #-------------------------------------------  
+        # Seguir aqui ......!!!!!!!!
         
     # Apply any manipulation/transformation you need to define
     # the synthetic data (rotations, scalings, removing outliers, etc)
@@ -506,7 +516,7 @@ def main_Elas_EX1_():
 
 #----------------------------------------------------------------------------
 #--- Run
-main_Elas_EX0_()
+main_Elas_EX02_()
 #npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
 #print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
 
