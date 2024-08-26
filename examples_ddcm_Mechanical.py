@@ -201,7 +201,6 @@ def main_Elas_EX02_():
     symgradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     sigma_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     count = 0
-
     for bcvs in bcvals:
 
         print('----')

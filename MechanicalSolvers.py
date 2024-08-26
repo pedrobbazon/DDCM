@@ -131,22 +131,6 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
                  fd.DirichletBC(W.sub(1), fd.Constant(0.1), tag_top) 
                 ]
 
-    elif(flag_setting == 'Beam'):
-        # Restricted at both ends
-        
-        f = body_force(x)
-        Res -= fd.inner(f, v)*fd.dx
-
-        tag_left = boundary_tags['Left']
-        tag_right = boundary_tags['Right']
-        bcall = [fd.DirichletBC(W, fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), tag_left), 
-                 fd.DirichletBC(W, fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), tag_right)
-                ]
-        
-        fs = boundary_force['Top'](x)
-        tag_top = boundary_tags['Top']
-        Res -= fd.inner(fs, v)*fd.ds(tag_top)
-
     elif(flag_setting == 'Uniaxial'):
         
         # By definition, the uniaxial test consists of
