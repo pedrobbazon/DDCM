@@ -207,12 +207,15 @@ class MechanicalDDCMData():
         g10 = symgradu_vals[:,1,0]
         g11 = symgradu_vals[:,1,1]
 
-        if(self.flag_Rn == 'R6'):
-            self.sampled_symgradu = np.dstack([g00, g01, g11])[0]
-            self.sampled_stress   = np.dstack([s00, s01, s11])[0]
-        elif(self.flag_Rn == 'R8'):
-            self.sampled_symgradu = np.dstack([g00, g01, g10, g11])[0]
-            self.sampled_stress   = np.dstack([s00, s01, s10, s11])[0]
+        if(self.domain.dim == 2):
+            if(self.flag_Rn == 'R6'):
+                self.sampled_symgradu = np.dstack([g00, g01, g11])[0]
+                self.sampled_stress   = np.dstack([s00, s01, s11])[0]
+            elif(self.flag_Rn == 'R8'):
+                self.sampled_symgradu = np.dstack([g00, g01, g10, g11])[0]
+                self.sampled_stress   = np.dstack([s00, s01, s10, s11])[0]
+        elif(self.domain.dim == 3):
+            raise Exception('3D not implemented yet')
 
         if(add_origin):
             if(self.domain.dim == 2):
