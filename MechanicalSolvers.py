@@ -134,15 +134,17 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
     elif(flag_setting == 'Uniaxial'):
         
         # By definition, the uniaxial test consists of
-        # Bottom wall restricted, top wall imposed vertical
-        # displacement and free lateral walls:
+        # Bottom wall restricted y, top wall imposed vertical
+        # displacement, left wall restricted in x and right wlall free:
+        # with no body forces
         f = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
         Res -= fd.inner(f, v)*fd.dx
 
         uybottom, uytop = fd.Constant(0.0), boundary_vals(x)
-        tag_top, tag_bottom = boundary_tags['Top'], boundary_tags['Bottom']
+        tag_top, tag_bottom, tag_left = boundary_tags['Top'], boundary_tags['Bottom'], boundary_tags['Left']
         bcall = [fd.DirichletBC(W.sub(1), uybottom, tag_bottom), 
-                 fd.DirichletBC(W.sub(1), uytop, tag_top)]
+                 fd.DirichletBC(W.sub(1), uytop, tag_top),
+                 fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left)]
 
     else:
         

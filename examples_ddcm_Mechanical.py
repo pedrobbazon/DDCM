@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on:         30th May, 2024
-Last Modified on:   05th August, 2024
+Last Modified on:   28th August, 2024
 
 @authors: P. Balbao & R.F. Ausas
 """
@@ -170,7 +170,7 @@ def main_Elas_EX02_():
     forcings = MechanicalForcingData(mybodyforce, mysurfaceforce, None, boundary_tags)
     #________________________________
 
-    params = {'YoungMod': fd.Constant(1.0), 'PoissonRat': fd.Constant(0.475)}
+    params = {'YoungMod': 1.0, 'PoissonRat': 0.475}
 
     ref_prob = MechanicalStdProblem(domain, params, 'Indent-Block', forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
 
@@ -194,24 +194,24 @@ def main_Elas_EX02_():
     nsd, Ls, Ns = 2, [0.2, 1.0], [3, 15]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 4, 5
-    bcvals = np.linspace(1.0+1.e-15, 2.0, Nbc)
-    symgradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
-    sigma_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    Nbc, Nth = 3, 5
+    bcvals = np.linspace(0.01+1.e-15, 0.02, Nbc)
+    symgradu_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
+    sigma_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
     count = 0
     for bcvs in bcvals:
 
         print('----')
         print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
         def mysynbcvals(x):
-            return fd.Constant(bcvs)
+            return fd.Constant(-bcvs)
 
+        boundary_tags = {'Left': 1 , 'Right': 2, 'Bottom': 3, 'Top': 4}
         synth_forcings = MechanicalForcingData(None, None, mysynbcvals, boundary_tags)
         
         synth_prob = MechanicalStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
-        synth_prob.solve(0.0, "mysynthsol")
+        synth_prob.solve(np.abs(bcvs), "mysynthsol")
 
         # Sample the synthetic solution: Program this according to your problem
         Nsampx, Nsampy  = 1, 1
@@ -228,17 +228,21 @@ def main_Elas_EX02_():
         s = fd.project(stdsyn_sol.s, synth_domain.TDG0)
         symgradu_sampled_vals = np.array(g.at(xs))
         sigma_sampled_vals = np.array(s.at(xs))
-        #-------------------------------------------  
-        # Seguir aqui ......!!!!!!!!
-        
-    # Apply any manipulation/transformation you need to define
-    # the synthetic data (rotations, scalings, removing outliers, etc)
-    symgradu_samples = symgradu_sampled_vals
-    sigma_samples  = sigma_sampled_vals
+        #-------------------------------------------        
+        # Apply any manipulation/transformation you need to define
+        # the synthetic data (rotations, scalings, removing outliers, etc)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
+            R = RotationMatrix(angle)
+            symgradu_samples[count] = R.T @ symgradu_sampled_vals @ R
+            sigma_samples[count] = R.T @ sigma_sampled_vals @ R
+            print(symgradu_sampled_vals)
+            count += 1
 
     ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-TDG0', flag_plot=True)
+
+    raise Exception('ldldldldld')
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_stress.shape[0]))
