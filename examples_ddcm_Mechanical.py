@@ -235,7 +235,7 @@ def main_Elas_EX02_():
             R = RotationMatrix(angle)
             symgradu_samples[count] = R.T @ symgradu_sampled_vals @ R
             sigma_samples[count] = R.T @ sigma_sampled_vals @ R
-            print(symgradu_sampled_vals)
+            print(sigma_sampled_vals)
             count += 1
 
     ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
