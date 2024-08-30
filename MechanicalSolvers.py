@@ -141,10 +141,11 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         Res -= fd.inner(f, v)*fd.dx
 
         uybottom, uytop = fd.Constant(0.0), boundary_vals(x)
-        tag_top, tag_bottom, tag_left = boundary_tags['Top'], boundary_tags['Bottom'], boundary_tags['Left']
+        tag_top, tag_bottom, tag_left, tag_right = boundary_tags['Top'], boundary_tags['Bottom'], boundary_tags['Left'], boundary_tags['Right']
         bcall = [fd.DirichletBC(W.sub(1), uybottom, tag_bottom), 
                  fd.DirichletBC(W.sub(1), uytop, tag_top),
-                 fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left)]
+                 fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left),
+                 fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_right)]
 
     else:
         

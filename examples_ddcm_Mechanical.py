@@ -195,8 +195,8 @@ def main_Elas_EX02_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 3, 5
-    bcvals = np.linspace(0.01+1.e-15, 0.02, Nbc)
+    Nbc, Nth = 10, 10
+    bcvals = np.linspace(0.01+1.e-15, 0.01, Nbc)
     symgradu_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
     sigma_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
     count = 0
@@ -235,14 +235,12 @@ def main_Elas_EX02_():
             R = RotationMatrix(angle)
             symgradu_samples[count] = R.T @ symgradu_sampled_vals @ R
             sigma_samples[count] = R.T @ sigma_sampled_vals @ R
-            print(sigma_sampled_vals)
+            print(sigma_samples[count])
             count += 1
 
     ddcm_data.SetSampledData(symgradu_samples, sigma_samples, add_origin=False, data_file='myDATA.txt')
 
     ddcm_data.Distribute(ref_prob.std_solution, 'Project-TDG0', flag_plot=True)
-
-    raise Exception('ldldldldld')
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_stress.shape[0]))
