@@ -99,9 +99,61 @@ As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_
 
 \end{proof}
 
-\textcolor{red}{conferir com o professor e o cristian}
+
+\begin{figure}[h!]
+	\centering
+	\caption{...}
+	\def\svgwidth{\columnwidth}
+	\input{Figures/sol_DNLSP1_plt_over_line_u_fem_mesh.pdf_tex}
+	\label{fig:sol_DNLSP1_plt_over_line_u_fem_mesh}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{...}
+	\def\svgwidth{\columnwidth}
+	\input{Figures/sol_DNLSP1_plt_over_line_s_fem_mesh.pdf_tex}
+	\label{fig:sol_DNLSP1_plt_over_line_s_fem_mesh}
+\end{figure}
 
 
+
+\begin{table}[h!]
+	\centering
+	\caption{L2 Error Data for Different FEM Mesh Sizes and Formulations and the same number of sampled points.}
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{lccccc}
+			\toprule
+			\textbf{Formulation} & \textbf{FEM Mesh} & $ \| \uD - \uD_h \|_{L^{2}} $ & $ \| \sD - \sD_h \|_{L^{2}} $ & $ \| \lD - \lD_h \|_{L^{2}} $ & $ \| \mD - \mD_h \|_{L^{2}} $ \\
+			\midrule
+			\multirow{3}{*}{DNLSP1-A} 
+			& 10.0  & 0.029667 & 0.623456 & 0.049219 & 1.264457 \\
+			& 50.0  & 0.028286 & 0.536606 & 0.056152 & 1.073735 \\
+			& 100.0 & 0.028333 & 0.528759 & 0.056566 & 1.057780 \\
+			\midrule
+			\multirow{3}{*}{DNLSP1-Aeqo} 
+			& 10.0  & 0.031100 & 0.469149 & 0.057765 & 0.917430 \\
+			& 50.0  & 0.028398 & 0.506107 & 0.056653 & 1.011805 \\
+			& 100.0 & 0.028369 & 0.512206 & 0.056703 & 1.024314 \\
+			\midrule
+			\multirow{3}{*}{DNLSP1-B} 
+			& 10.0  & 0.059674 & 0.544448 & 0.058580 & 1.011495 \\
+			& 50.0  & 0.030201 & 0.518981 & 0.056638 & 1.034829 \\
+			& 100.0 & 0.028834 & 0.518285 & 0.056706 & 1.035786 \\
+			\midrule
+			\multirow{3}{*}{DNLSP1-C} 
+			& 10.0  & 0.059674 & 0.623456 & 0.049219 & 1.011495 \\
+			& 50.0  & 0.030201 & 0.536606 & 0.056152 & 1.034829 \\
+			& 100.0 & 0.028834 & 0.528759 & 0.056566 & 1.035786 \\
+			\midrule
+			\multirow{3}{*}{DNLSP1-D} 
+			& 10.0  & 0.029667 & 0.544448 & 0.058580 & 1.264457 \\
+			& 50.0  & 0.028286 & 0.518981 & 0.056638 & 1.073735 \\
+			& 100.0 & 0.028333 & 0.518285 & 0.056706 & 1.057780 \\
+			\bottomrule
+		\end{tabular}%
+	}
+\end{table}
 
 %Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
 %
