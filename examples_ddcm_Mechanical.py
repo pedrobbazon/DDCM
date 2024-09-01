@@ -195,8 +195,8 @@ def main_Elas_EX02_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 10, 10
-    bcvals = np.linspace(0.01+1.e-15, 0.01, Nbc)
+    Nbc, Nth = 20, 20
+    bcvals = np.linspace(0.0001+1.e-15, 0.02, Nbc)
     symgradu_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
     sigma_samples = np.empty(shape=(Nbc*Nth,2,2), dtype=np.float64)
     count = 0
@@ -256,7 +256,7 @@ def main_Elas_EX02_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
     def myDerObjFunc(g, gdata, dg, s, sdata, dsi):
-        return [fd.inner(dsi, s-sdata)*fd.dx, fd.inner(dg, g-gdata)*fd.dx]
+        return [fd.inner(dg, g-gdata)*fd.dx, fd.inner(dsi, s-sdata)*fd.dx]
 
     ddcm_prob = DDCMMechProblem(ddcm_data, myObjFunc, myDerObjFunc, 'Indent-Block', forcings, NLSP5FA_MECH, orders=[0,1])
 
