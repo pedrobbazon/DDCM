@@ -59,58 +59,28 @@ Figure \ref{fig:DNLSP1_A_plt_over_line_lm} finally presents the data-driven solu
 
 Furthermore, similar studies have been performed considering the variants of the standard data-driven formulation, namely, DNLSP1-Aeqo, B, C, and D. However, since all of them showed similar results for all unknown fields, we chose to omit them here and discuss only their convergence aspects in the next section.
 
-\newpage
 
-\begin{proposition}
-	For a given finite element mesh with a fixed spatial step $ h $, the data-driven solution $ (\tilde{\sD}_h, \tilde{\eD}_h) $ converges to the reference solution $ (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) $ in a consistent norm \( \|\cdot\| \) as the number of sampled data points $ N_{m} \rightarrow \infty$ .
-\end{proposition}
-
-\begin{proof}
-
-Let $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$ be the reference functions, and let $\hat{\sD}_h$ and $\hat{\eD}_h$ be their projections onto the space $\text{DG}_0$. These projections minimize the $L^2$-norm projection errors:
-
-\[
-\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \quad \text{and} \quad \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)},
-\]
-
-implying that $\hat{\sD}_h$ and $\hat{\eD}_h$ are the closest elementwise constant functions in $\text{DG}_0$ to $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$, respectively. As $N_{m} \to \infty$, the discrete data set $\mathfrak{D}_m$ becomes dense in the solution space. By definition, a set $\mathfrak{D}_m$ is dense in a solution space if every point in that space can be approximated arbitrarily closely by point from $\mathfrak{D}_m$. Specifically, for any pair $(\hat{\sD}_h, \hat{\eD}_h)$ in the solution space and any $\epsilon > 0$, there exist discrete data pair $\left\{\left(\mathfrak{g}_n, \mathfrak{s}_n\right)\right\}_{n \in \mathcal{N}_m}$ such that:
-
-\[
-\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| < \epsilon.
-\]
-
-Thus, as $N_{m}$ increases, the discrete data $\mathfrak{D}_m$ densely samples the solution space and the optimization problem ensures:
-
-\[
-\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty.
-\]
-
-Thus, we proceed as follows: 
-
-\begin{equation*}
-	\begin{aligned}
-		\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &=  \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h)  +  (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \\
-		&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|.
-	\end{aligned}
-\end{equation*}
-
-
-As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0$. Since $\| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ is minimized, the difference $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ also approaches zero.
-
-\end{proof}
+One could now inquire about the accuracy of the data-driven solution for the proposed problem when the number of sampled points is fixed and the finite element mesh is progressively refined. To address this question, we conducted a numerical study for the natural formulation, DNLSP1-A, and all its variants. In this study, we fixed the number of sampled points at \( N_{\theta} = 6 \times 6 \) and gradually refined the finite element mesh, starting from a coarse grid (e.g., \( N_{x} \times N_{y} = 10 \times 10 \) elements per coordinate direction) to a fine grid (e.g., \( N_{x} \times N_{y} = 100 \times 100 \) elements per coordinate direction). 
 
 
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Data-driven solutions for the scalar pressure field for the natural formulation and all of its variants with a fixed number of sampled points $ N_{g} \times N_{\theta} = 6 \times 6 $ and three different number of finite element meshes. }
 	\def\svgwidth{\columnwidth}
 	\input{Figures/sol_DNLSP1_plt_over_line_u_fem_mesh.pdf_tex}
 	\label{fig:sol_DNLSP1_plt_over_line_u_fem_mesh}
 \end{figure}
 
+Figure \ref{fig:sol_DNLSP1_plt_over_line_u_fem_mesh} presents the results of the study for the scalar pressure field, \( \uD_h \). In the lower left corner of each subfigure, we show the two-dimensional pressure scalar field, ranging from the coarse mesh to the fine mesh in a descending order. Additionally, to better visibility, we plotted the solution profiles along the diagonal coordinate for each mesh and compared them to the reference or exact solution. 
+
+We first observe that the data-driven solutions based on formulations A, Aeqo, and D produce closely matching results, which is a natural consequence of the selected finite element space for that unknown. The same conclusion applies to the data-driven solutions based on formulations B and C. The staircase behavior of the numerical solution is particularly evident for the former formulations, especially on coarse meshes. 
+
+Although different characteristics are observed in each data-driven formulation, they all gradually converge to the exact solution as the finite element mesh becomes finer. However, the convergence is asymptotic up to a certain threshold, with the error remaining above a certain nonzero limit, since it depends simultaneously on the number of sampled points and the refinement of the finite element mesh. This can be verified in table \ref{tab:DNLSP1_fem_mesh_errors}. For formulation A, for instance, we observe that doubling the number of finite elements per coordinate direction causes the value of \( \| \uD - \uD_h \|_{L^{2}} \) to change only in the fourth decimal place, with similar behavior observed for the other formulations.
+
+
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Data-driven solutions for the flux vector field for the natural formulation and all of its variants with a fixed number of sampled points $ N_{g} \times N_{\theta} = 6 \times 6 $ and three different number of finite element meshes. }
 	\def\svgwidth{\columnwidth}
 	\input{Figures/sol_DNLSP1_plt_over_line_s_fem_mesh.pdf_tex}
 	\label{fig:sol_DNLSP1_plt_over_line_s_fem_mesh}
@@ -120,7 +90,7 @@ As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_
 
 \begin{table}[h!]
 	\centering
-	\caption{L2 Error Data for Different FEM Mesh Sizes and Formulations and the same number of sampled points.}
+	\caption{$L^{2}$-error for the scalar pressure field $\uD_h$, the flux vector field $\sD_h$, and the corresponding dual fields $\lD_h$ and $\mD_h$ for the natural formulation and all its variants, considering a fixed number of sampled points $N_{g} \times N_{\theta} = 6 \times 6$ and three different finite element meshes.}
 	\resizebox{\textwidth}{!}{%
 		\begin{tabular}{lccccc}
 			\toprule
@@ -153,7 +123,53 @@ As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_
 			\bottomrule
 		\end{tabular}%
 	}
+	\label{tab:DNLSP1_fem_mesh_errors}
 \end{table}
+
+The same study was conducted for the flux vector field, as summarized in Figure \ref{fig:sol_DNLSP1_plt_over_line_s_fem_mesh}. Again, we observe that the data-driven solutions based on formulations A and C exhibited similar profiles due to the use of a discontinuous Galerkin finite element space. Conversely, the data-driven solutions based on formulations B and D were also similar, as the same finite element space was chosen for that unknown. The data-driven solution for the flux based on the equal-order formulation, however, differs from the others.
+
+Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that, as with $ \uD_h  $, the convergence is asymptotic up to a certain threshold for formulations A, B, C, and D, with only marginal changes in $ \|\sD - \sD_h \|_{L^{2}} $ when refining the mesh from $ 50 \times 50 $ to $ 100 \times 100 $ elements per coordinate direction. However, for formulation Aeqo, the $ \|\sD - \sD_h \|_{L^{2}} $ did not decrease with further mesh refinement, which, as discussed earlier, is due to the structure of the saddle point problem (this issue will be further addressed in Section \ref{sec:convergence_ddcm}). Finally, for the sake of brevity, we do not present the two-dimensional plots and the associated plot over lines for the dual field in this study. However, the errors are summarized in Table \ref{tab:DNLSP1_fem_mesh_errors}.
+
+
+\begin{proposition}
+	For a given finite element mesh with a fixed spatial step $ h $, the data-driven solution $ (\tilde{\sD}_h, \tilde{\eD}_h) $ converges to the reference solution $ (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) $ in a consistent norm \( \|\cdot\| \) as the number of sampled data points $ N_{m} \rightarrow \infty$ .
+\end{proposition}
+
+
+
+\begin{proof}
+	
+	Let $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$ be the reference functions, and let $\hat{\sD}_h$ and $\hat{\eD}_h$ be their projections onto the space $\text{DG}_0$. These projections minimize the $L^2$-norm projection errors:
+	
+	\[
+	\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \quad \text{and} \quad \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)},
+	\]
+	
+	implying that $\hat{\sD}_h$ and $\hat{\eD}_h$ are the closest elementwise constant functions in $\text{DG}_0$ to $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$, respectively. As $N_{m} \to \infty$, the discrete data set $\mathfrak{D}_m$ becomes dense in the solution space. By definition, a set $\mathfrak{D}_m$ is dense in a solution space if every point in that space can be approximated arbitrarily closely by point from $\mathfrak{D}_m$. Specifically, for any pair $(\hat{\sD}_h, \hat{\eD}_h)$ in the solution space and any $\epsilon > 0$, there exist discrete data pair $\left\{\left(\mathfrak{g}_n, \mathfrak{s}_n\right)\right\}_{n \in \mathcal{N}_m}$ such that:
+	
+	\[
+	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| < \epsilon.
+	\]
+	
+	Thus, as $N_{m}$ increases, the discrete data $\mathfrak{D}_m$ densely samples the solution space and the optimization problem ensures:
+	
+	\[
+	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty.
+	\]
+	
+	Thus, we proceed as follows: 
+	
+	\begin{equation*}
+		\begin{aligned}
+			\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &=  \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h)  +  (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \\
+			&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|.
+		\end{aligned}
+	\end{equation*}
+	
+	
+	As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0$. Since $\| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ is minimized, the difference $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ also approaches zero.
+	
+\end{proof}
 
 %Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
 %
@@ -185,7 +201,7 @@ As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_
 
 
 \newpage
-\subsubsection{Convergence of the data-driven formulation}
+\subsubsection{Convergence of the data-driven formulation}\label{sec:convergence_ddcm}
 
 
 \begin{figure}[h!]
