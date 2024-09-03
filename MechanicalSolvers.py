@@ -161,7 +161,7 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
         bcall = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_bottom), 
                  fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom),
                  fd.DirichletBC(W.sub(0), uxtop, tag_top),
-                 fd.DirichletBC(W.sub(1), uytop, tag_top)]
+                 fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_top)]
 
     else:
         
