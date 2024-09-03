@@ -195,7 +195,7 @@ def main_Elas_EX02_():
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 10, 50
+    Nbc, Nth = 4, 4 
     bcvals = np.linspace(0.000001+1.e-15, 0.6, Nbc)
     symgradu_samples = np.empty(shape=(2*Nbc*Nth,2,2), dtype=np.float64)
     sigma_samples = np.empty(shape=(2*Nbc*Nth,2,2), dtype=np.float64)

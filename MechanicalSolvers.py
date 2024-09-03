@@ -146,6 +146,22 @@ def MechanicalPrimalCG(domain, flag_quads, params, flag_setting,
                  fd.DirichletBC(W.sub(1), uytop, tag_top),
                  fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_left),
                  fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_right)]
+        
+    elif(flag_setting == 'Shear'):
+        
+        # By definition, the shear test consists of
+        # Bottom wall totally restricted top wall imposed horizontal
+        # displacement, left and right  wall free:
+        # with no body forces
+        f = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        Res -= fd.inner(f, v)*fd.dx
+
+        uxtop = boundary_vals(x)
+        tag_top, tag_bottom, tag_left, tag_right = boundary_tags['Top'], boundary_tags['Bottom'], boundary_tags['Left'], boundary_tags['Right']
+        bcall = [fd.DirichletBC(W.sub(0), fd.Constant(0.0), tag_bottom), 
+                 fd.DirichletBC(W.sub(1), fd.Constant(0.0), tag_bottom),
+                 fd.DirichletBC(W.sub(0), uxtop, tag_top),
+                 fd.DirichletBC(W.sub(1), uytop, tag_top)]
 
     else:
         
