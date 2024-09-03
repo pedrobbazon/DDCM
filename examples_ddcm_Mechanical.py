@@ -211,7 +211,7 @@ def main_Elas_EX02_():
         synth_forcings = MechanicalForcingData(None, None, mysynbcvals, boundary_tags)
         
         synth_prob = MechanicalStdProblem(synth_domain, params, 'Shear', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
-        synth_prob.solve(np.abs(bcvs), "mysynthsol")
+        synth_prob.solve(np.abs(bcvs), "mysynthsol_shear")
 
         # Sample the synthetic solution: Program this according to your problem
         Nsampx, Nsampy  = 1, 1
@@ -238,7 +238,7 @@ def main_Elas_EX02_():
             count += 1
 
         synth_prob = MechanicalStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, SSLP_LinearElas, MechanicalPrimalCG, orders=[1])
-        synth_prob.solve(np.abs(bcvs), "mysynthsol")
+        synth_prob.solve(np.abs(bcvs), "mysynthsol_uniaxial")
 
         # Sample the synthetic solution: Program this according to your problem
         Nsampx, Nsampy  = 1, 1
