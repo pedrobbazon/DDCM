@@ -54,7 +54,7 @@ class ComputationalDomain:
 
         # Element areas
         tstdg          = fd.TestFunction(self.DG0)
-        self.area_els  = fd.assemble(one*tstdg*dx)
+        self.area_els  = fd.assemble(one*tstdg*fd.dx)
 
     def Create(self):
         if(self.simple_domain):
