@@ -260,26 +260,30 @@ Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that
 
 \subsubsection{Effect of noise on the input data}
 
-So far, we have studied aspects of convergence with respect to the data-driven formulation without introducing noise into the given data field $(\tilde{\eD}, \tilde{\sD})$. In the present section, in light of the proposed manufactured solution to the Darcy problem, we introduce a noise distribution into the original data field; in particular, we have opted for a normal (or Gaussian) distribution. The characteristics of the standard normal distribution will be defined by its mean and standard deviation, which will be denoted by $\mu_{\text{gn}}$ and $\sigma_{\text{gn}}$, respectively.\footnote{The subscript $gn$ represents Gaussian noise and is justified to avoid confusion with both the parameters $\mu$ - used to denote the fluid viscosity - and $\mD$ - used to denote the dual field of the compatibility equation.}.
+So far, we have studied data-driven solutions to the Darcy problem, examining the effects of variables such as the number of finite elements in the mesh, $ (N_{x} \times N_{y}) $, the number of sampled points, $ (N_{m} = N_{g} \times N_{\theta}) $, and the convergence of the unknown data fields: the pressure field $ \uD $, the flux vector field $ \sD $, the pressure gradient field $ \eD $, and the dual fields $ \mD $ and $ \lD $ for the natural data-driven formulation and its variants. However, these studies assume a given dataset, $\mathfrak{D}_{m} = \{(\mathfrak{g}_{n}, \mathfrak{s}_{n})\}_{n \in \mathcal{N}_{m}}$, that is noise-free. The objective of this section is to investigate the characteristics of a data-driven solution when a Gaussian noise is introduced into the available data. To this end, we define the standard normal distribution by its mean and standard deviation, which will be denoted by $ \mu $ and $ \sigma $, respectively.
 
-Since the maximum and minimum values of both $(\tilde{\eD}, \tilde{\sD})$ are completely known \textit{a priori}, the normal random noise generated for both data fields was subjected to a min-max scaling process to adjust the data noise range to be compatible with that found in the fabricated solution. Mathematically, we can express the noise data fields as:
-
+Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \sD_{h}^{\text{ref}})$ are known \textit{a priori} from the manufactured solution, the random noise generated for these data fields undergoes a min-max scaling process to ensure that the noise range aligns with that of the manufactured solution. Mathematically, the noise-added data fields can be expressed as:
 
 \begin{equation}
 	\begin{aligned}
-		\tilde{\eD}|_{\text{noise}} &=  \mathbf{g}_{\text{scaling}}  (\max(\tilde{\eD}) - \min(\tilde{\eD}) ) + \min(\tilde{\eD}), \ \mathbf{g}_{\text{scaling}} = \dfrac{\mathbf{g}_{\text{gn}} - \min(\textbf{g}_{gn})}{\max(\textbf{g}_{gn}) - \min(\textbf{g}_{gn})} \\
-		\tilde{\sD}|_{\text{noise}} &=  \mathbf{s}_{\text{scaling}}  (\max(\tilde{\sD}) - \min(\tilde{\sD}) ) + \min(\tilde{\sD}), \quad \mathbf{s}_{\text{scaling}} = \dfrac{\mathbf{s}_{\text{gn}} - \min(\textbf{s}_{gn})}{\max(\textbf{s}_{gn}) - \min(\textbf{s}_{gn})} \\
+		\mathfrak{g}_{\text{noise}} &= \left[\frac{\mathfrak{g}_{\text{gn}} - \min(\mathfrak{g}_{\text{gn}})}{\max(\mathfrak{g}_{\text{gn}}) - \min(\mathfrak{g}_{\text{gn}})} \right] \left[\max(\mathfrak{g}) - \min(\mathfrak{g})\right] + \min(\mathfrak{g}), \\
+		\mathfrak{s}_{\text{noise}} &= \left[\frac{\mathfrak{s}_{\text{gn}} - \min(\mathfrak{s}_{\text{gn}})}{\max(\mathfrak{s}_{\text{gn}}) - \min(\mathfrak{s}_{\text{gn}})} \right] \left[\max(\mathfrak{s}) - \min(\mathfrak{s})\right] + \min(\mathfrak{s}),
 	\end{aligned}
 \end{equation}
 
-where, $ \mathbf{g}_{\text{gn}} $ and $ \mathbf{s}_{\text{gn}} $ are vectors whose components $ g_{i} $ and $ s_{i} $ respectively, are independently drawn from a univariate normal distribution, i.e., $ g_{i} \sim \mathcal{N}(\mu_{\text{gn}},\sigma_{\text{gn}})$ and $ s_{i} \sim \mathcal{N}(\mu_{\text{gn}},\sigma_{\text{gn}}), \forall i \in \{1,\dots,d\}$. Finally, to control the magnitude of the generated noisy data, we introduce a scalar parameter, $ \alpha \in \mathbb{R}$, which multiplies $ \tilde{\eD}|_{\text{noise}} $ and $ \tilde{\sD}|_{\text{noise}} $, so from now on we will denote $ \alpha $ as a noise control factor.
+where $ \mathfrak{g}_{\text{gn}} $ and $ \mathfrak{s}_{\text{gn}} $ are vectors with components $ g_{i} $ and $ s_{i} $ that are independently drawn from a univariate normal distribution, i.e., $ g_{i}, s_{i} \sim \mathcal{N}(\mu, \sigma) \quad \forall i \in \{1, \dots, d\} $. Finally, to control the magnitude of the introduced noise, we introduce a scalar parameter $ \alpha \in \mathbb{R} $, which scales $ \mathfrak{g}_{\text{noise}} $ and $ \mathfrak{s}_{\text{noise}} $. This parameter, $ \alpha $, will be referred to as the magnitude factor.
+
+To carry out this study, we admit a Gaussian distribution with zero mean and unitary standard deviation. Also, the number of sampled points was set as follows: $ N_{g} = 15 $ with three distinct values for $ N_{\theta} = \{5, 10, 20\} $. Additionally, four values for the magnitude factor were considered, $ \alpha = \{0.05, 0.1, 0.2, 0.4\} $. This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test.
+
+Figure \ref{fig:compound_noise_u} summarizes the data-driven solutions obtained for the scalar pressure field. As can be seen, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. Also, it should be pointed that for $ N_{\theta} = 5 $, we observe a certain deviation between the data-driven pressure profiles and the exact solution for all the different values of $ \alpha $, which can be understood as a immediate consequence of the total number of sampled points, already studied in the previous sections. 
+
 
 
 %In the first experiment with noisy data fields, three different values of the pair $ (N_{g},N_{\theta}) $ were considered, and the following parameters $ \mu_{\text{gn}} = 0.0 $, $ \sigma_{\text{gn}} = 1.0 $ and $ \alpha = 2.5 \times 10^{-2} $ were adopted to introduce the random normal noise data. Figure \ref{fig:orig_flux_grad_samples} illustrates the relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the three selected values of $ (N_{g},N_{\theta}) $. The choice for those values intends to characterize distinct data scenarios: the first one (figure \ref{fig:orig_flux_grad_samples_NbcNth_4}) should represent absence (or lack) of data; the second one (figure \ref{fig:orig_flux_grad_samples_NbcNth_8}) should represent an intermediate case, where an reasonable number os points is provided, and the last one (figure \ref{fig:orig_flux_grad_samples_NbcNth_16}) should depict an ideal case, where a large amount of data is given. 
 
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Figures (a), (f), and (k) display the data-driven solution for the scalar pressure field along the diagonal coordinate for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the 2-norm of the flux-gradient relationship for each magnitude factor, corresponding to all considered values of $N_{\theta}$, respectively.}
 	\fontsize{6pt}{10pt}\selectfont 
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/compound_noise_u.pdf_tex}  
@@ -288,7 +292,7 @@ where, $ \mathbf{g}_{\text{gn}} $ and $ \mathbf{s}_{\text{gn}} $ are vectors who
 
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Figures (a), (f), and (k) display the data-driven solution for the flux vector field along the diagonal coordinate for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the two-dimensional flux vector field for each magnitude factor, corresponding to all considered values of $ N_{\theta} $, respectively.  }
 	\fontsize{6pt}{10pt}\selectfont 
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/compound_noise_s.pdf_tex}  
