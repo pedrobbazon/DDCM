@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{581.2051752bp}%
+    \setlength{\unitlength}{589.60625596bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,12 +50,13 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.60044565)%
+  \begin{picture}(1,0.62051044)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{compound_noise_u.pdf}}%
-    \put(0.01045779,0.45043595){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 5$\end{tabular}}}}}%
-    \put(0.01045779,0.23616111){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 10$\end{tabular}}}}}%
-    \put(0.01045779,0.02635146){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 20$\end{tabular}}}}}%
+    \put(0.00928431,0.49440063){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 5$\end{tabular}}}}}%
+    \put(0.00928431,0.27791538){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 10$\end{tabular}}}}}%
+    \put(0.00928431,0.06205581){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 20$\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{compound_noise_u.pdf}}%
   \end{picture}%
 \endgroup%
