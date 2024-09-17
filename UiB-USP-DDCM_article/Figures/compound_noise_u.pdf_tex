@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{589.60629921bp}%
+    \setlength{\unitlength}{589.60625596bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,27 +50,27 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.62739724)%
+  \begin{picture}(1,0.63959647)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
-    \put(0.00976195,0.49987418){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 5$\end{tabular}}}}}%
-    \put(0.14307002,0.4235338){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
-    \put(0.35784618,0.47760651){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
-    \put(0.1447451,0.2126139){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f)\end{tabular}}}}%
-    \put(0.35784618,0.26671167){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g)\end{tabular}}}}%
-    \put(0.54174357,0.26669912){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(h)\end{tabular}}}}%
-    \put(0.72523484,0.26669912){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(i)\end{tabular}}}}%
-    \put(0.90756423,0.26669912){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(j)\end{tabular}}}}%
-    \put(0.14328646,0.00169394){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(k)\end{tabular}}}}%
-    \put(0.36013922,0.05577915){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(l)\end{tabular}}}}%
-    \put(0.53955716,0.0557917){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(m)\end{tabular}}}}%
-    \put(0.72294807,0.0557917){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(n)\end{tabular}}}}%
-    \put(0.90541861,0.0557917){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(o)\end{tabular}}}}%
-    \put(0.54228309,0.47761894){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
-    \put(0.72294176,0.47760651){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
-    \put(0.90539668,0.47761894){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e)\end{tabular}}}}%
-    \put(0.00976195,0.28973175){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 10$\end{tabular}}}}}%
-    \put(0.00976197,0.07910339){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 20$\end{tabular}}}}}%
+    \put(0.00995175,0.50959384){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 5$\end{tabular}}}}}%
+    \put(0.14585186,0.4317691){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
+    \put(0.36211719,0.48998824){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
+    \put(0.14755952,0.21674802){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f)\end{tabular}}}}%
+    \put(0.36211719,0.27499295){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g)\end{tabular}}}}%
+    \put(0.5432384,0.27498012){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(h)\end{tabular}}}}%
+    \put(0.72668424,0.27498012){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(i)\end{tabular}}}}%
+    \put(0.90779896,0.27498012){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(j)\end{tabular}}}}%
+    \put(0.14607252,0.00172695){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(k)\end{tabular}}}}%
+    \put(0.36445483,0.05995904){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(l)\end{tabular}}}}%
+    \put(0.54100948,0.0599718){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(m)\end{tabular}}}}%
+    \put(0.72435302,0.0599718){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(n)\end{tabular}}}}%
+    \put(0.9056116,0.0599718){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(o)\end{tabular}}}}%
+    \put(0.54378842,0.49000108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
+    \put(0.72434663,0.48998824){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
+    \put(0.90558922,0.49000108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e)\end{tabular}}}}%
+    \put(0.00995175,0.29536535){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 10$\end{tabular}}}}}%
+    \put(0.00995176,0.08064152){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 20$\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{compound_noise_u.pdf}}%
   \end{picture}%
 \endgroup%

@@ -222,7 +222,7 @@ Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figures (a) to (e) depict the $ L^{2}$-norm convergence error of the vector flux field in Darcy's problem, $ \|\sD-\sD_h\|_{L^{2}} $, for each data-driven formulation. Figure (f) presents the reference solution for the vector flux field in the manufactured Darcy problem.}
+	\caption{Figures (a) to (e) depict the $ L^{2}$-norm convergence error of the flux vector field in Darcy's problem, $ \|\sD-\sD_h\|_{L^{2}} $, for each data-driven formulation. Figure (f) presents the reference solution for the flux vector field in the manufactured Darcy problem.}
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/DNLSP1_conv_s_L2.pdf_tex}  
 	\label{fig:DNLSP1_conv_s_L2}  
@@ -273,17 +273,17 @@ Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \
 
 where $ \mathfrak{g}_{\text{gn}} $ and $ \mathfrak{s}_{\text{gn}} $ are vectors with components $ g_{i} $ and $ s_{i} $ that are independently drawn from a univariate normal distribution, i.e., $ g_{i}, s_{i} \sim \mathcal{N}(\mu, \sigma) \quad \forall i \in \{1, \dots, d\} $. Finally, to control the magnitude of the introduced noise, we introduce a scalar parameter $ \alpha \in \mathbb{R} $, which scales $ \mathfrak{g}_{\text{noise}} $ and $ \mathfrak{s}_{\text{noise}} $. This parameter, $ \alpha $, will be referred to as the magnitude factor.
 
-To carry out this study, we admit a Gaussian distribution with zero mean and unitary standard deviation. Also, the number of sampled points was set as follows: $ N_{g} = 15 $ with three distinct values for $ N_{\theta} = \{5, 10, 20\} $. Additionally, four values for the magnitude factor were considered, $ \alpha = \{0.05, 0.1, 0.2, 0.4\} $. This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test.
+To carry out this study, we selected the DNLSP1-A formulation, also referred to as the natural one, and assumed a Gaussian distribution with zero mean and unit standard deviation. The number of sampled points was set as follows: \( N_{g} = 15 \) with three distinct values for \( N_{\theta} = \{5, 10, 20\} \). Additionally, four values for the magnitude factor were considered: \( \alpha = \{0.05, 0.1, 0.2, 0.4\} \). This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test.
 
-Figure \ref{fig:compound_noise_u} summarizes the data-driven solutions obtained for the scalar pressure field. As can be seen, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. Also, it should be pointed that for $ N_{\theta} = 5 $, we observe a certain deviation between the data-driven pressure profiles and the exact solution for all the different values of $ \alpha $, which can be understood as a immediate consequence of the total number of sampled points, already studied in the previous sections. 
+Figure \ref{fig:compound_noise_u} presents the data-driven solutions obtained for the scalar pressure field. As shown, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. However, it is noteworthy that for \( N_{\theta} = 5 \), there is a noticeable deviation between the data-driven pressure profiles and the exact solution for all values of \( \alpha \). This deviation can be attributed to the limited number of sampled points, as discussed in previous sections.
+
+Figure \ref{fig:compound_noise_s}, on the other hand, displays the data-driven solutions for the flux vector field. At first glance, Figure \ref{fig:compound_noise_s}(a) might suggest that the Gaussian noise significantly impacts the accuracy of the data-driven solution for the flux vector field. However, a comparison with Figure \ref{fig:DNLSP1_A_plt_over_line_s}(e) reveals that the observed discrepancies between the data-driven solutions and the expected analytical solution are primarily due to the low number of sampled points. Although the introduction of Gaussian noise seems to affect the flux vector field more than the scalar pressure field, the data-driven solutions still exhibit satisfactory accuracy, even when subjected to a high-intensity noise dataset.
 
 
-
-%In the first experiment with noisy data fields, three different values of the pair $ (N_{g},N_{\theta}) $ were considered, and the following parameters $ \mu_{\text{gn}} = 0.0 $, $ \sigma_{\text{gn}} = 1.0 $ and $ \alpha = 2.5 \times 10^{-2} $ were adopted to introduce the random normal noise data. Figure \ref{fig:orig_flux_grad_samples} illustrates the relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the three selected values of $ (N_{g},N_{\theta}) $. The choice for those values intends to characterize distinct data scenarios: the first one (figure \ref{fig:orig_flux_grad_samples_NbcNth_4}) should represent absence (or lack) of data; the second one (figure \ref{fig:orig_flux_grad_samples_NbcNth_8}) should represent an intermediate case, where an reasonable number os points is provided, and the last one (figure \ref{fig:orig_flux_grad_samples_NbcNth_16}) should depict an ideal case, where a large amount of data is given. 
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figures (a), (f), and (k) display the data-driven solution for the scalar pressure field along the diagonal coordinate for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the 2-norm of the flux-gradient relationship for each magnitude factor, corresponding to all considered values of $N_{\theta}$, respectively.}
+	\caption{Figures (a), (f), and (k) display the data-driven solution for the scalar pressure field along the diagonal coordinate based on DNLSP1-A formulation for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the 2-norm of the flux-gradient relationship for each magnitude factor, corresponding to all considered values of $N_{\theta}$, respectively.}
 	\fontsize{6pt}{10pt}\selectfont 
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/compound_noise_u.pdf_tex}  
@@ -292,7 +292,7 @@ Figure \ref{fig:compound_noise_u} summarizes the data-driven solutions obtained 
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figures (a), (f), and (k) display the data-driven solution for the flux vector field along the diagonal coordinate for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the two-dimensional flux vector field for each magnitude factor, corresponding to all considered values of $ N_{\theta} $, respectively.  }
+	\caption{Figures (a), (f), and (k) display the data-driven solution for the flux vector field along the diagonal coordinate based on DNLSP1-A formulation for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the two-dimensional flux vector field for each magnitude factor, corresponding to all considered values of $ N_{\theta} $, respectively.  }
 	\fontsize{6pt}{10pt}\selectfont 
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/compound_noise_s.pdf_tex}  
