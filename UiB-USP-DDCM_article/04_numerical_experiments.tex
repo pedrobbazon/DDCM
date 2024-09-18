@@ -273,7 +273,7 @@ Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \
 
 where $ \mathfrak{g}_{\text{gn}} $ and $ \mathfrak{s}_{\text{gn}} $ are vectors with components $ g_{i} $ and $ s_{i} $ that are independently drawn from a univariate normal distribution, i.e., $ g_{i}, s_{i} \sim \mathcal{N}(\mu, \sigma) \quad \forall i \in \{1, \dots, d\} $. Finally, to control the magnitude of the introduced noise, we introduce a scalar parameter $ \alpha \in \mathbb{R} $, which scales $ \mathfrak{g}_{\text{noise}} $ and $ \mathfrak{s}_{\text{noise}} $. This parameter, $ \alpha $, will be referred to as the magnitude factor.
 
-To carry out this study, we selected the DNLSP1-A formulation, also referred to as the natural one, and assumed a Gaussian distribution with zero mean and unit standard deviation. The number of sampled points was set as follows: \( N_{g} = 15 \) with three distinct values for \( N_{\theta} = \{5, 10, 20\} \). Additionally, four values for the magnitude factor were considered: \( \alpha = \{0.05, 0.1, 0.2, 0.4\} \). This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test.
+To carry out this study, we selected the DNLSP1-A formulation, also referred to as the natural one, and assumed a Gaussian distribution with zero mean and unit standard deviation. The number of sampled points was set as follows: \( N_{g} = 15 \) with three distinct values for \( N_{\theta} = \{5, 10, 20\} \). Additionally, four values for the magnitude factor were considered: \( \alpha = \{0.05, 0.1, 0.2, 0.4\} \). This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test. Finally, the finite element mesh was maintained as one hundred elements per coordinate direction, i.e. $ (N_{x}\times N_{y} = 100 \times 100) $.
 
 Figure \ref{fig:compound_noise_u} presents the data-driven solutions obtained for the scalar pressure field. As shown, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. However, it is noteworthy that for \( N_{\theta} = 5 \), there is a noticeable deviation between the data-driven pressure profiles and the exact solution for all values of \( \alpha \). This deviation can be attributed to the limited number of sampled points, as discussed in previous sections.
 
@@ -297,6 +297,23 @@ Figure \ref{fig:compound_noise_s}, on the other hand, displays the data-driven s
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/compound_noise_s.pdf_tex}  
 	\label{fig:compound_noise_s}  
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Data-driven solution for the scalar dual field, $\lD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.}
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/compound_noise_l.pdf_tex}  
+	\label{fig:compound_noise_l}  
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Data-driven solution for the vector dual field, $\mD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.
+	}
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/compound_noise_m.pdf_tex}  
+	\label{fig:compound_noise_m}  
 \end{figure}
 
 
