@@ -72,7 +72,7 @@ def FLM_DarcyNonLinear(potential, flux, params):
     def Kofu(u, params):
         kappa0 = params['kappa0']
         viol = params['viol']
-        return kappa0*(1 + 10*0.5 * (1.0 + tanh(viol*(u-2.0))))
+        return kappa0*(1 + 10*0.5 * (1.0 + fd.tanh(viol*(u-2.0))))
     return flux + Kofu(potential,params) * fd.grad(potential)
     
 def FLP_DarcyLinear(potential, params):
@@ -266,7 +266,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
         filename = dir_outs+'/ucg.pvd'
         w.sub(1).rename('Reference.Potential-CG')
-        VTKFile(filename, mode=mode).write(project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
+        VTKFile(filename, mode=mode).write(fd.project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
         #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
@@ -341,7 +341,7 @@ def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
         raise ValueError('Unrecognized problem setting option')
 
     kappa = params[0] # We expect it to be a tensor (see this better later on)
-    Km1 = fd.as_tensor([[1.0/kappa(u)[0,0], Constant(0.0)], [Constant(0.0), 1.0/kappa(u)[1,1]]])
+    Km1 = fd.as_tensor([[1.0/kappa(u)[0,0], fd.Constant(0.0)], [fd.Constant(0.0), 1.0/kappa(u)[1,1]]])
     Res  = (Km1*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
     Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
@@ -376,7 +376,7 @@ def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
 
         filename = dir_outs+'/ucg.pvd'
         w.sub(1).rename('Reference.Potential-CG')
-        VTKFile(filename, mode=mode).write(project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
+        VTKFile(filename, mode=mode).write(fd.project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
         
         filename = dir_outs+'/gradu.pvd'
         #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')

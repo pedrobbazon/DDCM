@@ -1,0 +1,102 @@
+%% Creator: Inkscape 1.3.2 (1:1.3.2+202311252150+091e20ef0f), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'compound_noise_l.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{587.87417915bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.72488394)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.01292396,0.56420153){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 5$\end{tabular}}}}}%
+    \put(0.04242592,0.49647045){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) $\alpha = 0.05$\end{tabular}}}}%
+    \put(0.27713238,0.49647045){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) $\alpha = 0.1$\end{tabular}}}}%
+    \put(0.50663127,0.49648829){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) $\alpha = 0.2$\end{tabular}}}}%
+    \put(0.73458372,0.49647045){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) $\alpha = 0.4$\end{tabular}}}}%
+    \put(0.0424037,0.25012838){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e) $\alpha = 0.05$\end{tabular}}}}%
+    \put(0.27970555,0.25012838){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f) $\alpha = 0.1$\end{tabular}}}}%
+    \put(0.50585799,0.25012838){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g) $\alpha = 0.2$\end{tabular}}}}%
+    \put(0.73459262,0.25012838){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(h) $\alpha = 0.4$\end{tabular}}}}%
+    \put(0.04547459,0.00378645){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(i) $\alpha = 0.05$\end{tabular}}}}%
+    \put(0.28038103,0.00378645){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(j) $\alpha = 0.1$\end{tabular}}}}%
+    \put(0.50636463,0.00378645){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(k) $\alpha = 0.2$\end{tabular}}}}%
+    \put(0.73783238,0.00378645){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(l) $\alpha = 0.4$\end{tabular}}}}%
+    \put(0.01292396,0.31206838){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 10$\end{tabular}}}}}%
+    \put(0.01292398,0.06572594){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$N_{\theta} = 20$\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{compound_noise_l.pdf}}%
+    \put(0.96971226,0.71668877){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-2.1e-01}\end{tabular}}}}%
+    \put(0.9684756,0.5241202){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2.0e-01}\end{tabular}}}}%
+    \put(0.95668377,0.68914401){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.15}\end{tabular}}}}%
+    \put(0.95668377,0.66521417){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.10}\end{tabular}}}}%
+    \put(0.95668377,0.64160045){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.05}\end{tabular}}}}%
+    \put(0.94773358,0.61764174){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}%
+    \put(0.95289565,0.5941063){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.05}\end{tabular}}}}%
+    \put(0.95289565,0.57057083){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.10}\end{tabular}}}}%
+    \put(0.95289565,0.54734614){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.15}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{compound_noise_l.pdf}}%
+    \put(0.96976716,0.47173319){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-9.0e-02}\end{tabular}}}}%
+    \put(0.96853205,0.28059785){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{8.1e-02}\end{tabular}}}}%
+    \put(0.95674559,0.43608863){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.06}\end{tabular}}}}%
+    \put(0.95674559,0.41382013){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.04}\end{tabular}}}}%
+    \put(0.95674559,0.39124254){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.02}\end{tabular}}}}%
+    \put(0.94780356,0.36897441){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}%
+    \put(0.95295901,0.34639653){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.02}\end{tabular}}}}%
+    \put(0.95295901,0.32412833){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.04}\end{tabular}}}}%
+    \put(0.95295901,0.30155169){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.06}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{compound_noise_l.pdf}}%
+    \put(0.97481702,0.22462623){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-4.0e-02}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{compound_noise_l.pdf}}%
+    \put(0.97343527,0.03397214){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{3.8e-02}\end{tabular}}}}%
+    \put(0.96115364,0.17294069){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.02}\end{tabular}}}}%
+    \put(0.96115364,0.14871934){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.01}\end{tabular}}}}%
+    \put(0.95145261,0.12449829){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}%
+    \put(0.95722036,0.10027732){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.01}\end{tabular}}}}%
+    \put(0.95722036,0.07605627){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.02}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{compound_noise_l.pdf}}%
+  \end{picture}%
+\endgroup%
