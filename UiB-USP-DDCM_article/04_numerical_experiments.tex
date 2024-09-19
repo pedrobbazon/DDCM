@@ -2,6 +2,32 @@
 
 \subsection{Results for Darcy's problem}
 
+\subsubsection{Illustrative examples}
+
+As a continuation of the numerical experiment shown in the previous section, we aim to 
+illustrate the effect of the data set size on the data-driven solution. To that end, we first
+fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
+data by $N_{\theta} = 4,~6,~8,~10,~20,~40,~80$ different angles. 
+The pressure field $\uD_h$, the flux $\sD_h$ and the gradient $\eD_h$
+solutions are shown in figure \ref{fig:sol_varNtheta}. It is also interesting
+to see the distribution of the data over the domain $\Omega$. 
+We also show the dual fields $\lD_h$ and $\mD_h$ in \ref{fig:dualsol_varNtheta}.
+On the other hand, in figures \ref{fig:sol_varNg} and \ref{fig:dualsol_varNg}  
+we show the solution when $N_{\theta} = 40$ is fixed and the number
+of points in the 1D uniaxial test is varied, namely, 
+$N_g = 5,~10,~15,~20,~25,~30,~35$. 
+The main observation is that as the total number of points in the data
+set is increased the data-driven solution becomes closer to the reference solution.
+However, this is a clearly consequence of the model chosen to compute
+such reference solution. For instance, if in the same case we 
+assume a much simpler linear relation between fluxes and gradients
+the references solution and thus the data-driven one will 
+significantly changed. This is illustrated in figure \ref{fig:sol_darcysimple}
+for the same set of values of $N_{\theta}$ of the previous experiment.
+
+
+\subsubsection{Convergence to a manufactured solution}
+
 In this section, we present the numerical results obtained using the data-driven approach to solve Darcy's fluid flow problem in porous media. To assess the accuracy of the proposed methodology, we employ a manufactured solution as a benchmark for comparison. In this context, we define a smooth and regular scalar potential function which stands for the pressure in Darcy's fluid flow problem. For the present results, the selected function, $ \uD \in \mathcal{C}^{\infty} $, is given by:
 
 $$ 
