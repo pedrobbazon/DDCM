@@ -18,34 +18,44 @@ of points in the 1D uniaxial test is varied, namely,
 $N_g = 5,~10,~15,~20,~25,~30,~35$. 
 The main observation is that as the total number of points in the data
 set is increased the data-driven solution becomes closer to the reference solution.
-However, this is a clearly consequence of the model chosen to compute
+However, this is clearly as a result of the model chosen to compute
 such reference solution. For instance, if in the same case we 
 assume a much simpler linear relation between fluxes and gradients
-the references solution and thus the data-driven one will 
+the reference solution and thus the data-driven one will 
 significantly changed. This is illustrated in figure \ref{fig:sol_darcysimple}
 for the same set of values of $N_{\theta}$ of the previous experiment.
-
+Another aspect that influenced the data driven solution is the fact that 
+isotropy was assumed to compute the reference solution used
+to initially distribute the data. If we consider otherwise an anisotropic behavior
+we end up with different results. To that end we produce synthetic results
+using Forcheimer's model with different permeability values to which
+we assign to two mutually orthogonal directions.
 
 \subsubsection{Convergence to a manufactured solution}
 
-In this section, we present the numerical results obtained using the data-driven approach to solve Darcy's fluid flow problem in porous media. To assess the accuracy of the proposed methodology, we employ a manufactured solution as a benchmark for comparison. In this context, we define a smooth and regular scalar potential function which stands for the pressure in Darcy's fluid flow problem. For the present results, the selected function, $ \uD \in \mathcal{C}^{\infty} $, is given by:
-
-$$ 
-\uD:\Omega \to \mathbb{R} \mid p(x,y) = \cos(\pi x)\cos(\pi y),
-$$
-
-where $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1] $. Thus, in light of equation \ref{eq:poisson_general} and the classical Darcy's model, quantities such as flux, $ \sD $, gradient, $ \eD $, and source term, $q$, can be easily derived by symbolic programming. By doing so and also assuming an isotropic medium with unitary constant porosity, $ \frac{k}{\mu} = 1 $, one can conclude that, for the selected pressure scalar function, the corresponding flux, pressure gradient and source term are given by:
-
-
+We assess the convergence of the data-driven formulation and all its 
+variants, namely, formulation DNLSP1-A, Aeqor, B, C and D to a manufactured solution 
+proposed as the reference case. To that end we choose $ \uD \in \mathcal{C}^{\infty} $ to be s given by:
+\begin{equation}
+\uD:\Omega \to \mathbb{R},~p(x,y) = \cos(\pi x)\cos(\pi y), \label{eq:manup}
+\end{equation}
+where the domain $\Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1]$.
+Assuming the permeability to be isotropic with $\frac{k}{\mu} = 1$ we derive
+from (\ref{eq:manup})  the complete solution and corresponding source term to be
 \begin{equation*}
 	\begin{aligned}
-		&\sD:\Omega \to \mathbb{R}^{2} &&\mid \sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
-		&\eD:\Omega \to \mathbb{R}^{2} &&\mid \eD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
-		&q:\Omega \to \mathbb{R} &&\mid q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
+		&\sD: \Omega \to \mathbb{R}^{2}, & &\sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&\eD: \Omega \to \mathbb{R}^{2}, & &\eD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
+		&q: \Omega \to \mathbb{R}, & &q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
 	\end{aligned}
 \end{equation*}
+First, we assess the behavior of original fomulation DNLSP1-A. We introduce a finite element 
+structured mesh made of $20,000$ triangular elements and produce synthetic data 
+having different values of $N_{g} \times N_{\theta}$, namely, $2 \times 2$ 
+The synthetic data is produced such that the minimum and maximum values of the
+pressure gradient given by the manufactured solution are captured.  
 
-respectively. To assess the accuracy of the discrete data-driven solutions, we utilized the standard formulation for Darcy's problem, denoted by DNLSP1-A. By maintaining a fixed finite element mesh with 100 elements per coordinate direction and varying the number of sampled pairs ($N_{g} \times N_{\theta}$) from smaller configurations such as $2 \times 2$ to larger configurations such as $16 \times 16$\footnote{It should be noted that, since the relationship between  $ (\sD_h^{\text{ref}},\eD_h^{\text{ref}}) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed.}, we observed a gradual convergence of the data-driven solutions for all the unknown fields -- $\uD_h$, $\sD_h$, $\eD_h$, $\lD_h$, and $\mD_h$ -- towards the exact (or manufactured) solution. 
+to larger configurations such as $16 \times 16$\footnote{It should be noted that, since the relationship between  $ (\sD_h^{\text{ref}},\eD_h^{\text{ref}}) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed.}, we observed a gradual convergence of the data-driven solutions for all the unknown fields -- $\uD_h$, $\sD_h$, $\eD_h$, $\lD_h$, and $\mD_h$ -- towards the exact (or manufactured) solution. 
 
 Figures \ref{fig:DNLSP1_A_plt_over_line_u}(a) to \ref{fig:DNLSP1_A_plt_over_line_u}(d), for example, present the data-driven solutions for the scalar pressure field. As can be observed, the greater the number of sampled pairs  ($N_{g} \times N_{\theta})$ the closer the data-driven solution is to the manufactured pressure field -- c.f. figure \ref{fig:DNLSP1_conv_u_L2}(f) --. Figure \ref{fig:DNLSP1_A_plt_over_line_u}(e), in addition,  provides the pressure profiles along the diagonal coordinate for each considered sampled pair relation. This further corroborates the observed convergence behavior of the data-driven solution. 
 
