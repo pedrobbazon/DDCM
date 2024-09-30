@@ -87,6 +87,7 @@ def FitForcheimerParams(data_file):
     else:
         paux = np.linalg.lstsq(A, modgrad, rcond=None)[0]
         p = np.array([paux[1], paux[0], 0.0])
+        print(p)
 
     fluxeval = np.linspace(min(modflux),max(modflux))
     gradeval = np.polyval(p, fluxeval)

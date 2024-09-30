@@ -631,10 +631,10 @@ def main_EX31_():
 
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=False, data_file='myDATA.txt')
 
-    noise_params = {'type': 'gaussian', 'magnitude': 1.0, 'mean': 0.0, 'std': 0.005}
+    noise_params = {'type': 'gaussian', 'magnitude': 0.05, 'mean': 0.0, 'std': 1.0e-10}
     ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
 
-    Nth = 9
+    Nth = 6
     gradu_samples_new = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     flux_samples_new = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
     auxgrad = ddcm_data.sampled_grad

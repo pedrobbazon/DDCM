@@ -211,7 +211,7 @@ Next, let us consider the following finite element formulation to solve the refe
 $\sD_h^{\text{ref}} \in \RT_{k+1}^{\text{disc}}$ such that
 \begin{equation}
         \begin{aligned}
-\int_{\Omega} { \left [ \eD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
+\int_{\Omega} { \left [ \nabla\uD_h^{\text{ref}} + \frac{\mu}{k}\,\sD_h^{\text{ref}} +
 \beta \,r(\sD_h^{\text{ref}} )\, \sD_h^{\text{ref}} \right ]} \cdot \boldsymbol{\tau}_h \, d\mathbf{x} & = & 0 &~~ \forall \boldsymbol{\tau}_h \in \RT_{k+1}^{\text{disc}} \\
 \int_{\Omega} {\sD_h^{\text{ref}} \cdot \nabla{v}_h} \, d\mathbf{x} & = & 0 &~~ \forall v_h \in \CG^{0}_k
  \end{aligned}
@@ -224,6 +224,8 @@ is a regularization of $\| \sD \|$, such that
 $r(\|\sD \|) \rightarrow \|\sD \|$ as $\eta \rightarrow 0$. The regularization is
 introduced to ensure convergence of the Newton-Raphson iterations 
 used for solving the nonlinearites. In practice, we take $\eta = 10^{-12}$. 
+The refence gradient $\eD_h^{\text{ref}} \in \DG_0$ is obtained by postprocessing
+of $\uD_h^{\text{ref}}$.
 The reference pressure and flux fields are shown in part (c) of
 figure \ref{fig:datadistproc}. In order to solve the data driven problem,
 we must first distribute the data over the domain. With the isotropic medium
