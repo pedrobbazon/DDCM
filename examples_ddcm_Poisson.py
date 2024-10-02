@@ -709,6 +709,7 @@ def main_EX32_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
+    #params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
     params = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.19722865), 'beta_x_rho': fd.Constant(8.44782321)}
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
 
@@ -1085,7 +1086,7 @@ def main_EX6_():
         synth_forcings = PoissonForcingData(None, None, mysynbcvals)
         
         # They could be the same parameters as in the reference solution or we may add some perturbation
-        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(1.0)}
+        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
         synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
         synth_prob.solve(bcvs, "mysynthsol")
 
