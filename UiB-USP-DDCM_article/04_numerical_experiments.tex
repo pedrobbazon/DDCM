@@ -7,7 +7,7 @@
 As a continuation of the numerical experiment shown in the previous section, we aim to 
 illustrate the effect of the data set size on the data-driven solution. To that end, we first
 fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
-data by $N_{\theta} = 4,~6,~8,~10,~20,~40,~80$ different angles. 
+data by $N_{\theta} = 4,~6,~8,~10$ and $20$ different angles. 
 The pressure field $\uD_h$, the flux $\sD_h$ and the gradient $\eD_h$
 solutions are shown in figure \ref{fig:sol_varNtheta}. It is also interesting
 to see the distribution of the data over the domain $\Omega$. 
@@ -29,6 +29,17 @@ isotropy was assumed to compute the reference solution used
 to initially distribute the data. If we consider otherwise an anisotropic behavior
 we end up with different results. To that end we produce synthetic results
 using Forcheimer's model with different permeability values assigned to two mutually orthogonal directions.
+
+\begin{figure}[ht!!]
+	\begin{center}
+		\caption{Data-Driven solutions produced for different values of
+		$N_{\theta}$ corresponding to the Forcheimer's model
+	to compute the reference solution.} \label{fig:effectNtheta}
+		\fontsize{5pt}{6pt} \selectfont
+		\def\svgwidth{12.5cm}
+		\input{Figures/pressures_and_fluxes_forcheimer_all.pdf_tex}
+	\end{center}
+\end{figure}
 
 \subsubsection{Convergence to a manufactured solution}
 
