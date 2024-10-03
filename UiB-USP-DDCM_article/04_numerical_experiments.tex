@@ -5,19 +5,20 @@
 \subsubsection{Illustrative examples}
 
 As a continuation of the numerical experiment shown in the previous section, we aim to 
-illustrate the effect of the data set size on the data-driven solution. To that end, we first
-fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
-data by $N_{\theta} = 4,~6,~8,~10$ and $20$ different angles. 
-The pressure field $\uD_h$, the flux $\sD_h$ and the gradient $\eD_h$
+illustrate the effect of the data set size on the data-driven solution. To that end, we first fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
+data by $N_{\theta} = 4,~6,~8,~10$ and $20$ different angles equally distributed
+over $[0,2\pi)$. 
+The pressure field $\uD_h$ (contours and surface) and the flux $\sD_h$ 
 solutions are shown in figure \ref{fig:sol_varNtheta}. It is also interesting
 to see the distribution of the data over the domain $\Omega$. 
-We also show the dual fields $\lD_h$ and $\mD_h$ in \ref{fig:dualsol_varNtheta}.
-On the other hand, in figures \ref{fig:sol_varNg} and \ref{fig:dualsol_varNg}  
-we show the solution when $N_{\theta} = 40$ is fixed and the number
-of points in the 1D uniaxial test is varied, namely, 
-$N_g = 5,~10,~15,~20,~25,~30,~35$. 
+%We also show the dual fields $\lD_h$ and $\mD_h$ in \ref{fig:dualsol_varNtheta}.
+On the other hand, in figure \ref{fig:sol_varNg} we show the solution when 
+$N_{\theta} = 40$ is fixed and the number of points in the 1D uniaxial test is 
+varied, namely, $N_g = 5,~10,~15,~20,~25,~30,~35$. 
 The main observation is that as the total number of points in the data
 set is increased the data-driven solution becomes closer to the reference solution.
+Later on in this section, we show numerical evidence of this convergence for a problem
+with manufactured solution.
 However, this is clearly as a result of the model chosen to compute
 such reference solution. For instance, if in the same case we 
 assume a much simpler linear relation between fluxes and gradients
