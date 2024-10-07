@@ -197,9 +197,8 @@ g + \dfrac{\mu}{k}\,s + \beta \,s^2 = 0 \label{eq:forchscalar}
 \end{equation}
 where $\eD = g \, \check{\mathbf{e}}_y$ and $\sD = s \, \check{\mathbf{e}}_y$,
 such that we can write $g$ (the magnitude of the pressure gradient)
-as a function of $s$ (the magnitude of the flux). The resulting
-plot is shown in part (b) of figure \ref{fig:datadistproc}, however,
-for custom we plot $s$ vs. $g$.
+as a function of $s$ (the magnitude of the flux). 
+The resulting plot is shown in part (b) of Figure \ref{fig:datadistproc}; however, for convention, we plot $s$ vs. $g$. It is important to note that we force the linear fit to pass through the origin, as a zero gradient implies zero flux.
 If such prior informations are not available, a suitable model
 must be proposed. With this reconstructed manifold we may solve Darcy's problem.
 We consider the computational domain $[0,1]^2$, a source term $q = 1$ and boundary condition
@@ -263,9 +262,7 @@ to be presented in the next section. Note that the behavior
 of the data-driven solution reflects the sparsity of the available data.
 In this specific example, since we rotated the 1D data only by 4 different
 angles $0,~\pi/2, \pi, 3\pi/2$, the data-driven solution exhibits this particular pattern.
-The solution changes significantly if we increase or alter the data set,
-as we will see later on. 
-This initial example already illustrates some of the components 
+The solution changes if we increase or modify the data set, or if we assume a different model. For illustration, figure \ref{fig:compadarcyfor} shows a comparison of the data-driven solution and the corresponding data distribution when a simple Darcy's law is used to reconstruct the constitutive manifold, as opposed to the more sophisticated Forchheimer model. Additional insights and examples are provided in the numerical results section. This initial example already illustrates some of the components 
 involved in the data-driven computing framework. 
 The procedure outlined above can serve as an effective method for initializing
 the global optimization problem that we ultimately aim to solve. 
@@ -283,6 +280,17 @@ Now, we proceed to formulate discrete versions of NLSP1.
   \def\svgwidth{13cm}
   \input{Figures/compound_ddcm_example.pdf_tex}
   \end{center}
+\end{figure}
+
+\begin{figure}[ht!!]
+	\begin{center}
+		\caption{Comparison of the data-driven pressure 
+			corresponding to Darcy's and Forcheimer's model to
+			compute the reference solution.} \label{fig:compadarcyfor}
+		\fontsize{5pt}{6pt} \selectfont
+		\def\svgwidth{13cm}
+		\input{Figures/comparison_compound_darcy_forch.pdf_tex}
+	\end{center}
 \end{figure}
 
 \subsubsection{A first discrete NSLP1 formulation for Darcy's problem}

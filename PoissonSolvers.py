@@ -231,7 +231,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         
         raise ValueError('Unrecognized problem setting option')
 
-    kappa = params[0]
+    kappa = params['kappa']
     Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
     Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
