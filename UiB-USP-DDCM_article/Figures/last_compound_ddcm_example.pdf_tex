@@ -1,0 +1,89 @@
+%% Creator: Inkscape 1.1.2 (0a00cf5339, 2022-02-04), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'last_compound_ddcm_example.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{379.51490863bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,1.05809148)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{last_compound_ddcm_example.pdf}}%
+    \put(0.32268198,0.00215044){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{DDCM Pressure}$\end{tabular}}}}%
+    \put(0.63638526,0.00214861){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{DDCM Flux}$\end{tabular}}}}%
+    \put(0.32268198,1.04808061){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Reference Pressure},~ \uD_h^{\mbox{\tiny ref}}$\end{tabular}}}}%
+    \put(0.03639428,0.50004117){\color[rgb]{0,0,0}\rotatebox{89.028142}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Uniaxial test}$\end{tabular}}}}}%
+    \put(0.63638526,1.04808178){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Reference Flux},~\sD_h^{\mbox{\tiny ref}}$\end{tabular}}}}%
+    \put(0.65292002,0.38373316){\color[rgb]{0,0,0}\rotatebox{90.423451}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{Data distribution}$\end{tabular}}}}}%
+    \put(0.02178369,0.73732831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
+    \put(0.0854124,0.60283507){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}{Flux}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{last_compound_ddcm_example.pdf}}%
+    \put(0.37605087,0.72741366){\makebox(0,0)[lt]{\lineheight{0}\smash{\begin{tabular}[t]{l}$\textbf{Linear regression}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{last_compound_ddcm_example.pdf}}%
+    \put(0.37605087,0.69949789){\makebox(0,0)[lt]{\lineheight{0}\smash{\begin{tabular}[t]{l}$\textbf{Experimenal data}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{last_compound_ddcm_example.pdf}}%
+    \put(0.22866605,0.68148185){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
+    \put(0.07783651,0.35467032){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$p_{\mbox{\tiny outlet}}$\end{tabular}}}}%
+    \put(0.08384526,0.77116163){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$p_{\mbox{\tiny inlet}}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{last_compound_ddcm_example.pdf}}%
+    \put(0.77524523,0.64697879){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{last_compound_ddcm_example.pdf}}%
+    \put(0.27610956,0.95965256){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.12\end{tabular}}}}%
+    \put(0.27610956,1.03427211){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.33\end{tabular}}}}%
+    \put(0.27610956,0.9870609){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.2\end{tabular}}}}%
+    \put(0.27610956,1.01576073){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.28\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{last_compound_ddcm_example.pdf}}%
+    \put(0.2736058,0.24669591){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.12\end{tabular}}}}%
+    \put(0.2736058,0.32053521){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.31\end{tabular}}}}%
+    \put(0.2736058,0.27665762){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.2\end{tabular}}}}%
+    \put(0.2736058,0.30789733){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}0.28\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{last_compound_ddcm_example.pdf}}%
+    \put(0.60139481,0.15740924){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
+    \put(0.60153414,0.89722072){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
+  \end{picture}%
+\endgroup%
