@@ -63,6 +63,14 @@ def FLM_ForcheimerReg(potential, flux, params):
     modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
     return fd.grad(potential) + muokap*flux + betarho * modfluxreg * flux
 
+def FLM_ForcheimerRegAni(potential, flux, params):
+    eta = params['eta']
+    muokap = params['mu_over_kappa']
+    betarho = params['beta_x_rho']
+    modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
+    Km1 = fd.as_tensor([[muokap[0,0], muokap[0,1]], [muokap[1,0], muokap[1,1]]])
+    return fd.grad(potential) + Km1*flux + betarho * modfluxreg * flux
+
 def FLM_Klinkenberg(potential, flux, params):
     kapomu = params['kappaovermu']
     DK = params['DK']
@@ -89,6 +97,86 @@ def FLP_DarcyLinear(potential, params):
 def PoissonDualMixedHdiv(domain, flag_quads, params, flag_setting,
                          volumetric_source, boundary_flux, boundary_vals,
                          FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
+    
+    # In this formulation we need constitutive 
+    # parameters and a FluxLaw in which sigma might
+    # not be explicity obtained from grad(u)
+      
+    mesh = domain.msh
+
+    orderF, orderU = orders
+    if(flag_quads):
+        HD = fd.FunctionSpace(mesh, "RTCF", orderF)
+        CG = fd.FunctionSpace(mesh, "CG", orderU)
+    else:
+        HD = fd.FunctionSpace(mesh, "DRT", orderF)
+        CG = fd.FunctionSpace(mesh, "CG", orderU)
+
+    W = HD * CG
+
+    w = fd.Function(W, name='Solution')
+    sigma, u = fd.split(w)
+    tau, v = fd.TestFunctions(W)
+
+    x = fd.SpatialCoordinate(mesh)
+    n = fd.FacetNormal(mesh)
+
+    if(flag_setting == 'Pure-Dirichlet'):
+        
+        q = volumetric_source(x)
+
+        # u bc (strong in this formulation)
+        bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 'on_boundary')]
+
+    elif(flag_setting == 'Uniaxial'):
+        
+        # By definition, the uniaxial test consists of this:
+        q = fd.Constant(0.0)
+
+        # u bc (strong in this formulation)
+        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
+        tag_bottom, tag_top = 3, 4
+        bcall = [fd.DirichletBC(W.sub(1), ubottom, tag_bottom), fd.DirichletBC(W.sub(1), utop, tag_top)]
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+    
+    Res  = (fd.inner(FluxLaw(u, sigma, params),tau))*fd.dx(degree=4)
+    Res += fd.inner(sigma,fd.grad(v))*fd.dx
+    Res += q*v*fd.dx(degree=4)
+
+    fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
+    g = fd.grad(u)
+
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here 
+    # e.g., if u \in DG1, g may belong to DG0, but if u \in DG0 then we should 
+    # integrate by parts during projection??
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/flux.pvd'
+        w.sub(0).rename('Reference.Flux')
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('Reference.Potential')
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+        
+        filename = dir_outs+'/gradu.pvd'
+        gpl = fd.project(g, domain.VDG0, name='Reference.Grad(u)')
+        VTKFile(filename, mode=mode).write(gpl, time=tt)
+
+    return w.sub(0), w.sub(1), g
+
+def PoissonDualMixedHdivAni(domain, flag_quads, params, flag_setting,
+                            volumetric_source, boundary_flux, boundary_vals,
+                            FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
     
     # In this formulation we need constitutive 
     # parameters and a FluxLaw in which sigma might

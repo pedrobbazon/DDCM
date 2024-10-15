@@ -5,12 +5,14 @@
 \subsubsection{Illustrative examples}
 
 As a continuation of the numerical experiment shown in the previous section, we aim to 
-illustrate the effect of the data set size on the data-driven solution. To that end, we first fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
+qualitatively illustrate the effect of the data set size on the data-driven solution. To that end, we first fix the number of points $N_g$ to the value $15$ from the 1D uniaxial test and rotate the corresponding
 data by $N_{\theta} = 4,~6,~8,~10$ and $20$ different angles equally distributed
-over $[0,2\pi)$. 
+over $[0,2\pi)$. In this case we consider data not exhibiting deviations with
+respect to the theoretical curve (the red line in figure \ref{fig:datadistproc}). 
+The effect of noise in the data will be evaluated later on.
 The pressure field $\uD_h$ (contours and surface) and the flux $\sD_h$ 
 solutions are shown in figure \ref{fig:sol_varNtheta}. It is also interesting
-to see the distribution of the data over the domain $\Omega$ shown in the last
+to see the distribution of data over the domain $\Omega$ shown in the last
 row. It is worth mentioning that, for the proximity measure chosen, the corresponding
 data-driven problem becomes a linear one, whereas as, the finite element problem
 solve to find the reference solution is non-linear in such case.  
@@ -18,13 +20,15 @@ solve to find the reference solution is non-linear in such case.
 %On the other hand, in figure \ref{fig:sol_varNg} we show the solution when 
 %$N_{\theta} = 40$ is fixed and the number of points in the 1D uniaxial test is 
 %varied, namely, $N_g = 5,~10,~15,~20,~25,~30,~35$. 
-The first striking observation is that the data-driven solution becomes closer to the reference solution as the total number of points in the data set increases. Later in this section, we present numerical evidence of this convergence for a problem with a manufactured solution. Additionally, note that if we assume a different model to compute the reference solution, the data-driven approach will yield a different result. For example, if we assume a much simpler linear relationship between fluxes and gradients, both the reference solution and, consequently, the data-driven solution will change significantly. This is illustrated in figure \ref{fig:sol_darcysimple}
-for the same set of values of $N_{\theta}$ of the previous experiment.
+The first striking observation is that the data-driven solution becomes closer to the reference one as the total number of points in the data set increases. Later in this section, we present quantitative numerical evidence of this convergence for a problem with a manufactured solution. Additionally, note that if we assume a different model to compute the reference solution, the data-driven approach will yield a different result. For example, if we assume a much simpler linear relationship between flux and gradient, both the reference and, consequently, the data-driven solution will change. This is illustrated in figure \ref{fig:sol_darcysimple}
+for the same set of values $N_{\theta}$ of the previous experiment.
 Another aspect that influenced the data driven solution is the fact that 
 isotropy was assumed to compute the reference solution used
 to initially distribute the data. If we consider otherwise an anisotropic behavior
 we end up with different results. To that end we produce synthetic results
-using Forcheimer's model with different permeability values assigned to two mutually orthogonal directions.
+using Forcheimer's model with different permeability values assigned to two mutually 
+orthogonal directions. The data points relating flux and gradient for each 
+direction are shown in figure \ref{fig:anydatapoints}
 
 \begin{figure}[ht!!]
 	\begin{center}
