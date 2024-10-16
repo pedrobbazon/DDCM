@@ -1113,6 +1113,141 @@ def main_EX5_():
 
     return npoints_data, hsize, L2error_u, H1error_u, L2error_s
 
+# Example of a refence solution based on an analytical expression with anisotropic K
+def main_EX50_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+
+    def uexactaux(x):
+        return cos(pi*x[0])*cos(pi*x[1])
+    
+    kappa_xx = 1.0
+    kappa_xy = 0.0
+    kappa_yy = 10.0
+    kappa = fd.as_tensor([[kappa_xx, kappa_xy], [kappa_xy, kappa_yy]])
+
+    def sexact(x):
+        return -kappa * fd.grad(uexactaux(x))
+    
+    def gradexact(x):
+        return -(mu*kappa*sexact(x) + beta*sqrt(fd.inner(sexact(x),sexact(x))))*sexact(x)
+
+    def mysource(x):
+        return fd.div(sexact(x))
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    # This will only be called for visualization purposes
+    params = {'exact-potential': uexact, 'exact-flux': sexact}
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [50, 50]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    ddcm_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    ddcm_data = PoissonDDCMData(ddcm_domain)
+
+    # In this manufactured example, we create by hand fluxes and grads 
+    # without actually solving a synthetic problem:
+    ti = time.time()
+    Nbc, Nth = 400, 800
+    bcvals = np.linspace(1.0+1.e-15, 12.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth,2), dtype=np.float64)
+    count = 0
+    for bcvs in bcvals:
+        # Generate a flux s and a grad g 
+        g1 = 0.0
+        L = 1.0
+        g2 = (bcvs - 1.0)/L
+        gradu_sampled_vals = np.array([g1, g2])
+        #-------------------------------------------  
+        
+        # Apply any manipulation/transformation you need to define
+        # the synthetic data (rotations, scalings, removing outliers, etc)
+        # This implementation is much faster
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
+            ct, st = np.cos(angle), np.sin(angle)
+            gradu_samples[count,0] = ct * gradu_sampled_vals[0] - st * gradu_sampled_vals[1]
+            gradu_samples[count,1] = st * gradu_sampled_vals[0] + ct * gradu_sampled_vals[1]
+            
+            flux_samples[count,0] = -(kappa_xx*gradu_samples[count,0] + kappa_xy*gradu_samples[count,1])
+            flux_samples[count,1] = -(kappa_xy*gradu_samples[count,0] + kappa_yy*gradu_samples[count,1])
+            count += 1
+
+    print(' . Bcs x Rotate= ', time.time() - ti)
+
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file=None)
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Interpolate-VDG0', flag_plot=True)
+
+    npoints_data = ddcm_data.sampled_grad.shape[0]
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(npoints_data))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    # 4. Compute some error norms
+    
+    print('   ... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return npoints_data, hsize, L2error_u, H1error_u, L2error_s
+
 #----------------------------------------------------------------------------
 # Example to illustrate in the paper the workflow of the data distribution
 # considering Forcheimer's model with anisotropic K
@@ -1136,13 +1271,15 @@ def main_EX51_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    kappa_xx = 1.0
-    kappa_yy = 10000.0
-    muokappa = fd.as_tensor([[fd.Constant(1/kappa_xx), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1/kappa_yy)]])
-    params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(10.0)}
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerRegAni, PoissonDualMixedHdivAni, orders=[2,1])
+    vals_kyy = [1.0, 10.0, 100.0, 1000.0]
+    for val in vals_kyy:
+        kappa_xx = 1.0
+        kappa_yy = val
+        muokappa = fd.as_tensor([[fd.Constant(1/kappa_xx), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1/kappa_yy)]])
+        params = {'eta': fd.Constant(1.e-6), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(10.0)}
+        ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerRegAni, PoissonDualMixedHdivAni, orders=[2,1])
 
-    ref_prob.solve(0.0, "myrefsol")
+        ref_prob.solve(val, "myrefsol")
 
     raise Exception('jkjfjfjfjfjfjfjfjfjfjfjfj')
 
