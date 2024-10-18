@@ -1131,12 +1131,19 @@ def main_EX50_():
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
 
+    #Pressure= sqrt(2)*beta*x[0]**2*x[1]*sqrt(x[0]**2*x[1]**2)/3 - mu*x[0]**2*x[1]/(2*kappa)
+    #Flux_x= x[0]*x[1]
+    #Flux_y= x[0]*x[1]
+    #Grad_x= sqrt(2)*beta*x[0]*x[1]*sqrt(x[0]**2*x[1]**2) - mu*x[0]*x[1]/kappa
+    #Grad_y= sqrt(2)*beta*x[0]*x[1]*sqrt(x[0]**2*x[1]**2) - mu*x[0]*x[1]/kappa
+    #Source= x[0] + x[1]
+
     def uexactaux(x):
         return cos(pi*x[0])*cos(pi*x[1])
     
     kappa_xx = 1.0
     kappa_xy = 0.0
-    kappa_yy = 10.0
+    kappa_yy = 1.0
     kappa = fd.as_tensor([[kappa_xx, kappa_xy], [kappa_xy, kappa_yy]])
 
     def sexact(x):
