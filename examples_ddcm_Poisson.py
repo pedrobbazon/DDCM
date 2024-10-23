@@ -849,7 +849,7 @@ def main_EX33_():
 
 #----------------------------------------------------------------------------
 
-# Example of a refence solution based on an analytical expression
+# Example of a reference solution based on an analytical expression
 def main_EX4_():
 
     ti = time.time()
@@ -1113,7 +1113,7 @@ def main_EX5_():
 
     return npoints_data, hsize, L2error_u, H1error_u, L2error_s
 
-# Example of a refence solution based on an analytical expression for the Forcheimer's model
+# Convergence study for the Forcheimer's model based on an analytical solution
 def main_EX50_(N=20):
 
     ti = time.time()
@@ -1130,13 +1130,6 @@ def main_EX50_(N=20):
 
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
-
-    #Pressure= sqrt(2)*beta*x[0]**2*x[1]*sqrt(x[0]**2*x[1]**2)/3 - mu*x[0]**2*x[1]/(2*kappa)
-    #Flux_x= x[0]*x[1]
-    #Flux_y= x[0]*x[1]
-    #Grad_x= sqrt(2)*beta*x[0]*x[1]*sqrt(x[0]**2*x[1]**2) - mu*x[0]*x[1]/kappa
-    #Grad_y= sqrt(2)*beta*x[0]*x[1]*sqrt(x[0]**2*x[1]**2) - mu*x[0]*x[1]/kappa
-    #Source= x[0] + x[1]
 
     def uexact(x):
         beta = fd.Constant(10.0)
@@ -1364,22 +1357,31 @@ def main_EX6_():
 
 #----------------------------------------------------------------------------
 #--- Run
-hhs, L2u, H1u, L2s = [], [], [], []
-for N in [20, 40, 80, 160]:
-    hsize, L2error_u, H1error_u, L2error_s = main_EX50_(N)
-    print(hsize, L2error_u, H1error_u, L2error_s)
-    hhs.append(hsize)
-    L2u.append(L2error_u)
-    H1u.append(H1error_u)
-    L2s.append(L2error_s)
+import sys
 
-plt.loglog(hhs, L2u, '-or')
-plt.loglog(hhs, H1u, '-ob')
-plt.loglog(hhs, L2s, '-og')
-plt.xlabel('$h$')
-plt.ylabel('Error')
-plt.legend(['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$',  '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'])
-plt.show()
+main_selector = np.int32(sys.argv[1])
 
-#npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
-#print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
+if(main_selector == 50): # Convergence study of Forcheimer's model with manufactured solution
+    hhs, L2u, H1u, L2s = [], [], [], []
+    for N in [20, 40, 80, 160]:
+        hsize, L2error_u, H1error_u, L2error_s = main_EX50_(N)
+        print(hsize, L2error_u, H1error_u, L2error_s)
+        hhs.append(hsize)
+        L2u.append(L2error_u)
+        H1u.append(H1error_u)
+        L2s.append(L2error_s)
+
+    plt.loglog(hhs, L2u, '-or')
+    plt.loglog(hhs, H1u, '-ob')
+    plt.loglog(hhs, L2s, '-og')
+    plt.xlabel('$h$')
+    plt.ylabel('Error')
+    plt.legend(['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$',  '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'])
+    plt.show()
+elif(main_selector == 51): # Forcheimer's model with anysotropic K
+    main_EX51_()
+elif(main_selector == 4): # Data-driven solution based on reference solution given by analytical expression
+    npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
+    print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
+else:
+    print('\n   ||||>>> Main selector option not recognized: ', main_selector)
