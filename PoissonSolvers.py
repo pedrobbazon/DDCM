@@ -69,7 +69,8 @@ def FLM_ForcheimerRegAni(potential, flux, params):
     betarho = params['beta_x_rho']
     modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
     Km1 = fd.as_tensor([[muokap[0,0], muokap[0,1]], [muokap[1,0], muokap[1,1]]])
-    return fd.grad(potential) + Km1*flux + betarho * modfluxreg * flux
+    Km12 = fd.as_tensor([[sqrt(muokap[0,0]), muokap[0,1]], [muokap[1,0], sqrt(muokap[1,1])]])
+    return fd.grad(potential) + Km1*flux + betarho * Km12 * modfluxreg * flux
 
 def FLM_Klinkenberg(potential, flux, params):
     kapomu = params['kappaovermu']
