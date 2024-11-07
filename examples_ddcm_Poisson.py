@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on:         17th May, 2024
-Last Modified on:   15th October, 2024
+Last Modified on:   30th October, 2024
 
 @authors: P. Balbao & R.F. Ausas
 """
@@ -128,6 +128,133 @@ def main_EX0_():
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FD, orders=[1,0])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
+
+#----------------------------------------------------------------------------
+
+# Example using the simple linear Darcy model to generate the reference solution and sample the data from itself
+# using the proximity measure with the modulus
+def main_EX10_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    def mysource(x):
+        return fd.Constant(1.0)
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    params = {'kappa': fd.Constant(1.0)}
+
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    # Note in this case, I've made the data associated to the same domain (and mesh)
+    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
+    ddcm_data = PoissonDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    synth_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+        
+    params = {'kappa': fd.Constant(1.0)}
+    synth_prob = PoissonStdProblem(synth_domain, params, 'Pure-Dirichlet', synth_forcings, FLM_DarcyLinear, PoissonDualMixedHdiv, orders=[2,1])
+    synth_prob.solve(0.0, "mysynthsol")
+
+    # Sample the synthetic solution: Program this according to your problem
+
+    one_sample_per_element = True
+    if(one_sample_per_element == True): # One point per element centroid
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+    else: # Sample points one a regular grid
+        Nsampx, Nsampy  = 5, 5
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
+    #- Pay attention: this is a concious decision
+    # and it may change in other situations
+    stdsyn_sol = synth_prob.std_solution
+    g = fd.project(stdsyn_sol.g, synth_domain.VDG0)
+    s = fd.project(stdsyn_sol.s, synth_domain.VDG0)
+    gradu_sampled_vals = np.array(g.at(xs))
+    flux_sampled_vals = np.array(s.at(xs))
+    #-------------------------------------------  
+        
+    # Apply any manipulation/transformation you need to define
+    # the synthetic data (rotations, scalings, removing outliers, etc)
+    gradu_samples = gradu_sampled_vals
+    flux_samples  = flux_sampled_vals
+
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        eta = fd.Constant(0.1)
+        #modgreg = eta*(sqrt(1.0 + fd.inner(g,g)/eta**2) - 1.0)
+        #modsreg = eta*(sqrt(1.0 + fd.inner(s,s)/eta**2) - 1.0)
+        #modgdata = sqrt(fd.inner(gdata,gdata))
+        #modsdata = sqrt(fd.inner(sdata,sdata))
+        modgreg = eta*(sqrt(1.0 + fd.inner(g-gdata,g-gdata)/eta**2) - 1.0)
+        modsreg = eta*(sqrt(1.0 + fd.inner(s-sdata,s-sdata)/eta**2) - 1.0)
+        return (modgreg + modsreg)*fd.dx
+        #return 0.6*((modgreg-modgdata)**2 + (modsreg-modsdata)**2)*fd.dx(degree=4) + 0.4*(fd.inner(g-gdata, g-gdata) + fd.inner(s-sdata, s-sdata))*fd.dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
 
     ddcm_prob.solve("myddcmsol")
 
@@ -1196,12 +1323,12 @@ def main_EX51_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    vals_kyy = [1.0]
+    vals_kyy = [1.0, 10.0, 100.0, 1000.0]
     for val in vals_kyy:
         kappa_xx = 1.0
         kappa_yy = val
         muokappa = fd.as_tensor([[fd.Constant(1/kappa_xx), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1/kappa_yy)]])
-        params = {'eta': fd.Constant(1.e-3), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(1.0)}
+        params = {'eta': fd.Constant(1.e-3), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(10.0)}
         ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerRegAni, PoissonDualMixedHdivAni, orders=[2,1])
 
         ref_prob.solve(val, "myrefsol")
@@ -1361,7 +1488,9 @@ import sys
 
 main_selector = np.int32(sys.argv[1])
 
-if(main_selector == 50): # Convergence study of Forcheimer's model with manufactured solution
+if(main_selector == 10): # Proximity measure with the modulus
+    main_EX10_()
+elif(main_selector == 50): # Convergence study of Forcheimer's model with manufactured solution
     hhs, L2u, H1u, L2s = [], [], [], []
     for N in [20, 40, 80, 160]:
         hsize, L2error_u, H1error_u, L2error_s = main_EX50_(N)
