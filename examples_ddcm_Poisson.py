@@ -1323,15 +1323,15 @@ def main_EX51_():
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    vals_kyy = [1.0, 10.0, 100.0, 1000.0, 10000.0]
+    vals_kyy = [1.0, 5.0, 10.0, 20.0]
     for val in vals_kyy:
         kappa_xx = 1.0
         kappa_yy = val
-        #muokappa = fd.as_tensor([[fd.Constant(1/kappa_xx), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1/kappa_yy)]])
-        #params = {'eta': fd.Constant(1.e-10), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(0.0)}
-        params = {'kappa': fd.as_tensor([[kappa_xx, 0.0], [0.0, kappa_yy]])}
-        #ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerRegAni, PoissonDualMixedHdivAni, orders=[2,1])
-        ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdivAni, orders=[2,1])
+        muokappa = fd.as_tensor([[fd.Constant(1/kappa_xx), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1/kappa_yy)]])
+        params = {'eta': fd.Constant(1.e-10), 'mu_over_kappa': muokappa, 'beta_x_rho': fd.Constant(1.0)}
+        ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, FLM_ForcheimerRegAni, PoissonDualMixedHdivAni, orders=[2,1])
+        #params = {'kappa': fd.as_tensor([[kappa_xx, 0.0], [0.0, kappa_yy]])}
+        #ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdivAni, orders=[2,1])
 
         ref_prob.solve(val, "myrefsol")
         x = fd.SpatialCoordinate(domain.msh)
