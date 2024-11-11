@@ -44,14 +44,11 @@ direction are shown in figure \ref{fig:anydatapoints}
 \subsubsection{Convergence to a manufactured solution}
 
 We assess the convergence of the data-driven formulation and all its 
-variants, namely, formulation DNLSP1-A, Aeqor, B, C and D to a manufactured solution 
-proposed as the reference case. To that end we choose $ \uD \in \mathcal{C}^{\infty} $ to be s given by:
+variants, namely, formulation DNLSP1-A, Aeqor, B, C and D to a manufactured solution proposed as the reference case. To that end we choose $ \uD \in \mathcal{C}^{\infty} $ to be given by:
 \begin{equation}
 \uD:\Omega \to \mathbb{R},~p(x,y) = \cos(\pi x)\cos(\pi y), \label{eq:manup}
 \end{equation}
-where the domain $\Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1]$.
-Assuming the permeability to be isotropic with $\frac{k}{\mu} = 1$ we derive
-from (\ref{eq:manup})  the complete solution and corresponding source term to be
+where the domain $\Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1]\times[0,1]$. Assuming the permeability to be isotropic with $\frac{k}{\mu} = 1$ we derive from (\ref{eq:manup})  the complete solution and corresponding source term to be
 \begin{equation*}
 	\begin{aligned}
 		&\sD: \Omega \to \mathbb{R}^{2}, & &\sD = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top} \\
@@ -59,26 +56,22 @@ from (\ref{eq:manup})  the complete solution and corresponding source term to be
 		&q: \Omega \to \mathbb{R}, & &q = -2\pi^{2}\cos(\pi x) \cos(\pi y),
 	\end{aligned}
 \end{equation*}
-First, we assess the behavior of original fomulation DNLSP1-A. We introduce a finite element 
-structured mesh made of $20,000$ triangular elements and produce synthetic data 
-having different values of $N_{g} \times N_{\theta}$, namely, $2 \times 2$ 
-The synthetic data is produced such that the minimum and maximum values of the
-pressure gradient given by the manufactured solution are captured.  
 
-to larger configurations such as $16 \times 16$\footnote{It should be noted that, since the relationship between  $ (\sD_h^{\text{ref}},\eD_h^{\text{ref}}) $  is known \textit{a priori} based on the manufactured solution, the discrete data relating flux and pressure gradient obtained from the uniaxial test, i.e $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $, should ensure that the minimum and maximum values of both fields are encompassed.}, we observed a gradual convergence of the data-driven solutions for all the unknown fields -- $\uD_h$, $\sD_h$, $\eD_h$, $\lD_h$, and $\mD_h$ -- towards the exact (or manufactured) solution. 
+First, we assess the behavior of original formulation DNLSP1-A. So, we introduce a finite element structured mesh made of $20.000$ triangular elements and produce synthetic data having different values of $N_{m} = N_{g} \times N_{\theta}$, i.e. starting with $2 \times 2$ and increasing up to $16 \times 16$. The numerical experiments, then, shown a gradual convergence of the data-driven solutions for all the unknown field -- $\uD_h$, $\sD_h$, $\eD_h$, $\lD_h$, and $\mD_h$ -- towards the manufactured solution as $ N_{m} $ increases. It is worth to mentioning that the synthetic data are produced in such way that the minimum and maximum values of the pressure gradient and the associated flux given by the manufactured solution are captured. This approach prevents mismatches between the smallest and largest physical states, $ (\eD,\sD) $, present in both reference solution and the synthetic data set, i.e. $ \mathfrak{D}_m = \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $.
+
 
 Figures \ref{fig:DNLSP1_A_plt_over_line_u}(a) to \ref{fig:DNLSP1_A_plt_over_line_u}(d), for example, present the data-driven solutions for the scalar pressure field. As can be observed, the greater the number of sampled pairs  ($N_{g} \times N_{\theta})$ the closer the data-driven solution is to the manufactured pressure field -- c.f. figure \ref{fig:DNLSP1_conv_u_L2}(f) --. Figure \ref{fig:DNLSP1_A_plt_over_line_u}(e), in addition,  provides the pressure profiles along the diagonal coordinate for each considered sampled pair relation. This further corroborates the observed convergence behavior of the data-driven solution. 
 
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a) to (d) on the left present the data-driven solutions for the scalar pressure field based on DNLSP1-A formulation, using a fixed finite element mesh with 100 elements per coordinate direction and with different pairs of sampled points. Figure (e) on the right shows the data-driven solution for the pressure profiles along the diagonal coordinate corresponding to each solution depicted in figures (a) to (d).}
-	\fontsize{6pt}{10pt}\selectfont % Adjust font size and line spacing here
+	\fontsize{6pt}{10pt}\selectfont 
 	\def\svgwidth{\columnwidth}
 	\input{Figures/DNLSP1_A_plt_over_line_u.pdf_tex}
 	\label{fig:DNLSP1_A_plt_over_line_u}
 \end{figure}
 
-Figures \ref{fig:DNLSP1_A_plt_over_line_s}(a) to \ref{fig:DNLSP1_A_plt_over_line_s}(d), analogously to the previous figure, describe the data-driven solution for the flow vector field. Once again, it can be concluded that, as the number of sampled pairs increases, the data-driven solution progressively approaches the fabricated flow vector field -- c.f. figure \ref{fig:DNLSP1_conv_s_L2}(f) --. It should be noted that, compared to the scalar pressure field, the convergence in this case appears to be slower, since with the same choice $ N_{g}\times N_{\theta} = 16 \times 16$, the solution represented in figure \ref{fig:DNLSP1_A_plt_over_line_u}(d) is closer to the reference solution in figure \ref{fig:DNLSP1_conv_u_L2}(f) than the solution in figure \ref{fig:DNLSP1_A_plt_over_line_s}(d) is to the reference in figure \ref{fig:DNLSP1_conv_s_L2}(f). This difference in convergence rates will be justified through the study of the convergence of both fields in the $ L^{2} $-norm, which will be addressed in the next section.
+Figures \ref{fig:DNLSP1_A_plt_over_line_s}(a) to \ref{fig:DNLSP1_A_plt_over_line_s}(d), analogously to the previous figure, describe the data-driven solution for the flux vector field. Once again, numerical evidences shown that, as the number of sampled pairs increases, the data-driven solution progressively approaches the manufactured flux vector field -- c.f. figure \ref{fig:DNLSP1_conv_s_L2}(f) --. It should be noted that, compared to the scalar pressure field, the convergence in this case appears to be slower, since with the same choice $ N_{g}\times N_{\theta} = 16 \times 16$, the solution represented in figure \ref{fig:DNLSP1_A_plt_over_line_u}(d) is closer to the reference solution in figure \ref{fig:DNLSP1_conv_u_L2}(f) than the solution in figure \ref{fig:DNLSP1_A_plt_over_line_s}(d) is to the reference in figure \ref{fig:DNLSP1_conv_s_L2}(f). This difference in convergence rates will be justified through an convergence study of both fields in the $ L^{2} $-norm, which will be addressed in the next section.
 
 \begin{figure}[h!]
 	\centering
@@ -105,9 +98,7 @@ Figure \ref{fig:DNLSP1_A_plt_over_line_lm} finally presents the data-driven solu
 
 Furthermore, similar studies have been performed considering the variants of the standard data-driven formulation, namely, DNLSP1-Aeqo, B, C, and D. However, since all of them showed similar results for all unknown fields, we chose to omit them here and discuss only their convergence aspects in the next section.
 
-
-One could now inquire about the accuracy of the data-driven solution for the proposed problem when the number of sampled points is fixed and the finite element mesh is progressively refined. To address this question, we conducted a numerical study for the natural formulation, DNLSP1-A, and all its variants. In this study, we fixed the number of sampled points at \( N_{\theta} = 6 \times 6 \) and gradually refined the finite element mesh, starting from a coarse grid (e.g., \( N_{x} \times N_{y} = 10 \times 10 \) elements per coordinate direction) to a fine grid (e.g., \( N_{x} \times N_{y} = 100 \times 100 \) elements per coordinate direction). 
-
+One could now inquire about the accuracy of the data-driven solution for the proposed problem when the number of sampled points is fixed and the finite element mesh is progressively refined. To address this question, we conducted a numerical study for the standard formulation, DNLSP1-A, and all its variants. In this study, we fixed the number of sampled points at \( N_{\theta} = 6 \times 6 \) and gradually refined the finite element mesh, starting from a coarse grid (e.g., \( N_{x} \times N_{y} = 10 \times 10 \) elements per coordinate direction) to a fine grid (e.g., \( N_{x} \times N_{y} = 100 \times 100 \) elements per coordinate direction). 
 
 \begin{figure}[h!]
 	\centering
@@ -117,11 +108,10 @@ One could now inquire about the accuracy of the data-driven solution for the pro
 	\label{fig:sol_DNLSP1_plt_over_line_u_fem_mesh}
 \end{figure}
 
-Figure \ref{fig:sol_DNLSP1_plt_over_line_u_fem_mesh} presents the results of the study for the scalar pressure field, \( \uD_h \). In the lower left corner of each subfigure, we show the two-dimensional pressure scalar field, ranging from the coarse mesh to the fine mesh in a descending order. Additionally, to better visibility, we plotted the solution profiles along the diagonal coordinate for each mesh and compared them to the reference or exact solution. 
+Figure \ref{fig:sol_DNLSP1_plt_over_line_u_fem_mesh} presents the results of that study for the scalar pressure field, \( \uD_h \). In the lower left corner of each subfigure, we show the two-dimensional pressure scalar field, ranging from the coarse mesh to the fine mesh in a descending order. Additionally, to better visibility, we plotted the solution profiles along the diagonal coordinate for each mesh and compared them to the reference or exact solution.  We first observe that the data-driven solutions based on formulations A, Aeqo, and D produce closely matching results, which is a natural consequence of the selected finite element space for that unknown. The same conclusion applies to the data-driven solutions based on formulations B and C. The staircase behavior of the numerical solution is particularly evident for the latter formulations, especially on coarse meshes. Although different characteristics are observed in each data-driven formulation, they all gradually converge to the exact solution as the finite element mesh becomes finer. However, the convergence is asymptotic up to a certain threshold, with the error remaining above a certain nonzero limit, since it depends simultaneously on the number of sampled points and the refinement of the finite element mesh.
 
-We first observe that the data-driven solutions based on formulations A, Aeqo, and D produce closely matching results, which is a natural consequence of the selected finite element space for that unknown. The same conclusion applies to the data-driven solutions based on formulations B and C. The staircase behavior of the numerical solution is particularly evident for the former formulations, especially on coarse meshes. 
 
-Although different characteristics are observed in each data-driven formulation, they all gradually converge to the exact solution as the finite element mesh becomes finer. However, the convergence is asymptotic up to a certain threshold, with the error remaining above a certain nonzero limit, since it depends simultaneously on the number of sampled points and the refinement of the finite element mesh. This can be verified in table \ref{tab:DNLSP1_fem_mesh_errors}. For formulation A, for instance, we observe that doubling the number of finite elements per coordinate direction causes the value of \( \| \uD - \uD_h \|_{L^{2}} \) to change only in the fourth decimal place, with similar behavior observed for the other formulations.
+%This can be verified in table \ref{tab:DNLSP1_fem_mesh_errors}. For formulation A, for instance, we observe that doubling the number of finite elements per coordinate direction causes the value of \( \| \uD - \uD_h \|_{L^{2}} \) to change only in the fourth decimal place, with similar behavior observed for the other formulations.
 
 
 \begin{figure}[h!]
@@ -134,119 +124,91 @@ Although different characteristics are observed in each data-driven formulation,
 
 
 
-\begin{table}[h!]
-	\centering
-	\caption{$L^{2}$-error for the scalar pressure field $\uD_h$, the flux vector field $\sD_h$, and the corresponding dual fields $\lD_h$ and $\mD_h$ for the natural formulation and all its variants, considering a fixed number of sampled points $N_{g} \times N_{\theta} = 6 \times 6$ and three different finite element meshes.}
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{lccccc}
-			\toprule
-			\textbf{Formulation} & \textbf{FEM Mesh} & $ \| \uD - \uD_h \|_{L^{2}} $ & $ \| \sD - \sD_h \|_{L^{2}} $ & $ \| \lD - \lD_h \|_{L^{2}} $ & $ \| \mD - \mD_h \|_{L^{2}} $ \\
-			\midrule
-			\multirow{3}{*}{DNLSP1-A} 
-			& 10.0  & 0.029667 & 0.623456 & 0.049219 & 1.264457 \\
-			& 50.0  & 0.028286 & 0.536606 & 0.056152 & 1.073735 \\
-			& 100.0 & 0.028333 & 0.528759 & 0.056566 & 1.057780 \\
-			\midrule
-			\multirow{3}{*}{DNLSP1-Aeqo} 
-			& 10.0  & 0.031100 & 0.469149 & 0.057765 & 0.917430 \\
-			& 50.0  & 0.028398 & 0.506107 & 0.056653 & 1.011805 \\
-			& 100.0 & 0.028369 & 0.512206 & 0.056703 & 1.024314 \\
-			\midrule
-			\multirow{3}{*}{DNLSP1-B} 
-			& 10.0  & 0.059674 & 0.544448 & 0.058580 & 1.011495 \\
-			& 50.0  & 0.030201 & 0.518981 & 0.056638 & 1.034829 \\
-			& 100.0 & 0.028834 & 0.518285 & 0.056706 & 1.035786 \\
-			\midrule
-			\multirow{3}{*}{DNLSP1-C} 
-			& 10.0  & 0.059674 & 0.623456 & 0.049219 & 1.011495 \\
-			& 50.0  & 0.030201 & 0.536606 & 0.056152 & 1.034829 \\
-			& 100.0 & 0.028834 & 0.528759 & 0.056566 & 1.035786 \\
-			\midrule
-			\multirow{3}{*}{DNLSP1-D} 
-			& 10.0  & 0.029667 & 0.544448 & 0.058580 & 1.264457 \\
-			& 50.0  & 0.028286 & 0.518981 & 0.056638 & 1.073735 \\
-			& 100.0 & 0.028333 & 0.518285 & 0.056706 & 1.057780 \\
-			\bottomrule
-		\end{tabular}%
-	}
-	\label{tab:DNLSP1_fem_mesh_errors}
-\end{table}
+%\begin{table}[h!]
+%	\centering
+%	\caption{$L^{2}$-error for the scalar pressure field $\uD_h$, the flux vector field $\sD_h$, and the corresponding dual fields $\lD_h$ and $\mD_h$ for the natural formulation and all its variants, considering a fixed number of sampled points $N_{g} \times N_{\theta} = 6 \times 6$ and three different finite element meshes.}
+%	\resizebox{\textwidth}{!}{%
+%		\begin{tabular}{lccccc}
+%			\toprule
+%			\textbf{Formulation} & \textbf{FEM Mesh} & $ \| \uD - \uD_h \|_{L^{2}} $ & $ \| \sD - \sD_h \|_{L^{2}} $ & $ \| \lD - \lD_h \|_{L^{2}} $ & $ \| \mD - \mD_h \|_{L^{2}} $ \\
+%			\midrule
+%			\multirow{3}{*}{DNLSP1-A} 
+%			& 10.0  & 0.029667 & 0.623456 & 0.049219 & 1.264457 \\
+%			& 50.0  & 0.028286 & 0.536606 & 0.056152 & 1.073735 \\
+%			& 100.0 & 0.028333 & 0.528759 & 0.056566 & 1.057780 \\
+%			\midrule
+%			\multirow{3}{*}{DNLSP1-Aeqo} 
+%			& 10.0  & 0.031100 & 0.469149 & 0.057765 & 0.917430 \\
+%			& 50.0  & 0.028398 & 0.506107 & 0.056653 & 1.011805 \\
+%			& 100.0 & 0.028369 & 0.512206 & 0.056703 & 1.024314 \\
+%			\midrule
+%			\multirow{3}{*}{DNLSP1-B} 
+%			& 10.0  & 0.059674 & 0.544448 & 0.058580 & 1.011495 \\
+%			& 50.0  & 0.030201 & 0.518981 & 0.056638 & 1.034829 \\
+%			& 100.0 & 0.028834 & 0.518285 & 0.056706 & 1.035786 \\
+%			\midrule
+%			\multirow{3}{*}{DNLSP1-C} 
+%			& 10.0  & 0.059674 & 0.623456 & 0.049219 & 1.011495 \\
+%			& 50.0  & 0.030201 & 0.536606 & 0.056152 & 1.034829 \\
+%			& 100.0 & 0.028834 & 0.528759 & 0.056566 & 1.035786 \\
+%			\midrule
+%			\multirow{3}{*}{DNLSP1-D} 
+%			& 10.0  & 0.029667 & 0.544448 & 0.058580 & 1.264457 \\
+%			& 50.0  & 0.028286 & 0.518981 & 0.056638 & 1.073735 \\
+%			& 100.0 & 0.028333 & 0.518285 & 0.056706 & 1.057780 \\
+%			\bottomrule
+%		\end{tabular}%
+%	}
+%	\label{tab:DNLSP1_fem_mesh_errors}
+%\end{table}
 
 The same study was conducted for the flux vector field, as summarized in Figure \ref{fig:sol_DNLSP1_plt_over_line_s_fem_mesh}. Again, we observe that the data-driven solutions based on formulations A and C exhibited similar profiles due to the use of a discontinuous Galerkin finite element space. Conversely, the data-driven solutions based on formulations B and D were also similar, as the same finite element space was chosen for that unknown. The data-driven solution for the flux based on the equal-order formulation, however, differs from the others.
 
-Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that, as with $ \uD_h  $, the convergence is asymptotic up to a certain threshold for formulations A, B, C, and D, with only marginal changes in $ \|\sD - \sD_h \|_{L^{2}} $ when refining the mesh from $ 50 \times 50 $ to $ 100 \times 100 $ elements per coordinate direction. However, for formulation Aeqo, the $ \|\sD - \sD_h \|_{L^{2}} $ did not decrease with further mesh refinement, which, as discussed earlier, is due to the structure of the saddle point problem (this issue will be further addressed in Section \ref{sec:convergence_ddcm}). Finally, for the sake of brevity, we do not present the two-dimensional plots and the associated plot over lines for the dual field in this study. However, the errors are summarized in table \ref{tab:DNLSP1_fem_mesh_errors}.
-
-
-\begin{proposition}
-	For a given finite element mesh with a fixed spatial step $ h $, the data-driven solution $ (\tilde{\sD}_h, \tilde{\eD}_h) $ converges to the reference solution $ (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) $ in a consistent norm \( \|\cdot\| \) as the number of sampled data points $ N_{m} \rightarrow \infty$ .
-\end{proposition}
+Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that, as with $ \uD_h  $, the convergence is asymptotic up to a certain threshold for formulations A, B, C, and D, with only marginal changes in $ \|\sD - \sD_h \|_{L^{2}} $ when refining the mesh from $ 50 \times 50 $ to $ 100 \times 100 $ elements per coordinate direction. Finally, for the sake of brevity, we do not present the two-dimensional plots and the associated plot over lines for the dual field in this study. 
 
 
 
-\begin{proof}
-	
-	Let $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$ be the reference functions, and let $\hat{\sD}_h$ and $\hat{\eD}_h$ be their projections onto the space $\text{DG}_0$. These projections minimize the $L^2$-norm projection errors:
-	
-	\[
-	\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \quad \text{and} \quad \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)},
-	\]
-	
-	implying that $\hat{\sD}_h$ and $\hat{\eD}_h$ are the closest elementwise constant functions in $\text{DG}_0$ to $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$, respectively. As $N_{m} \to \infty$, the discrete data set $\mathfrak{D}_m$ becomes dense in the solution space. By definition, a set $\mathfrak{D}_m$ is dense in a solution space if every point in that space can be approximated arbitrarily closely by point from $\mathfrak{D}_m$. Specifically, for any pair $(\hat{\sD}_h, \hat{\eD}_h)$ in the solution space and any $\epsilon > 0$, there exist discrete data pair $\left\{\left(\mathfrak{g}_n, \mathfrak{s}_n\right)\right\}_{n \in \mathcal{N}_m}$ such that:
-	
-	\[
-	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| < \epsilon.
-	\]
-	
-	Thus, as $N_{m}$ increases, the discrete data $\mathfrak{D}_m$ densely samples the solution space and the optimization problem ensures:
-	
-	\[
-	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty.
-	\]
-	
-	Thus, we proceed as follows: 
-	
-	\begin{equation*}
-		\begin{aligned}
-			\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &=  \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h)  +  (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \\
-			&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|.
-		\end{aligned}
-	\end{equation*}
-	
-	
-	As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0$. Since $\| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ is minimized, the difference $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ also approaches zero.
-	
-\end{proof}
+%--------------------------------------------------------------------------    
+%\begin{proposition}
+%	For a given finite element mesh with a fixed spatial step $ h $, the data-driven solution $ (\tilde{\sD}_h, \tilde{\eD}_h) $ converges to the reference solution $ (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) $ in a consistent norm \( \|\cdot\| \) as the number of sampled data points $ N_{m} \rightarrow \infty$ .
+%\end{proposition}
 
-%Based on the presented results, we observe that in the limit of $ N_{m} \rightarrow \infty $, all the data-driven formulations naturally recover the continuous or exact solution. This fact can be justified observing that the projection of the reference functions  $ \sD_h^{\text{ref}} $ and  $ \eD_h^{\text{ref}} $ onto  $ \text{DG}_0 $  minimizes the projection error in the sense of least squares, i.e:
-%
-%$$
-%\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \text{ and } \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)}
-%$$
-%
-%are minimized. Thus,  $ \hat{\sD}_h $  and  $ \hat{\eD}_h $  are the closest elementwise constant functions in  $ \text{DG}_0 $ to  $\sD_h^{\text{ref}} $  and  $ \eD_h^{\text{ref}} $ , respectively. Addionally, as  $ N_{m} \to \infty  $, the data  $ \mathfrak{D}_m $ becomes dense in the solution space, which means that the discrete data points   $ \left\lbrace\left(\mathfrak{g}_n,\mathfrak{s}_n\right)\right\rbrace_{n \in \mathcal{N}_m} $ will densely sample the range of  $ (\hat{\sD}_h, \hat{\eD}_h) $ . Consequently, the optimization problem ensures that:
-%
-%$$
-%\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty
-%$$
-%
-%So,
-%
-%\begin{equation*}
-%	\begin{aligned}
-%		\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &= \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) + (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|    \\
-%		&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|
-%	\end{aligned}.
-%\end{equation*}
-%
-%Then, as $ N_{m} \to \infty $, $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0  $ and considering that  $ \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ is already minimized, we conclude that the total error  $ \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|  $ also approaches zero.
+%\begin{proof}
+%	
+%	Let $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$ be the reference functions, and let $\hat{\sD}_h$ and $\hat{\eD}_h$ be their projections onto the space $\text{DG}_0$. These projections minimize the $L^2$-norm projection errors:
+%	
+%	\[
+%	\| \sD_h^{\text{ref}} - \hat{\sD}_h \|_{L^2(\Omega)} \quad \text{and} \quad \| \eD_h^{\text{ref}} - \hat{\eD}_h \|_{L^2(\Omega)},
+%	\]
+%	
+%	implying that $\hat{\sD}_h$ and $\hat{\eD}_h$ are the closest elementwise constant functions in $\text{DG}_0$ to $\sD_h^{\text{ref}}$ and $\eD_h^{\text{ref}}$, respectively. As $N_{m} \to \infty$, the discrete data set $\mathfrak{D}_m$ becomes dense in the solution space. By definition, a set $\mathfrak{D}_m$ is dense in a solution space if every point in that space can be approximated arbitrarily closely by point from $\mathfrak{D}_m$. Specifically, for any pair $(\hat{\sD}_h, \hat{\eD}_h)$ in the solution space and any $\epsilon > 0$, there exist discrete data pair $\left\{\left(\mathfrak{g}_n, \mathfrak{s}_n\right)\right\}_{n \in \mathcal{N}_m}$ such that:
+%	
+%	\[
+%	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| < \epsilon.
+%	\]
+%	
+%	Thus, as $N_{m}$ increases, the discrete data $\mathfrak{D}_m$ densely samples the solution space and the optimization problem ensures:
+%	
+%	\[
+%	\| (\tilde{\sD}_h|_{K_n}, \tilde{\eD}_h|_{K_n}) - (\hat{\sD}_h|_{K_n}, \hat{\eD}_h|_{K_n}) \| \to 0 \text{ as } N_{m} \to \infty.
+%	\]
+%	
+%	Thus, we proceed as follows: 
+%	
+%	\begin{equation*}
+%		\begin{aligned}
+%			\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| &=  \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h)  +  (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \| \\
+%			&\leq \| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| + \| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|.
+%		\end{aligned}
+%	\end{equation*}
+%	
+%	
+%	As $N_{m} \to \infty$, the term $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\hat{\sD}_h, \hat{\eD}_h) \| \to 0$. Since $\| (\hat{\sD}_h, \hat{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ is minimized, the difference $\| (\tilde{\sD}_h, \tilde{\eD}_h) - (\sD_h^{\text{ref}}, \eD_h^{\text{ref}}) \|$ also approaches zero.
+%	
+%\end{proof}
+%----------------------------------------------------------------------------
 
-
-
-%To analyze the effect of the finite element space choice, we plotted the solution for each data-driven formulation along the diagonal of the square. The results are shown in Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}g). To provide a clearer view of the differences between the formulations, Figure~(\ref{fig:DNSLP1_sol_plt_over_line_u}h) presents an enlarged view of the rectangular region defined in (\ref{fig:DNSLP1_sol_plt_over_line_u}g). As expected, the formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D yielded coincident numerical pressure field solutions, \( \uD_h \), since the same finite element space was selected for these formulations (cf. Table~\ref{tab:spaces}). Similarly, formulations DNLSP1-B and DNLSP1-C produced numerical solutions for the pressure field that are coincident with each other but distinct from the former group. It is also noteworthy that the numerical solutions obtained with formulations DNLSP1-A, DNLSP1-Aeqo, and DNLSP1-D demonstrate better accuracy compared to those obtained with formulations DNLSP1-B and DNLSP1-C. The latter solutions exhibit a staircase behavior, which is a natural consequence of the selected finite element space (cf. Table~\ref{tab:spaces}).
-
-
-
-\newpage
+\clearpage
 \subsubsection{Convergence of the data-driven formulation}\label{sec:convergence_ddcm}
 
 
@@ -303,12 +265,9 @@ Regarding the accuracy of the numerical solution for $ \sD_h $, we conclude that
 
 
 \clearpage
-
 \subsubsection{Effect of noise on the input data}
 
-So far, we have studied data-driven solutions to the Darcy problem, examining the effects of variables such as the number of finite elements in the mesh, $ (N_{x} \times N_{y}) $, the number of sampled points, $ (N_{m} = N_{g} \times N_{\theta}) $, and the convergence of the unknown data fields: the pressure field $ \uD $, the flux vector field $ \sD $, the pressure gradient field $ \eD $, and the dual fields $ \mD $ and $ \lD $ for the natural data-driven formulation and its variants. However, these studies assume a given dataset, $\mathfrak{D}_{m} = \{(\mathfrak{g}_{n}, \mathfrak{s}_{n})\}_{n \in \mathcal{N}_{m}}$, that is noise-free. The objective of this section is to investigate the characteristics of a data-driven solution when a Gaussian noise is introduced into the available data. To this end, we define the standard normal distribution by its mean and standard deviation, which will be denoted by $ \mu $ and $ \sigma $, respectively.
-
-Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \sD_{h}^{\text{ref}})$ are known \textit{a priori} from the manufactured solution, the random noise generated for these data fields undergoes a min-max scaling process to ensure that the noise range aligns with that of the manufactured solution. Mathematically, the noise-added data fields can be expressed as:
+So far, we have studied data-driven solutions to the Darcy problem, examining the effects of variables such as the number of finite elements in the mesh, $ (N_{x} \times N_{y}) $, the number of sampled points, $ (N_{m} = N_{g} \times N_{\theta}) $, and the convergence of unknown data fields: the pressure field $ \uD $, the flux vector field $ \sD $, the pressure gradient field $ \eD $, and the dual fields $ \mD $ and $ \lD $ for the natural data-driven formulation and its variants. However, these studies assume a given dataset, $\mathfrak{D}_{m} = \{(\mathfrak{g}_{n}, \mathfrak{s}_{n})\}_{n \in \mathcal{N}_{m}}$, that is noise-free. The objective of this section is to investigate the characteristics of a data-driven solution when a Gaussian noise is introduced into the available data. To this end, we define the standard normal distribution by its mean and standard deviation, which will be denoted by $ \mu $ and $ \sigma $, respectively. Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \sD_{h}^{\text{ref}})$ are known \textit{a priori} from the manufactured solution, the random noise generated for these data fields undergoes a min-max scaling process to ensure that the noise range aligns with that of the manufactured solution. Mathematically, the noise-added data fields can be expressed as:
 
 \begin{equation}
 	\begin{aligned}
@@ -319,12 +278,9 @@ Moreover, since the maximum and minimum values of both $(\eD_{h}^{\text{ref}}, \
 
 where $ \mathfrak{g}_{\text{gn}} $ and $ \mathfrak{s}_{\text{gn}} $ are vectors with components $ g_{i} $ and $ s_{i} $ that are independently drawn from a univariate normal distribution, i.e., $ g_{i}, s_{i} \sim \mathcal{N}(\mu, \sigma) \quad \forall i \in \{1, \dots, d\} $. Finally, to control the magnitude of the introduced noise, we introduce a scalar parameter $ \alpha \in \mathbb{R} $, which scales $ \mathfrak{g}_{\text{noise}} $ and $ \mathfrak{s}_{\text{noise}} $. This parameter, $ \alpha $, will be referred to as the magnitude factor.
 
-To carry out this study, we selected the DNLSP1-A formulation, also referred to as the natural one, and assumed a Gaussian distribution with zero mean and unit standard deviation. The number of sampled points was set as follows: \( N_{g} = 15 \) with three distinct values for \( N_{\theta} = \{5, 10, 20\} \). Additionally, four values for the magnitude factor were considered: \( \alpha = \{0.05, 0.1, 0.2, 0.4\} \). This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test. Finally, the finite element mesh was maintained as one hundred elements per coordinate direction, i.e. $ (N_{x}\times N_{y} = 100 \times 100) $.
+To carry out this study, we selected the DNLSP1-A formulation and assumed a Gaussian distribution with zero mean and unit standard deviation. The number of sampled points was set as follows: \( N_{g} = 15 \) with three distinct values for \( N_{\theta} = \{5, 10, 20\} \). Additionally, four values for the magnitude factor were considered: \( \alpha = \{0.05, 0.1, 0.2, 0.4\} \). This range begins with a very low level of noise and progressively increases to a higher level, where certain points may be regarded as outliers in the context of an experimental test. Finally, the finite element mesh was maintained as one hundred elements per coordinate direction, i.e. $ (N_{x}\times N_{y} = 100 \times 100) $.
 
-Figure \ref{fig:compound_noise_u} presents the data-driven solutions obtained for the scalar pressure field. As shown, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. However, it is noteworthy that for \( N_{\theta} = 5 \), there is a noticeable deviation between the data-driven pressure profiles and the exact solution for all values of \( \alpha \). This deviation can be attributed to the limited number of sampled points, as discussed in previous sections.
-
-Figure \ref{fig:compound_noise_s}, on the other hand, displays the data-driven solutions for the flux vector field. At first glance, Figure \ref{fig:compound_noise_s}(a) might suggest that the Gaussian noise significantly impacts the accuracy of the data-driven solution for the flux vector field. However, a comparison with Figure \ref{fig:DNLSP1_A_plt_over_line_s}(e) reveals that the observed discrepancies between the data-driven solutions and the expected analytical solution are primarily due to the low number of sampled points. So, although the introduction of Gaussian noise seems to affect the flux vector field more than the scalar pressure field, the data-driven solutions still exhibit satisfactory accuracy, even when subjected to a high-intensity noise dataset.
-
+Figure \ref{fig:compound_noise_u} then presents the data-driven solutions obtained for the scalar pressure field. As shown, the data-driven solution closely approximates the expected analytical solution, even when subjected to a high-intensity noise dataset. However, it is noteworthy that for \( N_{\theta} = 5 \), there is a noticeable deviation between the data-driven pressure profiles and the exact solution for all values of \( \alpha \). This deviation can be attributed to the limited number of sampled points, as discussed in previous sections. Figure \ref{fig:compound_noise_s}, on the other hand, displays the data-driven solutions for the flux vector field. At first glance, Figure \ref{fig:compound_noise_s}(a) might suggest that the Gaussian noise significantly impacts the accuracy of the data-driven solution for the flux vector field. However, a comparison with Figure \ref{fig:DNLSP1_A_plt_over_line_s}(e) reveals that the observed discrepancies between the data-driven solutions and the expected analytical solution are primarily due to the low number of sampled points. So, although the introduction of Gaussian noise seems to affect the flux vector field more than the scalar pressure field, the data-driven solutions still exhibit satisfactory accuracy, even when subjected to a high-intensity noise dataset.
 
 
 \begin{figure}[h!]
@@ -336,9 +292,6 @@ Figure \ref{fig:compound_noise_s}, on the other hand, displays the data-driven s
 	\label{fig:compound_noise_u}  
 \end{figure}
 
-Finally, regarding the data-driven solutions for the dual field, i.e. $ \lD $ and $ \mD $, Figures \ref{fig:compound_noise_l} and \ref{fig:compound_noise_m} show the obtained results for varying values of $ \alpha $ and each specified value of $ N_{\theta} $. 
-
-
 \begin{figure}[h!]
 	\centering
 	\caption{Figures (a), (f), and (k) display the data-driven solution for the flux vector field along the diagonal coordinate based on DNLSP1-A formulation for varying values of $\alpha$ and for each specified value of $N_{\theta}$, in the given order. Figures (b) to (e), (g) to (j), and (l) to (o) present the two-dimensional flux vector field for each magnitude factor, corresponding to all considered values of $ N_{\theta} $, respectively.  }
@@ -347,231 +300,99 @@ Finally, regarding the data-driven solutions for the dual field, i.e. $ \lD $ an
 	\label{fig:compound_noise_s}  
 \end{figure}
 
-\begin{figure}[h!]
-	\centering
-	\caption{Data-driven solution for the scalar dual field, $\lD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.}
-	\def\svgwidth{\columnwidth}  
-	\input{Figures/compound_noise_l.pdf_tex}  
-	\label{fig:compound_noise_l}  
-\end{figure}
 
-\begin{figure}[h!]
-	\centering
-	\caption{Data-driven solution for the vector dual field, $\mD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.
-	}
-	\def\svgwidth{\columnwidth}  
-	\input{Figures/compound_noise_m.pdf_tex}  
-	\label{fig:compound_noise_m}  
-\end{figure}
+%---------------------------------------------------------------------------
+% I chose to omit the dual fields for the study of the effect of noise, since it does not convey much information.
 
+
+%Finally, regarding the data-driven solutions for the dual field, i.e. $ \lD $ and $ \mD $, Figures \ref{fig:compound_noise_l} and \ref{fig:compound_noise_m} show the obtained results for varying values of $ \alpha $ and each specified value of $ N_{\theta} $. 
 
 %\begin{figure}[h!]
 %	\centering
-%	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the original data fields, considering three different values of the pair $ (N_{g},N_{\theta}) $.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:orig_flux_grad_samples_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:orig_flux_grad_samples_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/orig_flux_grad_samples_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:orig_flux_grad_samples_NbcNth_16}
-%	\end{subfigure}
-%	\label{fig:orig_flux_grad_samples}
-%\end{figure}
-%
-%The figure \ref{fig:noisy_flux_grad_samples}, on the other hand, presents the relationship between $ \|\tilde{\eD} \|_{2} $ and $ \|\tilde{\sD}\|_{2} $ for the same cases considered previously, but now subject to normal random distribution. As can be seen, the noise control factor, $ \alpha $, allows you to define a certain noise effect that slightly changes the original data fields.
-%
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Relationship between $ \|\tilde{\sD} \|_{2} $ and $ \|\tilde{\eD}\|_{2} $ for the noisy data fields, considering three different values of the pair $ (N_{g},N_{\theta}) $.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:noisy_flux_grad_samples_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:noisy_flux_grad_samples_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/noisy_flux_grad_samples_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:noisy_flux_grad_samples_NbcNth_16}
-%	\end{subfigure}
-%	\label{fig:noisy_flux_grad_samples}
-%\end{figure}
-%
-%Once we've defined the new data fields we'll deal with, we should be able to analyze characteristics of the unknown numerical solution fields, namely: pressure, $ p_{h} $, flux, $ \sD_h $, pressure gradient, $ \eD_h $ and the dual fields $ \mD_h $ and $ \lD_h $.  
-%
-%
-%\begin{itemize}
-%	\item \textcolor{red}{Aqui assumimos que o os parâmetros $ (N_{g},N_{\theta}) $ foram previamente definidos e explicados.}
-%	\item \textcolor{red}{Explicar o motivo pelo qual não apresenta-se as soluções manufaturadas para os duais}
-%	\item \textcolor{red}{Explicar o motivo pelo qual não apresenta-se as soluções manufaturadas para os duais}
-%\end{itemize}
-%
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Manufactured solution for the unknown data fields. (a) pressure, $ p $; (b) flux $ \sD $ and (c) pressure gradient $ \eD $. }
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/u_ref.png}
-%		\caption{$ p $}
-%		\label{fig:u_ref}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/s_ref.png}
-%		\caption{$ \sD $}
-%		\label{fig:s_ref}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/g_ref.png}
-%		\caption{$ \eD $}
-%		\label{fig:g_ref}
-%	\end{subfigure}
-%	\label{fig:manufactured_solutions}
+%	\caption{Data-driven solution for the scalar dual field, $\lD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.}
+%	\def\svgwidth{\columnwidth}  
+%	\input{Figures/compound_noise_l.pdf_tex}  
+%	\label{fig:compound_noise_l}  
 %\end{figure}
 %
 %\begin{figure}[h!]
 %	\centering
-%	\caption{Data-driven finite element solution for the pressure, $ p_{h} $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:u_noise_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:u_noise_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/u_noise_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:u_noise_NbcNth_16}
-%	\end{subfigure}
+%	\caption{Data-driven solution for the vector dual field, $\mD$, based on the DNLSP1-A formulation for varying values of $\alpha$ and each specified value of $N_{\theta}$.
+%	}
+%	\def\svgwidth{\columnwidth}  
+%	\input{Figures/compound_noise_m.pdf_tex}  
+%	\label{fig:compound_noise_m}  
 %\end{figure}
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Data-driven finite element solution for the flux, $ \sD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:s_noise_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:s_noise_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/s_noise_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:s_noise_NbcNth_16}
-%	\end{subfigure}
-%\end{figure}
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Data-driven finite element solution for the pressure gradient, $ \eD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:g_noise_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:g_noise_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/g_noise_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:g_noise_NbcNth_16}
-%	\end{subfigure}
-%\end{figure}
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Data-driven finite element solution for the balance Lagrangian multiplier, $ \lD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:l_noise_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:l_noise_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/l_noise_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:l_noise_NbcNth_16}
-%	\end{subfigure}
-%\end{figure}
-%
-%\begin{figure}[h!]
-%	\centering
-%	\caption{Data-driven finite element solution for the constraint Lagrangian multiplier, $ \mD_h $, considering the three different values of the pair $ (N_{g},N_{\theta}) $ and the noisy data fields.}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_4.png}
-%		\caption{$ N_{g} \times N_{\theta} = 4 \times 4 $}
-%		\label{fig:m_noise_NbcNth_4}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_8.png}
-%		\caption{$ N_{g} \times N_{\theta} = 8 \times 8 $}
-%		\label{fig:m_noise_NbcNth_8}
-%	\end{subfigure}
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{Figures/m_noise_NbcNth_16.png}
-%		\caption{$ N_{g} \times N_{\theta} = 16 \times 16 $}
-%		\label{fig:m_noise_NbcNth_16}
-%	\end{subfigure}
-%\end{figure}
+%-----------------------------------------------------------------------------
 
 
-\cleardoublepage
 
-
-  
+\clearpage
 \subsubsection{A non-linear example}
 
 
+
+\clearpage
 \subsection{Results for elasticity problem}
+
+We now address to second prototypical elliptic second-order Poisson problem: the classical elasticity problem. To introduce some novelties in this study, we consider nontrivial geometries both for the domain over which synthetic data are generated and for that in which the problem is to be solved by the data-driven formulation. For the synthetic data generation process, we also propose numerical experiments that aim to mimic a typical stress-strain experiment performed in a laboratory. In this aspect, through the GMSH library, we build a geometric domain that resembles a material specimen and whose dimensions are illustrated in the figure \ref{fig:compound_meshes_elastostatic}(a); on the other hand, regarding the data-driven domain, we opted to use the classical Cook's membrane, figure \ref{fig:compound_meshes_elastostatic}(b), since it is a classic benchmark problem in computational elasticity. 
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figure (a), on the left, shows the geometric domain that mimics a material specimen and is used to generate synthetic data. Figure (b), on the right, displays the Cook's membrane domain, where the data-driven problem is solved.}
+	\def\svgwidth{\columnwidth}
+	\input{Figures/compound_meshes_elastostatic.pdf_tex}
+	\label{fig:compound_meshes_elastostatic}
+\end{figure}
+
+
+
+To proceed, we define the process through which we generate the synthetic pairs $\mathfrak{D}_{m} = \left\{\mathfrak{e}_{n},\mathfrak{s}_{n}\right\}_{n \in \mathcal{N}_{m}}$, which now are second-order tensors and denote the symmetric gradient of the displacement field and stress, respectively. Previously, in the Darcy problem, an simple uniaxial experiment was enough to capture different pairs pressure gradient-flux. However, to be able to generate synthetic data for the elasticity problem, we should consider two independent experiments: in the first one, we perform an uniaxial stress test, as illustrated in figure \ref{fig:synthetic_data_elastostatic}(a); in the second one, we carry an shear stress test, as presented in figure  \ref{fig:synthetic_data_elastostatic}(b)
+
+
+\begin{equation*}
+	\textbf{Uniaxial:}
+	\begin{cases}
+		\begin{aligned}
+			&\mathbf{u} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{bottom}} \\
+			&u_{x} = 0,~&&\text{on}~\Gamma_{\text{left}} \\
+			&u_{y} =-t,~&&\text{on}~\Gamma_{\text{top}}	\\
+			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}
+		\end{aligned}
+	\end{cases} 
+	\textbf{Shear:}
+	\begin{cases}
+		\begin{aligned}
+			&\mathbf{u} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{bottom}} \\
+			&u_{x} = 0,~&&\text{on}~\Gamma_{\text{left}} \\
+			&u_{y} =-t,~&&\text{on}~\Gamma_{\text{top}}	\\
+			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}
+		\end{aligned}
+	\end{cases} 
+\end{equation*}
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{...}
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/synthetic_data_elastostatic.pdf_tex}  
+	\label{fig:synthetic_data_elastostatic}  
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{...}
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/ddcm_cook_mambrane.pdf_tex}  
+	\label{fig:ddcm_cook_mambrane}  
+\end{figure}
+
+
+\clearpage
+\subsubsection{Convergence to a manufactured solution}
+
+\cleardoublepage
 
