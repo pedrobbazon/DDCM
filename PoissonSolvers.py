@@ -429,9 +429,9 @@ def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
         
         raise ValueError('Unrecognized problem setting option')
 
-    kappa = params[0] # We expect it to be a tensor (see this better later on)
-    Km1 = fd.as_tensor([[1.0/kappa(u)[0,0], fd.Constant(0.0)], [fd.Constant(0.0), 1.0/kappa(u)[1,1]]])
-    Res  = (Km1*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
+    kappa = params['kappa'] # We expect it to be a tensor (see this better later on)
+    Km1 = fd.as_tensor([[fd.Constant(1.0/kappa[0,0]), fd.Constant(0.0)], [fd.Constant(0.0), fd.Constant(1.0/kappa[1,1])]])
+    Res  = (fd.dot(Km1*sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
     Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
