@@ -55,8 +55,8 @@
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{compound_meshes_elastostatic.pdf}}%
     \put(-0.00140769,0.32807823){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$H$\end{tabular}}}}%
-    \put(0.16652748,0.141813){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$L = \frac{2}{5}H$\end{tabular}}}}%
-    \put(0.05365405,0.05430126){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$h = \frac{1}{5}H$\end{tabular}}}}%
+    \put(0.16652748,0.141813){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$L = \frac{1}{5}H$\end{tabular}}}}%
+    \put(0.05365405,0.05430126){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$l = \frac{1}{5}H$\end{tabular}}}}%
     \put(0.11109569,0.24370313){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$r = \frac{1}{10}H$\end{tabular}}}}%
     \put(0.09090216,0.00223577){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
     \put(0.606242,0.00223577){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
