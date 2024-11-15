@@ -335,24 +335,25 @@ Figure \ref{fig:compound_noise_u} then presents the data-driven solutions obtain
 \clearpage
 \subsection{Results for elasticity problem}
 
-We now address the classical elasticity problem. To introduce some novelties in this study, we consider nontrivial geometries both for the domain over which synthetic data are generated and for the one in which the problem is to be solved by the data-driven formulation. For the synthetic data generation process, we also propose numerical experiments that aim to imitate a typical stress-strain experiment performed in the laboratory. In this regard, by means of the GMSH library, we construct a geometric domain that resembles a material specimen and whose dimensions are illustrated in figure \ref{fig:compound_meshes_elastostatic}(a); similarly, for the data-driven domain, we chose to use the classical Cook membrane, figure \ref{fig:compound_meshes_elastostatic}(b), since it is a classical benchmark problem in computational elasticity.
+We now address the classical elasticity problem. To introduce some novelties in this study, we consider nontrivial geometries both for the domain over which synthetic data are generated and for the one in which the problem is to be solved by the data-driven formulation. For the synthetic data generation process, we again propose numerical experiments that aim to imitate a typical stress-strain experiment performed in the laboratory. In this regard, by means of the GMSH library, we construct a geometric domain that resembles a material specimen and whose dimensions are illustrated in figure \ref{fig:compound_meshes_elastostatic}(a); similarly, for the data-driven domain, we chose to use the classical Cook membrane, figure \ref{fig:compound_meshes_elastostatic}(b), since it is a classical benchmark problem in computational elasticity.
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a), on the left, shows the geometric domain that mimics a material specimen and is used to generate synthetic data. Figure (b), on the right, displays the Cook's membrane domain, where the data-driven problem is solved.}
+	\caption{Figure (a) on the left shows the geometric domain that mimics a material specimen and is used to generate synthetic data. Figure (b) on the right shows the Cook membrane domain where the data-driven problem is to be solved.}
 	\def\svgwidth{\columnwidth}
 	\input{Figures/compound_meshes_elastostatic.pdf_tex}
 	\label{fig:compound_meshes_elastostatic}
 \end{figure}
 
-To define each of them mathematically, we begin by denoting the specimen domain as a closed, bounded, and connected subset of two-dimensional Euclidean space, $ \Omega_{sp} \subset \mathbb{R}^{2} $, whose boundary can be defined as follows: $ \partial \Omega_{sp} = \left\{\Gamma_{\text{bottom}}^{sp} \cup \Gamma_{\text{right}}^{sp} \cup \Gamma_{\text{top}}^{sp} \cup \Gamma_{\text{left}}^{sp} \right\} $, where
+
+To mathematically formalize both problems, i.e., the synthetic data generation problem and the Cook membrane data-driven problem, we start by denoting the specimen domain as a closed, bounded, and connected subset of the two-dimensional Euclidean space, $ \Omega_{\text{sp}} \subset \mathbb{R}^{2} $, whose boundary can be conveniently defined as: $ \partial \Omega_{\text{sp}} = \left\{\Gamma_{\text{bottom}}^{\text{sp}} \cup \Gamma_{\text{right}}^{\text{sp}} \cup \Gamma_{\text{top}}^{\text{sp}} \cup \Gamma_{\text{left}}^{\text{sp}} \right\} $, where 
 
 \begin{equation*}
 	\begin{aligned}
-		&\Gamma_{\text{bottom}}^{sp} && = ~ \left\{ \mathbf{x} \in \Omega_{sp}\mid x_1 \in \left[ 0, \frac{H}{5}\right], \, x_2 = 0 \right\}\\
-		&\Gamma_{\text{top}}^{sp} && = ~\left\{ \mathbf{x} \in \Omega_{sp} \mid x_1 \in \left[ 0, \frac{H}{5}\right], \, x_2 = H \right\}\\
-		&\Gamma_{\text{left}}^{sp} && = ~ \left\{ \mathbf{x} \in \Omega_{sp} \mid x_1 = 0, \, x_2 \in \left[0,H\right] \right\}\\
-		&\Gamma_{\text{right}}^{sp} &&= ~ \bigcup_{i=1}^{5}\Gamma_{i}, \\
+		&\Gamma_{\text{bottom}}^{\text{sp}} && = ~ \left\{ \mathbf{x} \in \Omega_{\text{sp}}\mid x_1 \in \left[ 0, \frac{H}{5}\right], \, x_2 = 0 \right\}\\
+		&\Gamma_{\text{top}}^{\text{sp}} && = ~\left\{ \mathbf{x} \in \Omega_{\text{sp}} \mid x_1 \in \left[ 0, \frac{H}{5}\right], \, x_2 = H \right\}\\
+		&\Gamma_{\text{left}}^{\text{sp}} && = ~ \left\{ \mathbf{x} \in \Omega_{\text{sp}} \mid x_1 = 0, \, x_2 \in \left[0,H\right] \right\}\\
+		&\Gamma_{\text{right}}^{\text{sp}} &&= ~ \bigcup_{i=1}^{5}\Gamma_{i}, \\
 	\end{aligned}
 \end{equation*}
 
@@ -360,50 +361,48 @@ with each $ \Gamma_{i} $ given by:
 
 {\small
 \begin{equation*}
-	\begin{cases}
 		\begin{aligned}
-			&\Gamma_{1} = \left\{\mathbf{x} \in \Omega_{sp} \mid x_{1} = \frac{H}{5}, \ x_{2} \in \left[0,\frac{H}{5}\right] \right\} \\
-			&\Gamma_{2} = \left\{\mathbf{x} \in \Omega_{sp} \mid x_{1} = \frac{H}{5}, \ x_{2} \in \left[\frac{4H}{5}, H\right] \right\} \\
-			&\Gamma_{3} = \left\{\mathbf{x} \in \Omega_{sp} \mid x_{1} = \frac{H}{10}, \ x_{2} \in \left[\frac{3H}{10}, \frac{7H}{10}\right] \right\} \\
-			&\Gamma_{4} = \left\{\mathbf{x} \in \Omega_{sp} \mid x_{1} \leq \frac{H}{5}, \ x_{2} \leq \frac{3H}{10}, \ \left(x_{1}-\frac{H}{5}\right)^2 + \left(x_{2}-\frac{3H}{10}\right)^2 = \left(\frac{H}{10}\right)^2\right\} \\
-			&\Gamma_{5} = \left\{\mathbf{x} \in\Omega_{sp} \mid x_{1} \leq \frac{H}{5}, \ x_{2} \geq \frac{4H}{5}, \ \left(x_{1}-\frac{H}{5}\right)^2 + \left(x_{2}-\frac{H}{5}\right)^2 = \left(\frac{H}{10}\right)^2\right\}
+			&\Gamma_{1} = \left\{\mathbf{x} \in \Omega_{\text{sp}} \mid x_{1} = \frac{H}{5}, \ x_{2} \in \left[0,\frac{H}{5}\right] \right\} \\
+			&\Gamma_{2} = \left\{\mathbf{x} \in \Omega_{\text{sp}} \mid x_{1} = \frac{H}{5}, \ x_{2} \in \left[\frac{4H}{5}, H\right] \right\} \\
+			&\Gamma_{3} = \left\{\mathbf{x} \in \Omega_{\text{sp}} \mid x_{1} = \frac{H}{10}, \ x_{2} \in \left[\frac{3H}{10}, \frac{7H}{10}\right] \right\} \\
+			&\Gamma_{4} = \left\{\mathbf{x} \in \Omega_{\text{sp}} \mid x_{1} \leq \frac{H}{5}, \ x_{2} \leq \frac{3H}{10}, \ \left(x_{1}-\frac{H}{5}\right)^2 + \left(x_{2}-\frac{3H}{10}\right)^2 = \left(\frac{H}{10}\right)^2\right\} \\
+			&\Gamma_{5} = \left\{\mathbf{x} \in\Omega_{\text{sp}} \mid x_{1} \leq \frac{H}{5}, \ x_{2} \geq \frac{4H}{5}, \ \left(x_{1}-\frac{H}{5}\right)^2 + \left(x_{2}-\frac{H}{5}\right)^2 = \left(\frac{H}{10}\right)^2\right\}
 		\end{aligned}
-	\end{cases}
 \end{equation*}
 }
 
-Similarly, the Cook membrane domain is also a closed, bounded, and connected subset of the two-dimensional Euclidean space, $ \Omega_{ck} \subset \mathbb{R}^{2} $, whose boundary can be defined mathematically as $ \partial \Omega_{ck} = \left\{\Gamma_{\text{bottom}}^{ck} \cup \Gamma_{\text{right}}^{ck} \cup \Gamma_{\text{top}}^{ck} \cup \Gamma_{\text{left}}^{ck} \right\} $, where
+Similarly, we also consider the Cook membrane domain a closed, bounded, and connected subset of the two-dimensional Euclidean space, $ \Omega_{\text{ck}} \subset \mathbb{R}^{2} $, whose boundary can be defined as $ \partial \Omega_{\text{ck}} = \left\{\Gamma_{\text{bottom}}^{\text{ck}} \cup \Gamma_{\text{right}}^{\text{ck}} \cup \Gamma_{\text{top}}^{\text{ck}} \cup \Gamma_{\text{left}}^{\text{ck}} \right\} $, where
 
 \begin{equation*}
 	\begin{aligned}
-		&\Gamma_{\text{bottom}}^{ck} && = ~ \left\{ \mathbf{x} \in \Omega_{ck} \mid x_{2} = \frac{11}{12}x_{1} \right\}\\
-		&\Gamma_{\text{top}}^{ck} && = ~\left\{ \mathbf{x} \in \Omega_{ck} \mid x_{2} = \frac{1}{3}x_{1}+ \frac{11B}{12}\right\}\\
-		&\Gamma_{\text{left}}^{ck} && = ~ \left\{ \mathbf{x} \in \Omega_{ck} \mid x_1 = 0, \, x_2 \in \left[0,H\right] \right\}\\
-		&\Gamma_{\text{right}}^{ck} &&= ~ \left\{ \mathbf{x}  \in \Omega_{ck} \mid x_{1} = B, \ x_{2} \in \left[\frac{11B}{12},\frac{5B}{4}\right]\right\} \\
+		&\Gamma_{\text{bottom}}^{\text{ck}} && = ~ \left\{ \mathbf{x} \in \Omega_{\text{ck}} \mid x_{2} = \frac{11}{12}x_{1} \right\}\\
+		&\Gamma_{\text{top}}^{\text{ck}} && = ~\left\{ \mathbf{x} \in \Omega_{\text{ck}} \mid x_{2} = \frac{1}{3}x_{1}+ \frac{11B}{12}\right\}\\
+		&\Gamma_{\text{left}}^{\text{ck}} && = ~ \left\{ \mathbf{x} \in \Omega_{\text{ck}} \mid x_1 = 0, \, x_2 \in \left[0,H\right] \right\}\\
+		&\Gamma_{\text{right}}^{\text{ck}} &&= ~ \left\{ \mathbf{x}  \in \Omega_{\text{ck}} \mid x_{1} = B, \ x_{2} \in \left[\frac{11B}{12},\frac{5B}{4}\right]\right\} \\
 	\end{aligned}
 \end{equation*}
 
-To proceed, we must define the process by which we generate the synthetic pairs $\mathfrak{D}_{m} = \left\{\mathfrak{e}_{n},\mathfrak{s}_{n}\right\}_{n \in \mathcal{N}_{m}}$, which are now second-order tensors and denote the symmetric gradient of the displacement and stress fields, respectively. To do this, we consider two independent numerical experiments: in the first, we subject the specimen domain to a uniaxial stress test, as illustrated in figure \ref{fig:synthetic_data_elastostatic}(a); in the second, we subject the specimen domain to a shear stress test, as shown in figure \ref{fig:synthetic_data_elastostatic}(b). The boundary conditions to be imposed to perform both the uniaxial and shear stress tests in $ \Omega_{\textit{sp}} $ are defined below:
+Once we have formally defined each domain, we must specify the process by which we generate the synthetic pairs $\mathfrak{D}_{m} = \left\{\mathfrak{e}_{n},\mathfrak{s}_{n}\right\}_{n \in \mathcal{N}_{m}}$, which are now second-order tensors, denoting the symmetric gradient of the displacement field and the stress field, respectively, and which will ultimately be used to compute the functions $\tilde{\eE}_h$ and $\tilde{\sE}_h$, as we have already described in section \ref{sec:datadist}. To do this, we consider two independent numerical experiments: in the first, we subject the specimen domain to a \textbf{uniaxial} stress test, as illustrated in figure \ref{fig:synthetic_data_elastostatic}(a); in the second, we subject the specimen domain to a \textbf{shear} stress test, as shown in figure \ref{fig:synthetic_data_elastostatic}(b). The boundary conditions to be imposed to perform both the uniaxial and shear stress tests in $ \Omega_{\text{sp}} $ are defined by equation \ref{eq:bcs_elasticity_synth_data}:
 
 {\small
-\begin{equation*}
+\begin{equation}\label{eq:bcs_elasticity_synth_data}
 	\textbf{Uniaxial:} \begin{cases}
 		\begin{aligned}
-			&u_{y} = 0,~&&\text{on}~\Gamma_{\text{bottom}}^{sp} \\
-			&u_{y} =-t,~&&\text{on}~\Gamma_{\text{top}}^{sp}	\\
-			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}^{sp} \\
-			&u_{x} = 0,~&&\text{on}~\Gamma_{\text{left}}^{sp} \\
+			&u_{y} =-t,~&&\text{on}~\Gamma_{\text{top}}^{\text{sp}}	\\
+			&u_{y} = 0,~&&\text{on}~\Gamma_{\text{bottom}}^{\text{sp}} \\
+			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}^{\text{sp}} \\
+			&u_{x} = 0,~&&\text{on}~\Gamma_{\text{left}}^{\text{sp}} \\
 		\end{aligned}
 	\end{cases} 
 	\textbf{Shear:} \begin{cases}
 		\begin{aligned}
-			&\mathbf{u} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{bottom}}^{sp} \\
-			&u_{x} =-t,~&&\text{on}~\Gamma_{\text{top}}^{sp}	\\
-			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}^{sp}\\
-			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{left}}^{sp}
+			&u_{x} =-t,~&&\text{on}~\Gamma_{\text{top}}^{\text{sp}}	\\
+			&\mathbf{u} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{bottom}}^{\text{sp}} \\
+			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{right}}^{\text{sp}}\\
+			&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{left}}^{\text{sp}}
 		\end{aligned}
 	\end{cases} 
-\end{equation*}
+\end{equation}
 }
 
 where $ t $ is the parametric value used to impose different values of vertical displacement in the uniaxial stress test and horizontal displacement in the shear stress test. 
@@ -411,24 +410,82 @@ where $ t $ is the parametric value used to impose different values of vertical 
 
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Figure (a) at the top shows numerical solution of the displacement field for the uniaxial stress test on the specimen geometry considering different values of vertical displacement on $\Gamma_{\text{top}}^{\text{sp}}$ and parametrized by $t$. Figure (b) at the bottom presents the numerical solution fo the displacement field for the shear stress test on the same geometry, with different values of horizontal displacement on $\Gamma_{\text{top}}^{\text{sp}}$ parametrized by $t$. In both figures, the points where the stress-strain measurements are evaluated are highlighted, simulating an extensometer setup. }
 	\def\svgwidth{\columnwidth}  
 	\input{Figures/synthetic_data_elastostatic.pdf_tex}  
 	\label{fig:synthetic_data_elastostatic}  
 \end{figure}
 
+We now move on to the Cook membrane data-driven problem. For this study, we consider an embedded Cook membrane on $\Gamma_{\text{left}}^{\text{ck}}$ and subjected to an vertical shear force on $\Gamma_{\text{right}}^{\text{ck}}$. Mathematically, the imposed boundary conditions are given by equation \ref{eq:bcs_cook_membrane}.
+
+\begin{equation}\label{eq:bcs_cook_membrane}
+	\begin{cases}
+		\begin{aligned}
+		&\mathbf{u} = [0,0]^{\top}&&\text{on}~\Gamma_{\text{top}}^{\text{sp}} \\
+		&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{bottom}}^{\text{sp}}\\
+		&\sE \cdot \mathbf{\breve{n}} = \left[0,\mathcal{F}_{y}\right]^{\top},~&&\text{on}~\Gamma_{\text{right}}^{\text{sp}} \\
+		&\sE \cdot \mathbf{\breve{n}} = [0,0]^{\top},~&&\text{on}~\Gamma_{\text{left}}^{\text{sp}}\\
+		\end{aligned}
+	\end{cases}
+\end{equation}
+
+To perform the numerical experiment, we set the dimensions of the specimen and the Cook membrane to be $ H=1 $ and $ B=1 $, respectively (Figure \ref{fig:compound_meshes_elastostatic}). Regarding the finite element meshes, the characteristic length of the specimen was set to $ l_c = 0.05 $ meanwhile a mesh comprising $ 20.000 $ triangular elements was adopted to discretize the Cook membrane geometry. Concerning the synthetic data generation process, we chose to sample a set of $ 10 $ points across the specimen geometry (Figure \ref{fig:synthetic_data_elastostatic}), each of them obtained by imposing $ N_{g}=100 $ equally spaced displacement values on $ \Gamma_{\text{top}}^{\text{sp}} $, whose range encompasses the minimum and maximum displacements of the target solution. 
 
 \begin{figure}[h!]
 	\centering
-	\caption{...}
+	\caption{Figures (a) and (b) compare the numerical displacement field in the Cook membrane obtained using the classical primal finite element method and the data-driven approach. Likewise, Figures (c) and (d) present a comparison of the numerical stress field in the Cook membrane, highlighting the differences between the classical finite element formulation and the data-based formulation. }
 	\def\svgwidth{\columnwidth}  
-	\input{Figures/ddcm_cook_mambrane.pdf_tex}  
-	\label{fig:ddcm_cook_mambrane}  
+	\input{Figures/ddcm_cook_membrane.pdf_tex}  
+	\label{fig:ddcm_cook_membrane}  
 \end{figure}
 
+Additionally, the obtained pairs $ \left\{\mathfrak{e},\mathfrak{s}\right\} $ were rotated by $ N_{\theta} = 100 $ angles uniformly distributed in the interval $ [0, 2\pi) $. Both processes were conducted for each of the tests, i.e., uniaxial tension and shear. The collected results are, then, summarize in Figure \ref{fig:ddcm_cook_membrane}. As can be observed, the, the data-driven solution greatly approximates to the expected reference solution for both displacement and stress fields. The experiment evidence the robustness of the data-driven approach, in the sense that it can handle with different problems even though they do not share the same geometry characteristics
 
-\clearpage
+
 \subsubsection{Convergence to a manufactured solution}
+
+(Preliminary results: sampling from the reference problem)
+
+To establish the convergence study for the elasticity problem following the same model we adopted to Darcy's problem, an manufactured solution is proposed on a regular Cartesian two-dimensional domain, $ \Omega \subset \mathbb{R}^{2} \mid \Omega = [0,1] \times [0,1] $, with pure Dirichlet boundary conditions. To this end, we consider the following manufactured displacement field
+
+\begin{equation*}
+	\begin{aligned}
+		\mathbf{u}\colon \Omega \rightarrow \mathbb{R}^{2}, \quad \mathbf{u} = \left[\cos(\pi x)\cos(\pi y),\cos(\pi x)\cos(\pi y) \right]^{\top}	
+	\end{aligned}
+\end{equation*}
+
+from which one can derive the associated stress, $ \sE $, symmetric gradient of displacement field, $ \eE $, and the body force, $ \mathbf{f} $
+
+\begin{equation*}
+	\begin{aligned}
+		&\sE \colon \Omega \rightarrow \mathbb{R}^{2\times2}, \quad &&\sE = \begin{bmatrix}
+			-\pi\left[\alpha\sin(\pi x) + \beta\sin(\pi y)\right] & 0 \\
+			0 &-\pi\left[\alpha\sin(\pi y) + \beta\sin(\pi x)\right]
+		\end{bmatrix}
+		 \\
+	 	&\eE \colon \Omega \rightarrow \mathbb{R}^{2\times2}, \quad &&\eE = \begin{bmatrix}
+	 		-\pi \sin(\pi x) & 0 \\
+	 		0 &-\pi \sin(\pi y)
+	 	\end{bmatrix}
+ 		\\
+ 		&\mathbf{f} \colon \Omega \rightarrow \mathbb{R}^{2}, \quad &&\mathbf{f} = \left[\pi^2\alpha\cos(\pi x), \pi^2\alpha\cos(\pi y) \right]^{\top}
+	\end{aligned}
+\end{equation*}
+
+
+being $ \alpha = (\lambda_L + 2\mu_L) $ and $ \beta = \lambda_L $. 
+
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{... }
+	\def\svgwidth{\columnwidth}  
+	\input{Figures/ddcm_convergence_elasticity.pdf_tex}  
+	\label{fig:ddcm_convergence_elasticity}  
+\end{figure}
+
 
 \cleardoublepage
 
