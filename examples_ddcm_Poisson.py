@@ -1518,7 +1518,7 @@ def main_EX7_():
        kappa0 = fd.Constant(1.0)
        return kappa0
     
-    def sigma(u): # Quadratic
+    def sigma(u): # Quadratic case
        sigma0 = fd.Constant(0.5)
        kappa = -sigma0*u**0.5
        return kappa
