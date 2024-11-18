@@ -1485,11 +1485,168 @@ def main_EX6_():
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
+    return 0
 
+#----------------------------------------------------------------------------
+
+# Example adding a nonlinear reaction term to induze coupling between the equations
+def main_EX7_():
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    
+    #________________________________
+    def mysource(x):
+        return fd.Constant(100.0) # so as to activate the nonlinearities
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    def kappa(u):
+       kappa0 = fd.Constant(1.0)
+       return kappa0
+    
+    def sigma(u): # Quadratic
+       sigma0 = fd.Constant(0.5)
+       kappa = -sigma0*u**0.5
+       return kappa
+    '''
+    def sigma(u): # Exponencial
+       sigma0 = fd.Constant(10.0)
+       beta = fd.Constant(0.4)
+       kappa = -sigma0*fd.exp(-beta*u)
+       return kappa
+        
+    def sigma(u): # Logistic
+       sigma0 = fd.Constant(1.0)
+       beta = fd.Constant(1.0)
+       kappa = sigma0*u*(1.0 - u/beta)
+       return kappa
+    '''
+    '''
+    def sigma(u): # Michaelis
+       sigma0 = fd.Constant(1.0)
+       beta = fd.Constant(1.0)
+       kappa = sigma0*u/(beta + u)
+       return kappa
+    '''
+    params = {'kappa': kappa, 'sigma': sigma}
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
+
+    ref_prob.solve(0.0, "myrefsolNL")
+
+    raise Exception('kdkkdkdkdkdkdkdkdkdkdkdkkdkdkdkdkdkdkdkdk')
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution begins ...')
+    print('-------------------------------------------------------')
+
+    # Note in this case, I've made the data associated to the same domain (and mesh)
+    # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
+    ddcm_data = PoissonDDCMData(domain)
+
+    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
+    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    # Let us suppose we do some continuation to compute the data:
+    Nbc, Nth = 4, 4
+    Nsampx, Nsampy  = 1, 10
+    bcvals = np.linspace(2.0, 8.0, Nbc)
+    gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+    count = 0
+    for bcvs in bcvals:
+
+        print('----')
+        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
+        def mysynbcvals(x):
+            return fd.Constant(bcvs)
+        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
+        
+        params = {'kappa': kappa_of_u, 'reaction': None}
+        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, None, PoissonMixedHdiv, orders=[2,1])
+        synth_prob.solve(bcvs, "mysynthsol")
+
+        # Sample the synthetic solution: Program this according to your problem
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+        std_sol = synth_prob.std_solution
+        # Pay attention: this is a concious decision
+        # and it may change in other situations
+        g = fd.project(std_sol.g, synth_domain.VDG0)
+        s = fd.project(std_sol.s, synth_domain.VDG0)
+        gradu_sampled_vals = np.array(g.at(xs))
+        flux_sampled_vals = np.array(s.at(xs))
+        #-------------------------------------------  
+        
+        # Apply any manipulation/transformation you need to define
+        # the synthetic data (rotations, scalings, removing outliers, etc)
+        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
+            ct, st = np.cos(angle), np.sin(angle)
+            for s in range(Nsampx*Nsampy):
+                gradu_samples[count,0] = ct * gradu_sampled_vals[s,0] - st * gradu_sampled_vals[s,1]
+                gradu_samples[count,1] = st * gradu_sampled_vals[s,0] + ct * gradu_sampled_vals[s,1]
+                flux_samples[count,0] = ct * flux_sampled_vals[s,0] - st * flux_sampled_vals[s,1]
+                flux_samples[count,1] = st * flux_sampled_vals[s,0] + ct * flux_sampled_vals[s,1]
+                count += 1
+    
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+
+    ddcm_data.Distribute(ref_prob.std_solution, 'Project-VDG0', flag_plot=True)
+    
+    print('--------------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('--------------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1])
+
+    ddcm_prob.solve("myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
 
     return 0
 
 #----------------------------------------------------------------------------
+
 #--- Run
 import sys
 
@@ -1519,5 +1676,7 @@ elif(main_selector == 51): # Forcheimer's model with anysotropic K
 elif(main_selector == 4): # Data-driven solution based on reference solution given by analytical expression
     npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
     print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
+elif(main_selector == 7): # Data-driven solution based on reference solution given by analytical expression
+    main_EX7_()
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)

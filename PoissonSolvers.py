@@ -324,6 +324,10 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
     Res += q*v*fd.dx(degree=4) + pressure_boundary_term
 
+    sigma = params['sigma']
+    if(sigma != None):
+        Res += sigma(u) * v * fd.dx(degree=4)
+
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
     # Compute g in a consistent way?
