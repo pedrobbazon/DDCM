@@ -1501,12 +1501,33 @@ def main_EX7_():
 
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution
 
+    mymeshfile, tags = CreateMeshInclusions('inclusions')
+
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
+
+    # The following lines define a piecewise constant function for the reaction coefficient
+    Qh = fd.FunctionSpace(domain.msh, "DG", degree=0)
+    sigma = fd.TrialFunction(Qh)
+    vp = fd.TestFunction(Qh)
+    ap = sigma*vp*fd.dx
+    sigmaA, sigmaB = 0.0, 100.0
+    ninclusions = 3
+    background_marker = tags['background_marker']
+    inclusion_marker = tags['inclusion_marker']
+    Lp = fd.Constant(sigmaA)*vp*fd.dx(background_marker)
+    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+0)
+    Lp += fd.Constant(sigmaA)*vp*fd.dx(inclusion_marker+1)
+    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+2)
+
+    sigmah = fd.Function(Qh, name='sigma')
+    opts={"ksp_type": "preonly", "pc_type": "lu"}
+    fd.solve(ap==Lp, sigmah, bcs=[], solver_parameters=opts)
+    VTKFile("sigma.pvd").write(sigmah)
     
     #________________________________
     def mysource(x):
-        return fd.Constant(100.0) # so as to activate the nonlinearities
+        return fd.Constant(1.0) # so as to activate the nonlinearities
     def mysurfaceflux(x):
         return None
     def mybcvals(x):
@@ -1518,11 +1539,14 @@ def main_EX7_():
        kappa0 = fd.Constant(1.0)
        return kappa0
     
-    def sigma(u): # Quadratic case
-       sigma0 = fd.Constant(0.5)
-       kappa = -sigma0*u**0.5
-       return kappa
+    def sigma(u): # Linear case with discontinuous sigma
+        return sigmah*fd.exp(-0.5*u)
+
     '''
+    def sigma(u): # Quadratic case
+       sigma0 = fd.Constant(10.0)
+       sigma = -sigma0*u**2
+       return sigma
     def sigma(u): # Exponencial
        sigma0 = fd.Constant(10.0)
        beta = fd.Constant(0.4)
