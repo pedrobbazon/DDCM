@@ -297,6 +297,13 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
         # Some non-zero initial guess to avoid singularities
         w.sub(1).interpolate(boundary_vals(x))
+
+    elif(flag_setting == 'Pure-Neumann'):
+        
+        q = volumetric_source(x)
+                
+        # Flux bc (strong in this formulation) - empty for this setting
+        bcall = [fd.DirichletBC(W.sub(0), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), 'on_boundary')]
         
     elif(flag_setting == 'Uniaxial'):
         
@@ -322,7 +329,13 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
     kappa = params['kappa']
     Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
-    Res += q*v*fd.dx(degree=4) + pressure_boundary_term
+    Res += q*v*fd.dx(degree=4)
+    if(flag_setting == 'Pure-Dirichlet'):
+        Res += pressure_boundary_term
+
+    sigma = params['sigma']
+    if(sigma != None):
+        Res += sigma(u) * v * fd.dx(degree=4)
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
