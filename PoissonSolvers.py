@@ -333,9 +333,9 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     if(flag_setting == 'Pure-Dirichlet'):
         Res += pressure_boundary_term
 
-    sigma = params['sigma']
-    if(sigma != None):
-        Res += sigma(u) * v * fd.dx(degree=4)
+    reac = params['sigma']
+    if(reac != None):
+        Res += reac(u) * v * fd.dx(degree=4)
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
@@ -531,5 +531,76 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         VTKFile(filename, mode=mode).write(gradu, time=tt)
 
     return sexact, uexact, gradexact
+
+def PoissonPrimal(domain, flag_quads, params, flag_setting,
+                  volumetric_source, boundary_flux, boundary_vals,
+                  FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
+
+    # This function is essentially called for visualization purposes
+    # in turn, the solution that it returns is the same analytical function
+    # provided as input
+
+    # The mesh and spaces are intended to represent well the 
+    # analytical solution and they will likely be quite accurate
+    mesh = domain.msh
+    x = fd.SpatialCoordinate(mesh)
+
+    orderU = orders[0]
+    CG = fd.FunctionSpace(mesh, "CG", orderU)
+
+    u = fd.Function(CG, name='Solution')
+    v = fd.TestFunction(CG)
+    n = fd.FacetNormal(mesh)
+
+    kappa = params['kappa']
+    Res  = (kappa(u))*fd.dot(fd.grad(u), fd.grad(v))*fd.dx(degree=4)
+
+    if(flag_setting == 'Pure-Dirichlet'):
+        
+        q = volumetric_source(x)
+        
+        # Flux bc (strong in this formulation) - empty for this setting
+        bcall = [fd.DirichletBC(CG, boundary_vals(x), 'on_boundary')]
+
+    elif(flag_setting == 'Pure-Neumann'):
+        
+        q = volumetric_source(x)
+        Res += boundary_flux(x) * v * fd.ds(degree=4)
+        bcall = []
+    
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+
+    Res -= q*v*fd.dx(degree=4)
+
+    reac = params['sigma']
+    if(reac != None):
+        Res += reac(u) * v * fd.dx(degree=4)
+
+    fd.solve(Res == 0, u, bcs=bcall, solver_parameters=petsc_opt1)
+    s = kappa(u)*fd.grad(u)
+    g = fd.grad(u)
+    
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/flux.pvd'
+        spl = fd.project(s, domain.VDG0, name='Reference.Grad(u)')
+        VTKFile(filename, mode=mode).write(spl, time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        u.rename('Reference.Potential')
+        VTKFile(filename, mode=mode).write(u, time=tt)
+        
+        filename = dir_outs+'/gradu.pvd'
+        gpl = fd.project(g, domain.VDG0, name='Reference.Grad(u)')
+        VTKFile(filename, mode=mode).write(gpl, time=tt)
+
+    return s, u, g
 
 #=====================================================================================

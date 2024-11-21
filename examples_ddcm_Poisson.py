@@ -1511,7 +1511,7 @@ def main_EX7_():
     sigma = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = sigma*vp*fd.dx
-    sigmaA, sigmaB = 10.0, 0.0
+    sigmaA, sigmaB = 1000.0, 1.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
@@ -1529,7 +1529,7 @@ def main_EX7_():
     def mysource(x):
         return fd.Constant(1.0) # so as to activate the nonlinearities
     def mysurfaceflux(x):
-        return None
+        return fd.Constant(0.0)
     def mybcvals(x):
         return fd.Constant(0.123456789)
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
@@ -1567,7 +1567,7 @@ def main_EX7_():
        return kappa
     '''
     params = {'kappa': kappa, 'sigma': sigma}
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
 
     ref_prob.solve(0.0, "myrefsolNL")
 
