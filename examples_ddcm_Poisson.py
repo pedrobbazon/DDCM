@@ -1501,7 +1501,7 @@ def main_EX7_():
 
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution
 
-    mymeshfile, tags = CreateMeshInclusions('inclusions')
+    mymeshfile, tags = CreateMesh1Inclusions('inclusions')
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
@@ -1511,14 +1511,14 @@ def main_EX7_():
     sigma = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = sigma*vp*fd.dx
-    sigmaA, sigmaB = 0.0, 100.0
+    sigmaA, sigmaB = 0.0, 1000.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
     Lp = fd.Constant(sigmaA)*vp*fd.dx(background_marker)
     Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+0)
-    Lp += fd.Constant(sigmaA)*vp*fd.dx(inclusion_marker+1)
-    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+2)
+    #Lp += fd.Constant(sigmaA)*vp*fd.dx(inclusion_marker+1)
+    #Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+2)
 
     sigmah = fd.Function(Qh, name='sigma')
     opts={"ksp_type": "preonly", "pc_type": "lu"}
@@ -1540,7 +1540,7 @@ def main_EX7_():
        return kappa0
     
     def sigma(u): # Linear case with discontinuous sigma
-        return sigmah*fd.exp(-0.5*u)
+        return sigmah*u
 
     '''
     def sigma(u): # Quadratic case
