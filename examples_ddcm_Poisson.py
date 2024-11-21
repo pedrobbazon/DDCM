@@ -1567,7 +1567,7 @@ def main_EX7_():
        return kappa
     '''
     params = {'kappa': kappa, 'sigma': sigma}
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
 
     ref_prob.solve(0.0, "myrefsolNL")
 
