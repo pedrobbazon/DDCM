@@ -1511,7 +1511,7 @@ def main_EX7_():
     sigma = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = sigma*vp*fd.dx
-    sigmaA, sigmaB = 0.0, 1000.0
+    sigmaA, sigmaB = 10.0, 0.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
