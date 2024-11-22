@@ -296,7 +296,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         bcall = []
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(boundary_vals(x))
+        #w.sub(1).interpolate(boundary_vals(x))
 
     elif(flag_setting == 'Pure-Neumann'):
         
@@ -335,7 +335,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
 
     reac = params['sigma']
     if(reac != None):
-        Res += reac(u) * v * fd.dx(degree=4)
+        Res -= reac(u) * v * fd.dx(degree=4)
 
     fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1)
 
