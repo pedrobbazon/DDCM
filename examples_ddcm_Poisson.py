@@ -1688,11 +1688,16 @@ def main_EX8_():
     
     #________________________________
     def mysource(x):
-        return fd.Constant(1.0)
+        return fd.Constant(0.0)
     def mysurfaceflux(x):
         return fd.Constant(0.0)
     def mybcvals(x):
-        return fd.Constant(0.123456789)
+        theta = fd.conditional(fd.gt(fd.atan2(x[1]+1e-10, x[0]+1e-10),0), fd.atan2(x[1]+1e-10, x[0]+1e-10), fd.atan2(x[1]+1e-10, x[0]+1e-10) + 2*fd.pi)
+        r = fd.sqrt(x[0]**2 + x[1]**2)
+        omega = 1.75*fd.pi
+        alpha = fd.pi/omega
+        return (r**alpha)*fd.sin(alpha*theta)
+
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
@@ -1705,6 +1710,8 @@ def main_EX8_():
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonPrimal, orders=[1])
 
     ref_prob.solve(0.0, "myrefsol")
+
+    raise Exception('oooopppppooooooppppp')
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
