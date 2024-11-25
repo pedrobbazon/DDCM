@@ -31,7 +31,7 @@ petsc_opt1 = {
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
-            orders, dir_outs):
+            params, orders, dir_outs):
 
     mesh = domain.msh
     
@@ -72,9 +72,6 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     dL += (fd.inner(g, dm) - fd.inner(fd.grad(u), dm))* fd.dx
     dL += (fd.inner(dg, m) - fd.inner(fd.grad(du), m)) * fd.dx
 
-    # Jacobian
-    Jac = fd.derivative(dL, w)
-
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
@@ -83,9 +80,22 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         # Homogeneous boundary condition for scalar Lagrange multiplier
         bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
 
+    elif(flag_setting == 'Pure-Neumann'):
+
+        dL += boundary_flux(x) * dl * fd.ds(degree=4)
+        bc_lst = []
+
     else:
         
         raise ValueError('Unrecognized problem setting option')
+    
+    reac = params['reaction']
+    if(reac != None):
+        dL += reac(u) * dl * fd.dx
+        dL += reac(du) * l *fd.dx
+
+    # Jacobian
+    Jac = fd.derivative(dL, w)
 
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
@@ -120,7 +130,7 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
                   flag_setting, volumetric_source, boundary_flux, boundary_vals,
-                  orders, dir_outs):
+                  params, orders, dir_outs):
 
     mesh = domain.msh
     
@@ -205,7 +215,7 @@ def NLSP5FA_EQUOR(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
-            orders, dir_outs):
+            params, orders, dir_outs):
 
     mesh = domain.msh
     
@@ -293,7 +303,7 @@ def NLSP5FB(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
-            orders, dir_outs):
+            params, orders, dir_outs):
 
     mesh = domain.msh
     
@@ -386,7 +396,7 @@ def NLSP5FC(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
-            orders, dir_outs):
+            params, orders, dir_outs):
 
     mesh = domain.msh
     
@@ -477,7 +487,7 @@ def NLSP5FD(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 def NLSP5FA_MECH(domain, ObjFunc, der_ObjFunc, symgraddata, stressdata, flag_quads,
                  flag_setting, body_force, boundary_force, boundary_vals, boundary_tags,
-                 orders, dir_outs):
+                 params, orders, dir_outs):
     
     mesh = domain.msh
     

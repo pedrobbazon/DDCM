@@ -477,13 +477,14 @@ class DDCMSolution():
 # Program the different DDCM formulations
 class DDCMProblem():
 
-    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation, orders):
+    def __init__(self, ddcm_data, ObjF, dObjF, setting_type_flag: str, forcings, ddcm_formulation, orders, params=None):
         self.ddcm_data = ddcm_data
         self.J = ObjF        # Function to be minimized
         self.dJ = dObjF      # Jacobian of function to be minimized (can be given or compute by the program)
         self.setting_type = setting_type_flag
         self.ddcm_formulation = ddcm_formulation
         self.forcings = forcings
+        self.params = params
         self.orders = orders
         self.ddcm_solution = DDCMSolution()
 
@@ -501,6 +502,7 @@ class DDCMProblem():
                                                  self.forcings.volumetric_source,
                                                  self.forcings.boundary_flux,
                                                  self.forcings.boundary_vals,
+                                                 self.params,
                                                  self.orders,
                                                  dir_outs)
         

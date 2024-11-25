@@ -330,10 +330,10 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
     kappa = params['kappa']
     Res  = ((1.0/kappa(u))*fd.dot(sigma, tau) - fd.div(tau)*u - fd.div(sigma)*v)*fd.dx(degree=4)
     Res += q*v*fd.dx(degree=4)
-    if(flag_setting == 'Pure-Dirichlet'):
+    if(flag_setting == 'Pure-Dirichlet' or flag_setting == 'Uniaxial'):
         Res += pressure_boundary_term
 
-    reac = params['sigma']
+    reac = params['reaction']
     if(reac != None):
         Res -= reac(u) * v * fd.dx(degree=4)
 
@@ -574,7 +574,7 @@ def PoissonPrimal(domain, flag_quads, params, flag_setting,
 
     Res -= q*v*fd.dx(degree=4)
 
-    reac = params['sigma']
+    reac = params['reaction']
     if(reac != None):
         Res += reac(u) * v * fd.dx(degree=4)
 
