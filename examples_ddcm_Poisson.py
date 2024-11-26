@@ -1692,7 +1692,7 @@ def main_EX8_():
     def mysurfaceflux(x):
         return fd.Constant(0.0)
     def mybcvals(x):
-        theta = fd.conditional(fd.gt(fd.atan2(x[1]+1e-10, x[0]+1e-10),0), fd.atan2(x[1]+1e-10, x[0]+1e-10), fd.atan2(x[1]+1e-10, x[0]+1e-10) + 2*fd.pi)
+        theta = fd.conditional(fd.gt(fd.atan2(x[1]+1e-12, x[0]+1e-12),0), fd.atan2(x[1]+1e-12, x[0]+1e-12), fd.atan2(x[1]+1e-12, x[0]+1e-12) + 2*fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2)
         omega = 1.75*fd.pi
         alpha = fd.pi/omega
@@ -1711,8 +1711,6 @@ def main_EX8_():
 
     ref_prob.solve(0.0, "myrefsol")
 
-    raise Exception('oooopppppooooooppppp')
-
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
     print('----------------------------------------------------------')
@@ -1727,54 +1725,67 @@ def main_EX8_():
     # Note in this case, I've made the data associated to the same domain (and mesh)
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = PoissonDDCMData(domain)
+    
+    one_sample_per_element = False
+    if(one_sample_per_element == True): # One point per element centroid
+        synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
+        synth_prob = PoissonStdProblem(synth_domain, params, 'Pure-Dirichlet', forcings, None, PoissonPrimal, orders=[1])
+        synth_prob.solve(0.0, "mysynthsol")
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+        stdsyn_sol = synth_prob.std_solution
+        g = fd.project(stdsyn_sol.g, synth_domain.VDG0)
+        s = fd.project(stdsyn_sol.s, synth_domain.VDG0)
+        gradu_samples = np.array(g.at(xs))
+        flux_samples = np.array(s.at(xs))
+    else:
+        nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
+        synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
-    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+        # Let us suppose we do some continuation to compute the data:
+        Nbc, Nth = 5, 5
+        Nsampx, Nsampy  = 1, 1
+        bcvals = np.linspace(1.0, 20.0, Nbc)
+        gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+        flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
+        count = 0
+        for bcvs in bcvals:
 
-    # Let us suppose we do some continuation to compute the data:
-    Nbc, Nth = 10, 10
-    Nsampx, Nsampy  = 1, 1
-    bcvals = np.linspace(1.0, 8.0, Nbc)
-    gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
-    flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
-    count = 0
-    for bcvs in bcvals:
+            print('----')
+            print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
+            def mysynbcvals(x):
+                return fd.Constant(bcvs)
+            synth_forcings = PoissonForcingData(None, None, mysynbcvals)
+            
+            params = {'kappa': kappa, 'reaction': None}
+            synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, None, PoissonMixedHdiv, orders=[2,1])
+            synth_prob.solve(bcvs, "mysynthsol")
 
-        print('----')
-        print('|||| B.C. Val on top wall= %1.2f' %(bcvs))
-        def mysynbcvals(x):
-            return fd.Constant(bcvs)
-        synth_forcings = PoissonForcingData(None, None, mysynbcvals)
-        
-        params = {'kappa': kappa, 'reaction': None}
-        synth_prob = PoissonStdProblem(synth_domain, params, 'Uniaxial', synth_forcings, None, PoissonMixedHdiv, orders=[2,1])
-        synth_prob.solve(bcvs, "mysynthsol")
-
-        # Sample the synthetic solution: Program this according to your problem
-        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
-        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
-        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
-        xlsg, ylsg = np.meshgrid(xls, yls)
-        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
-        std_sol = synth_prob.std_solution
-        # Pay attention: this is a concious decision
-        # and it may change in other situations
-        g = fd.project(std_sol.g, synth_domain.VDG0)
-        s = fd.project(std_sol.s, synth_domain.VDG0)
-        gradu_sampled_vals = np.array(g.at(xs))
-        flux_sampled_vals = np.array(s.at(xs))
-        #-------------------------------------------  
-        
-        # Apply any manipulation/transformation you need to define
-        # the synthetic data (rotations, scalings, removing outliers, etc)
-        for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
-            ct, st = np.cos(angle), np.sin(angle)
-            for s in range(Nsampx*Nsampy):
-                gradu_samples[count,0] = ct * gradu_sampled_vals[s,0] - st * gradu_sampled_vals[s,1]
-                gradu_samples[count,1] = st * gradu_sampled_vals[s,0] + ct * gradu_sampled_vals[s,1]
-                flux_samples[count,0] = ct * flux_sampled_vals[s,0] - st * flux_sampled_vals[s,1]
-                flux_samples[count,1] = st * flux_sampled_vals[s,0] + ct * flux_sampled_vals[s,1]
-                count += 1
+            # Sample the synthetic solution: Program this according to your problem
+            Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+            xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+            yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+            xlsg, ylsg = np.meshgrid(xls, yls)
+            xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+            std_sol = synth_prob.std_solution
+            # Pay attention: this is a concious decision
+            # and it may change in other situations
+            g = fd.project(std_sol.g, synth_domain.VDG0)
+            s = fd.project(std_sol.s, synth_domain.VDG0)
+            gradu_sampled_vals = np.array(g.at(xs))
+            flux_sampled_vals = np.array(s.at(xs))
+            #-------------------------------------------  
+            
+            # Apply any manipulation/transformation you need to define
+            # the synthetic data (rotations, scalings, removing outliers, etc)
+            for angle in np.linspace(0.0, 2.*np.pi, Nth, endpoint=False):
+                ct, st = np.cos(angle), np.sin(angle)
+                for s in range(Nsampx*Nsampy):
+                    gradu_samples[count,0] = ct * gradu_sampled_vals[s,0] - st * gradu_sampled_vals[s,1]
+                    gradu_samples[count,1] = st * gradu_sampled_vals[s,0] + ct * gradu_sampled_vals[s,1]
+                    flux_samples[count,0] = ct * flux_sampled_vals[s,0] - st * flux_sampled_vals[s,1]
+                    flux_samples[count,1] = st * flux_sampled_vals[s,0] + ct * flux_sampled_vals[s,1]
+                    count += 1
     
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
 
