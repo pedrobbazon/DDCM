@@ -341,27 +341,50 @@ def CreateMesh1Inclusions(meshname):
     return filename, tags
 
 
-def CreateMeshReentrantCorner(meshname):
+def CreateMeshReentrantCorner(meshname, case=1):
 
-    lc = 1.0e-1
     gmsh.initialize()
-    gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-    gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
-    gmsh.model.geo.addPoint(0, 0, 0, 0.01*lc, 3)
-    gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
-    gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
-    gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
+    lc = 1.0e-1
+    if(case == 1 or case == 2):    
+        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+        if(case == 1):
+            gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
+        elif(case == 2):
+            gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
+        gmsh.model.geo.addPoint(0, 0, 0, 0.01*lc, 3)
+        gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
+        gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
+        gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
+
+        gmsh.model.geo.addLine(1, 2, 1)
+        gmsh.model.geo.addLine(2, 3, 2)
+        gmsh.model.geo.addLine(3, 4, 3)
+        gmsh.model.geo.addLine(4, 5, 4)
+        gmsh.model.geo.addLine(5, 6, 5)
+        gmsh.model.geo.addLine(6, 1, 6)
+        gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5, 6], 1)
+        gmsh.model.geo.addPlaneSurface([1], 1)
+        gmsh.model.geo.synchronize()
+        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
+    elif(case == 3):
+        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+        gmsh.model.geo.addPoint(0, 0, 0, 0.01*lc, 2)
+        gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
+        gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
+        gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
+
+        gmsh.model.geo.addLine(1, 2, 1)
+        gmsh.model.geo.addLine(2, 3, 2)
+        gmsh.model.geo.addLine(3, 4, 3)
+        gmsh.model.geo.addLine(4, 5, 4)
+        gmsh.model.geo.addLine(5, 1, 5)
+        gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5], 1)
+        gmsh.model.geo.addPlaneSurface([1], 1)
+        gmsh.model.geo.synchronize()
+        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
+    else:
+        raise ValueError('case not recognized in CreateMeshReentrantCorner\n\n')
     
-    gmsh.model.geo.addLine(1, 2, 1)
-    gmsh.model.geo.addLine(2, 3, 2)
-    gmsh.model.geo.addLine(3, 4, 3)
-    gmsh.model.geo.addLine(4, 5, 4)
-    gmsh.model.geo.addLine(5, 6, 5)
-    gmsh.model.geo.addLine(6, 1, 6)
-    gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5, 6], 1)
-    gmsh.model.geo.addPlaneSurface([1], 1)
-    gmsh.model.geo.synchronize()
-    gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
     ps = gmsh.model.addPhysicalGroup(2, [1])
     gmsh.model.setPhysicalName(2, ps, "My surface") 
 

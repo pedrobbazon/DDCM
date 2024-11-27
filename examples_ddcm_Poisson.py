@@ -1681,7 +1681,14 @@ def main_EX8_():
 
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution
 
-    mymeshfile, tags = CreateMeshReentrantCorner('reentrant')
+    case_corner = 3
+    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner)
+    if(case_corner == 1):
+        omega = 1.75*fd.pi
+    elif(case_corner == 2):
+        omega = 1.5*fd.pi
+    elif(case_corner == 3):
+        omega = 1.25*fd.pi
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
@@ -1694,7 +1701,6 @@ def main_EX8_():
     def mybcvals(x):
         theta = fd.conditional(fd.gt(fd.atan2(x[1]+1e-12, x[0]+1e-12),0), fd.atan2(x[1]+1e-12, x[0]+1e-12), fd.atan2(x[1]+1e-12, x[0]+1e-12) + 2*fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2)
-        omega = 1.75*fd.pi
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
 
