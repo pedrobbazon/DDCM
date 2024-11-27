@@ -1538,11 +1538,17 @@ def main_EX7_():
     def kappa(u):
        kappa0 = fd.Constant(1.0)
        return kappa0
-    '''
+    
+    '''    
     def reaction(u): # Linear case with discontinuous sigma
         return fd.Constant(sigmaB)*u
+    def dreaction(u): # Linear case with discontinuous sigma
+        return fd.Constant(sigmaB)
+
     def reaction(u): # Quadratic case
        return fd.Constant(sigmaB)*u**2
+    def dreaction(u):
+       return 2.0*fd.Constant(sigmaB)*u
     '''
     
     def reaction(u): # Exponencial
@@ -1550,21 +1556,20 @@ def main_EX7_():
        return fd.Constant(sigmaB)*fd.exp(-beta*u)
     def dreaction(u): # Exponencial
        beta = fd.Constant(0.4)
-       return fd.Constant(sigmaB)*beta*fd.exp(-beta*u)
-    '''    
+       return fd.Constant(sigmaB)*beta*fd.exp(-beta*u)    
+    
+    '''
     def reaction(u): # Logistic
        sigma0 = fd.Constant(1.0)
        beta = fd.Constant(1.0)
        kappa = sigma0*u*(1.0 - u/beta)
        return kappa
-    '''
-    '''
     def reaction(u): # Michaelis
        sigma0 = fd.Constant(1.0)
        beta = fd.Constant(1.0)
-       kappa = sigma0*u/(beta + u)
-       return kappa
+       return sigma0*u/(beta + u)
     '''
+
     params = {'kappa': kappa, 'reaction': reaction}
     #ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
