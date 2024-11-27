@@ -1739,13 +1739,13 @@ def main_EX8_():
         gradu_samples = np.array(g.at(xs))
         flux_samples = np.array(s.at(xs))
     else:
-        nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
+        nsd, Ls, Ns = 2, [0.2, 1.0], [2, 4]
         synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
         # Let us suppose we do some continuation to compute the data:
-        Nbc, Nth = 5, 5
+        Nbc, Nth = 20, 10
         Nsampx, Nsampy  = 1, 1
-        bcvals = np.linspace(1.0, 20.0, Nbc)
+        bcvals = 1.0 + np.logspace(np.log10(0.5),np.log10(20),Nbc)
         gradu_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
         flux_samples = np.empty(shape=(Nbc*Nth*Nsampx*Nsampy,2), dtype=np.float64)
         count = 0

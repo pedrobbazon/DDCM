@@ -579,7 +579,7 @@ def PoissonPrimal(domain, flag_quads, params, flag_setting,
         Res += reac(u) * v * fd.dx(degree=4)
 
     fd.solve(Res == 0, u, bcs=bcall, solver_parameters=petsc_opt1)
-    s = kappa(u)*fd.grad(u)
+    s = -kappa(u)*fd.grad(u)
     g = fd.grad(u)
     
     if(dir_outs != None):

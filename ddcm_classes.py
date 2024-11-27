@@ -428,6 +428,7 @@ class PoissonDDCMData():
             raise ValueError(flag_project+' option not recognized in method Distribuite()')
         
         reference_state = np.dstack([refgrad[:,0], refgrad[:,1], refflux[:,0], refflux[:,1]])[0]
+        print(reference_state)
 
         # These are only vectors with data, not associated yet to any domain
         sampgrad = self.sampled_grad
