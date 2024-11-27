@@ -1511,7 +1511,7 @@ def main_EX7_():
     source = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
-    sigmaA, sigmaB = 0.0, 1000.0
+    sigmaA, sigmaB = 0.0, 10.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
@@ -1538,21 +1538,20 @@ def main_EX7_():
     def kappa(u):
        kappa0 = fd.Constant(1.0)
        return kappa0
-    
+    '''
     def reaction(u): # Linear case with discontinuous sigma
         return fd.Constant(sigmaB)*u
-
-    '''
     def reaction(u): # Quadratic case
-       sigma0 = fd.Constant(10.0)
-       sigma = -sigma0*u**2
-       return sigma
+       return fd.Constant(sigmaB)*u**2
+    '''
+    
     def reaction(u): # Exponencial
-       sigma0 = fd.Constant(10.0)
        beta = fd.Constant(0.4)
-       kappa = -sigma0*fd.exp(-beta*u)
-       return kappa
-        
+       return fd.Constant(sigmaB)*fd.exp(-beta*u)
+    def dreaction(u): # Exponencial
+       beta = fd.Constant(0.4)
+       return fd.Constant(sigmaB)*beta*fd.exp(-beta*u)
+    '''    
     def reaction(u): # Logistic
        sigma0 = fd.Constant(1.0)
        beta = fd.Constant(1.0)
@@ -1567,8 +1566,8 @@ def main_EX7_():
        return kappa
     '''
     params = {'kappa': kappa, 'reaction': reaction}
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
-    #ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
+    #ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
 
     ref_prob.solve(0.0, "myrefsol")
 
@@ -1587,7 +1586,7 @@ def main_EX7_():
     # we used for the reference solution, but this doesn't have to be the case, it can be a finer mesh
     ddcm_data = PoissonDDCMData(domain)
 
-    nsd, Ls, Ns = 2, [0.2, 1.0], [20, 100]
+    nsd, Ls, Ns = 2, [0.2, 1.0], [2, 10]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
 
     # Let us suppose we do some continuation to compute the data:
@@ -1653,7 +1652,7 @@ def main_EX7_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_params = {'reaction': reaction}
+    ddcm_params = {'reaction': reaction, 'dreaction': dreaction}
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Neumann', forcings, NLSP5FA, orders=[0,1], params=ddcm_params)
 
     ddcm_prob.solve("myddcmsol")
