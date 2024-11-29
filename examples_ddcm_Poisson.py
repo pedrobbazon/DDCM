@@ -1538,26 +1538,27 @@ def main_EX7_():
     def kappa(u):
        kappa0 = fd.Constant(1.0)
        return kappa0
-    
-    '''    
+        
     def reaction(u): # Linear case with discontinuous sigma
         return fd.Constant(sigmaB)*u
     def dreaction(u): # Linear case with discontinuous sigma
         return fd.Constant(sigmaB)
-
+    
+    '''
     def reaction(u): # Quadratic case
        return fd.Constant(sigmaB)*u**2
     def dreaction(u):
        return 2.0*fd.Constant(sigmaB)*u
     '''
     
+    '''
     def reaction(u): # Exponencial
        beta = fd.Constant(0.4)
        return fd.Constant(sigmaB)*fd.exp(-beta*u)
     def dreaction(u): # Exponencial
        beta = fd.Constant(0.4)
        return fd.Constant(sigmaB)*beta*fd.exp(-beta*u)    
-    
+    '''
     '''
     def reaction(u): # Logistic
        sigma0 = fd.Constant(1.0)
@@ -1685,7 +1686,7 @@ def main_EX8_():
 
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution
 
-    case_corner = 3
+    case_corner = 1
     mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner)
     if(case_corner == 1):
         omega = 1.75*fd.pi
