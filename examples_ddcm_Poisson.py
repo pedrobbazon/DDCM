@@ -1816,7 +1816,7 @@ def main_EX8_():
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_params = {'reaction': None}
+    ddcm_params = {'reaction': None, 'dreaction': None}
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, NLSP5FA, orders=[0,1], params=ddcm_params)
 
     ddcm_prob.solve("myddcmsol")

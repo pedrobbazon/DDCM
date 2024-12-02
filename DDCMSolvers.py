@@ -90,8 +90,8 @@ def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         raise ValueError('Unrecognized problem setting option')
     
     reac = params['reaction']
-    dreac = params['dreaction']
     if(reac != None):
+        dreac = params['dreaction']
         dL += reac(u) * dl * fd.dx
         dL += dreac(u) * du * l * fd.dx
 
