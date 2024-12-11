@@ -29,6 +29,124 @@ petsc_opt1 = {
     'pc_factor_mat_solver_type': 'mumps'
 }
 
+def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
+              flag_setting, volumetric_source, boundary_flux, boundary_vals,
+              params, orders, dir_outs):
+
+    mesh = domain.msh
+    
+    orderF, orderU = orders
+
+    DGtype = 'DG'
+    if(flag_quads):
+        DGtype = 'DQ'
+    CG  = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF)
+
+    # Mixed space: In this formulation we assume all scalar fields 
+    # are approximated in the same space, the same for all vector fields 
+    #  flux    u    g  lambda  mu
+    W = VDG * CG * VDG * CG * VDG
+
+    x = fd.SpatialCoordinate(mesh)
+
+    # Unknown field
+    w = fd.Function(W)
+    s, u, e, lam, mu = fd.split(w)
+
+    # Test functions
+    vs, vu, ve, vlam, vmu = fd.TestFunctions(W)
+
+    # Functional to be minimized
+    J = ObjFunc(e, graddata, s, fluxdata)
+
+    zeda  = parameters['zeda']
+    theta = parameters['theta']
+    kappa = parameters['kappa']
+    alpha = parameters['alpha']
+    beta  = parameters['beta']
+    ls    = parameters['ls']
+    lmu   = parameters['lmu']
+    f     = volumetric_source
+
+    # Lagrangian:
+    # 1. Proximity function
+    L  = J
+    # 2. Balance and Compatibility constraint
+    L += fd.inner(s,fd.grad(lam)) * fd.dx
+    L += fd.inner(zeda*u - f, lam) * fd.dx
+    L += fd.inner(e - fd.grad(u), mu) * fd.dx
+    # 3. Stabilization terms
+    resB = fd.div(s) + zeda*u - f
+    L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
+    resC = e - fd.grad(u) 
+    L += 0.5*alpha*fd.inner(resC) * fd.dx
+    resA = fd.div(mu) + zeda*lam
+    L -= (0.5*beta*lmu**2)*fd.inner(resB,resB) * fd.dx
+
+    # First variations
+    #if(der_ObjFunc == None):
+    #    dqJ = fd.derivative(J, q, dq)
+    #    dgJ = fd.derivative(J, g, dg)
+       
+
+    bc_lst = []
+    if(flag_setting == 'Pure-Dirichlet'):
+        # Boundary condition for potential field
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
+
+        # Homogeneous boundary condition for scalar Lagrange multiplier
+        bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
+
+    elif(flag_setting == 'Pure-Neumann'):
+
+        dL += boundary_flux(x) * dl * fd.ds(degree=4)
+        bc_lst = []
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+    
+    reac = params['reaction']
+    if(reac != None):
+        dreac = params['dreaction']
+        dL += reac(u) * dl * fd.dx
+        dL += dreac(u) * du * l * fd.dx
+
+    # Jacobian
+    Jac = fd.derivative(dL, w)
+
+    # Non-linear solve (see solver parameters above)
+    fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+    
+    if(dir_outs != None):
+
+        # Split the solution for post-processing
+        #qpl, ppl, gpl, lpl, mpl = split(w)
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('DDCM.Flux')
+        VTKFile(filename).write(w.sub(0))
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('DDCM.Potential')
+        VTKFile(filename).write(w.sub(1))
+        
+        filename = dir_outs+'/g.pvd'
+        w.sub(2).rename('DDCM.gradient(u)')
+        VTKFile(filename).write(w.sub(2))
+
+        filename = dir_outs+'/l.pvd'
+        w.sub(3).rename('DDCM.lambda')
+        VTKFile(filename).write(w.sub(3))
+
+        filename = dir_outs+'/m.pvd'
+        w.sub(4).rename('DDCM.mu')
+        VTKFile(filename).write(w.sub(4))
+    
+    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
+
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
             params, orders, dir_outs):
