@@ -59,7 +59,8 @@ class ComputationalDomain:
     def Create(self):
         if(self.simple_domain):
             return fd.RectangleMesh(self.Nx, self.Ny, 
-                                    self.Lx, self.Ly, 
+                                    self.Lx, self.Ly,
+                                    originX=0.0, originY=0.0,
                                     quadrilateral=self.flag_quads)
         else:
             return fd.Mesh(self.meshfile)
@@ -318,12 +319,16 @@ class MechanicalDDCMData():
 #
 # Discrete data to be used in the DDCM problem (Poisson problem)
 class PoissonDDCMData():
-    def __init__(self, domain):
+    def __init__(self, domain, Analytical=False, fluxex=None, gradex=None):
         # The DDCM data is associated to a domain
         self.domain = domain
         # The complete sampled data set 
         self.sampled_grad = None
         self.sampled_flux = None
+
+        self.Analytical = Analytical
+        self.fluxex = fluxex
+        self.gradex = gradex
         '''
         Data distributed over the domain to be used by the DDCM solver:
         by option we assign the data to the elements.
@@ -333,6 +338,10 @@ class PoissonDDCMData():
         '''
         self.graddata = fd.Function(domain.VDG0)
         self.fluxdata = fd.Function(domain.VDG0)
+        if(self.Analytical):
+            x = fd.SpatialCoordinate(domain.msh)
+            self.graddata = self.gradex(x)
+            self.fluxdata = self.fluxex(x)
 
     #----------------------------------------------------------------------------
     # Read the (Flux-Grad) data from a file and accommodate it in

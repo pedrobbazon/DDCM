@@ -30,22 +30,22 @@ petsc_opt1 = {
 }
 
 def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
-              flag_setting, volumetric_source, boundary_flux, boundary_vals,
-              params, orders, dir_outs):
+             flag_setting, volumetric_source, boundary_flux, boundary_vals,
+             params, orders, dir_outs):
 
     mesh = domain.msh
     
-    orderF, orderU = orders
+    orderS, orderU = orders
 
     DGtype = 'DG'
     if(flag_quads):
         DGtype = 'DQ'
     CG  = fd.FunctionSpace(mesh, family="CG", degree=orderU)
-    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderF)
+    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderS)
 
     # Mixed space: In this formulation we assume all scalar fields 
     # are approximated in the same space, the same for all vector fields 
-    #  flux    u    g  lambda  mu
+    #    s     u    e    lam  mu
     W = VDG * CG * VDG * CG * VDG
 
     x = fd.SpatialCoordinate(mesh)
@@ -56,39 +56,39 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Test functions
     vs, vu, ve, vlam, vmu = fd.TestFunctions(W)
+    vw = fd.TestFunction(W)
 
     # Functional to be minimized
     J = ObjFunc(e, graddata, s, fluxdata)
 
-    zeda  = parameters['zeda']
-    theta = parameters['theta']
-    kappa = parameters['kappa']
-    alpha = parameters['alpha']
-    beta  = parameters['beta']
-    ls    = parameters['ls']
-    lmu   = parameters['lmu']
+    zeda  = params['zeda']
+    theta = params['theta']
+    kappa = params['kappa']
+    alpha = params['alpha']
+    beta  = params['beta']
+    ls    = params['ls']
+    lmu   = params['lmu']
     f     = volumetric_source
 
     # Lagrangian:
     # 1. Proximity function
     L  = J
     # 2. Balance and Compatibility constraint
-    L += fd.inner(s,fd.grad(lam)) * fd.dx
-    L += fd.inner(zeda*u - f, lam) * fd.dx
+    L -= fd.inner(s,fd.grad(lam)) * fd.dx
+    L += fd.inner(zeda*u - f(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
     # 3. Stabilization terms
-    resB = fd.div(s) + zeda*u - f
+    resB = fd.div(s) + zeda*u - f(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
     resC = e - fd.grad(u) 
-    L += 0.5*alpha*fd.inner(resC) * fd.dx
+    L += 0.5*alpha*fd.inner(resC,resC) * fd.dx
     resA = fd.div(mu) + zeda*lam
     L -= (0.5*beta*lmu**2)*fd.inner(resB,resB) * fd.dx
 
     # First variations
     #if(der_ObjFunc == None):
     #    dqJ = fd.derivative(J, q, dq)
-    #    dgJ = fd.derivative(J, g, dg)
-       
+    #    dgJ = fd.derivative(J, g, dg)       
 
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
@@ -106,12 +106,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     else:
         
         raise ValueError('Unrecognized problem setting option')
-    
-    reac = params['reaction']
-    if(reac != None):
-        dreac = params['dreaction']
-        dL += reac(u) * dl * fd.dx
-        dL += dreac(u) * du * l * fd.dx
+
+    # Optimallity conditions
+    dL = fd.derivative(L, w, vw)
 
     # Jacobian
     Jac = fd.derivative(dL, w)
