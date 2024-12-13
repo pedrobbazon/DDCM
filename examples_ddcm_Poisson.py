@@ -1835,7 +1835,9 @@ def main_EX8_():
 #----------------------------------------------------------------------------
 
 # Example of a reference solution based on an analytical expression
-def main_EX9_(N=50):
+
+import math as ma
+def main_EX9_(N=20):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1861,7 +1863,7 @@ def main_EX9_(N=50):
               'ls': h, 'lmu': h, 'formulation': 'Equal-Order'}
 
     def uexact(x):
-        return cos(pi*x[0])*cos(pi*x[1])
+        return fd.cos(ma.pi*x[0])*fd.cos(ma.pi*x[1])
     def sexact(x):
         perm = params['perm']
         return -perm * fd.grad(uexact(x))
@@ -1978,9 +1980,18 @@ elif(main_selector == 9):
     plt.loglog(hhs, L2u, '-or')
     plt.loglog(hhs, H1u, '-ob')
     plt.loglog(hhs, L2s, '-og')
+    plt.loglog(hhs, L2e, '-oc')
+    plt.loglog(hhs, L2l, '-om')
+    plt.loglog(hhs, L2m, '-ok')
     plt.xlabel('$h$')
     plt.ylabel('Error')
-    plt.legend(['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$',  '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'])
+    plt.legend(['$\|u-u_h\|_{L^2}$', 
+                '$\|u-u_h\|_{H^1}$', 
+                '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',
+                 $\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+                '$\|\lambda-\lambda_h\|_{H^1}$', 
+                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$'
+                ])
     plt.show()
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
