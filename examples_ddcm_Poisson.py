@@ -1990,7 +1990,7 @@ elif(main_selector == 9):
                 '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',
                  $\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
                 '$\|\lambda-\lambda_h\|_{H^1}$', 
-                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$'
+                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$', 
                 ])
     plt.show()
 else:
