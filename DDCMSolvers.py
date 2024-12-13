@@ -37,16 +37,24 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     orderS, orderU = orders
 
-    DGtype = 'DG'
-    if(flag_quads):
-        DGtype = 'DQ'
-    CG  = fd.FunctionSpace(mesh, family="CG", degree=orderU)
-    VDG = fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderS)
+    formulation = params['formulation']
+    if(formulation == 'Natural'):
+        DGtype = 'DG'
+        if(flag_quads):
+            DGtype = 'DQ'
+        SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+        VF =  fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderS)
+    elif(formulation == 'Equal-Order'):
+        SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+        VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+    else:
+        raise ValueError('Formulation not recognized in DDCMStab')
 
-    # Mixed space: In this formulation we assume all scalar fields 
-    # are approximated in the same space, the same for all vector fields 
-    #    s     u    e    lam  mu
-    W = VDG * CG * VDG * CG * VDG
+    # Mixed space: 
+    # In this formulation we assume all scalar fields are approximated 
+    # in the same space SF and all vector fields in the same space VF
+    #   s    u    e    lam  mu
+    W = VF * SF * VF * SF * VF
 
     x = fd.SpatialCoordinate(mesh)
 
@@ -54,8 +62,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     w = fd.Function(W)
     s, u, e, lam, mu = fd.split(w)
 
-    # Test functions
-    vs, vu, ve, vlam, vmu = fd.TestFunctions(W)
+    # Test function
     vw = fd.TestFunction(W)
 
     # Functional to be minimized
@@ -71,24 +78,19 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     f     = volumetric_source
 
     # Lagrangian:
-    # 1. Proximity function
+    # Proximity function
     L  = J
-    # 2. Balance and Compatibility constraint
+    # Balance and Compatibility constraint
     L -= fd.inner(s,fd.grad(lam)) * fd.dx
     L += fd.inner(zeda*u - f(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
-    # 3. Stabilization terms
+    # Stabilization terms
     resB = fd.div(s) + zeda*u - f(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
     resC = e - fd.grad(u) 
     L += 0.5*alpha*fd.inner(resC,resC) * fd.dx
     resA = fd.div(mu) + zeda*lam
-    L -= (0.5*beta*lmu**2)*fd.inner(resB,resB) * fd.dx
-
-    # First variations
-    #if(der_ObjFunc == None):
-    #    dqJ = fd.derivative(J, q, dq)
-    #    dgJ = fd.derivative(J, g, dg)       
+    L -= (0.5*beta*lmu**2)*fd.inner(resB,resB) * fd.dx    
 
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):

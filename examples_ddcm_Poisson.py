@@ -1858,7 +1858,7 @@ def main_EX9_(N=50):
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(3.0/32.0), 'beta': fd.Constant(0.5), 
-              'ls': h, 'lmu': h}
+              'ls': h, 'lmu': h, 'formulation': 'Equal-Order'}
 
     def uexact(x):
         return cos(pi*x[0])*cos(pi*x[1])
@@ -1905,7 +1905,7 @@ def main_EX9_(N=50):
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=[0,1], params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=[1,1], params=params)
 
     ddcm_prob.solve("myddcmsol")
 
@@ -1965,7 +1965,22 @@ elif(main_selector == 7): # Data-driven solution with reaction term
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
 elif(main_selector == 9):
-     N = 100
-     hsize, L2error_u, H1error_u, L2error_s, L2error_e, L2error_lmd, L2error_mu = main_EX9_(N)
+    hhs, L2u, H1u, L2s, L2e, L2l, L2m = [], [], [], [], [], [], []
+    for N in [20, 40, 80, 160]:
+        hsize, L2error_u, H1error_u, L2error_s, L2error_e, L2error_lmd, L2error_mu = main_EX9_(N)
+        hhs.append(hsize)
+        L2u.append(L2error_u)
+        H1u.append(H1error_u)
+        L2s.append(L2error_s)
+        L2e.append(L2error_e)
+        L2l.append(L2error_lmd)
+        L2m.append(L2error_mu)
+    plt.loglog(hhs, L2u, '-or')
+    plt.loglog(hhs, H1u, '-ob')
+    plt.loglog(hhs, L2s, '-og')
+    plt.xlabel('$h$')
+    plt.ylabel('Error')
+    plt.legend(['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$',  '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'])
+    plt.show()
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
