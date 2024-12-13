@@ -90,7 +90,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     resC = e - fd.grad(u) 
     L += 0.5*alpha*fd.inner(resC,resC) * fd.dx
     resA = fd.div(mu) + zeda*lam
-    L -= (0.5*beta*lmu**2)*fd.inner(resB,resB) * fd.dx    
+    L -= (0.5*beta*lmu**2)*fd.inner(resA,resA) * fd.dx    
 
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
