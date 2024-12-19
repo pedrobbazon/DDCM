@@ -1860,7 +1860,7 @@ def main_EX9_(N=20):
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(3.0/32.0), 'beta': fd.Constant(0.5), 
-              'ls': h, 'lmu': h, 'formulation': 'Equal-Order'}
+              'ls': h, 'lmu': h, 'formulation': 'Natural'} # 'formulation': 'Equal-Order'
 
     def uexact(x):
         return fd.cos(ma.pi*x[0])*fd.cos(ma.pi*x[1])
@@ -1907,7 +1907,7 @@ def main_EX9_(N=20):
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=[1,1], params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=[0,1], params=params)
 
     ddcm_prob.solve("myddcmsol")
 
@@ -1919,7 +1919,7 @@ def main_EX9_(N=20):
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
     L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type='L2')
-    L2error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
+    L2error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
     L2error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
 
     print('----------------------------------------------------------')
@@ -1968,7 +1968,7 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
     main_EX8_()
 elif(main_selector == 9):
     hhs, L2u, H1u, L2s, L2e, L2l, L2m = [], [], [], [], [], [], []
-    for N in [20, 40, 80, 160]:
+    for N in [20, 50, 100, 200]:
         hsize, L2error_u, H1error_u, L2error_s, L2error_e, L2error_lmd, L2error_mu = main_EX9_(N)
         hhs.append(hsize)
         L2u.append(L2error_u)
@@ -1985,12 +1985,12 @@ elif(main_selector == 9):
     plt.loglog(hhs, L2m, '-ok')
     plt.xlabel('$h$')
     plt.ylabel('Error')
-    plt.legend(['$\|u-u_h\|_{L^2}$', 
+    plt.legend(['$\|u-u_h\|_{L^2}$',
                 '$\|u-u_h\|_{H^1}$', 
                 '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',
-                 $\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+                '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
                 '$\|\lambda-\lambda_h\|_{H^1}$', 
-                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$', 
+                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' 
                 ])
     plt.show()
 else:
