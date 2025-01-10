@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on:         17th May, 2024
-Last Modified on:   30th October, 2024
+Last Modified on:   10th January, 2025
 
 @authors: P. Balbao & R.F. Ausas
 """
@@ -1837,7 +1837,7 @@ def main_EX8_():
 # Example of a reference solution based on an analytical expression
 
 import math as ma
-def main_EX9_(N=20):
+def main_EX9_(formulation='Natural', N=20):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1861,7 +1861,7 @@ def main_EX9_(N=20):
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
               'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-              'ls': h, 'lmu': h, 'formulation': 'Natural'} # 'formulation': 'Equal-Order'
+              'ls': h, 'lmu': h, 'formulation': formulation} 
 
     def uexact(x):
         return fd.cos(ma.pi*x[0])*fd.cos(ma.pi*x[1])
@@ -1908,7 +1908,11 @@ def main_EX9_(N=20):
     def myObjFunc(g,gdata,s,sdata):
         return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
 
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=[0,1], params=params)
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
 
     ddcm_prob.solve("myddcmsol")
 
@@ -1918,10 +1922,14 @@ def main_EX9_(N=20):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
-    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type='L2')
-    L2error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    L2error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
+    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    if(formulation == 'Natural'):
+        typerr = 'L2'
+    elif(formulation == 'Equal-Order'):
+         typerr = 'H1'
+    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type=typerr)
+    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type=typerr)
+    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=typerr)
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -1932,7 +1940,7 @@ def main_EX9_(N=20):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, L2error_s, L2error_e, L2error_lmd, L2error_mu
+    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
 #--- Run
 import sys
@@ -1968,31 +1976,35 @@ elif(main_selector == 7): # Data-driven solution with reaction term
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
 elif(main_selector == 9):
-    hhs, L2u, H1u, L2s, L2e, L2l, L2m = [], [], [], [], [], [], []
+    hhs, L2u, H1u, H1l, Es, Ee, Em = [], [], [], [], [], [], []
     for N in [20, 50, 100, 200]:
-        hsize, L2error_u, H1error_u, L2error_s, L2error_e, L2error_lmd, L2error_mu = main_EX9_(N)
+        #formulation = 'Natural'
+        formulation = 'Equal-Order'
+        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N)
         hhs.append(hsize)
         L2u.append(L2error_u)
         H1u.append(H1error_u)
-        L2s.append(L2error_s)
-        L2e.append(L2error_e)
-        L2l.append(L2error_lmd)
-        L2m.append(L2error_mu)
+        H1l.append(H1error_lmd)
+        Es.append(error_s)
+        Ee.append(error_e)
+        Em.append(error_mu)
     plt.loglog(hhs, L2u, '-or')
     plt.loglog(hhs, H1u, '-ob')
-    plt.loglog(hhs, L2s, '-og')
-    plt.loglog(hhs, L2e, '-oc')
-    plt.loglog(hhs, L2l, '-om')
-    plt.loglog(hhs, L2m, '-ok')
+    plt.loglog(hhs, H1l, '-om')
+    plt.loglog(hhs, Es, '-og')
+    plt.loglog(hhs, Ee, '-oc')
+    plt.loglog(hhs, Em, '-ok')
     plt.xlabel('$h$')
     plt.ylabel('Error')
-    plt.legend(['$\|u-u_h\|_{L^2}$',
-                '$\|u-u_h\|_{H^1}$', 
-                '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',
-                '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-                '$\|\lambda-\lambda_h\|_{H^1}$', 
-                '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' 
-                ])
+    lstleg = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$']
+    if(formulation == 'Natural'):
+        plt.title('Natural')
+        lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
+    elif(formulation == 'Equal-Order'):
+        plt.title('Equal Order')
+        lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{H^1}$', '$\|\mathbf{e}-\mathbf{e}_h\|_{H^1}$', '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{H^1}$']
+    plt.legend(lstleg)
+    plt.savefig('errors'+formulation+'.png')
     plt.show()
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
