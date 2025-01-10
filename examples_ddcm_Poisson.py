@@ -1923,10 +1923,7 @@ def main_EX9_(formulation='Natural', N=20):
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
     H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    if(formulation == 'Natural'):
-        typerr = 'L2'
-    elif(formulation == 'Equal-Order'):
-         typerr = 'H1'
+    typerr = 'L2'
     error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type=typerr)
     error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type=typerr)
     error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=typerr)
@@ -1997,12 +1994,13 @@ elif(main_selector == 9):
     plt.xlabel('$h$')
     plt.ylabel('Error')
     lstleg = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$']
+    lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
+               '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+               '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
     if(formulation == 'Natural'):
         plt.title('Natural')
-        lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
     elif(formulation == 'Equal-Order'):
         plt.title('Equal Order')
-        lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{H^1}$', '$\|\mathbf{e}-\mathbf{e}_h\|_{H^1}$', '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{H^1}$']
     plt.legend(lstleg)
     plt.savefig('errors'+formulation+'.png')
     plt.show()
