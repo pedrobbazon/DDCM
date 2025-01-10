@@ -1859,7 +1859,8 @@ def main_EX9_(N=20):
 
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(3.0/32.0), 'beta': fd.Constant(0.5), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': 'Natural'} # 'formulation': 'Equal-Order'
 
     def uexact(x):

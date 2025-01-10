@@ -73,6 +73,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     kappa = params['kappa']
     alpha = params['alpha']
     beta  = params['beta']
+    gamma = params['gamma']
+    eta  = params['eta']
     ls    = params['ls']
     lmu   = params['lmu']
     f     = volumetric_source
@@ -80,17 +82,27 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Lagrangian:
     # Proximity function
     L  = J
+
     # Balance and Compatibility constraint
     L -= fd.inner(s,fd.grad(lam)) * fd.dx
     L += fd.inner(zeda*u - f(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
+
     # Stabilization terms
+    resC = e - fd.grad(u)
+    L += 0.5*alpha*fd.inner(resC,resC) * fd.dx
+
+    resE = e + mu - graddata
+    L  -= 0.5*gamma*fd.inner(resE,resE) * fd.dx
+
+    resK = kappa*s - fd.grad(lam) - kappa*fluxdata
+    L  -= (0.5*eta/kappa)*fd.inner(resK,resK) * fd.dx
+
     resB = fd.div(s) + zeda*u - f(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
-    resC = e - fd.grad(u) 
-    L += 0.5*alpha*fd.inner(resC,resC) * fd.dx
-    resA = fd.div(mu) + zeda*lam
-    L -= (0.5*beta*lmu**2)*fd.inner(resA,resA) * fd.dx    
+
+    resM = fd.div(mu) + zeda*lam
+    L -= (0.5*beta*lmu**2)*fd.inner(resM,resM) * fd.dx
 
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
