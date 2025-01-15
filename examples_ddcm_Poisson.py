@@ -2056,6 +2056,8 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
 
 #--- Run
 import sys
+from tabulate import tabulate
+
 
 main_selector = np.int32(sys.argv[1])
 
@@ -2120,19 +2122,21 @@ elif(main_selector == 9):
     plt.savefig('errors'+formulation+'.png')
     plt.show()
 elif(main_selector == 91):
-    c_corners = [1, 2, 3, 4]
-    c_corners_labels = ['$\\frac{\pi}{2}$', '$\\frac{5\pi}{4}$', '$\\frac{3\pi}{2}$','$\\frac{7\pi}{4}$']
+    case_corners = [1, 2, 3, 4]
+    c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
     hhs = [0.1, 0.05, 0.025, 0.0125]
     formulation = 'Natural'  # or 'Equal-Order'
     norm_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
                    '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
                    '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
     save_labels = ['L2u', 'H1u', 'H1l', 'Es', 'Ee', 'Em']
-    errors = [[], [], [], [], [], []]
-
+    
+    errors = np.empty((len(norm_labels),len(case_corners), len(hhs)))
+    conv_rates = np.empty((len(norm_labels), len(case_corners)))
+    
     for norm_index, norm_label in enumerate(norm_labels):
         fig, ax = plt.subplots(figsize=(8, 6))
-        for case_corner_index, case_corner in enumerate(c_corners):
+        for case_corner_index, case_corner in enumerate(case_corners):
             norm_values = []  # Reset for each case_corner
             for hsize in hhs:
                 # Call the function
@@ -2140,11 +2144,14 @@ elif(main_selector == 91):
                 # Map computed errors to their respective list
                 error_list = [L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu]
                 norm_values.append(error_list[norm_index])
-            # Append to global errors list
-            errors[norm_index].append(norm_values)
             # Plot for the current norm and case_corner
             ax.loglog(hhs, norm_values, '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
-            
+            # Save the errors
+            errors[norm_index, case_corner_index, :] = norm_values
+            # Compute the estimated convergence rate 
+            p = (np.log(norm_values[-1]/norm_values[-2])) / (np.log(hhs[-1]/hhs[-2]))
+            conv_rates[norm_index, case_corner_index] = p
+         
         ax.set_xlabel('$h$')
         ax.set_ylabel(f'{norm_label}')
         ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -2156,7 +2163,17 @@ elif(main_selector == 91):
         elif(formulation == 'Equal-Order'):
             ax.set_title('Equal Order')
         ax.legend()
-        plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.png')
-        plt.show()
+        # plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.png')
+        plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.svg')
+        # plt.show()
+    
+    # Output
+    headers = ["Norm"] + c_corners_labels
+    table_data = [
+        [label] + [f"{val:.4f}" for val in row] for label, row in zip(norm_labels, conv_rates)
+    ]
+    print("Estimated Convergence Rates:")
+    print(tabulate(table_data, headers=headers, tablefmt="github"))
+        
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
