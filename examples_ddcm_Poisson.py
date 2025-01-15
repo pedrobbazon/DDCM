@@ -2125,7 +2125,7 @@ elif(main_selector == 91):
     case_corners = [1, 2, 3, 4]
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
     hhs = [0.1, 0.05, 0.025, 0.0125]
-    formulation = 'Natural'  # or 'Equal-Order'
+    formulation = 'Equal-Order'  # or 'Equal-Order'
     norm_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
                    '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
                    '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
