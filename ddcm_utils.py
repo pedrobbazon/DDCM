@@ -157,7 +157,7 @@ def FitDarcyParams(data_file):
 
     return 0
 
-import gmsh
+import gmsh 
 import numpy as np
 
 #--------------------------------------------------------------------
@@ -341,17 +341,17 @@ def CreateMesh1Inclusions(meshname):
     return filename, tags
 
 
-def CreateMeshReentrantCorner(meshname, case=1):
-
+def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
+    # Cases 1, 2 and 3 consider non-convex geometries. 
+    # Case 4, on the other hand, consider the only convex geometry
     gmsh.initialize()
-    lc = 1.0e-1
     if(case == 1 or case == 2):    
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
         if(case == 1):
             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
         elif(case == 2):
             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
-        gmsh.model.geo.addPoint(0, 0, 0, 0.01*lc, 3)
+        gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
@@ -368,7 +368,7 @@ def CreateMeshReentrantCorner(meshname, case=1):
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
     elif(case == 3):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        gmsh.model.geo.addPoint(0, 0, 0, 0.01*lc, 2)
+        gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
@@ -382,6 +382,19 @@ def CreateMeshReentrantCorner(meshname, case=1):
         gmsh.model.geo.addPlaneSurface([1], 1)
         gmsh.model.geo.synchronize()
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
+    elif(case == 4):
+        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+        gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
+        gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
+        gmsh.model.geo.addPoint(-1, 1, 0, lc, 4)
+        gmsh.model.geo.addLine(1, 2, 1)
+        gmsh.model.geo.addLine(2, 3, 2)
+        gmsh.model.geo.addLine(3, 4, 3)
+        gmsh.model.geo.addLine(4, 1, 4)
+        gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
+        gmsh.model.geo.addPlaneSurface([1], 1)
+        gmsh.model.geo.synchronize()
+        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
     else:
         raise ValueError('case not recognized in CreateMeshReentrantCorner\n\n')
     
@@ -395,10 +408,12 @@ def CreateMeshReentrantCorner(meshname, case=1):
     tags = {'onboundary': 1}
 
     gmsh.option.setNumber("Mesh.Algorithm", 6)
+    gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(2)
     
     filename = meshname+".msh"
     gmsh.write(filename)
+    gmsh.write(meshname+".vtk") # For visualization in Paraview
     gmsh.finalize()
 
     return filename, tags

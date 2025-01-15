@@ -1939,7 +1939,7 @@ def main_EX9_(formulation='Natural', N=20):
 
     return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
-# Example of a convergence study in a corner reentrant geometry with a known analytical solution
+# Example of a convergence study in convex and non-convex geometries with a known analytical solution
 
 def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     
@@ -1950,21 +1950,18 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     print('|::| Reference Domain and solution begins ...')
     print('---------------------------------------------')
     
-    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
-    
-    lc = hsize             # set the characteristic length of the mesh
-    # case_corner = 1      # select the corner case under study 
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution    
+    lc = hsize             # set the characteristic length of the mesh 
     mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc)
-    if(case_corner == 0):
-        omega = 2*fd.pi
-    elif(case_corner == 1):
+    if(case_corner == 1):
         omega = 1.75*fd.pi
     elif(case_corner == 2):
         omega = 1.5*fd.pi
     elif(case_corner == 3):
         omega = 1.25*fd.pi
-    
-
+    elif(case_corner == 4):
+        omega = 0.5*fd.pi
+        
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
     #________________________________
@@ -1980,10 +1977,7 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     # Analytical expressions
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
-        theta = fd.conditional(
-            fd.gt(angle, 0), angle,             # Keep the angle as is
-            angle + 2 * fd.pi                   # Otherwise, add 2*pi to the angle to make it positive
-        )
+        theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2)
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
@@ -2126,38 +2120,43 @@ elif(main_selector == 9):
     plt.savefig('errors'+formulation+'.png')
     plt.show()
 elif(main_selector == 91):
-    L2u = []
-    c_corners = [0, 1, 2, 3]
-    hhs = [0.1, 0.05, 0.025]
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
-    fig, ax = plt.subplots(figsize=(8, 6))
+    c_corners = [1, 2, 3, 4]
+    c_corners_labels = ['$\\frac{\pi}{2}$', '$\\frac{5\pi}{4}$', '$\\frac{3\pi}{2}$','$\\frac{7\pi}{4}$']
+    hhs = [0.1, 0.05, 0.025, 0.0125]
+    formulation = 'Natural'  # or 'Equal-Order'
+    norm_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
+                   '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+                   '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
+    save_labels = ['L2u', 'H1u', 'H1l', 'Es', 'Ee', 'Em']
+    errors = [[], [], [], [], [], []]
 
-    for case_corner in c_corners:
-        L2u = []  # Reset L2u for each case_corner
-        for hsize in hhs:
-            L2error_u, _, _, _, _, _ = main_EX91_(formulation, hsize, case_corner)
-            L2u.append(L2error_u)
-        ax.loglog(hhs, L2u, label=f'Case {case_corner}')
-        
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    # Adjust the legend
-    # lstleg = ['$\|u-u_h\|_{L^2}$']
-    # lstleg += ['$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$',
-    #            '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
-    #            '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-    #            '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
-
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if formulation == 'Natural':
-        plt.title('Natural')
-    elif formulation == 'Equal-Order':
-        plt.title('Equal Order')
-    plt.legend()
-    plt.savefig('errors_' + formulation + '.png')
-    plt.show()
+    for norm_index, norm_label in enumerate(norm_labels):
+        fig, ax = plt.subplots(figsize=(8, 6))
+        for case_corner_index, case_corner in enumerate(c_corners):
+            norm_values = []  # Reset for each case_corner
+            for hsize in hhs:
+                # Call the function
+                L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX91_(formulation, hsize, case_corner)
+                # Map computed errors to their respective list
+                error_list = [L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu]
+                norm_values.append(error_list[norm_index])
+            # Append to global errors list
+            errors[norm_index].append(norm_values)
+            # Plot for the current norm and case_corner
+            ax.loglog(hhs, norm_values, '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
+            
+        ax.set_xlabel('$h$')
+        ax.set_ylabel(f'{norm_label}')
+        ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        ax.tick_params(axis='both', which='major')
+        ax.tick_params(axis='both', which='minor')
+        ax.set_title(f'{norm_label} Errors ({formulation})')
+        if(formulation == 'Natural'):
+            ax.set_title('Natural')
+        elif(formulation == 'Equal-Order'):
+            ax.set_title('Equal Order')
+        ax.legend()
+        plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.png')
+        plt.show()
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
