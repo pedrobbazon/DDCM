@@ -1836,8 +1836,7 @@ def main_EX8_():
 
 # Example of a reference solution based on an analytical expression
 
-import math as ma
-def main_EX9_(formulation='Natural', N=20):
+def main_EX9_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1864,7 +1863,7 @@ def main_EX9_(formulation='Natural', N=20):
               'ls': h, 'lmu': h, 'formulation': formulation} 
 
     def uexact(x):
-        return fd.cos(ma.pi*x[0])*fd.cos(ma.pi*x[1])
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     def sexact(x):
         perm = params['perm']
         return -perm * fd.grad(uexact(x))
@@ -1918,15 +1917,14 @@ def main_EX9_(formulation='Natural', N=20):
 
     # 4. Compute some error norms
     
-    print('   ... Computing some error norms ...')
+    print('... Computing some error norms ...')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
     H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    typerr = 'L2'
-    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type=typerr)
-    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type=typerr)
-    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=typerr)
+    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
+    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
+    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -2090,11 +2088,21 @@ elif(main_selector == 7): # Data-driven solution with reaction term
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
 elif(main_selector == 9):
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
+    flag_norm_type = 'L2' 
+    # flag_norm_type = Hdiv
+    legend_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
+                   '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+                   '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
+    save_labels = ['L2u', 'H1u', 'H1l', 'Es', 'Ee', 'Em']
     hhs, L2u, H1u, H1l, Es, Ee, Em = [], [], [], [], [], [], []
-    for N in [20, 50, 100, 200]:
-        #formulation = 'Natural'
-        formulation = 'Equal-Order'
-        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N)
+    
+    # Plot
+    fig, ax = plt.subplots(figsize=(8,6))
+    # Loop over different mesh refinements 
+    for N in [200]:
+        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N, flag_norm_type)
         hhs.append(hsize)
         L2u.append(L2error_u)
         H1u.append(H1error_u)
@@ -2102,30 +2110,32 @@ elif(main_selector == 9):
         Es.append(error_s)
         Ee.append(error_e)
         Em.append(error_mu)
-    plt.loglog(hhs, L2u, '-or')
-    plt.loglog(hhs, H1u, '-ob')
-    plt.loglog(hhs, H1l, '-om')
-    plt.loglog(hhs, Es, '-og')
-    plt.loglog(hhs, Ee, '-oc')
-    plt.loglog(hhs, Em, '-ok')
-    plt.xlabel('$h$')
-    plt.ylabel('Error')
-    lstleg = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$']
-    lstleg += ['$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
-               '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-               '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
+    
+    ax.loglog(hhs, L2u, '-or')
+    ax.loglog(hhs, H1u, '-ob')
+    ax.loglog(hhs, H1l, '-om')
+    ax.loglog(hhs, Es, '-og')
+    ax.loglog(hhs, Ee, '-oc')
+    ax.loglog(hhs, Em, '-ok')
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
+    ax.legend(legend_labels)
+    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major')
+    ax.tick_params(axis='both', which='minor')
     if(formulation == 'Natural'):
-        plt.title('Natural')
+        ax.set_title('Natural')
     elif(formulation == 'Equal-Order'):
-        plt.title('Equal Order')
-    plt.legend(lstleg)
-    plt.savefig('errors'+formulation+'.png')
-    plt.show()
+        ax.set_title('Equal Order')
+    plt.savefig('errors'+formulation+'.svg')
+    # plt.show()
+    
 elif(main_selector == 91):
     case_corners = [1, 2, 3, 4]
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
     hhs = [0.1, 0.05, 0.025, 0.0125]
-    formulation = 'Equal-Order'  # or 'Equal-Order'
+    formulation = 'Natural'  
+    # formulation = 'Equal-Order'
     norm_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
                    '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
                    '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
@@ -2157,7 +2167,6 @@ elif(main_selector == 91):
         ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
         ax.tick_params(axis='both', which='major')
         ax.tick_params(axis='both', which='minor')
-        ax.set_title(f'{norm_label} Errors ({formulation})')
         if(formulation == 'Natural'):
             ax.set_title('Natural')
         elif(formulation == 'Equal-Order'):
