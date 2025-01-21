@@ -995,7 +995,7 @@ def main_EX4_():
     # These would be the ones corresponding to the analytical solution we propose
 
     def uexact(x):
-        return cos(pi*x[0])*cos(pi*x[1])
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     def sexact(x):
         kappa = fd.Constant(1.0)
         return -kappa * fd.grad(uexact(x))
@@ -1127,7 +1127,7 @@ def main_EX5_():
     # These would be the ones corresponding to the analytical solution we propose
 
     def uexact(x):
-        return cos(pi*x[0])*cos(pi*x[1])
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     
     kappa_xx = 1.0
     kappa_xy = 0.0
@@ -1262,7 +1262,7 @@ def main_EX50_(N=20):
         beta = fd.Constant(10.0)
         mu = fd.Constant(1.0)
         kappa = fd.Constant(1.0)
-        return -beta*(x[0]**2*sqrt(x[0]**2 + x[1]**2)/3 + x[1]**2*sqrt(x[0]**2 + x[1]**2)/3) - mu*x[0]**2/(2*kappa) - mu*x[1]**2/(2*kappa)
+        return -beta*(x[0]**2*fd.sqrt(x[0]**2 + x[1]**2)/3 + x[1]**2*fd.sqrt(x[0]**2 + x[1]**2)/3) - mu*x[0]**2/(2*kappa) - mu*x[1]**2/(2*kappa)
 
     def sexact(x):
         return fd.as_vector([x[0], x[1]])
@@ -1271,8 +1271,8 @@ def main_EX50_(N=20):
         beta = fd.Constant(10)
         mu = fd.Constant(1.0)
         kappa = fd.Constant(1.0)
-        return fd.as_vector([-beta*x[0]*sqrt(x[0]**2 + x[1]**2) - mu*x[0]/kappa,
-                             -beta*x[0]*sqrt(x[0]**2 + x[1]**2) - mu*x[1]/kappa])
+        return fd.as_vector([-beta*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[0]/kappa,
+                             -beta*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[1]/kappa])
 
     def mysource(x):
         return fd.Constant(2.0)
@@ -1832,10 +1832,9 @@ def main_EX8_():
 
     return 0
 
-#----------------------------------------------------------------------------
+#==================================================================================================================================================#
 
 # Example of a reference solution based on an analytical expression
-
 def main_EX9_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     ti = time.time()
@@ -1938,7 +1937,6 @@ def main_EX9_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
 # Example of a convergence study in convex and non-convex geometries with a known analytical solution
-
 def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     
     ti = time.time()
@@ -2052,6 +2050,8 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
 
     return L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
+
+
 #--- Run
 import sys
 from tabulate import tabulate
@@ -2087,39 +2087,47 @@ elif(main_selector == 7): # Data-driven solution with reaction term
     main_EX7_()
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
-elif(main_selector == 9):
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
-    flag_norm_type = 'L2' 
-    # flag_norm_type = Hdiv
-    legend_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
-                   '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-                   '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
-    save_labels = ['L2u', 'H1u', 'H1l', 'Es', 'Ee', 'Em']
-    hhs, L2u, H1u, H1l, Es, Ee, Em = [], [], [], [], [], [], []
+elif(main_selector == 9): 
+    # formulation = 'Natural'
+    formulation = 'Equal-Order'
+    if formulation == 'Natural':
+        flag_norm_labels = ['L2']
+    elif formulation == 'Equal-Order':
+        flag_norm_labels = ['L2', 'Hdiv']
+    else:
+        raise ValueError('Invalid options')
     
-    # Plot
-    fig, ax = plt.subplots(figsize=(8,6))
+    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
+    EsHdiv, EeHdiv, EmHdiv = [], [], []
+    
     # Loop over different mesh refinements 
-    for N in [200]:
-        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N, flag_norm_type)
-        hhs.append(hsize)
-        L2u.append(L2error_u)
-        H1u.append(H1error_u)
-        H1l.append(H1error_lmd)
-        Es.append(error_s)
-        Ee.append(error_e)
-        Em.append(error_mu)
-    
-    ax.loglog(hhs, L2u, '-or')
-    ax.loglog(hhs, H1u, '-ob')
-    ax.loglog(hhs, H1l, '-om')
-    ax.loglog(hhs, Es, '-og')
-    ax.loglog(hhs, Ee, '-oc')
-    ax.loglog(hhs, Em, '-ok')
+    for index, flag_norm_type in enumerate(flag_norm_labels):
+        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = [], [], [], [], [], [], []    # reset before changing the flag norm
+        for N in [25, 50, 100, 200]:
+            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N, flag_norm_type)
+            if flag_norm_type == 'L2':
+                hhs.append(hsize)
+                L2u.append(L2error_u)
+                H1u.append(H1error_u)
+                H1l.append(H1error_lmd)
+                EsL2.append(error_s)
+                EeL2.append(error_e)
+                EmL2.append(error_mu)
+            elif flag_norm_type == 'Hdiv':
+                EsHdiv.append(error_s) 
+                EeHdiv.append(error_e)
+                EmHdiv.append(error_mu)
+            else:
+                raise ValueError('Error!')
+            
+    # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
+    ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
+    ax.loglog(hhs, H1l, '-om', label = '$\|\lambda-\lambda_h\|_{H^1}$')
     ax.set_xlabel('$h$')
     ax.set_ylabel('Error')
-    ax.legend(legend_labels)
+    ax.legend()
     ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.tick_params(axis='both', which='major')
     ax.tick_params(axis='both', which='minor')
@@ -2127,62 +2135,100 @@ elif(main_selector == 9):
         ax.set_title('Natural')
     elif(formulation == 'Equal-Order'):
         ax.set_title('Equal Order')
-    plt.savefig('errors'+formulation+'.svg')
-    # plt.show()
+    plt.savefig('errors_u_lmd_'+formulation+'.svg')
+    plt.show()
     
+    # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.loglog(hhs, EsL2, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
+    ax.loglog(hhs, EeL2, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
+    ax.loglog(hhs, EmL2, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' )
+    if formulation == 'Equal-Order':
+        ax.loglog(hhs, EsHdiv, '--^g', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{\\text{Hdiv}}$')
+        ax.loglog(hhs, EeHdiv, '--^c', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{\\text{Hdiv}}$')
+        ax.loglog(hhs, EmHdiv, '--^k', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{\\text{Hdiv}}$' )
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
+    ax.legend()
+    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major')
+    ax.tick_params(axis='both', which='minor')
+    if(formulation == 'Natural'):
+        ax.set_title('Natural')
+    elif(formulation == 'Equal-Order'):
+        ax.set_title('Equal Order')
+    else:
+        raise ValueError('Invalid option!')
+    plt.savefig('errors_s_e_mu_'+formulation+'.svg')
+    plt.show()
+        
 elif(main_selector == 91):
-    case_corners = [1, 2, 3, 4]
-    c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
     hhs = [0.1, 0.05, 0.025, 0.0125]
+    # Specify the formulation to be used
     formulation = 'Natural'  
     # formulation = 'Equal-Order'
-    norm_labels = ['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$', '$\|\lambda-\lambda_h\|_{H^1}$', 
-                   '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$',   '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-                   '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$']
-    save_labels = ['L2u', 'H1u', 'H1l', 'Es', 'Ee', 'Em']
-    
-    errors = np.empty((len(norm_labels),len(case_corners), len(hhs)))
-    conv_rates = np.empty((len(norm_labels), len(case_corners)))
-    
-    for norm_index, norm_label in enumerate(norm_labels):
+
+    # Specify each case corner to be used
+    case_corners = [1, 2, 3, 4]
+    c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
+
+    # Allocate memory for storing the errors for each case corner and different mesh sizes 
+    L2u = np.empty((len(case_corners), len(hhs)))
+    H1u, H1l, Es, Ee, Em = (np.empty_like(L2u) for _ in range(5))
+
+    # Store all the errors in a dictionary 
+    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'Es': Es, 'Ee': Ee, 'Em': Em}
+    conv_rates = {key: [] for key in errors.keys()}
+    norm_labels = {
+        'L2u': '$\|u-u_h\|_{L^2}$', 
+        'H1u': '$\|u-u_h\|_{H^1}$', 
+        'H1l': '$\|\lambda-\lambda_h\|_{H^1}$',
+        'Es': '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
+        'Ee': '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$',
+        'Em': '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$'
+    }
+
+    # Loop through each case corner and mesh size
+    for case_corner_index, case_corner in enumerate(case_corners):
+        for hsize_index, hsize in enumerate(hhs):
+            # Call the function
+            L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX91_(formulation, hsize, case_corner)
+            errors['L2u'][case_corner_index, hsize_index] = L2error_u
+            errors['H1u'][case_corner_index, hsize_index] = H1error_u
+            errors['H1l'][case_corner_index, hsize_index] = H1error_lmd
+            errors['Es'][case_corner_index, hsize_index] = error_s 
+            errors['Ee'][case_corner_index, hsize_index] = error_e 
+            errors['Em'][case_corner_index, hsize_index] = error_mu
+
+    # Generate plots for each error metric
+    for key, value in errors.items():
         fig, ax = plt.subplots(figsize=(8, 6))
         for case_corner_index, case_corner in enumerate(case_corners):
-            norm_values = []  # Reset for each case_corner
-            for hsize in hhs:
-                # Call the function
-                L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX91_(formulation, hsize, case_corner)
-                # Map computed errors to their respective list
-                error_list = [L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu]
-                norm_values.append(error_list[norm_index])
-            # Plot for the current norm and case_corner
-            ax.loglog(hhs, norm_values, '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
-            # Save the errors
-            errors[norm_index, case_corner_index, :] = norm_values
-            # Compute the estimated convergence rate 
-            p = (np.log(norm_values[-1]/norm_values[-2])) / (np.log(hhs[-1]/hhs[-2]))
-            conv_rates[norm_index, case_corner_index] = p
-         
+            # Plot
+            ax.loglog(hhs, value[case_corner_index, :], '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
+
+            # Compute the associated convergence rate
+            p = (np.log(value[case_corner_index, -1] / value[case_corner_index, -2]) /
+                np.log(hhs[-1] / hhs[-2]))
+            conv_rates[key].append(p)
+
+        # Configure the plot
         ax.set_xlabel('$h$')
-        ax.set_ylabel(f'{norm_label}')
+        ax.set_ylabel(norm_labels[key])
         ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
         ax.tick_params(axis='both', which='major')
         ax.tick_params(axis='both', which='minor')
-        if(formulation == 'Natural'):
-            ax.set_title('Natural')
-        elif(formulation == 'Equal-Order'):
-            ax.set_title('Equal Order')
+        ax.set_title(formulation)
         ax.legend()
-        # plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.png')
-        plt.savefig(f'{save_labels[norm_index]}_errors_{formulation}.svg')
+        # plt.savefig(f'{key}_errors_{formulation}.svg')
         # plt.show()
-    
-    # Output
+
+   # Output
     headers = ["Norm"] + c_corners_labels
-    table_data = [
-        [label] + [f"{val:.4f}" for val in row] for label, row in zip(norm_labels, conv_rates)
-    ]
+    table_data = [[err] + [f"{rate:.4f}" for rate in val] for err, val in conv_rates.items()]
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
+
         
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
