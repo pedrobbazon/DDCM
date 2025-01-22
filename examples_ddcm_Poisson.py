@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 # Our libraries
 from ddcm_classes import *
 from ddcm_utils import *
+from DDCMSolvers import *
 
 #----------------------------------------------------------------------------
 
@@ -427,7 +428,7 @@ def main_EX2_():
     def kappa_of_u(u):
        kappa0 = fd.Constant(1.0)
        viol = fd.Constant(25.0)
-       kappa = kappa0*(1.0 + 10.0*0.5 * (1.0 + tanh(viol*(u-2.0))))
+       kappa = kappa0*(1.0 + 10.0*0.5 * (1.0 + fd.tanh(viol*(u-2.0))))
        return kappa
     params = [kappa_of_u]
 
@@ -1268,7 +1269,7 @@ def main_EX50_(N=20):
         return fd.as_vector([x[0], x[1]])
     
     def gradexact(x):
-        beta = fd.Constant(10)
+        beta = fd.Constant(10.0)
         mu = fd.Constant(1.0)
         kappa = fd.Constant(1.0)
         return fd.as_vector([-beta*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[0]/kappa,
@@ -1835,7 +1836,7 @@ def main_EX8_():
 #==================================================================================================================================================#
 
 # Example of a reference solution based on an analytical expression
-def main_EX9_(formulation='Natural', N=20, flag_norm_type = 'L2'):
+def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2051,8 +2052,118 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     return L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
 
+#  Example of a convergence study for the Forcheimer's model based on an analytical solution
+def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
+    
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
 
-#--- Run
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+    h = fd.CellDiameter(domain.msh)
+
+    # perm : permeability tensor; visc: dynamic viscosity; zeda:
+    # forch_coef: Forcheimer coefficient; zeda: reaction coefficient
+    params = {'perm': fd.Constant(1.0), 'visc' : fd.Constant(1.0),
+              'forch_coef': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    def uexact(x):
+        forch_coef = params['forch_coef']
+        visc = params['visc']
+        perm = params['perm']
+        return -forch_coef*(x[0]**2*fd.sqrt(x[0]**2 + x[1]**2)/3 + x[1]**2*fd.sqrt(x[0]**2 + x[1]**2)/3) - visc*x[0]**2/(2*perm) - visc*x[1]**2/(2*perm)
+
+    def sexact(x):
+        return fd.as_vector([x[0], x[1]])
+    
+    def eexact(x):
+        forch_coef = params['forch_coef']
+        visc = params['visc']
+        perm = params['perm']
+        return fd.as_vector([-forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[0]/perm,
+                             -forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[1]/perm])
+    
+    def mysource(x):
+        return fd.Constant(2.0)
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        kappa = params['kappa'] 
+        return (0.5)*fd.inner(g-gdata, g-gdata)*fd.dx + (0.5*kappa)*fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob.solve("myddcmsol")
+
+    # 4. Compute some error norms
+    
+    print('... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
+    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
+    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
+    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
+
+#=============== Run ===============#
 import sys
 from tabulate import tabulate
 
@@ -2087,7 +2198,7 @@ elif(main_selector == 7): # Data-driven solution with reaction term
     main_EX7_()
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
-elif(main_selector == 9): 
+elif(main_selector == 90): 
     # formulation = 'Natural'
     formulation = 'Equal-Order'
     if formulation == 'Natural':
@@ -2104,7 +2215,7 @@ elif(main_selector == 9):
     for index, flag_norm_type in enumerate(flag_norm_labels):
         hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = [], [], [], [], [], [], []    # reset before changing the flag norm
         for N in [25, 50, 100, 200]:
-            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX9_(formulation, N, flag_norm_type)
+            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX90_(formulation, N, flag_norm_type)
             if flag_norm_type == 'L2':
                 hhs.append(hsize)
                 L2u.append(L2error_u)
@@ -2228,7 +2339,9 @@ elif(main_selector == 91):
     table_data = [[err] + [f"{rate:.4f}" for rate in val] for err, val in conv_rates.items()]
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
-
-        
+     
+elif(main_selector == 92):
+    hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation='Natural', N=100, flag_norm_type = 'L2')
+    print(L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu)
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
