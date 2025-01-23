@@ -2342,30 +2342,78 @@ elif(main_selector == 91):
     print(tabulate(table_data, headers=headers, tablefmt="github"))
      
 elif(main_selector == 92):
-    hhs, L2u, H1u, H1l, Es, Ee, Em = [], [], [], [], [], [], []
-    for N in [20, 40, 80, 160]:
-        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation='Natural', N=N, flag_norm_type = 'L2')
-        hhs.append(hsize)
-        L2u.append(L2error_u)
-        H1u.append(H1error_u)
-        H1l.append(H1error_lmd)
-        Es.append(error_s)
-        Ee.append(error_e)
-        Em.append(error_mu)
-
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
+    if formulation == 'Natural':
+        flag_norm_labels = ['L2']
+    elif formulation == 'Equal-Order':
+        flag_norm_labels = ['L2', 'Hdiv']
+    else:
+        raise ValueError('Invalid options')
+    
+    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
+    EsHdiv, EeHdiv, EmHdiv = [], [], []
+    
+    # Loop over different mesh refinements 
+    for index, flag_norm_type in enumerate(flag_norm_labels):
+        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = [], [], [], [], [], [], []    # reset before changing the flag norm
+        for N in [25, 50, 100, 200]:
+            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, N, flag_norm_type)
+            if flag_norm_type == 'L2':
+                hhs.append(hsize)
+                L2u.append(L2error_u)
+                H1u.append(H1error_u)
+                H1l.append(H1error_lmd)
+                EsL2.append(error_s)
+                EeL2.append(error_e)
+                EmL2.append(error_mu)
+            elif flag_norm_type == 'Hdiv':
+                EsHdiv.append(error_s) 
+                EeHdiv.append(error_e)
+                EmHdiv.append(error_mu)
+            else:
+                raise ValueError('Error!')
+            
+    # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
     fig, ax = plt.subplots(figsize=(8,6))
     ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
     ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
-    ax.loglog(hhs, H1l, '-om', label =  '$\|\lambda-\lambda_h\|_{H^1}$')
-    ax.loglog(hhs, Es, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
-    ax.loglog(hhs, Ee, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
-    ax.loglog(hhs, Em, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$')
+    ax.loglog(hhs, H1l, '-om', label = '$\|\lambda-\lambda_h\|_{H^1}$')
     ax.set_xlabel('$h$')
     ax.set_ylabel('Error')
+    ax.legend()
     ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.tick_params(axis='both', which='major')
     ax.tick_params(axis='both', which='minor')
+    if(formulation == 'Natural'):
+        ax.set_title('Natural')
+    elif(formulation == 'Equal-Order'):
+        ax.set_title('Equal Order')
+    plt.savefig('Forcheimer_errors_u_lmd_'+formulation+'.svg')
+    plt.show()
+    
+    # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.loglog(hhs, EsL2, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
+    ax.loglog(hhs, EeL2, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
+    ax.loglog(hhs, EmL2, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' )
+    if formulation == 'Equal-Order':
+        ax.loglog(hhs, EsHdiv, '--^g', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{\\text{Hdiv}}$')
+        ax.loglog(hhs, EeHdiv, '--^c', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{\\text{Hdiv}}$')
+        ax.loglog(hhs, EmHdiv, '--^k', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{\\text{Hdiv}}$' )
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
     ax.legend()
+    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major')
+    ax.tick_params(axis='both', which='minor')
+    if(formulation == 'Natural'):
+        ax.set_title('Natural')
+    elif(formulation == 'Equal-Order'):
+        ax.set_title('Equal Order')
+    else:
+        raise ValueError('Invalid option!')
+    plt.savefig('Forcheimer_errors_s_e_mu_'+formulation+'.svg')
     plt.show()
     
 else:
