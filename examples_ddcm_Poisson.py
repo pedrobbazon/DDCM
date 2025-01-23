@@ -2085,8 +2085,8 @@ def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         forch_coef = params['forch_coef']
         visc = params['visc']
         perm = params['perm']
-        return -forch_coef*(x[0]**2*fd.sqrt(x[0]**2 + x[1]**2)/3 + x[1]**2*fd.sqrt(x[0]**2 + x[1]**2)/3) - visc*x[0]**2/(2*perm) - visc*x[1]**2/(2*perm)
-
+        return - visc/(2*perm)*(x[0]**2 + x[1]**2) - (forch_coef/3)*(x[0]**2 + x[1]**2)**(3/2) 
+    
     def sexact(x):
         return fd.as_vector([x[0], x[1]])
     
@@ -2095,10 +2095,11 @@ def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         visc = params['visc']
         perm = params['perm']
         return fd.as_vector([-forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[0]/perm,
-                             -forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[1]/perm])
-    
+                             -forch_coef*x[1]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[1]/perm])
+        
     def mysource(x):
-        return fd.Constant(2.0)
+        zeda = params['zeda']
+        return fd.div(sexact(x)) + zeda*uexact(x)
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
@@ -2341,7 +2342,31 @@ elif(main_selector == 91):
     print(tabulate(table_data, headers=headers, tablefmt="github"))
      
 elif(main_selector == 92):
-    hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation='Natural', N=100, flag_norm_type = 'L2')
-    print(L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu)
+    hhs, L2u, H1u, H1l, Es, Ee, Em = [], [], [], [], [], [], []
+    for N in [20, 40, 80, 160]:
+        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation='Natural', N=N, flag_norm_type = 'L2')
+        hhs.append(hsize)
+        L2u.append(L2error_u)
+        H1u.append(H1error_u)
+        H1l.append(H1error_lmd)
+        Es.append(error_s)
+        Ee.append(error_e)
+        Em.append(error_mu)
+
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
+    ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
+    ax.loglog(hhs, H1l, '-om', label =  '$\|\lambda-\lambda_h\|_{H^1}$')
+    ax.loglog(hhs, Es, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
+    ax.loglog(hhs, Ee, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
+    ax.loglog(hhs, Em, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$')
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
+    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major')
+    ax.tick_params(axis='both', which='minor')
+    ax.legend()
+    plt.show()
+    
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)

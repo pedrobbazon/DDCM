@@ -84,7 +84,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     L  = J
 
     # Balance and Compatibility constraint
-    L -= fd.inner(s,fd.grad(lam)) * fd.dx
+    L -= fd.inner(s, fd.grad(lam)) * fd.dx
     L += fd.inner(zeda*u - f(x), lam) * fd.dx(degree=4)
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
 
@@ -116,7 +116,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
         raise ValueError('Neumann conditions should be include in the Lagrangian')
         #dL += boundary_flux(x) * dl * fd.ds(degree=4)
-
+        
     else:
         
         raise ValueError('Unrecognized problem setting option')
