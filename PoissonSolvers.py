@@ -60,16 +60,16 @@ def FLM_ForcheimerReg(potential, flux, params):
     eta = params['eta']
     muokap = params['mu_over_kappa']
     betarho = params['beta_x_rho']
-    modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
+    modfluxreg = eta*(fd.sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
     return fd.grad(potential) + muokap*flux + betarho * modfluxreg * flux
 
 def FLM_ForcheimerRegAni(potential, flux, params):
     eta = params['eta']
     muokap = params['mu_over_kappa']
     betarho = params['beta_x_rho']
-    modfluxreg = eta*(sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
+    modfluxreg = eta*(fd.sqrt(1.0 + fd.inner(flux,flux)/eta**2) - 1.0)
     Km1 = fd.as_tensor([[muokap[0,0], muokap[0,1]], [muokap[1,0], muokap[1,1]]])
-    Km12 = fd.as_tensor([[sqrt(muokap[0,0]), muokap[0,1]], [muokap[1,0], sqrt(muokap[1,1])]])
+    Km12 = fd.as_tensor([[fd.sqrt(muokap[0,0]), muokap[0,1]], [muokap[1,0], fd.sqrt(muokap[1,1])]])
     return fd.grad(potential) + Km1*flux + betarho * Km12 * modfluxreg * flux
 
 def FLM_Klinkenberg(potential, flux, params):

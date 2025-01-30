@@ -1856,12 +1856,27 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    #           'ls': h, 'lmu': h, 'formulation': formulation} 
+
+    # Test this only for the natural formulation
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+    #           'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+    #           'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    
+    # Test this only for the equal-order formulation
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation} 
-
+    
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     def sexact(x):
@@ -2200,6 +2215,7 @@ elif(main_selector == 7): # Data-driven solution with reaction term
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
 elif(main_selector == 90): 
+    
     # formulation = 'Natural'
     formulation = 'Equal-Order'
     if formulation == 'Natural':
@@ -2209,13 +2225,17 @@ elif(main_selector == 90):
     else:
         raise ValueError('Invalid options')
     
+    # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
     EsHdiv, EeHdiv, EmHdiv = [], [], []
+    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 
+              'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
+              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
+    conv_rates = {key: [] for key in errors.keys()}
     
     # Loop over different mesh refinements 
     for index, flag_norm_type in enumerate(flag_norm_labels):
-        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = [], [], [], [], [], [], []    # reset before changing the flag norm
-        for N in [25, 50, 100, 200]:
+        for N in [25, 50, 100, 200] :
             hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX90_(formulation, N, flag_norm_type)
             if flag_norm_type == 'L2':
                 hhs.append(hsize)
@@ -2231,7 +2251,16 @@ elif(main_selector == 90):
                 EmHdiv.append(error_mu)
             else:
                 raise ValueError('Error!')
-            
+    
+    # Compute the associated convergence rates 
+    for key, value in errors.items():
+        if not value:
+            conv_rates[key] = [np.nan]
+        else:
+            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
+            conv_rates[key].append(p)
+
+              
     # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
     fig, ax = plt.subplots(figsize=(8,6))
     ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
@@ -2273,8 +2302,16 @@ elif(main_selector == 90):
         raise ValueError('Invalid option!')
     plt.savefig('errors_s_e_mu_'+formulation+'.svg')
     plt.show()
+    
+    # Output
+    headers = ["Norm", "Convergence rate"]
+    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
+    print("Estimated Convergence Rates:")
+    print(tabulate(table_data, headers=headers, tablefmt="github"))
+    
         
 elif(main_selector == 91):
+    
     hhs = [0.1, 0.05, 0.025, 0.0125]
     # Specify the formulation to be used
     formulation = 'Natural'  
@@ -2318,7 +2355,6 @@ elif(main_selector == 91):
         for case_corner_index, case_corner in enumerate(case_corners):
             # Plot
             ax.loglog(hhs, value[case_corner_index, :], '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
-
             # Compute the associated convergence rate
             p = (np.log(value[case_corner_index, -1] / value[case_corner_index, -2]) /
                 np.log(hhs[-1] / hhs[-2]))
@@ -2334,16 +2370,18 @@ elif(main_selector == 91):
         ax.legend()
         # plt.savefig(f'{key}_errors_{formulation}.svg')
         # plt.show()
+    
 
-   # Output
+    # Output
     headers = ["Norm"] + c_corners_labels
     table_data = [[err] + [f"{rate:.4f}" for rate in val] for err, val in conv_rates.items()]
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
      
 elif(main_selector == 92):
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
+    
+    # formulation = 'Natural'
+    formulation = 'Equal-Order'
     if formulation == 'Natural':
         flag_norm_labels = ['L2']
     elif formulation == 'Equal-Order':
@@ -2353,10 +2391,13 @@ elif(main_selector == 92):
     
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
     EsHdiv, EeHdiv, EmHdiv = [], [], []
+    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 
+              'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
+              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
+    conv_rates = {key: [] for key in errors.keys()}
     
     # Loop over different mesh refinements 
     for index, flag_norm_type in enumerate(flag_norm_labels):
-        hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = [], [], [], [], [], [], []    # reset before changing the flag norm
         for N in [25, 50, 100, 200]:
             hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, N, flag_norm_type)
             if flag_norm_type == 'L2':
@@ -2373,6 +2414,14 @@ elif(main_selector == 92):
                 EmHdiv.append(error_mu)
             else:
                 raise ValueError('Error!')
+            
+    # Compute the associated convergence rates 
+    for key, value in errors.items():
+        if not value:
+            conv_rates[key] = [np.nan]
+        else:
+            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
+            conv_rates[key].append(p)
             
     # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
     fig, ax = plt.subplots(figsize=(8,6))
@@ -2415,6 +2464,12 @@ elif(main_selector == 92):
         raise ValueError('Invalid option!')
     plt.savefig('Forcheimer_errors_s_e_mu_'+formulation+'.svg')
     plt.show()
+    
+    # Output
+    headers = ["Norm", "Convergence rate"]
+    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
+    print("Estimated Convergence Rates:")
+    print(tabulate(table_data, headers=headers, tablefmt="github"))
     
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
