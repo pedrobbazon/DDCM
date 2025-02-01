@@ -1856,26 +1856,12 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
-    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-    #           'ls': h, 'lmu': h, 'formulation': formulation} 
-
-    # Test this only for the natural formulation
-    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
-    #           'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
-    #           'ls': h, 'lmu': h, 'formulation': formulation} 
-    
-    
-    # Test this only for the equal-order formulation
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.5),
-              'ls': h, 'lmu': h, 'formulation': formulation} 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
+
     
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
@@ -2096,6 +2082,7 @@ def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
               'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
+    
     def uexact(x):
         forch_coef = params['forch_coef']
         visc = params['visc']
@@ -2252,6 +2239,7 @@ elif(main_selector == 90):
             else:
                 raise ValueError('Error!')
     
+    print(errors)
     # Compute the associated convergence rates 
     for key, value in errors.items():
         if not value:
@@ -2276,7 +2264,7 @@ elif(main_selector == 90):
         ax.set_title('Natural')
     elif(formulation == 'Equal-Order'):
         ax.set_title('Equal Order')
-    plt.savefig('errors_u_lmd_'+formulation+'.svg')
+    plt.savefig('Darcy_errors_u_lmd_'+formulation+'.svg')
     plt.show()
     
     # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
@@ -2300,7 +2288,7 @@ elif(main_selector == 90):
         ax.set_title('Equal Order')
     else:
         raise ValueError('Invalid option!')
-    plt.savefig('errors_s_e_mu_'+formulation+'.svg')
+    plt.savefig('Darcy_errors_s_e_mu_'+formulation+'.svg')
     plt.show()
     
     # Output
