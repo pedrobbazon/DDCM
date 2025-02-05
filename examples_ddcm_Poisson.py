@@ -1836,7 +1836,111 @@ def main_EX8_():
 #==================================================================================================================================================#
 
 # Example of a reference solution based on an analytical expression
-def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.Constant(0.5), alpha = fd.Constant(0.125), 
+def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+
+    h = fd.CellDiameter(domain.msh)
+
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
+    
+    def uexact(x):
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
+    def sexact(x):
+        perm = params['perm']
+        return -perm * fd.grad(uexact(x))
+    def eexact(x):
+        return fd.grad(uexact(x))
+
+    def mysource(x):
+        perm = params['perm']
+        zeda = params['zeda']
+        return fd.div(-perm*fd.grad(uexact(x))) + zeda*uexact(x)
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+
+    ddcm_prob.solve("myddcmsol")
+
+    # 4. Compute some error norms
+    
+    print('... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
+    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
+    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
+    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
+
+
+
+# Example of a reference solution based on an analytical expression
+def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.Constant(0.5), alpha = fd.Constant(0.125), 
                beta = fd.Constant(0.5), gamma = fd.Constant(0.125), eta = fd.Constant(0.5)):
 
     ti = time.time()
@@ -2244,8 +2348,7 @@ elif(main_selector == 90):
                 EmHdiv.append(error_mu)
             else:
                 raise ValueError('Error!')
-    
-    print(errors)
+
     # Compute the associated convergence rates 
     for key, value in errors.items():
         if not value:
@@ -2471,31 +2574,7 @@ elif(main_selector == 900):
     formulation, N, flag_norm_type = 'Equal-Order', 100, 'L2'
     Nmin, Nmax, Nvals = 0.1, 100.0, 25
 
-    def customInterval(n_points, frac_dense=0.7, frac_low=0.15):
-    
-        # Ensure at least 2 points in each section
-        n_dense = max(int(n_points * frac_dense), 2)  # More points in [0.1, 10]
-        n_low = max(int(n_points * frac_low), 2)      # Fewer points in [0, 0.1]
-        n_high = max(n_points - (n_dense + n_low), 2) # Remaining in [10, 100]
-
-        # Adjust if total points changed
-        while n_dense + n_low + n_high > n_points:
-            n_high -= 1
-        while n_dense + n_low + n_high < n_points:
-            n_high += 1
-
-        # Linear spacing in [0, 0.1]
-        part_low = np.linspace(0, 0.1, n_low, endpoint=False)
-
-        # Logarithmic spacing in [0.1, 10] (denser here)
-        part_dense = np.geomspace(0.1, 10, n_dense, endpoint=False)
-
-        # Linear spacing in [10, 100]
-        part_high = np.linspace(10, 100, n_high)
-
-        return np.concatenate([part_low, part_dense, part_high])
-
-    # Example usage
+    # Example usagez
     interval = np.geomspace(Nmin,Nmax, Nvals, endpoint=True)
     
     # Define parameter ranges
@@ -2516,7 +2595,7 @@ elif(main_selector == 900):
             }
 
             # Run simulation
-            hsize, *errors = main_EX90_(formulation=formulation, N=N, flag_norm_type=flag_norm_type, **param_values)
+            hsize, *errors = main_EX900_(formulation=formulation, N=N, flag_norm_type=flag_norm_type, **param_values)
 
             # Store errors
             for key, error in zip(error_data.keys(), errors):
