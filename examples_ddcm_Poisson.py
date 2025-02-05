@@ -1836,7 +1836,8 @@ def main_EX8_():
 #==================================================================================================================================================#
 
 # Example of a reference solution based on an analytical expression
-def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
+def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.Constant(0.5), alpha = fd.Constant(0.125), 
+               beta = fd.Constant(0.5), gamma = fd.Constant(0.125), eta = fd.Constant(0.5)):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1856,12 +1857,17 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    #           'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': theta, 'kappa': fd.Constant(1.0), 
+              'alpha': alpha, 'beta': beta, 
+              'gamma': gamma, 'eta': eta,
+              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
     
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
@@ -2459,5 +2465,82 @@ elif(main_selector == 92):
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
     
+elif(main_selector == 900):
+
+    # Define fixed parameters
+    formulation, N, flag_norm_type = 'Equal-Order', 100, 'L2'
+    Nmin, Nmax, Nvals = 0.1, 100.0, 25
+
+    def customInterval(n_points, frac_dense=0.7, frac_low=0.15):
+    
+        # Ensure at least 2 points in each section
+        n_dense = max(int(n_points * frac_dense), 2)  # More points in [0.1, 10]
+        n_low = max(int(n_points * frac_low), 2)      # Fewer points in [0, 0.1]
+        n_high = max(n_points - (n_dense + n_low), 2) # Remaining in [10, 100]
+
+        # Adjust if total points changed
+        while n_dense + n_low + n_high > n_points:
+            n_high -= 1
+        while n_dense + n_low + n_high < n_points:
+            n_high += 1
+
+        # Linear spacing in [0, 0.1]
+        part_low = np.linspace(0, 0.1, n_low, endpoint=False)
+
+        # Logarithmic spacing in [0.1, 10] (denser here)
+        part_dense = np.geomspace(0.1, 10, n_dense, endpoint=False)
+
+        # Linear spacing in [10, 100]
+        part_high = np.linspace(10, 100, n_high)
+
+        return np.concatenate([part_low, part_dense, part_high])
+
+    # Example usage
+    interval = np.geomspace(Nmin,Nmax, Nvals, endpoint=True)
+    
+    # Define parameter ranges
+    param_ranges = {key: interval for key in ['theta', 'alpha', 'beta', 'gamma', 'eta']}
+
+    # Iterate over parameters
+    for param, values in param_ranges.items():
+        error_data = {key: [] for key in ['L2_u', 'H1_u', 'H1_lmd', 's', 'e', 'mu']}
+        
+        for val in values:
+            # Define varying parameter
+            param_values = {
+                'theta': fd.Constant(0.5) if param != 'theta' else fd.Constant(val),
+                'alpha': fd.Constant(0.125) if param != 'alpha' else fd.Constant(val),
+                'beta': fd.Constant(0.5) if param != 'beta' else fd.Constant(val),
+                'gamma': fd.Constant(0.125) if param != 'gamma' else fd.Constant(val),
+                'eta': fd.Constant(0.5) if param != 'eta' else fd.Constant(val),
+            }
+
+            # Run simulation
+            hsize, *errors = main_EX90_(formulation=formulation, N=N, flag_norm_type=flag_norm_type, **param_values)
+
+            # Store errors
+            for key, error in zip(error_data.keys(), errors):
+                error_data[key].append(error)
+
+        # Plot results
+        plt.figure(figsize=(8, 6))
+        labels = [
+            r'$\|u-u_h\|_{L^2}$', r'$\|u-u_h\|_{H^1}$', r'$\|\lambda-\lambda_h\|_{H^1}$',
+            r'$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', r'$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
+            r'$\|\boldsymbol{\mu}-\boldsymbol{\mu}_h\|_{L^2}$'
+        ]
+        
+        for key, label in zip(error_data.keys(), labels):
+            plt.loglog(values, error_data[key], '.-', label=label)
+
+        plt.xlabel(f'$\\{param}$')
+        plt.ylabel('Error')
+        plt.title('Equal-Order')
+        plt.legend(loc='best')
+        plt.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        plt.minorticks_on()
+        plt.savefig(f"{param}_error_new.svg")
+        # plt.show()
+
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
