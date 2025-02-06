@@ -1856,11 +1856,17 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    #           'ls': h, 'lmu': h, 'formulation': formulation} 
+
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
+              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
     
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
@@ -1971,7 +1977,7 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
               'theta': theta, 'kappa': fd.Constant(1.0), 
               'alpha': alpha, 'beta': beta, 
               'gamma': gamma, 'eta': eta,
-              'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
+              'ls': h, 'lmu': h, 'formulation': formulation} 
     
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
@@ -2572,7 +2578,7 @@ elif(main_selector == 900):
 
     # Define fixed parameters
     formulation, N, flag_norm_type = 'Equal-Order', 100, 'L2'
-    Nmin, Nmax, Nvals = 0.1, 100.0, 25
+    Nmin, Nmax, Nvals = 0.01, 100.0, 50
 
     # Example usagez
     interval = np.geomspace(Nmin,Nmax, Nvals, endpoint=True)
