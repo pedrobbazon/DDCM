@@ -1867,15 +1867,16 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
     def eexact(x):
         return fd.grad(uexact(x))
+    
     def etilde(x):
         A = fd.Constant(0.1)        # Amplitude
-        f = fd.Constant(0.1)        # Frequency
+        f = fd.Constant(0.05)        # Frequency
         phi = fd.Constant(0.0)      # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*eexact(x)[0] + phi),
                             eexact(x)[1] + A*fd.sin(f*fd.pi*eexact(x)[1] + phi)])
     def stilde(x):
         A = fd.Constant(0.1)    # Amplitude
-        f = fd.Constant(0.1)    # Frequency
+        f = fd.Constant(0.05)    # Frequency
         phi = fd.Constant(0.0)  # Phase angle 
         return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
                              -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
@@ -1885,8 +1886,8 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return etilde(x) - eexact(x)
     # by eq.(21)
     def lmbdexact(x):
-        perm = params['perm']
-        return -(1/perm)*fd.div(muexact(x))
+        zeda = params['zeda']
+        return -(1/zeda)*fd.div(muexact(x))
     # by eq.(23)
     def sexact(x):
         perm = params['perm']
@@ -2342,8 +2343,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
     main_EX8_()
 elif(main_selector == 90): 
     
-    # formulation = 'Natural'
-    formulation = 'Equal-Order'
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
     if formulation == 'Natural':
         flag_norm_labels = ['L2']
     elif formulation == 'Equal-Order':
