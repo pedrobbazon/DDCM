@@ -1856,35 +1856,58 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
-    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-    #           'ls': h, 'lmu': h, 'formulation': formulation} 
-
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
-              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
+    # Propose an manufactured potential field and its associated gradient
     def uexact(x):
-        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
-    def sexact(x):
-        perm = params['perm']
-        return -perm * fd.grad(uexact(x))
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
     def eexact(x):
         return fd.grad(uexact(x))
+    def etilde(x):
+        A = fd.Constant(0.1)        # Amplitude
+        f = fd.Constant(0.1)        # Frequency
+        phi = fd.Constant(0.0)      # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*eexact(x)[0] + phi),
+                            eexact(x)[1] + A*fd.sin(f*fd.pi*eexact(x)[1] + phi)])
+    def stilde(x):
+        A = fd.Constant(0.1)    # Amplitude
+        f = fd.Constant(0.1)    # Frequency
+        phi = fd.Constant(0.0)  # Phase angle 
+        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
+                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
 
-    def mysource(x):
+    # by eq.(22)
+    def muexact(x):
+        return etilde(x) - eexact(x)
+    # by eq.(21)
+    def lmbdexact(x):
         perm = params['perm']
+        return -(1/perm)*fd.div(muexact(x))
+    # by eq.(23)
+    def sexact(x):
+        perm = params['perm']
+        return stilde(x) + (1/perm)*fd.grad(lmbdexact(x))
+    # by eq.(24)
+    def qexact(x):
         zeda = params['zeda']
-        return fd.div(-perm*fd.grad(uexact(x))) + zeda*uexact(x)
+        return zeda*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
         return uexact(x)
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+            
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals)
     #________________________________
 
     # This will only be called for visualization purposes
@@ -1901,7 +1924,7 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
     # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
 
     # 3. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
@@ -1927,10 +1950,10 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
     error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
     error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
-    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
+    error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')

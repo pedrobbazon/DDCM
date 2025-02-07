@@ -85,10 +85,13 @@ class MechanicalForcingData():
         self.boundary_tags = boundary_tags
 
 class PoissonForcingData():
-    def __init__(self, volumetric_source, boundary_flux, boundary_vals):
+    def __init__(self, volumetric_source, boundary_flux, boundary_vals, 
+                 lmbd_boundary_vals = None, mu_boundary_vals = None):
         self.volumetric_source = volumetric_source
         self.boundary_flux = boundary_flux
         self.boundary_vals = boundary_vals
+        self.lmbd_boundary_vals = lmbd_boundary_vals
+        self.mu_boundary_vals = mu_boundary_vals
 
 # 
 # Define the Standard Poisson problem, model and solver
@@ -512,6 +515,8 @@ class DDCMProblem():
                                                  self.forcings.volumetric_source,
                                                  self.forcings.boundary_flux,
                                                  self.forcings.boundary_vals,
+                                                 self.forcings.lmbd_boundary_vals,
+                                                 self.forcings.mu_boundary_vals,
                                                  self.params,
                                                  self.orders,
                                                  dir_outs)

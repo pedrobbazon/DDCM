@@ -31,6 +31,7 @@ petsc_opt1 = {
 
 def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
              flag_setting, volumetric_source, boundary_flux, boundary_vals,
+             lmbd_boundary_vals, mu_boundary_vals,
              params, orders, dir_outs):
 
     mesh = domain.msh
@@ -77,7 +78,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     eta  = params['eta']
     ls    = params['ls']
     lmu   = params['lmu']
-    f     = volumetric_source
+    q     = volumetric_source
 
     # Lagrangian:
     # Proximity function
@@ -85,7 +86,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Balance and Compatibility constraint
     L -= fd.inner(s, fd.grad(lam)) * fd.dx
-    L += fd.inner(zeda*u - f(x), lam) * fd.dx(degree=4)
+    L += fd.inner(zeda*u - q(x), lam) * fd.dx(degree=4)
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
 
     # Stabilization terms
@@ -98,7 +99,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     resK = kappa*s - fd.grad(lam) - kappa*fluxdata
     L  -= (0.5*eta/kappa)*fd.inner(resK,resK) * fd.dx
 
-    resB = fd.div(s) + zeda*u - f(x)
+    resB = fd.div(s) + zeda*u - q(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
 
     resM = fd.div(mu) + zeda*lam
@@ -108,14 +109,27 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
         bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
-
         # Homogeneous boundary condition for scalar Lagrange multiplier
-        bc_lst.append(fd.DirichletBC(W.sub(3), fd.Constant(0.0), "on_boundary"))
-
+        bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+        
     elif(flag_setting == 'Pure-Neumann'):
-
         raise ValueError('Neumann conditions should be include in the Lagrangian')
         #dL += boundary_flux(x) * dl * fd.ds(degree=4)
+        
+    elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
+        # Dirichlet boundary conditions for potential field on left and right
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), 1))
+        bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), 2))
+        
+        bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
+        bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
+        
+        # Neumann boundary conditions for the flux field on top and bottom
+        bc_lst.append(fd.DirichletBC(W.sub(0), boundary_flux(x), 3))
+        bc_lst.append(fd.DirichletBC(W.sub(0), boundary_flux(x), 4))
+        
+        bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 3))
+        bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 4))
         
     else:
         
