@@ -1862,6 +1862,13 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
               'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+    #           'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+    #           'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    
     # Propose an manufactured potential field and its associated gradient
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
@@ -1869,29 +1876,34 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return fd.grad(uexact(x))
     
     def etilde(x):
-        A = fd.Constant(0.1)        # Amplitude
-        f = fd.Constant(0.05)        # Frequency
-        phi = fd.Constant(0.0)      # Phase angle 
-        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*eexact(x)[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*eexact(x)[1] + phi)])
+        A = fd.Constant(0.1)         # Amplitude
+        f = fd.Constant(1.0)         # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     def stilde(x):
-        A = fd.Constant(0.1)    # Amplitude
-        f = fd.Constant(0.05)    # Frequency
-        phi = fd.Constant(0.0)  # Phase angle 
+        A = fd.Constant(0.1)     # Amplitude
+        f = fd.Constant(1.0)     # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
         return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
                              -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
 
     # by eq.(22)
     def muexact(x):
         return etilde(x) - eexact(x)
-    # by eq.(21)
+    
     def lmbdexact(x):
+        return fd.sin(fd.pi*x[0])*fd.sin(fd.pi*x[1])
+    
+    # by eq.(21)
+    def fdual(x):
         zeda = params['zeda']
-        return -(1/zeda)*fd.div(muexact(x))
+        return zeda*lmbdexact(x) + fd.div(muexact(x))
+    
     # by eq.(23)
     def sexact(x):
-        perm = params['perm']
-        return stilde(x) + (1/perm)*fd.grad(lmbdexact(x))
+        kappa = params['kappa']
+        return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
         zeda = params['zeda']
@@ -1907,8 +1919,10 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return lmbdexact(x)
     def mymu_boundary_vals(x):
         return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
             
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
     #________________________________
 
     # This will only be called for visualization purposes
@@ -1935,7 +1949,8 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
     if(formulation == 'Natural'):
         ords = [0,1]
@@ -2343,8 +2358,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
     main_EX8_()
 elif(main_selector == 90): 
     
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
+    # formulation = 'Natural'
+    formulation = 'Equal-Order'
     if formulation == 'Natural':
         flag_norm_labels = ['L2']
     elif formulation == 'Equal-Order':

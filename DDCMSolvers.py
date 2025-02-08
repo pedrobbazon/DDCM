@@ -31,7 +31,7 @@ petsc_opt1 = {
 
 def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
              flag_setting, volumetric_source, boundary_flux, boundary_vals,
-             lmbd_boundary_vals, mu_boundary_vals,
+             lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
              params, orders, dir_outs):
 
     mesh = domain.msh
@@ -79,6 +79,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     ls    = params['ls']
     lmu   = params['lmu']
     q     = volumetric_source
+    f = dual_volumetric_source
 
     # Lagrangian:
     # Proximity function
@@ -86,7 +87,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Balance and Compatibility constraint
     L -= fd.inner(s, fd.grad(lam)) * fd.dx
-    L += fd.inner(zeda*u - q(x), lam) * fd.dx(degree=4)
+    L += fd.inner(zeda*u - q(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
 
     # Stabilization terms
@@ -102,9 +103,11 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     resB = fd.div(s) + zeda*u - q(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
 
-    resM = fd.div(mu) + zeda*lam
+    resM = fd.div(mu) + zeda*lam - f(x)
     L -= (0.5*beta*lmu**2)*fd.inner(resM,resM) * fd.dx
-
+    
+    L -= u*f(x)*fd.dx
+    
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
         # Boundary condition for potential field
