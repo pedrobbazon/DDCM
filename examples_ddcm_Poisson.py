@@ -1856,17 +1856,17 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-              'ls': h, 'lmu': h, 'formulation': formulation} 
-    
     # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
-    #           'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
     #           'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
     
     
     # Propose an manufactured potential field and its associated gradient
@@ -1874,32 +1874,32 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
     def eexact(x):
         return fd.grad(uexact(x))
-    
+    # Propose an analytical expression for lambda
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
+        A = fd.Constant(1.0)
+        return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+    # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.1)         # Amplitude
+        A = fd.Constant(0.01)        # Amplitude
         f = fd.Constant(1.0)         # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
                             eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     def stilde(x):
-        A = fd.Constant(0.1)     # Amplitude
+        A = fd.Constant(0.01)    # Amplitude
         f = fd.Constant(1.0)     # Frequency
         phi = fd.Constant(0.0)   # Phase angle 
         return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
                              -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
-
+    
     # by eq.(22)
     def muexact(x):
         return etilde(x) - eexact(x)
-    
-    def lmbdexact(x):
-        return fd.sin(fd.pi*x[0])*fd.sin(fd.pi*x[1])
-    
     # by eq.(21)
     def fdual(x):
         zeda = params['zeda']
         return zeda*lmbdexact(x) + fd.div(muexact(x))
-    
     # by eq.(23)
     def sexact(x):
         kappa = params['kappa']
@@ -1926,7 +1926,7 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     #________________________________
 
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -2018,23 +2018,60 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
               'gamma': gamma, 'eta': eta,
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
+    # Propose an manufactured potential field and its associated gradient
     def uexact(x):
-        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
-    def sexact(x):
-        perm = params['perm']
-        return -perm * fd.grad(uexact(x))
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
     def eexact(x):
         return fd.grad(uexact(x))
-
-    def mysource(x):
-        perm = params['perm']
+    # Propose an analytical expression for lambda
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
+        A = fd.Constant(1.0)
+        return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+    # Propose a flux-gradient relationship based on the dataset  
+    def etilde(x):
+        A = fd.Constant(0.01)        # Amplitude
+        f = fd.Constant(1.0)         # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    def stilde(x):
+        A = fd.Constant(0.01)     # Amplitude
+        f = fd.Constant(1.0)     # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
+                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
+    
+    # by eq.(22)
+    def muexact(x):
+        return etilde(x) - eexact(x)
+    # by eq.(21)
+    def fdual(x):
         zeda = params['zeda']
-        return fd.div(-perm*fd.grad(uexact(x))) + zeda*uexact(x)
+        return zeda*lmbdexact(x) + fd.div(muexact(x))
+    # by eq.(23)
+    def sexact(x):
+        kappa = params['kappa']
+        return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
+    # by eq.(24)
+    def qexact(x):
+        zeda = params['zeda']
+        return zeda*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
         return uexact(x)
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
+            
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
     #________________________________
 
     # This will only be called for visualization purposes
@@ -2051,7 +2088,7 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
     # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
 
     # 3. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
@@ -2061,7 +2098,8 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
     if(formulation == 'Natural'):
         ords = [0,1]
@@ -2077,10 +2115,10 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
     error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
     error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
-    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
+    error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -2358,8 +2396,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
     main_EX8_()
 elif(main_selector == 90): 
     
-    # formulation = 'Natural'
-    formulation = 'Equal-Order'
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
     if formulation == 'Natural':
         flag_norm_labels = ['L2']
     elif formulation == 'Equal-Order':

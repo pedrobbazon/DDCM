@@ -110,6 +110,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     bc_lst = []
     if(flag_setting == 'Pure-Dirichlet'):
+        
         # Boundary condition for potential field
         bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary"))
         # Homogeneous boundary condition for scalar Lagrange multiplier
@@ -120,6 +121,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         #dL += boundary_flux(x) * dl * fd.ds(degree=4)
         
     elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
+        
         # Dirichlet boundary conditions for potential field on left and right
         bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(1), boundary_vals(x), 2))
@@ -127,7 +129,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
         
-        # Neumann boundary conditions for the flux field on top and bottom
+        # Neumann boundary conditions for the flux field on top and bottom      
         bc_lst.append(fd.DirichletBC(W.sub(0), boundary_flux(x), 3))
         bc_lst.append(fd.DirichletBC(W.sub(0), boundary_flux(x), 4))
         

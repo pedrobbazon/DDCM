@@ -502,7 +502,10 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     sexact = params['exact-flux']
     uexact = params['exact-potential']
+    lmbdexact = params['exact-lmbd']
+    muexact = params['exact-mu']
     gradexact = fd.grad(uexact(x))
+
 
     if(dir_outs != None):
 
@@ -529,6 +532,16 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         gradu = fd.assemble(interpolate(gradexact, Vflux))
         gradu.rename('Reference.Grad(u)')
         VTKFile(filename, mode=mode).write(gradu, time=tt)
+        
+        filename = dir_outs+'/l.pvd'
+        lmbd = fd.assemble(interpolate(lmbdexact(x), Vpot))
+        lmbd.rename('Reference.lambda')
+        VTKFile(filename).write(lmbd)
+
+        filename = dir_outs+'/m.pvd'
+        mu = fd.assemble(interpolate(muexact(x), Vflux))
+        mu.rename('Reference.mu')
+        VTKFile(filename).write(mu)
 
     return sexact, uexact, gradexact
 

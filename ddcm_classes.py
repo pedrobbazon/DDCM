@@ -128,7 +128,7 @@ class PoissonStdProblem():
         self.std_solution.u = u
         self.std_solution.s = sigma 
         self.std_solution.g = g 
-
+        
         return self.std_solution
     
 # Define the Standard Mechanical problem, model and solver
