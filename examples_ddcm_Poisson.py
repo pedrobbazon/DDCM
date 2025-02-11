@@ -1881,28 +1881,28 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
     
     
-    def etilde(x):
-        return fd.as_vector([fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1]), 
-                             fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1])])
+    # def etilde(x):
+    #     return fd.as_vector([fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1]), 
+    #                          fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1])])
     
-    def stilde(x):
-        return fd.as_vector([-fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1]),
-                             -fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1])])
+    # def stilde(x):
+    #     return fd.as_vector([-fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1]),
+    #                          -fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1])])
     
     
     # Propose a flux-gradient relationship based on the dataset  
-    # def etilde(x):
-    #     A = fd.Constant(0.01)        # Amplitude
-    #     f = fd.Constant(1.0)         # Frequency
-    #     phi = fd.Constant(0.0)       # Phase angle 
-    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-    #                         eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
-    # def stilde(x):
-    #     A = fd.Constant(0.01)    # Amplitude
-    #     f = fd.Constant(1.0)     # Frequency
-    #     phi = fd.Constant(0.0)   # Phase angle 
-    #     return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
-    #                          -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
+    def etilde(x):
+        A = fd.Constant(0.01)        # Amplitude
+        f = fd.Constant(1.0)         # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    def stilde(x):
+        A = fd.Constant(0.01)    # Amplitude
+        f = fd.Constant(1.0)     # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
+                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
