@@ -37,7 +37,7 @@ vw = fd.TestFunction(W)
 
 zeda = fd.Constant(1.0)
 q = fd.Constant(1.0)
-J = 0.5*((fd.div(s) + zeda*u - q)**2) * fd.dx + fd.Constant(1.0e-3) * (fd.inner(s+fd.grad(u),s+fd.grad(u))) * fd.dx
+J = 0.5*((fd.div(s) + zeda*u - q)**2) * fd.dx
 
  # Optimallity conditions
 dJ = fd.derivative(J, w, vw)
