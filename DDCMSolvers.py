@@ -81,9 +81,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     lmu   = params['lmu']
     q     = volumetric_source
     f = dual_volumetric_source
-    lamexact = lmbd_boundary_vals
-    muexact = mu_boundary_vals
-    sexact = boundary_flux
+    # lamexact = lmbd_boundary_vals
+    # muexact = mu_boundary_vals
+    # sexact = boundary_flux
 
     # Lagrangian:
     # Proximity function
