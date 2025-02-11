@@ -1879,19 +1879,30 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
         A = fd.Constant(1.0)
         return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
-    # Propose a flux-gradient relationship based on the dataset  
+    
+    
     def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(1.0)         # Frequency
-        phi = fd.Constant(0.0)       # Phase angle 
-        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+        return fd.as_vector([fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1]), 
+                             fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1])])
+    
     def stilde(x):
-        A = fd.Constant(0.01)    # Amplitude
-        f = fd.Constant(1.0)     # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
-                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
+        return fd.as_vector([-fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1]),
+                             -fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1])])
+    
+    
+    # Propose a flux-gradient relationship based on the dataset  
+    # def etilde(x):
+    #     A = fd.Constant(0.01)        # Amplitude
+    #     f = fd.Constant(1.0)         # Frequency
+    #     phi = fd.Constant(0.0)       # Phase angle 
+    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+    #                         eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    # def stilde(x):
+    #     A = fd.Constant(0.01)    # Amplitude
+    #     f = fd.Constant(1.0)     # Frequency
+    #     phi = fd.Constant(0.0)   # Phase angle 
+    #     return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
+    #                          -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
@@ -1927,7 +1938,7 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     # This will only be called for visualization purposes
     params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
-    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Mixed-Dirichlet-Neumann', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
 
@@ -1956,7 +1967,7 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         ords = [0,1]
     elif(formulation == 'Equal-Order'):
         ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
     ddcm_prob.solve("myddcmsol")
 
