@@ -20,10 +20,10 @@ petsc_opt1 = {
     'snes_monitor': None,
     'snes_converged_reason': None,
     'snes_linesearch_type': 'basic',
-    'snes_max_it': 100,
+    'snes_max_it': 2,
     'snes_divergence_tolerance': 1e20,
-    'snes_rtol': 1e-9,
-    'snes_atol': 1e-11,
+    'snes_rtol': 1e-2,
+    'snes_atol': 1e-2,
     'mat_type': 'aij',
     'ksp_type': 'preonly',
     'pc_type': 'lu',
@@ -288,10 +288,18 @@ def PoissonMixedEO(domain, flag_quads, params, flag_setting,
         
         # Pressure bc (weak in this formulation)
 
-        pressure_boundary_term = v*fd.dot(boundary_flux(x),n)*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
+        #pressure_boundary_term = v*fd.dot(sigma,n)*fd.ds(degree=4)
+        pressure_boundary_term = (boundary_vals(x) - u)*fd.dot(tau,n)*fd.ds(degree=4)
+        flux_boundary_term = v*fd.dot(sigma,n)*fd.ds(degree=4)
+        #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
+        #bcall = [fd.DirichletBC(W.sub(0).sub(0), -boundary_flux(x)[0], 1),
+        #         fd.DirichletBC(W.sub(0).sub(0),  boundary_flux(x)[0], 2),
+        #         fd.DirichletBC(W.sub(0).sub(1), -boundary_flux(x)[1], 3),
+        #         fd.DirichletBC(W.sub(0).sub(1),  boundary_flux(x)[1], 4)]
+        #bcall = []
         
         # Flux bc (strong in this formulation) - empty for this setting
-        bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 1), fd.DirichletBC(W.sub(1), boundary_vals(x), 2)]
+        #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 1), fd.DirichletBC(W.sub(1), boundary_vals(x), 2)]
         #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
 
         # Some non-zero initial guess to avoid singularities
@@ -328,7 +336,132 @@ def PoissonMixedEO(domain, flag_quads, params, flag_setting,
 
     perm = params['perm']
     Res  = (fd.dot(sigma, tau) + fd.inner(perm(x)*fd.grad(u),tau) - fd.inner(sigma,fd.grad(v)))*fd.dx(degree=4)
+    Res += fd.Constant(0.25) * fd.inner(sigma - perm(x)*fd.grad(u), tau - perm(x)*fd.grad(v))*fd.dx(degree=4)
     Res -= q*v*fd.dx(degree=4)
+    Res += flux_boundary_term  + pressure_boundary_term
+
+    zeda = params['zeda']
+    if(zeda != None):
+        Res += zeda(x) * u * v * fd.dx(degree=4)
+
+    #v_basis = fd.VectorSpaceBasis(constant=True)
+    #nullspace = fd.MixedVectorSpaceBasis(W, [W.sub(0), v_basis])
+
+    #fd.solve(Res == 0, w, bcs=bcall, solver_parameters=petsc_opt1, nullspace=nullspace)
+    fd.solve(Res == 0, w, bcs=[], solver_parameters=petsc_opt1)
+
+    # Compute g in a consistent way?
+    gtr = fd.TrialFunction(VCG)
+    tau = fd.TestFunction(VCG)
+    usol = fd.Function(CG)
+    usol.assign(w.sub(1))
+    a = fd.inner(gtr,tau)*fd.dx
+    L = -usol*fd.div(tau)*fd.dx + usol*fd.dot(tau,n)*fd.ds
+    g = fd.Function(VCG, name='Reference.VCG-Gradient')
+    fd.solve(a == L, g, bcs=[], solver_parameters=petsc_opt2)
+
+    # It may be reasonable that the output be consistent with the choices
+    # of spaces above. That's why I program this here
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('Reference.Flux')
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('Reference.Potential')
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+
+        filename = dir_outs+'/ucg.pvd'
+        w.sub(1).rename('Reference.Potential-CG')
+        VTKFile(filename, mode=mode).write(fd.project(w.sub(1), domain.CG1, name='Potential-CG1'), time=tt)
+        
+        filename = dir_outs+'/gradu.pvd'
+        #gpl = fd.project(g, domain.VDG0, name='Gradient(u)')
+        VTKFile(filename, mode=mode).write(g, time=tt)
+
+    return w.sub(0), w.sub(1), g
+
+def PoissonMixedEOdiv(domain, flag_quads, params, flag_setting,
+                      volumetric_source, boundary_flux, boundary_vals,
+                      FluxLaw, orders, tt=0.0, dir_outs='myrefsol'):
+
+    # In this formulation the FluxLaw is not used.
+    # We just need the definition of kappa and assume
+    # that we can write (1/K)sigma = -grad(u)
+
+    mesh = domain.msh
+
+    orderF, orderU = orders
+    VCG = fd.VectorFunctionSpace(mesh, 'CG', degree=orderF)
+    CG = fd.FunctionSpace(mesh, 'CG', degree=orderU)
+
+    W = VCG * CG
+
+    w = fd.Function(W, name='Solution')
+    sigma, u = fd.split(w)
+    tau, v = fd.TestFunctions(W)
+
+    x = fd.SpatialCoordinate(mesh)
+
+    n = fd.FacetNormal(mesh)
+
+    if(flag_setting == 'Pure-Dirichlet'):
+        
+        q = volumetric_source(x)
+        
+        # Pressure bc (weak in this formulation)
+
+        #pressure_boundary_term = v*fd.dot(boundary_flux(x),n)*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
+        #pressure_boundary_term = boundary_vals(x)*fd.dot(tau,n)*fd.ds(degree=4)
+        pressure_boundary_term = u*fd.dot(tau,n)*fd.ds(degree=4)
+        bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
+        #bcall = []
+        
+        # Flux bc (strong in this formulation) - empty for this setting
+        #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), 1), fd.DirichletBC(W.sub(1), boundary_vals(x), 2)]
+        #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
+
+        # Some non-zero initial guess to avoid singularities
+        #w.sub(1).interpolate(boundary_vals(x))
+
+    elif(flag_setting == 'Pure-Neumann'):
+        
+        q = volumetric_source(x)
+                
+        # Flux bc (strong in this formulation) - empty for this setting
+        bcall = [fd.DirichletBC(W.sub(0), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), 'on_boundary')]
+        
+    elif(flag_setting == 'Uniaxial'):
+        
+        # By definition, the uniaxial test consists of this:
+        q = fd.Constant(0.0)
+        
+        # Pressure bc (weak in this formulation)
+        tag_bottom, tag_top = 3, 4
+        ubottom, utop = fd.Constant(1.0), boundary_vals(x)
+        pressure_boundary_term = ubottom*fd.dot(tau,n)*fd.ds(tag_bottom) + utop*fd.dot(tau,n)*fd.ds(tag_top)
+
+        # Flux bc (strong in this formulation)
+        no_flux = fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+        tag_left, tag_right = 1, 2
+        bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
+
+        # Some non-zero initial guess to avoid singularities
+        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+
+    else:
+        
+        raise ValueError('Unrecognized problem setting option')
+
+    perm = params['perm']
+    Res  = ((1/perm(x))*fd.dot(sigma, tau) - fd.inner(fd.div(tau),u) - fd.inner(fd.div(sigma),v))*fd.dx(degree=4)
+    Res += q*v*fd.dx(degree=4)
     Res += pressure_boundary_term
 
     zeda = params['zeda']

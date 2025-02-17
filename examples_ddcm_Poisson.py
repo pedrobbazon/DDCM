@@ -2007,13 +2007,13 @@ def main_EX99_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=True)
 
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
     
     def perm(x):
-        return fd.Constant(1.0)# + fd.Constant(0.2)*fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
+        return fd.Constant(1.0) #+ fd.Constant(0.2)*fd.cos(fd.pi*x[0])*fd.cos(303*fd.pi*x[1])
     
     def zeda(x):
         return fd.Constant(0.0)
@@ -2602,7 +2602,7 @@ elif(main_selector == 99):
     
     # Loop over different mesh refinements 
     for index, flag_norm_type in enumerate(flag_norm_labels):
-        for N in [25, 50, 100, 200] :
+        for N in [25, 50] :
             hsize, L2error_u, H1error_u, error_s, error_e = main_EX99_(formulation, N, flag_norm_type)
             if flag_norm_type == 'L2':
                 hhs.append(hsize)
