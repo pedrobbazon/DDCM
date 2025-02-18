@@ -1833,10 +1833,10 @@ def main_EX8_():
 
     return 0
 
-#==================================================================================================================================================#
+# ===== NEW FORMULATION ===== #
 
 # Example of a reference solution based on an analytical expression
-def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
+def main_EX90_(formulation='Natural', N=20):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1856,16 +1856,10 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     h = fd.CellDiameter(domain.msh)
 
-    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-    #           'ls': h, 'lmu': h, 'formulation': formulation} 
-    
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
-              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
+              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
     
@@ -1879,16 +1873,6 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
         x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
         A = fd.Constant(1.0)
         return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
-    
-    
-    # def etilde(x):
-    #     return fd.as_vector([fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1]), 
-    #                          fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1])])
-    
-    # def stilde(x):
-    #     return fd.as_vector([-fd.pi*fd.sin(fd.pi*x[0])*fd.cos(fd.pi*x[1]),
-    #                          -fd.pi*fd.cos(fd.pi*x[0])*fd.sin(fd.pi*x[1])])
-    
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
@@ -1938,237 +1922,6 @@ def main_EX90_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     # This will only be called for visualization purposes
     params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
-    ref_prob = PoissonStdProblem(domain, params_anal, 'Mixed-Dirichlet-Neumann', forcings, None, PoissonAnalytical, orders=[3,3])
-
-    ref_prob.solve(0.0, "myrefsol")
-
-    print('----------------------------------------------------------')
-    print('|::| Reference domain and solution: OK')
-    print('----------------------------------------------------------')
-
-    # 2. Read or sample some synthetic data from a standard solution: 
-    #    The idea is to produce some plausible data similar to what an experiment would deliver
-
-    # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
-
-    # 3. Solve the Data Driven problem: This problem should share the same 
-    #    forcings (bcs, sources, etc.) as the standard problem above
-
-    print('----------------------------------------------------------')
-    print('|> Data Driven solution begins ...')
-    print('----------------------------------')
-
-    def myObjFunc(g,gdata,s,sdata):
-        kappa = params['kappa']
-        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
-
-    if(formulation == 'Natural'):
-        ords = [0,1]
-    elif(formulation == 'Equal-Order'):
-        ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
-
-    ddcm_prob.solve("myddcmsol")
-
-    # 4. Compute some error norms
-    
-    print('... Computing some error norms ...')
-    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
-    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
-    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
-    error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
-
-    print('----------------------------------------------------------')
-    print('|> Data Driven solution OK')
-    print('----------------------------------------------------------')
-    
-    elapsed_time = time.time() - ti
-    print('----------------------------------------------------------')
-    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
-    print('----------------------------------------------------------')
-
-    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
-
-# Example of a reference solution based on an analytical expression
-def main_EX99_(formulation='Natural', N=20, flag_norm_type = 'L2'):
-
-    ti = time.time()
-    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
-    
-    print('----------------------------------------------------------')
-    print('|::| Reference Domain and solution begins ...')
-    print('---------------------------------------------')
-
-    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
-
-    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
-    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=True)
-
-    #________________________________
-    # These would be the ones corresponding to the analytical solution we propose
-    
-    def perm(x):
-        return fd.Constant(1.0) #+ fd.Constant(0.2)*fd.cos(fd.pi*x[0])*fd.cos(303*fd.pi*x[1])
-    
-    def zeda(x):
-        return fd.Constant(0.0)
-
-    params = {'perm': perm, 'zeda': zeda} 
-    
-    # Propose an manufactured potential field and its associated gradient
-    def uexact(x):
-        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
-
-    def sexact(x):
-        perm = params['perm']
-        return -perm(x)*fd.grad(uexact(x))
-
-    def eexact(x):
-        return fd.grad(uexact(x))
-
-    def qexact(x):
-        zeda = params['zeda']
-        return zeda(x)*uexact(x) + fd.div(sexact(x))
-    
-    def mysource(x):
-        return qexact(x)
-    def mysurfaceflux(x):
-        return sexact(x)
-    def mybcvals(x):
-        return uexact(x)
-            
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
-    #________________________________
-
-    # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
-    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedEO, orders=[1,1])
-
-    ref_prob.solve(N, "myrefsol")
-
-    print('----------------------------------------------------------')
-    print('|::| Reference domain and solution: OK')
-    print('----------------------------------------------------------')
-
-    # 4. Compute some error norms
-    
-    print('... Computing some error norms ...')
-    x = fd.SpatialCoordinate(ref_prob.domain.msh)
-    std_sol = ref_prob.std_solution
-    L2error_u = fd.errornorm(uexact(x), std_sol.u , norm_type='L2')
-    H1error_u = fd.errornorm(uexact(x), std_sol.u , norm_type='H1')
-    error_s = fd.errornorm(sexact(x), std_sol.s , norm_type= flag_norm_type)
-    error_e = fd.errornorm(eexact(x), std_sol.g , norm_type= flag_norm_type)
-
-    print('----------------------------------------------------------')
-    print('|> Data Driven solution OK')
-    print('----------------------------------------------------------')
-    
-    elapsed_time = time.time() - ti
-    print('----------------------------------------------------------')
-    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
-    print('----------------------------------------------------------')
-
-    return hsize, L2error_u, H1error_u, error_s, error_e
-
-
-# Example of a reference solution based on an analytical expression
-def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.Constant(0.5), alpha = fd.Constant(0.125), 
-               beta = fd.Constant(0.5), gamma = fd.Constant(0.125), eta = fd.Constant(0.5)):
-
-    ti = time.time()
-    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
-    
-    print('----------------------------------------------------------')
-    print('|::| Reference Domain and solution begins ...')
-    print('---------------------------------------------')
-
-    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
-
-    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
-    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-
-    #________________________________
-    # These would be the ones corresponding to the analytical solution we propose
-
-    h = fd.CellDiameter(domain.msh)
-
-    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-    #           'ls': fd.sqrt(h), 'lmu': fd.sqrt(h), 'formulation': formulation} 
-
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': theta, 'kappa': fd.Constant(1.0), 
-              'alpha': alpha, 'beta': beta, 
-              'gamma': gamma, 'eta': eta,
-              'ls': h, 'lmu': h, 'formulation': formulation} 
-    
-    # Propose an manufactured potential field and its associated gradient
-    def uexact(x):
-        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
-    def eexact(x):
-        return fd.grad(uexact(x))
-    # Propose an analytical expression for lambda
-    def lmbdexact(x):
-        x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
-        A = fd.Constant(1.0)
-        return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
-    # Propose a flux-gradient relationship based on the dataset  
-    def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(1.0)         # Frequency
-        phi = fd.Constant(0.0)       # Phase angle 
-        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
-    def stilde(x):
-        A = fd.Constant(0.01)     # Amplitude
-        f = fd.Constant(1.0)     # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
-                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
-    
-    # by eq.(22)
-    def muexact(x):
-        return etilde(x) - eexact(x)
-    # by eq.(21)
-    def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
-    # by eq.(23)
-    def sexact(x):
-        kappa = params['kappa']
-        return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
-    # by eq.(24)
-    def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
-    
-    def mysource(x):
-        return qexact(x)
-    def mysurfaceflux(x):
-        return sexact(x)
-    def mybcvals(x):
-        return uexact(x)
-    def mylmbd_boundary_vals(x):
-        return lmbdexact(x)
-    def mymu_boundary_vals(x):
-        return muexact(x)
-    def mydual_source(x):
-        return fdual(x)
-            
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
-    #________________________________
-
-    # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -2206,12 +1959,20 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
     
     print('... Computing some error norms ...')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
-    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
-    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
-    error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
+    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
+    L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
+    if formulation == 'Equal-Order':
+        Hdiverror_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        Hdiverror_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
+        Hdiverror_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
+    else:
+        Hdiverror_s = np.nan
+        Hdiverror_e = np.nan
+        Hdiverror_mu = np.nan
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -2222,10 +1983,191 @@ def main_EX900_(formulation='Natural', N=20, flag_norm_type = 'L2', theta = fd.C
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
+    return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+
+
+#  Example of a convergence study for the Forcheimer's model based on an analytical solution
+def main_EX91_(formulation='Natural', N=20):
+    
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+    h = fd.CellDiameter(domain.msh)
+
+    # perm : permeability tensor; visc: dynamic viscosity; zeda:
+    # forch_coef: Forcheimer coefficient; zeda: reaction coefficient
+    params = {'perm': fd.Constant(1.0), 'visc' : fd.Constant(1.0),
+              'forch_coef': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
+
+    
+    def uexact(x):
+        forch_coef = params['forch_coef']
+        visc = params['visc']
+        perm = params['perm']
+        return - visc/(2*perm)*(x[0]**2 + x[1]**2) - (forch_coef/3)*(x[0]**2 + x[1]**2)**(3/2) 
+    
+    def eexact(x):
+        forch_coef = params['forch_coef']
+        visc = params['visc']
+        perm = params['perm']
+        return fd.as_vector([-forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[0]/perm,
+                             -forch_coef*x[1]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[1]/perm])
+    
+    # Propose an analytical expression for lambda
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
+        A = fd.Constant(1.0)
+        return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+    
+    # def sexact(x):
+        # return fd.as_vector([x[0], x[1]])
+    
+    # Propose a flux-gradient relationship based on the dataset
+    sref = lambda x: fd.as_vector([x[0], x[1]])      
+    def stilde(x):
+        A = fd.Constant(0.1)    # Amplitude
+        f = fd.Constant(1.0)     # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return fd.as_vector([sref(x)[0] + A*fd.sin(f*fd.pi*sref(x)[0] + phi),
+                            sref(x)[1] + A*fd.sin(f*fd.pi*sref(x)[1] + phi)])  
+    def etilde(x):
+        A = fd.Constant(0.1)        # Amplitude
+        f = fd.Constant(1.0)         # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        visc = params['visc']        # Viscosity
+        perm = params['perm']        # Permeability
+        forch_coef = params['forch_coef']   # Forcheimer's coefficient 
+        # Regularization of (s*s)^(1/2)
+        epsilon = 1e-2
+        modfluxreg = epsilon*(fd.sqrt(1.0 + fd.inner(stilde(x),stilde(x))/epsilon**2) - 1.0)
+        
+        return fd.as_vector([-visc*perm*stilde(x)[0] - forch_coef*modfluxreg*stilde(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+                            -visc*perm*stilde(x)[1] - forch_coef*modfluxreg*stilde(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+     # by eq.(22)
+    def muexact(x):
+        return etilde(x) - eexact(x)
+    # by eq.(21)
+    def fdual(x):
+        zeda = params['zeda']
+        return zeda*lmbdexact(x) + fd.div(muexact(x))
+    # by eq.(23)
+    def sexact(x):
+        kappa = params['kappa']
+        return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
+    # by eq.(24)
+    def qexact(x):
+        zeda = params['zeda']
+        return zeda*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
+            
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
+      
+    # def mysource(x):
+    #     zeda = params['zeda']
+    #     return fd.div(sexact(x)) + zeda*uexact(x)
+    # def mysurfaceflux(x):
+    #     return sexact(x)
+    # def mybcvals(x):
+    #     return uexact(x)
+    # forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    #________________________________
+
+    
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        kappa = params['kappa'] 
+        return (0.5)*fd.inner(g-gdata, g-gdata)*fd.dx + (0.5*kappa)*fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob.solve("myddcmsol")
+
+    # 4. Compute some error norms
+    
+    print('... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
+    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
+    L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
+    if formulation == 'Equal-Order':
+        Hdiverror_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        Hdiverror_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
+        Hdiverror_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
+    else:
+        Hdiverror_s = np.nan
+        Hdiverror_e = np.nan
+        Hdiverror_mu = np.nan
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+
 
 # Example of a convergence study in convex and non-convex geometries with a known analytical solution
-def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
+def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
     
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2339,9 +2281,9 @@ def main_EX91_(formulation='Natural', hsize = 0.1, case_corner = 4):
     return L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
 
 
-#  Example of a convergence study for the Forcheimer's model based on an analytical solution
-def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
-    
+# Example of a reference solution based on an analytical expression
+def main_EX93_(formulation='Natural', N=20):
+
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
     
@@ -2353,94 +2295,70 @@ def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=True)
 
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
-    h = fd.CellDiameter(domain.msh)
+    
+    def perm(x):
+        return fd.Constant(1.0) #+ fd.Constant(0.2)*fd.cos(fd.pi*x[0])*fd.cos(303*fd.pi*x[1])
+    
+    def zeda(x):
+        return fd.Constant(1.0)
 
-    # perm : permeability tensor; visc: dynamic viscosity; zeda:
-    # forch_coef: Forcheimer coefficient; zeda: reaction coefficient
-    params = {'perm': fd.Constant(1.0), 'visc' : fd.Constant(1.0),
-              'forch_coef': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
-              'ls': h, 'lmu': h, 'formulation': formulation} 
+    params = {'perm': perm, 'zeda': zeda} 
     
-    
+    # Propose an manufactured potential field and its associated gradient
     def uexact(x):
-        forch_coef = params['forch_coef']
-        visc = params['visc']
-        perm = params['perm']
-        return - visc/(2*perm)*(x[0]**2 + x[1]**2) - (forch_coef/3)*(x[0]**2 + x[1]**2)**(3/2) 
-    
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
+
     def sexact(x):
-        return fd.as_vector([x[0], x[1]])
-    
-    def eexact(x):
-        forch_coef = params['forch_coef']
-        visc = params['visc']
         perm = params['perm']
-        return fd.as_vector([-forch_coef*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[0]/perm,
-                             -forch_coef*x[1]*fd.sqrt(x[0]**2 + x[1]**2) - visc*x[1]/perm])
-        
-    def mysource(x):
+        return -perm(x)*fd.grad(uexact(x))
+
+    def eexact(x):
+        return fd.grad(uexact(x))
+
+    def qexact(x):
         zeda = params['zeda']
-        return fd.div(sexact(x)) + zeda*uexact(x)
+        return zeda(x)*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
         return uexact(x)
+            
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
     #________________________________
 
-    
     # This will only be called for visualization purposes
     params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
-    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+    ref_prob = PoissonStdProblem(domain, params, 'Pure-Dirichlet', forcings, None, PoissonMixedEO, orders=[1,1])
 
-    ref_prob.solve(0.0, "myrefsol")
+    ref_prob.solve(N, "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
     print('----------------------------------------------------------')
 
-    # 2. Read or sample some synthetic data from a standard solution: 
-    #    The idea is to produce some plausible data similar to what an experiment would deliver
-
-    # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
-
-    # 3. Solve the Data Driven problem: This problem should share the same 
-    #    forcings (bcs, sources, etc.) as the standard problem above
-
-    print('----------------------------------------------------------')
-    print('|> Data Driven solution begins ...')
-    print('----------------------------------')
-
-    def myObjFunc(g,gdata,s,sdata):
-        kappa = params['kappa'] 
-        return (0.5)*fd.inner(g-gdata, g-gdata)*fd.dx + (0.5*kappa)*fd.inner(s-sdata, s-sdata)*fd.dx
-
-    if(formulationkappa == 'Natural'):
-        ords = [0,1]
-    elif(formulation == 'Equal-Order'):
-        ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
-    ddcm_prob.solve("myddcmsol")
-
     # 4. Compute some error norms
     
     print('... Computing some error norms ...')
-    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
-    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type= flag_norm_type)
-    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type= flag_norm_type)
-    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)
-
+    x = fd.SpatialCoordinate(ref_prob.domain.msh)
+    std_sol = ref_prob.std_solution
+    L2error_u = fd.errornorm(uexact(x), std_sol.u , norm_type='L2')
+    H1error_u = fd.errornorm(uexact(x), std_sol.u , norm_type='H1')
+    L2error_s = fd.errornorm(sexact(x), std_sol.s , norm_type= 'L2')
+    L2error_e = fd.errornorm(eexact(x), std_sol.g , norm_type= 'L2')
+    if formulation == 'Equal-Order':
+        Hdiverror_s = fd.errornorm(sexact(x), std_sol.s , norm_type= 'Hdiv')
+        Hdiverror_e = fd.errornorm(eexact(x), std_sol.g , norm_type= 'Hdiv')
+    else:
+        Hdiverror_s = np.nan
+        Hdiverror_e = np.nan
+        
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
     print('----------------------------------------------------------')
@@ -2450,9 +2368,68 @@ def main_EX92_(formulation='Natural', N=20, flag_norm_type = 'L2'):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
+    return hsize, L2error_u, H1error_u, L2error_s, L2error_e, Hdiverror_s, Hdiverror_e
 
-#=============== Run ===============#
+
+# ===== AUXILIARY FUNCTIONS ===== #
+
+def plotErrors(hhs=[], L2u=[], H1u=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv=[], EeHdiv=[],
+               EmHdiv=[], formulation='Natural', flag_save_fig=False, fig_names = []):
+    fig, ax = plt.subplots(figsize=(8,6))
+    if L2u:
+        ax.loglog(hhs,L2u,'-or',label='$\\|u-u_h\\|_{L^2}$')
+    if H1u:
+        ax.loglog(hhs,H1u,'-ob',label='$\\|u-u_h\\|_{H^1}$')
+    if H1l:
+        ax.loglog(hhs,H1l,'-om',label='$\\|\\lambda-\\lambda_h\\|_{H^1}$')
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
+    if ax.has_data():
+        ax.legend()
+    ax.grid(which='both',linestyle='--',linewidth=0.5,alpha=0.7)
+    ax.set_title(formulation)
+    ax.tick_params(axis='both',which='major')
+    ax.tick_params(axis='both',which='minor')
+    if flag_save_fig:
+        plt.savefig(f'{fig_names[0]}_{formulation}.svg')
+    plt.show()
+    
+    fig, ax = plt.subplots(figsize=(8,6))
+    if EsL2:
+        ax.loglog(hhs,EsL2,'-og',label='$\\|\\mathbf{s}-\\mathbf{s}_h\\|_{L^2}$')
+    if EeL2:
+        ax.loglog(hhs,EeL2,'-oc',label='$\\|\\mathbf{e}-\\mathbf{e}_h\\|_{L^2}$')
+    if EmL2:
+        ax.loglog(hhs,EmL2,'-ok',label='$\\|\\boldsymbol{\\mu}-\\boldsymbol{\\mu}_h\\|_{L^2}$')
+    
+    if formulation == 'Equal-Order':
+        if EsHdiv:
+            ax.loglog(hhs,EsHdiv,'--^g',label='$\\|\\mathbf{s}-\\mathbf{s}_h\\|_{\\text{Hdiv}}$')
+        if EeHdiv:
+            ax.loglog(hhs,EeHdiv,'--^c',label='$\\|\\mathbf{e}-\\mathbf{e}_h\\|_{\\text{Hdiv}}$')
+        if EmHdiv:
+            ax.loglog(hhs,EmHdiv,'--^k',label='$\\|\\boldsymbol{\\mu}-\\boldsymbol{\\mu}_h\\|_{\\text{Hdiv}}$')
+    
+    ax.set_xlabel('$h$')
+    ax.set_ylabel('Error')
+    if ax.has_data():
+        ax.legend()
+    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major')
+    ax.tick_params(axis='both', which='minor')
+    ax.set_title(formulation)
+    if flag_save_fig:
+        plt.savefig(f'{fig_names[1]}_{formulation}.svg')
+    plt.show()
+
+def printConvergenceRates(conv_rates):
+    headers = ["Norm", "Convergence rate"]
+    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
+    print("Estimated Convergence Rates:")
+    print(tabulate(table_data, headers=headers, tablefmt="github"))
+    
+
+# ===== RUN ===== #
 import sys
 from tabulate import tabulate
 
@@ -2461,6 +2438,7 @@ main_selector = np.int32(sys.argv[1])
 
 if(main_selector == 10): # Proximity measure with the modulus
     main_EX10_()
+
 elif(main_selector == 50): # Convergence study of Forcheimer's model with manufactured solution
     hhs, L2u, H1u, L2s = [], [], [], []
     for N in [20, 40, 80, 160]:
@@ -2478,26 +2456,25 @@ elif(main_selector == 50): # Convergence study of Forcheimer's model with manufa
     plt.ylabel('Error')
     plt.legend(['$\|u-u_h\|_{L^2}$', '$\|u-u_h\|_{H^1}$',  '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'])
     plt.show()
+
 elif(main_selector == 51): # Forcheimer's model with anysotropic K
     main_EX51_()
+
 elif(main_selector == 4): # Data-driven solution based on reference solution given by analytical expression
     npoints_data, hsize, L2error_u, H1error_u, L2error_s = main_EX4_()
     print("npoints= %d\nhsize= %f\nL2error_u= %f\nH1error_u=%f\nL2error_s=%f\n" %(npoints_data, hsize, L2error_u, H1error_u, L2error_s))
+
 elif(main_selector == 7): # Data-driven solution with reaction term
     main_EX7_()
+
 elif(main_selector == 8): # Data-driven solution with a domain with a reentrant corner
     main_EX8_()
+
 elif(main_selector == 90): 
     
     formulation = 'Natural'
     # formulation = 'Equal-Order'
-    if formulation == 'Natural':
-        flag_norm_labels = ['L2']
-    elif formulation == 'Equal-Order':
-        flag_norm_labels = ['L2', 'Hdiv']
-    else:
-        raise ValueError('Invalid options')
-    
+   
     # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
     EsHdiv, EeHdiv, EmHdiv = [], [], []
@@ -2507,170 +2484,61 @@ elif(main_selector == 90):
     conv_rates = {key: [] for key in errors.keys()}
     
     # Loop over different mesh refinements 
-    for index, flag_norm_type in enumerate(flag_norm_labels):
-        for N in [25, 50, 100, 200] :
-            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX90_(formulation, N, flag_norm_type)
-            if flag_norm_type == 'L2':
-                hhs.append(hsize)
-                L2u.append(L2error_u)
-                H1u.append(H1error_u)
-                H1l.append(H1error_lmd)
-                EsL2.append(error_s)
-                EeL2.append(error_e)
-                EmL2.append(error_mu)
-            elif flag_norm_type == 'Hdiv':
-                EsHdiv.append(error_s) 
-                EeHdiv.append(error_e)
-                EmHdiv.append(error_mu)
-            else:
-                raise ValueError('Error!')
-
+    for N in [25, 50, 100, 200] :
+        output = main_EX90_(formulation, N)
+        hhs.append(output[0]); L2u.append(output[1]); H1u.append(output[2]); H1l.append(output[3]); EsL2.append(output[4]) 
+        EeL2.append(output[5]); EmL2.append(output[6]); EsHdiv.append(output[7]); EeHdiv.append(output[8]); EmHdiv.append(output[9]) 
+        
     # Compute the associated convergence rates 
     for key, value in errors.items():
-        if not value:
+        if np.all(np.isnan(value)):
             conv_rates[key] = [np.nan]
         else:
             p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
             conv_rates[key].append(p)
 
-              
-    # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
-    ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
-    ax.loglog(hhs, H1l, '-om', label = '$\|\lambda-\lambda_h\|_{H^1}$')
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    plt.savefig('Darcy_errors_u_lmd_'+formulation+'.svg')
-    plt.show()
-    
-    # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, EsL2, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
-    ax.loglog(hhs, EeL2, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
-    ax.loglog(hhs, EmL2, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' )
-    if formulation == 'Equal-Order':
-        ax.loglog(hhs, EsHdiv, '--^g', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{\\text{Hdiv}}$')
-        ax.loglog(hhs, EeHdiv, '--^c', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{\\text{Hdiv}}$')
-        ax.loglog(hhs, EmHdiv, '--^k', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{\\text{Hdiv}}$' )
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    else:
-        raise ValueError('Invalid option!')
-    plt.savefig('Darcy_errors_s_e_mu_'+formulation+'.svg')
-    plt.show()
+    # Plots
+    flag_save_fig = True
+    fig_names = ['Darcy_errors_u_lmd','Darcy_errors_s_e_mu']
+    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig, fig_names)          
     
     # Output
-    headers = ["Norm", "Convergence rate"]
-    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
-    print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
-elif(main_selector == 99): 
+    printConvergenceRates(conv_rates)
+
+elif(main_selector == 91):
     
-    #formulation = 'Natural'
+    # formulation = 'Natural'
     formulation = 'Equal-Order'
-    if formulation == 'Natural':
-        flag_norm_labels = ['L2']
-    elif formulation == 'Equal-Order':
-        flag_norm_labels = ['L2', 'Hdiv']
-    else:
-        raise ValueError('Invalid options')
     
-    # Store all the errors in a dictionary 
-    hhs, L2u, H1u, EsL2, EeL2 = [], [], [], [], []
-    EsHdiv, EeHdiv = [], []
-    errors = {'L2u': L2u, 'H1u': H1u, 
-              'EsL2': EsL2, 'EeL2': EeL2,
-              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv}
+    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
+    EsHdiv, EeHdiv, EmHdiv = [], [], []
+    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 
+              'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
+              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
     conv_rates = {key: [] for key in errors.keys()}
     
-    # Loop over different mesh refinements 
-    for index, flag_norm_type in enumerate(flag_norm_labels):
-        for N in [25, 50] :
-            hsize, L2error_u, H1error_u, error_s, error_e = main_EX99_(formulation, N, flag_norm_type)
-            if flag_norm_type == 'L2':
-                hhs.append(hsize)
-                L2u.append(L2error_u)
-                H1u.append(H1error_u)
-                EsL2.append(error_s)
-                EeL2.append(error_e)
-            elif flag_norm_type == 'Hdiv':
-                EsHdiv.append(error_s) 
-                EeHdiv.append(error_e)
-            else:
-                raise ValueError('Error!')
-
+   # Loop over different mesh refinements 
+    for N in [25, 50, 100, 200] :
+        output = main_EX91_(formulation, N)
+        hhs.append(output[0]); L2u.append(output[1]); H1u.append(output[2]); H1l.append(output[3]); EsL2.append(output[4]) 
+        EeL2.append(output[5]); EmL2.append(output[6]); EsHdiv.append(output[7]); EeHdiv.append(output[8]); EmHdiv.append(output[9]) 
+            
     # Compute the associated convergence rates 
     for key, value in errors.items():
-        if not value:
+        if np.all(np.isnan(value)):
             conv_rates[key] = [np.nan]
         else:
             p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
             conv_rates[key].append(p)
-              
-    # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
-    ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    plt.savefig('Darcy_errors_u_lmd_'+formulation+'.svg')
-    plt.show()
-    
-    # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, EsL2, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
-    ax.loglog(hhs, EeL2, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
-    if formulation == 'Equal-Order':
-        ax.loglog(hhs, EsHdiv, '--^g', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{\\text{Hdiv}}$')
-        ax.loglog(hhs, EeHdiv, '--^c', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{\\text{Hdiv}}$')
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    else:
-        raise ValueError('Invalid option!')
-    plt.savefig('Darcy_errors_s_e_mu_'+formulation+'.svg')
-    plt.show()
-    
+                 
+    # Plots
+    flag_save_fig = False
+    fig_names = ['Forcheimer_errors_u_lmd','Forcheimer_errors_s_e_mu']
+    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig, fig_names)         
+            
     # Output
-    headers = ["Norm", "Convergence rate"]
-    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
-    print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
-    
-        
-elif(main_selector == 91):
+    printConvergenceRates(conv_rates)
+elif(main_selector == 92):
     
     hhs = [0.1, 0.05, 0.025, 0.0125]
     # Specify the formulation to be used
@@ -2701,7 +2569,7 @@ elif(main_selector == 91):
     for case_corner_index, case_corner in enumerate(case_corners):
         for hsize_index, hsize in enumerate(hhs):
             # Call the function
-            L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX91_(formulation, hsize, case_corner)
+            L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, hsize, case_corner)
             errors['L2u'][case_corner_index, hsize_index] = L2error_u
             errors['H1u'][case_corner_index, hsize_index] = H1error_u
             errors['H1l'][case_corner_index, hsize_index] = H1error_lmd
@@ -2738,17 +2606,13 @@ elif(main_selector == 91):
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
      
-elif(main_selector == 92):
+elif(main_selector == 93): 
     
-    # formulation = 'Natural'
-    formulation = 'Equal-Order'
-    if formulation == 'Natural':
-        flag_norm_labels = ['L2']
-    elif formulation == 'Equal-Order':
-        flag_norm_labels = ['L2', 'Hdiv']
-    else:
-        raise ValueError('Invalid options')
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
+
     
+    # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
     EsHdiv, EeHdiv, EmHdiv = [], [], []
     errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 
@@ -2756,133 +2620,27 @@ elif(main_selector == 92):
               'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
     conv_rates = {key: [] for key in errors.keys()}
     
-    # Loop over different mesh refinements 
-    for index, flag_norm_type in enumerate(flag_norm_labels):
-        for N in [25, 50, 100, 200]:
-            hsize, L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, N, flag_norm_type)
-            if flag_norm_type == 'L2':
-                hhs.append(hsize)
-                L2u.append(L2error_u)
-                H1u.append(H1error_u)
-                H1l.append(H1error_lmd)
-                EsL2.append(error_s)
-                EeL2.append(error_e)
-                EmL2.append(error_mu)
-            elif flag_norm_type == 'Hdiv':
-                EsHdiv.append(error_s) 
-                EeHdiv.append(error_e)
-                EmHdiv.append(error_mu)
-            else:
-                raise ValueError('Error!')
-            
+   # Loop over different mesh refinements 
+    for N in [25, 50, 100, 200] :
+        output = main_EX93_(formulation, N)
+        hhs.append(output[0]);  L2u.append(output[1]);    H1u.append(output[2]);    EsL2.append(output[3]) 
+        EeL2.append(output[4]); EsHdiv.append(output[5]); EeHdiv.append(output[6])
+
     # Compute the associated convergence rates 
     for key, value in errors.items():
-        if not value:
+        if np.all(np.isnan(value)):
             conv_rates[key] = [np.nan]
         else:
             p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
             conv_rates[key].append(p)
-            
-    # Plot the ||u-uh||_L2, ||u-uh||_H1 and ||lambda-lambda_h||_H1
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, L2u, '-or', label = '$\|u-u_h\|_{L^2}$')
-    ax.loglog(hhs, H1u, '-ob', label = '$\|u-u_h\|_{H^1}$')
-    ax.loglog(hhs, H1l, '-om', label = '$\|\lambda-\lambda_h\|_{H^1}$')
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    plt.savefig('Forcheimer_errors_u_lmd_'+formulation+'.svg')
-    plt.show()
-    
-    # Plot the ||s-sh||_V, ||e-eh||_V and ||mu-mu_h||_V, being V: L2 or Hdiv depending on the selected formulation
-    fig, ax = plt.subplots(figsize=(8,6))
-    ax.loglog(hhs, EsL2, '-og', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$')
-    ax.loglog(hhs, EeL2, '-oc', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$')
-    ax.loglog(hhs, EmL2, '-ok', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$' )
-    if formulation == 'Equal-Order':
-        ax.loglog(hhs, EsHdiv, '--^g', label = '$\|\mathbf{s}-\mathbf{s}_h\|_{\\text{Hdiv}}$')
-        ax.loglog(hhs, EeHdiv, '--^c', label = '$\|\mathbf{e}-\mathbf{e}_h\|_{\\text{Hdiv}}$')
-        ax.loglog(hhs, EmHdiv, '--^k', label = '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{\\text{Hdiv}}$' )
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    if(formulation == 'Natural'):
-        ax.set_title('Natural')
-    elif(formulation == 'Equal-Order'):
-        ax.set_title('Equal Order')
-    else:
-        raise ValueError('Invalid option!')
-    plt.savefig('Forcheimer_errors_s_e_mu_'+formulation+'.svg')
-    plt.show()
+              
+    # Plots
+    flag_save_fig = False
+    fig_names = ['xxx_errors_u_lmd','xxx_errors_s_e_mu']
+    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig)          
     
     # Output
-    headers = ["Norm", "Convergence rate"]
-    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
-    print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
-    
-elif(main_selector == 900):
-
-    # Define fixed parameters
-    formulation, N, flag_norm_type = 'Equal-Order', 100, 'L2'
-    Nmin, Nmax, Nvals = 0.01, 100.0, 50
-
-    # Example usagez
-    interval = np.geomspace(Nmin,Nmax, Nvals, endpoint=True)
-    
-    # Define parameter ranges
-    param_ranges = {key: interval for key in ['theta', 'alpha', 'beta', 'gamma', 'eta']}
-
-    # Iterate over parameters
-    for param, values in param_ranges.items():
-        error_data = {key: [] for key in ['L2_u', 'H1_u', 'H1_lmd', 's', 'e', ' error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type=flag_norm_type)mu']}
-        
-        for val in values:
-            # Define varying parameter
-            param_values = {
-                'theta': fd.Constant(0.5) if param != 'theta' else fd.Constant(val),
-                'alpha': fd.Constant(0.125) if param != 'alpha' else fd.Constant(val),
-                'beta': fd.Constant(0.5) if param != 'beta' else fd.Constant(val),
-                'gamma': fd.Constant(0.125) if param != 'gamma' else fd.Constant(val),
-                'eta': fd.Constant(0.5) if param != 'eta' else fd.Constant(val),
-            }
-
-            # Run simulation
-            hsize, *errors = main_EX900_(formulation=formulation, N=N, flag_norm_type=flag_norm_type, **param_values)
-
-            # Store errors
-            for key, error in zip(error_data.keys(), errors):
-                error_data[key].append(error)
-
-        # Plot results
-        plt.figure(figsize=(8, 6))
-        labels = [
-            r'$\|u-u_h\|_{L^2}$', r'$\|u-u_h\|_{H^1}$', r'$\|\lambda-\lambda_h\|_{H^1}$',
-            r'$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', r'$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$', 
-            r'$\|\boldsymbol{\mu}-\boldsymbol{\mu}_h\|_{L^2}$'
-        ]
-        
-        for key, label in zip(error_data.keys(), labels):
-            plt.loglog(values, error_data[key], '.-', label=label)
-
-        plt.xlabel(f'$\\{param}$')
-        plt.ylabel('Error')
-        plt.title('Equal-Order')
-        plt.legend(loc='best')
-        plt.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        plt.minorticks_on()
-        plt.savefig(f"{param}_error_new.svg")
-        # plt.show()
+    printConvergenceRates(conv_rates)
 
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
