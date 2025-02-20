@@ -2472,8 +2472,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
 
 elif(main_selector == 90): 
     
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
+    #formulation = 'Natural'
+    formulation = 'Equal-Order'
    
     # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
