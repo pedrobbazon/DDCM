@@ -756,7 +756,6 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     muexact = params['exact-mu']
     gradexact = fd.grad(uexact(x))
 
-
     if(dir_outs != None):
 
         if(tt == 0.0): # This time acts as a parameter over which we do continuation

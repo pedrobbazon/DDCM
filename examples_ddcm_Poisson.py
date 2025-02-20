@@ -1856,7 +1856,7 @@ def main_EX90_(formulation='Natural', N=20):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.0001), 
               'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
               'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
@@ -1922,7 +1922,7 @@ def main_EX90_(formulation='Natural', N=20):
 
     # This will only be called for visualization purposes
     params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
-    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
 
@@ -1951,7 +1951,7 @@ def main_EX90_(formulation='Natural', N=20):
         ords = [0,1]
     elif(formulation == 'Equal-Order'):
         ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
     ddcm_prob.solve("myddcmsol")
 

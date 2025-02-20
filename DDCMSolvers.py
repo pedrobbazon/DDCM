@@ -118,8 +118,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
         
     elif(flag_setting == 'Pure-Neumann'):
-        raise ValueError('Neumann conditions should be include in the Lagrangian')
-        # dL += boundary_flux(x) * dl * fd.ds(degree=4)
+        
+        L += fd.inner(s_boundary_vals(x),n)*lam*fd.ds(degree=4)
+        L -= fd.inner(mu_boundary_vals(x),n)*u*fd.ds(degree=4)
         
     elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
         
