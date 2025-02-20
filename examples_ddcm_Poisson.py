@@ -1856,10 +1856,16 @@ def main_EX90_(formulation='Natural', N=20):
 
     h = fd.CellDiameter(domain.msh)
 
+    # params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    #           'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
+    #           'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
+    #           'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    #           'ls': h, 'lmu': h, 'formulation': formulation} 
+    
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
     
@@ -1951,7 +1957,7 @@ def main_EX90_(formulation='Natural', N=20):
         ords = [0,1]
     elif(formulation == 'Equal-Order'):
         ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
     ddcm_prob.solve("myddcmsol")
 
@@ -1984,7 +1990,6 @@ def main_EX90_(formulation='Natural', N=20):
     print('----------------------------------------------------------')
 
     return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
-
 
 #  Example of a convergence study for the Forcheimer's model based on an analytical solution
 def main_EX91_(formulation='Natural', N=20):
@@ -2371,6 +2376,7 @@ def main_EX93_(formulation='Natural', N=20):
     return hsize, L2error_u, H1error_u, L2error_s, L2error_e, Hdiverror_s, Hdiverror_e
 
 
+
 # ===== AUXILIARY FUNCTIONS ===== #
 
 def plotErrors(hhs=[], L2u=[], H1u=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv=[], EeHdiv=[],
@@ -2428,7 +2434,7 @@ def printConvergenceRates(conv_rates):
     print("Estimated Convergence Rates:")
     print(tabulate(table_data, headers=headers, tablefmt="github"))
     
-
+   
 # ===== RUN ===== #
 import sys
 from tabulate import tabulate
@@ -2472,8 +2478,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
 
 elif(main_selector == 90): 
     
-    formulation = 'Natural'
-    # formulation = 'Equal-Order'
+    # formulation = 'Natural'
+    formulation = 'Equal-Order'
    
     # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
@@ -2538,6 +2544,7 @@ elif(main_selector == 91):
             
     # Output
     printConvergenceRates(conv_rates)
+
 elif(main_selector == 92):
     
     hhs = [0.1, 0.05, 0.025, 0.0125]

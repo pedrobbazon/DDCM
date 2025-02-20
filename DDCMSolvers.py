@@ -81,10 +81,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     lmu   = params['lmu']
     q     = volumetric_source
     f = dual_volumetric_source
-    # lamexact = lmbd_boundary_vals
-    # muexact = mu_boundary_vals
-    # sexact = boundary_flux
-
+    
     # Lagrangian:
     # Proximity function
     L  = J
@@ -93,8 +90,6 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     L -= fd.inner(s, fd.grad(lam)) * fd.dx
     L += fd.inner(zeda*u - q(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
-    # L += fd.inner(sexact(x),n)*lam*(fd.ds(3)+fd.ds(4))
-    # L -= fd.inner(muexact(x),n)*u*(fd.ds(3)+fd.ds(4))
     
     # Stabilization terms
     resC = e - fd.grad(u)
@@ -123,8 +118,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
         
     elif(flag_setting == 'Pure-Neumann'):
-        raise ValueError('Neumann conditions should be include in the Lagrangian')
-        # dL += boundary_flux(x) * dl * fd.ds(degree=4)
+        L -= fd.inner(boundary_flux(x),n)*lam*(fd.ds(3)+fd.ds(4))
+        L += fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
         
     elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
         
@@ -136,11 +131,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
         
         # Neumann boundary conditions for the flux field on top and bottom      
-        # bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), -boundary_flux(x)[1], 3))
-        # bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), boundary_flux(x)[1], 4))
-        
-        # bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 3))
-        # bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 4))
+        L += fd.inner(boundary_flux(x),n)*lam*(fd.ds(3)+fd.ds(4))
+        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
         
     else:
         
