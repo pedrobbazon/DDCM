@@ -1857,9 +1857,9 @@ def main_EX90_(formulation='Natural', N=20):
     h = fd.CellDiameter(domain.msh)
 
     params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+              'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
+              'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
     
@@ -1877,16 +1877,16 @@ def main_EX90_(formulation='Natural', N=20):
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
         A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(1.0)         # Frequency
+        f = fd.Constant(2.0)         # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
                             eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     def stilde(x):
         A = fd.Constant(0.01)    # Amplitude
-        f = fd.Constant(1.0)     # Frequency
+        f = fd.Constant(3.0)     # Frequency
         phi = fd.Constant(0.0)   # Phase angle 
-        return fd.as_vector([-etilde(x)[0] + A*fd.sin(f*fd.pi*etilde(x)[0] + phi),
-                             -etilde(x)[1] + A*fd.sin(f*fd.pi*etilde(x)[1] + phi)])
+        return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+                             -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
