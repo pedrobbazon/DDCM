@@ -81,11 +81,6 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     lmu   = params['lmu']
     q     = volumetric_source
     f = dual_volumetric_source
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> bfec02a5e14bd1e9bb806dd09ccaa1c8e1721034
     # Lagrangian:
     # Proximity function
     L  = J
@@ -122,14 +117,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
         
     elif(flag_setting == 'Pure-Neumann'):
-<<<<<<< HEAD
-        L -= fd.inner(boundary_flux(x),n)*lam*(fd.ds(3)+fd.ds(4))
-        L += fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
-=======
         
         L += fd.inner(s_boundary_vals(x),n)*lam*fd.ds(degree=4)
         L -= fd.inner(mu_boundary_vals(x),n)*u*fd.ds(degree=4)
->>>>>>> bfec02a5e14bd1e9bb806dd09ccaa1c8e1721034
         
     elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
         
@@ -139,16 +129,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
-<<<<<<< HEAD
-        
-        # Neumann boundary conditions for the flux field on top and bottom      
-        L += fd.inner(boundary_flux(x),n)*lam*(fd.ds(3)+fd.ds(4))
-        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
-=======
 
         L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
         L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
->>>>>>> bfec02a5e14bd1e9bb806dd09ccaa1c8e1721034
         
     else:
         
