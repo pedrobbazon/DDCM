@@ -1951,7 +1951,7 @@ def main_EX90_(formulation='Natural', N=20):
         ords = [0,1]
     elif(formulation == 'Equal-Order'):
         ords = [1,1]
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Neumann', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
     ddcm_prob.solve("myddcmsol")
 
