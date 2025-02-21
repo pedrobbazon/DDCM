@@ -754,6 +754,8 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     uexact = params['exact-potential']
     lmbdexact = params['exact-lmbd']
     muexact = params['exact-mu']
+    etilde = params['etilde']
+    stilde = params['stilde']
     gradexact = fd.grad(uexact(x))
 
     if(dir_outs != None):
@@ -791,6 +793,16 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         mu = fd.assemble(interpolate(muexact(x), Vflux))
         mu.rename('Reference.mu')
         VTKFile(filename).write(mu)
+
+        filename = dir_outs+'/et.pvd'
+        et = fd.assemble(interpolate(etilde(x), Vflux))
+        et.rename('Reference.et')
+        VTKFile(filename).write(et)
+
+        filename = dir_outs+'/st.pvd'
+        st = fd.assemble(interpolate(stilde(x), Vflux))
+        st.rename('Reference.st')
+        VTKFile(filename).write(st)
 
     return sexact, uexact, gradexact
 

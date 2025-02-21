@@ -1856,7 +1856,7 @@ def main_EX90_(formulation='Natural', N=20):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.0001), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(-10.0), 
               'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
               'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
@@ -1876,14 +1876,14 @@ def main_EX90_(formulation='Natural', N=20):
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(2.0)         # Frequency
+        A = fd.Constant(0.1)        # Amplitude
+        f = fd.Constant(3.0)         # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+                             eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     def stilde(x):
-        A = fd.Constant(0.01)    # Amplitude
-        f = fd.Constant(3.0)     # Frequency
+        A = fd.Constant(0.1)    # Amplitude
+        f = fd.Constant(2.0)     # Frequency
         phi = fd.Constant(0.0)   # Phase angle 
         return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
                              -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
@@ -1921,7 +1921,8 @@ def main_EX90_(formulation='Natural', N=20):
     #________________________________
 
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'etilde': etilde, 'stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
