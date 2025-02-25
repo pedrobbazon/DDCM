@@ -1,3 +1,5 @@
+import numpy as np
+import matplotlib.pyplot as plt
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
@@ -754,6 +756,8 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     uexact = params['exact-potential']
     lmbdexact = params['exact-lmbd']
     muexact = params['exact-mu']
+    etexact = params['exact-etilde']
+    stexact = params['exact-stilde']
     gradexact = fd.grad(uexact(x))
 
     if(dir_outs != None):
@@ -791,6 +795,32 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         mu = fd.assemble(interpolate(muexact(x), Vflux))
         mu.rename('Reference.mu')
         VTKFile(filename).write(mu)
+        
+        filename = dir_outs+'/et.pvd'
+        et = fd.assemble(interpolate(etexact(x), Vflux))
+        et.rename('Reference.et')
+        VTKFile(filename).write(et)
+
+        filename = dir_outs+'/st.pvd'
+        st = fd.assemble(interpolate(stexact(x), Vflux))
+        st.rename('Reference.st')
+        VTKFile(filename).write(st)
+
+        # marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
+        # nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    
+        # nvet = np.linalg.norm(et.dat.data[:,:], axis=1)
+        # nvst = np.linalg.norm(st.dat.data[:,:], axis=1)
+        # plt.figure(figsize=(8,6))
+        # plt.plot(nvet, nvst, **marker_style, label=r'$\text{Experimental data set}: \tilde{\mathbf{s}}\left(\tilde{\mathbf{e}}\right)$')
+        # plt.plot(nve, nve, '.k',label=r'$\text{Reference}: \mathbf{s}\left(\mathbf{e}\right)$')
+        # plt.xlabel(r'$\|\mathbf{e}\|$', fontsize=12)
+        # plt.ylabel(r'$\|\mathbf{s}\|$', fontsize=12)
+        # plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        # plt.legend(loc='best', fancybox=True, shadow=True, fontsize=11)
+        # plt.tick_params(axis='both', which='major', labelsize=11)
+        # plt.tick_params(axis='both', which='minor', labelsize=11)
+        # plt.savefig('stilde_vs_etilde.svg')
+        # plt.show()
 
     return sexact, uexact, gradexact
 

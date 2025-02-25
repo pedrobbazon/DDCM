@@ -1876,17 +1876,33 @@ def main_EX90_(formulation='Natural', N=20):
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(2.0)         # Frequency
+        A = fd.Constant(0.2)         # Amplitude
+        ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
-        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
+                             eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def stilde(x):
-        A = fd.Constant(0.01)    # Amplitude
-        f = fd.Constant(3.0)     # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                             -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+        A = fd.Constant(0.1)    # Amplitude
+        ome = fd.Constant(3.0)  # Frequency
+        phi = fd.Constant(0.0)  # Phase angle
+        eps = fd.Constant(1.0e-10)
+        met = fd.sqrt(etilde(x)[0]**2 + etilde(x)[1]**2) + eps
+        etn = fd.as_vector([etilde(x)[0]/met, etilde(x)[1]/met])
+        mst = met + A*fd.sin(ome*fd.pi*met)
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    # def etilde(x):
+    #     A = fd.Constant(0.01)        # Amplitude
+    #     f = fd.Constant(2.0)         # Frequency
+    #     phi = fd.Constant(0.0)       # Phase angle 
+    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+    #                         eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    # def stilde(x):
+    #     A = fd.Constant(0.01)    # Amplitude
+    #     f = fd.Constant(3.0)     # Frequency
+    #     phi = fd.Constant(0.0)   # Phase angle 
+    #     return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+    #                          -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
@@ -1921,7 +1937,8 @@ def main_EX90_(formulation='Natural', N=20):
     #________________________________
 
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -2101,7 +2118,8 @@ def main_EX91_(formulation='Natural', N=20):
 
     
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -2412,17 +2430,33 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        f = fd.Constant(2.0)         # Frequency
+        A = fd.Constant(0.2)         # Amplitude
+        ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
-        return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                            eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
+                             eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def stilde(x):
-        A = fd.Constant(0.01)    # Amplitude
-        f = fd.Constant(2.0)     # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-                             -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+        A = fd.Constant(0.1)    # Amplitude
+        ome = fd.Constant(3.0)  # Frequency
+        phi = fd.Constant(0.0)  # Phase angle
+        eps = fd.Constant(1.0e-10)
+        met = fd.sqrt(etilde(x)[0]**2 + etilde(x)[1]**2) + eps
+        etn = fd.as_vector([etilde(x)[0]/met, etilde(x)[1]/met])
+        mst = met + A*fd.sin(ome*fd.pi*met)
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    # def etilde(x):
+    #     A = fd.Constant(0.01)        # Amplitude
+    #     f = fd.Constant(2.0)         # Frequency
+    #     phi = fd.Constant(0.0)       # Phase angle 
+    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+    #                         eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    # # def stilde(x):
+    #     A = fd.Constant(0.01)    # Amplitude
+    #     f = fd.Constant(2.0)     # Frequency
+    #     phi = fd.Constant(0.0)   # Phase angle 
+    #     return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
+    #                          -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
@@ -2457,7 +2491,8 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     #________________________________
 
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 'exact-mu': muexact}
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
@@ -2497,6 +2532,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
     H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
     L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
@@ -2519,7 +2555,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
     
 
 
@@ -2626,8 +2662,8 @@ elif(main_selector == 8): # Data-driven solution with a domain with a reentrant 
 
 elif(main_selector == 90): 
     
-    #formulation = 'Natural'
-    formulation = 'Equal-Order'
+    formulation = 'Natural'
+    # formulation = 'Equal-Order'
    
     # Store all the errors in a dictionary 
     hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
@@ -2796,19 +2832,19 @@ elif(main_selector == 93):
 
 elif(main_selector == 94):
 		
-    formulation = 'Natural'; stab_params = {None:None}; fig_val_list = ['all']
-    # formulation = 'Equal-Order'; stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}; fig_val_list = ['u', 'l', 's', 'e', 'mu']
+    formulation = 'Natural'; stab_params = {None:None}; fig_val_list = ['u', 'l', 's_e_mu' ]
+    # formulation = 'Equal-Order'; stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}; fig_val_list = ['uL2', 'uH1','lL2' ,'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
     line_styles = {'theta': '-o','alpha':'--s','beta' :'-.^', 'gamma': ':p','eta': '--d'}
     
     def initializePlot(fig_num, xlabel, ylabel, title):
         """Initialize the plot with labels, title, grid, and tick parameters."""
-        plt.figure(fig_num, figsize=(9, 7))
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.title(title)
-        plt.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        plt.tick_params(axis='both', which='major')
-        plt.tick_params(axis='both', which='minor')
+        plt.figure(fig_num, figsize=(8, 6))
+        plt.xlabel(xlabel, fontsize=11)
+        plt.ylabel(ylabel, fontsize=11)
+        plt.title(title, fontsize=12)
+        plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        plt.tick_params(axis='both', which='major', labelsize=11)
+        plt.tick_params(axis='both', which='minor', labelsize=11)
     
     def plotLines(fig_num, hhs, data, label, line_type='-o'):
             """Plot lines on an existing figure."""
@@ -2817,11 +2853,12 @@ elif(main_selector == 94):
             
     if formulation == 'Natural':
         # Only one plot natural formulation
-        initializePlot(1, '$h$', 'Error', f'{formulation}')  
+        for fig_num in range(1,4):
+            initializePlot(fig_num, '$h$', 'Error', f'{formulation}')  
     elif formulation == 'Equal-Order':  
         # Five plots for the equal-order fomulation, one for each variable: u, l, s, e, mu
-        for i in range(1,6):
-            initializePlot(i, '$h$', 'Error', f'{formulation}')    
+        for fig_num in range(1,11):
+            initializePlot(fig_num, '$h$', 'Error', f'{formulation}')    
     else:
         raise ValueError('Invalid formulation')
     
@@ -2831,18 +2868,19 @@ elif(main_selector == 94):
         print(f'==== Solving for {kwargs} ====')
         
         # Store all the errors in a dictionary 
-        hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
+        hhs, L2u, H1u, L2l, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], [], []
         EsHdiv, EeHdiv, EmHdiv = [], [], []
-        errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
+        errors = {'L2u': L2u, 'H1u': H1u, 'L2l': L2l, 'H1l': H1l, 'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
             'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
         conv_rates = {key: [] for key in errors.keys()}
         
         # Loop over different mesh refinements
-        for N in [25, 50, 100, 200, 400] :
+        for N in [100, 200] :
             output = main_EX94_(formulation, N, **kwargs)
-            hhs.append(output[0]);  	L2u.append(output[1]);   	H1u.append(output[2]); 	    H1l.append(output[3])    
-            EsL2.append(output[3]); 	EeL2.append(output[4]); 	EmL2.append(output[5]); 
-            EsHdiv.append(output[6]);   EeHdiv.append(output[7]);	EmHdiv.append(output[8])
+            hhs.append(output[0]);  	L2u.append(output[1]);   	H1u.append(output[2]) 	    
+            L2l.append(output[3]);      H1l.append(output[4]);      EsL2.append(output[5])
+            EeL2.append(output[6]); 	EmL2.append(output[7]);     EsHdiv.append(output[8])
+            EeHdiv.append(output[9]);	EmHdiv.append(output[10])
                 
         # Compute the associated convergence rates 
         for key, value in errors.items():
@@ -2855,52 +2893,55 @@ elif(main_selector == 94):
         # Output
         printConvergenceRates(conv_rates)
     
-
+        
         if formulation == 'Natural':
             # Plot u in L2 and H1
             plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2}$', '-o')
             plotLines(1, hhs, H1u, '$\\|u - u_h\\|_{H^1}$',  '-o')
-            # Plot lambda in H1
-            plotLines(1, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1}$','--s')
+            # Plot lambda in L2 and H1
+            plotLines(2, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2}$','--s')
+            plotLines(2, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1}$','--s')
             # Plot s in L2 and Hdiv
-            plotLines(1, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '-.^')
+            plotLines(3, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '-.^')
             # Plot e in L2 and Hdiv
-            plotLines(1, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', ':p')
+            plotLines(3, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', ':p')
             # Plot mu in L2 and Hdiv
-            plotLines(1, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$', '--d')
+            plotLines(3, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$', '--d')
  
         elif formulation == 'Equal-Order':
             # Plot u in L2 and H1
             plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(1, hhs, H1u, '$\\|u - u_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
-            # Plot lambda in H1
-            plotLines(2, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(2, hhs, H1u, '$\\|u - u_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
+            # Plot lambda in L2 and H1
+            plotLines(3, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(4, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
             # Plot s in L2 and Hdiv
-            plotLines(3, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(3, hhs, EsHdiv,'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(5, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(6, hhs, EsHdiv,'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
             # Plot e in L2 and Hdiv
-            plotLines(4, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(4, hhs, EeHdiv,'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(7, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(8, hhs, EeHdiv,'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
             # Plot mu in L2 and Hdiv
-            plotLines(5, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(5, hhs, EmHdiv,'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(9, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(10, hhs, EmHdiv,'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
         
         else:
             raise ValueError('Invalid formulation')
         
         # Add legends and save
         if formulation == 'Natural':
-            plt.figure(1)
-            plt.legend(loc='best', ncol=2, fancybox=True, shadow=True)
-            plt.savefig(f'error_{fig_val_list[0]}.svg')
-        elif formulation == 'Equal-Order':
-            for fig_num in range(1,6):
+            for fig_num in range(1,4):
                 plt.figure(fig_num)
-                plt.legend(loc='best', ncol=2, fancybox=True, shadow=True)
-                plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
+                plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
+                # plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
+        elif formulation == 'Equal-Order':
+            for fig_num in range(1,11):
+                plt.figure(fig_num)
+                plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
+                # plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
         else: 
             raise ValueError('Invalid formulation')    
-    plt.show()
+    # plt.show()
      
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
