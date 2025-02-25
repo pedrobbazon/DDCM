@@ -1856,7 +1856,7 @@ def main_EX90_(formulation='Natural', N=20):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.0001), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(-10.0), 
               'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
               'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
@@ -2933,15 +2933,15 @@ elif(main_selector == 94):
             for fig_num in range(1,4):
                 plt.figure(fig_num)
                 plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-                # plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
+                plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
         elif formulation == 'Equal-Order':
             for fig_num in range(1,11):
                 plt.figure(fig_num)
                 plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-                # plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
+                plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
         else: 
             raise ValueError('Invalid formulation')    
-    # plt.show()
+    plt.show()
      
 else:
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
