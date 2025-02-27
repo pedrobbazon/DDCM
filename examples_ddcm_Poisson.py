@@ -2410,53 +2410,69 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.0001), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation} 
     
     
-    # Propose an manufactured potential field and its associated gradient
+    # Propose an manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
     def eexact(x):
         return fd.grad(uexact(x))
+    
     # Propose an analytical expression for lambda
     def lmbdexact(x):
-        x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
-        A = fd.Constant(1.0)
-        return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
+        A = fd.Constant(0.01)
+        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.2)         # Amplitude
+        A = fd.Constant(0.01)         # Amplitude
         ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
-    def stilde(x):
-        A = fd.Constant(0.1)    # Amplitude
+    def sexact(x):
+        A = fd.Constant(0.035)    # Amplitude
         ome = fd.Constant(3.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
-        met = fd.sqrt(etilde(x)[0]**2 + etilde(x)[1]**2) + eps
-        etn = fd.as_vector([etilde(x)[0]/met, etilde(x)[1]/met])
-        mst = met + A*fd.sin(ome*fd.pi*met)
+        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+        # mst = met + A*fd.sin(ome*fd.pi*met)
+        mst = met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
-    # def etilde(x):
-    #     A = fd.Constant(0.01)        # Amplitude
-    #     f = fd.Constant(2.0)         # Frequency
-    #     phi = fd.Constant(0.0)       # Phase angle 
-    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-    #                         eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
-    # # def stilde(x):
+    # def sexact(x):
+    #     perm = params['perm']
+    #     return -perm * eexact(x)
+    # Propose an analytical expression for lambda (enforces the continuity equation)
+    # def lmbdexact(x):
+    #     x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
+    #     A = fd.Constant(1.0)
+    #     return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+    # def lmbdexact(x):
     #     A = fd.Constant(0.01)    # Amplitude
-    #     f = fd.Constant(2.0)     # Frequency
-    #     phi = fd.Constant(0.0)   # Phase angle 
-    #     return fd.as_vector([-eexact(x)[0] + A*fd.sin(f*fd.pi*x[0] + phi),
-    #                          -eexact(x)[1] + A*fd.sin(f*fd.pi*x[1] + phi)])
+    #     ome = fd.Constant(0.25)     # Frequency
+    #     phi = fd.Constant(0.0)   # Phase angle
+    #     eps = fd.Constant(1.0e-10)
+    #     met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+    #     etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+    #     mst = met + A*fd.sin(ome*fd.pi*met)
+    #     return A*fd.exp(x[0]**2 + x[1]**2)
+    
+
+    # We define etilde and stilde as the known exact gradient added to a small frequency periodic disturbance
+    # def etilde(x):
+    #     A = fd.Constant(0.01)         # Amplitude
+    #     ome = fd.Constant(1.0)       # Frequency
+    #     phi = fd.Constant(0.0)       # Phase angle 
+    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
+    #                          eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
@@ -2466,9 +2482,9 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         zeda = params['zeda']
         return zeda*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
-    def sexact(x):
+    def stilde(x):
         kappa = params['kappa']
-        return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
+        return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
         zeda = params['zeda']
@@ -2833,7 +2849,10 @@ elif(main_selector == 93):
 elif(main_selector == 94):
 		
     formulation = 'Natural'; stab_params = {None:None}; fig_val_list = ['u', 'l', 's_e_mu' ]
-    # formulation = 'Equal-Order'; stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}; fig_val_list = ['uL2', 'uH1','lL2' ,'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+    # formulation = 'Equal-Order'; 
+    # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}; 
+    # stab_params = {None:None}
+    # fig_val_list = ['uL2', 'uH1','lL2' ,'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
     line_styles = {'theta': '-o','alpha':'--s','beta' :'-.^', 'gamma': ':p','eta': '--d'}
     
     def initializePlot(fig_num, xlabel, ylabel, title):
@@ -2875,7 +2894,7 @@ elif(main_selector == 94):
         conv_rates = {key: [] for key in errors.keys()}
         
         # Loop over different mesh refinements
-        for N in [100, 200] :
+        for N in [50] :
             output = main_EX94_(formulation, N, **kwargs)
             hhs.append(output[0]);  	L2u.append(output[1]);   	H1u.append(output[2]) 	    
             L2l.append(output[3]);      H1l.append(output[4]);      EsL2.append(output[5])
@@ -2910,20 +2929,20 @@ elif(main_selector == 94):
  
         elif formulation == 'Equal-Order':
             # Plot u in L2 and H1
-            plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(2, hhs, H1u, '$\\|u - u_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2}$', '-o')
+            plotLines(2, hhs, H1u, '$\\|u - u_h\\|_{H^1}$', '-o')
             # Plot lambda in L2 and H1
-            plotLines(3, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(4, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(3, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2}$','--s')
+            plotLines(4, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '--s')
             # Plot s in L2 and Hdiv
-            plotLines(5, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(6, hhs, EsHdiv,'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(5, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '-.^')
+            plotLines(6, hhs, EsHdiv,'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$','-.^')
             # Plot e in L2 and Hdiv
-            plotLines(7, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(8, hhs, EeHdiv,'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(7, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', ':p')
+            plotLines(8, hhs, EeHdiv,'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$',':p')
             # Plot mu in L2 and Hdiv
-            plotLines(9, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2},\t'+f'\\{param}={val}$', line_styles[param])
-            plotLines(10, hhs, EmHdiv,'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv},\t'+f'\\{param}={val}$', line_styles[param])
+            plotLines(9, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$','--d')
+            plotLines(10, hhs, EmHdiv,'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$', '--d')
         
         else:
             raise ValueError('Invalid formulation')
