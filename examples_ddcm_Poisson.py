@@ -1978,6 +1978,7 @@ def main_EX90_(formulation='Natural', N=20):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
     H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
     L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
@@ -2000,7 +2001,7 @@ def main_EX90_(formulation='Natural', N=20):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
 
 #  Example of a convergence study for the Forcheimer's model based on an analytical solution
 def main_EX91_(formulation='Natural', N=20):
@@ -2158,6 +2159,7 @@ def main_EX91_(formulation='Natural', N=20):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
     H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
     L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
@@ -2180,7 +2182,7 @@ def main_EX91_(formulation='Natural', N=20):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
 
 
 # Example of a convergence study in convex and non-convex geometries with a known analytical solution
@@ -2426,7 +2428,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     # Propose an analytical expression for lambda
     def lmbdexact(x):
         x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
-        A = fd.Constant(0.01)
+        A = fd.Constant(0.05)
         return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
     
     # Propose a flux-gradient relationship based on the dataset  
@@ -2437,14 +2439,23 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.035)    # Amplitude
+        A = fd.Constant(0.045)    # Amplitude
         ome = fd.Constant(3.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
         # mst = met + A*fd.sin(ome*fd.pi*met)
-        mst = met - A*met**3
+        mst = fd.sqrt(met) + met - A*met**3
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    def sexact(x):
+        A = fd.Constant(0.045)    # Amplitude
+        eps = fd.Constant(1.0e-10)
+        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+        # mst = met + A*fd.sin(ome*fd.pi*met)
+        mst = fd.sqrt(met) + met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # def sexact(x):
@@ -2577,13 +2588,15 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
 
 # ===== AUXILIARY FUNCTIONS ===== #
 
-def plotErrors(hhs=[], L2u=[], H1u=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv=[], EeHdiv=[],
+def plotErrors(hhs=[], L2u=[], H1u=[], L2l=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv=[], EeHdiv=[],
                EmHdiv=[], formulation='Natural', flag_save_fig=False, fig_names = [], flag_plot_fig = True):
     fig, ax = plt.subplots(figsize=(8,6))
     if L2u:
         ax.loglog(hhs,L2u,'-or',label='$\\|u-u_h\\|_{L^2}$')
     if H1u:
         ax.loglog(hhs,H1u,'-ob',label='$\\|u-u_h\\|_{H^1}$')
+    if L2l:
+        ax.loglog(hhs,L2l,'-og',label='$\\|\\lambda-\\lambda_h\\|_{L^2}$')
     if H1l:
         ax.loglog(hhs,H1l,'-om',label='$\\|\\lambda-\\lambda_h\\|_{H^1}$')
     ax.set_xlabel('$h$')
@@ -2627,7 +2640,20 @@ def plotErrors(hhs=[], L2u=[], H1u=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv
         plt.savefig(f'{fig_names[1]}.svg')
     if flag_plot_fig:
         plt.show()
+        
+    
+def computeConvergenceRates(hhs, errors):
+    """Compute convergence rates for each error type."""
+    conv_rates = {}
+    for key, value in errors.items():
+        if np.all(np.isnan(value)):
+            conv_rates[key] = [np.nan] 
+        else:
+            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
+            conv_rates[key] = [p]  
+    return conv_rates
 
+from tabulate import tabulate
 def printConvergenceRates(conv_rates):
     headers = ["Norm", "Convergence rate"]
     table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
@@ -2637,7 +2663,7 @@ def printConvergenceRates(conv_rates):
    
 # ===== RUN ===== #
 import sys
-from tabulate import tabulate
+
 
 
 main_selector = np.int32(sys.argv[1])
@@ -2682,66 +2708,48 @@ elif(main_selector == 90):
     # formulation = 'Equal-Order'
    
     # Store all the errors in a dictionary 
-    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
-    EsHdiv, EeHdiv, EmHdiv = [], [], []
-    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l,'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
-              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
-    conv_rates = {key: [] for key in errors.keys()}
-    
+    hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
     # Loop over different mesh refinements 
-    for N in [25, 50, 100, 200] :
+    for N in [25, 50, 100] :
         output = main_EX90_(formulation, N)
-        hhs.append(output[0]); L2u.append(output[1]); H1u.append(output[2]); H1l.append(output[3]); EsL2.append(output[4]) 
-        EeL2.append(output[5]); EmL2.append(output[6]); EsHdiv.append(output[7]); EeHdiv.append(output[8]); EmHdiv.append(output[9]) 
+        hhs.append(output[0])
+        for i, key in enumerate(errors.keys()):
+            errors[key].append(output[i+1])
         
     # Compute the associated convergence rates 
-    for key, value in errors.items():
-        if np.all(np.isnan(value)):
-            conv_rates[key] = [np.nan]
-        else:
-            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
-            conv_rates[key].append(p)
-
+    conv_rates = computeConvergenceRates(hhs,errors)
+    # Output
+    printConvergenceRates(conv_rates)
+    
     # Plots
     flag_save_fig = True
     fig_names = ['Darcy_errors_u_lmd','Darcy_errors_s_e_mu']
-    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig, fig_names)          
+    plotErrors(hhs, **errors, formulation=formulation, flag_save_fig=flag_save_fig, fig_names=fig_names)
+       
     
-    # Output
-    printConvergenceRates(conv_rates)
-
 elif(main_selector == 91):
     
     # formulation = 'Natural'
     formulation = 'Equal-Order'
     
-    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
-    EsHdiv, EeHdiv, EmHdiv = [], [], []
-    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
-              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
-    conv_rates = {key: [] for key in errors.keys()}
-    
-   # Loop over different mesh refinements 
-    for N in [25, 50, 100, 200] :
+    # Store all the errors in a dictionary 
+    hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+    # Loop over different mesh refinements 
+    for N in [25, 50, 100] :
         output = main_EX91_(formulation, N)
-        hhs.append(output[0]); L2u.append(output[1]); H1u.append(output[2]); H1l.append(output[3]); EsL2.append(output[4]) 
-        EeL2.append(output[5]); EmL2.append(output[6]); EsHdiv.append(output[7]); EeHdiv.append(output[8]); EmHdiv.append(output[9]) 
+        hhs.append(output[0])
+        for i, key in enumerate(errors.keys()):
+            errors[key].append(output[i+1])
             
     # Compute the associated convergence rates 
-    for key, value in errors.items():
-        if np.all(np.isnan(value)):
-            conv_rates[key] = [np.nan]
-        else:
-            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
-            conv_rates[key].append(p)
+    conv_rates = computeConvergenceRates(hhs,errors)
+    # Output
+    printConvergenceRates(conv_rates)
                  
     # Plots
     flag_save_fig = False
     fig_names = ['Forcheimer_errors_u_lmd','Forcheimer_errors_s_e_mu']
-    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig, fig_names)         
-            
-    # Output
-    printConvergenceRates(conv_rates)
+    plotErrors(hhs, **errors, formulation=formulation, flag_save_fig=flag_save_fig, fig_names=fig_names)       
 
 elif(main_selector == 92):
     
@@ -2803,7 +2811,6 @@ elif(main_selector == 92):
         ax.legend()
         # plt.savefig(f'{key}_errors_{formulation}.svg')
         # plt.show()
-    
 
     # Output
     headers = ["Norm"] + c_corners_labels
@@ -2816,151 +2823,121 @@ elif(main_selector == 93):
     formulation = 'Natural'
     # formulation = 'Equal-Order'
 
-    
     # Store all the errors in a dictionary 
-    hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], []
-    EsHdiv, EeHdiv, EmHdiv = [], [], []
-    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
-              'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
-    conv_rates = {key: [] for key in errors.keys()}
-    
-   # Loop over different mesh refinements 
-    for N in [25, 50, 100, 200] :
+    hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+    # Loop over different mesh refinements 
+    for N in [25, 50, 100] :
         output = main_EX93_(formulation, N)
-        hhs.append(output[0]);  L2u.append(output[1]);    H1u.append(output[2]);    EsL2.append(output[3]) 
-        EeL2.append(output[4]); EsHdiv.append(output[5]); EeHdiv.append(output[6])
+        hhs.append(output[0])
+        for i, key in enumerate(errors.keys()):
+            errors[key].append(output[i+1])
 		
     # Compute the associated convergence rates 
-    for key, value in errors.items():
-        if np.all(np.isnan(value)):
-            conv_rates[key] = [np.nan]
-        else:
-            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
-            conv_rates[key].append(p)
+    conv_rates = computeConvergenceRates(hhs,errors)
+    # Output
+    printConvergenceRates(conv_rates)
               
     # Plots
     flag_save_fig = False
     fig_names = ['xxx_errors_u_lmd','xxx_errors_s_e_mu']
-    plotErrors(hhs, L2u, H1u, H1l, EsL2, EeL2, EmL2, EsHdiv, EeHdiv, EmHdiv, formulation, flag_save_fig)          
+    plotErrors(hhs, **errors, formulation=formulation, flag_save_fig=flag_save_fig, fig_names=fig_names)             
     
-    # Output
-    printConvergenceRates(conv_rates)
-
 elif(main_selector == 94):
-		
-    formulation = 'Natural'; stab_params = {None:None}; fig_val_list = ['u', 'l', 's_e_mu' ]
-    # formulation = 'Equal-Order'; 
-    # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}; 
-    # stab_params = {None:None}
-    # fig_val_list = ['uL2', 'uH1','lL2' ,'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
-    line_styles = {'theta': '-o','alpha':'--s','beta' :'-.^', 'gamma': ':p','eta': '--d'}
     
-    def initializePlot(fig_num, xlabel, ylabel, title):
-        """Initialize the plot with labels, title, grid, and tick parameters."""
-        plt.figure(fig_num, figsize=(8, 6))
-        plt.xlabel(xlabel, fontsize=11)
-        plt.ylabel(ylabel, fontsize=11)
-        plt.title(title, fontsize=12)
-        plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        plt.tick_params(axis='both', which='major', labelsize=11)
-        plt.tick_params(axis='both', which='minor', labelsize=11)
-    
-    def plotLines(fig_num, hhs, data, label, line_type='-o'):
-            """Plot lines on an existing figure."""
-            plt.figure(fig_num)  
-            plt.loglog(hhs, data,  line_type, linewidth=2, label=label)
-            
+    # Configuration
+    # formulation = 'Natural'  
+    formulation = 'Equal-Order'
+
+    # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
-        # Only one plot natural formulation
-        for fig_num in range(1,4):
-            initializePlot(fig_num, '$h$', 'Error', f'{formulation}')  
-    elif formulation == 'Equal-Order':  
-        # Five plots for the equal-order fomulation, one for each variable: u, l, s, e, mu
-        for fig_num in range(1,11):
-            initializePlot(fig_num, '$h$', 'Error', f'{formulation}')    
+        stab_params = {None: None}
+        fig_val_list = ['u', 'l', 's_e_mu']
+        num_plots = 3
+    elif formulation == 'Equal-Order':
+        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
     else:
         raise ValueError('Invalid formulation')
-    
-    # Loop over each stabilization parameters
+
+    # Line styles for plotting
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
+
+    # Initialize all plots
+    def initializePlots(num_plots, formulation):
+        """Initialize all plots with labels, titles, and grids."""
+        for fig_num in range(1, num_plots + 1):
+            plt.figure(fig_num, figsize=(8, 6))
+            plt.xlabel('$h$', fontsize=11)
+            plt.ylabel('Error', fontsize=11)
+            plt.title(formulation, fontsize=12)
+            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+            plt.tick_params(axis='both', which='major', labelsize=11)
+            plt.tick_params(axis='both', which='minor', labelsize=11)
+
+    # Plot lines on a specific figure
+    def plotLines(fig_num, hhs, data, label, line_type='-o'):
+        """Plot lines on an existing figure."""
+        plt.figure(fig_num)
+        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
+
+    # Main loop
+    """Main logic for plotting and saving figures."""
+    initializePlots(num_plots, formulation)
+
     for param, val in stab_params.items():
-        kwargs = {} if formulation == 'Natural' else {param: val}
+        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
-        
-        # Store all the errors in a dictionary 
-        hhs, L2u, H1u, L2l, H1l, EsL2, EeL2, EmL2 = [], [], [], [], [], [], [], []
-        EsHdiv, EeHdiv, EmHdiv = [], [], []
-        errors = {'L2u': L2u, 'H1u': H1u, 'L2l': L2l, 'H1l': H1l, 'EsL2': EsL2, 'EeL2': EeL2, 'EmL2': EmL2, 
-            'EsHdiv': EsHdiv, 'EeHdiv': EeHdiv, 'EmHdiv': EmHdiv}
-        conv_rates = {key: [] for key in errors.keys()}
-        
-        # Loop over different mesh refinements
-        for N in [50] :
+
+        # Collect data for all mesh refinements
+        hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+        for N in [25, 50]:
             output = main_EX94_(formulation, N, **kwargs)
-            hhs.append(output[0]);  	L2u.append(output[1]);   	H1u.append(output[2]) 	    
-            L2l.append(output[3]);      H1l.append(output[4]);      EsL2.append(output[5])
-            EeL2.append(output[6]); 	EmL2.append(output[7]);     EsHdiv.append(output[8])
-            EeHdiv.append(output[9]);	EmHdiv.append(output[10])
-                
-        # Compute the associated convergence rates 
-        for key, value in errors.items():
-            if np.all(np.isnan(value)):
-                conv_rates[key] = [np.nan]
-            else:
-                p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
-                conv_rates[key].append(p)
-                
-        # Output
+            hhs.append(output[0])
+            for i, key in enumerate(errors.keys()):
+                errors[key].append(output[i + 1])
+
+        # Compute convergence rates
+        conv_rates = computeConvergenceRates(hhs, errors)
         printConvergenceRates(conv_rates)
-    
-        
+
+        # Plot data
         if formulation == 'Natural':
-            # Plot u in L2 and H1
-            plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2}$', '-o')
-            plotLines(1, hhs, H1u, '$\\|u - u_h\\|_{H^1}$',  '-o')
-            # Plot lambda in L2 and H1
-            plotLines(2, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2}$','--s')
-            plotLines(2, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1}$','--s')
-            # Plot s in L2 and Hdiv
-            plotLines(3, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '-.^')
-            # Plot e in L2 and Hdiv
-            plotLines(3, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', ':p')
-            # Plot mu in L2 and Hdiv
-            plotLines(3, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$', '--d')
- 
-        elif formulation == 'Equal-Order':
-            # Plot u in L2 and H1
-            plotLines(1, hhs, L2u, '$\\|u - u_h\\|_{L^2}$', '-o')
-            plotLines(2, hhs, H1u, '$\\|u - u_h\\|_{H^1}$', '-o')
-            # Plot lambda in L2 and H1
-            plotLines(3, hhs, L2l, '$\\|\\lambda - \\lambda_h\\|_{L^2}$','--s')
-            plotLines(4, hhs, H1l, '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '--s')
-            # Plot s in L2 and Hdiv
-            plotLines(5, hhs, EsL2,  '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '-.^')
-            plotLines(6, hhs, EsHdiv,'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$','-.^')
-            # Plot e in L2 and Hdiv
-            plotLines(7, hhs, EeL2,  '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', ':p')
-            plotLines(8, hhs, EeHdiv,'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$',':p')
-            # Plot mu in L2 and Hdiv
-            plotLines(9, hhs, EmL2,  '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$','--d')
-            plotLines(10, hhs, EmHdiv,'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$', '--d')
-        
+            plot_data = [
+                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
+                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
+                (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
+                ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
+                ['-.^', ':p', '--d'])
+            ]
         else:
-            raise ValueError('Invalid formulation')
-        
-        # Add legends and save
-        if formulation == 'Natural':
-            for fig_num in range(1,4):
-                plt.figure(fig_num)
-                plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-                plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
-        elif formulation == 'Equal-Order':
-            for fig_num in range(1,11):
-                plt.figure(fig_num)
-                plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-                plt.savefig(f'error_{fig_val_list[fig_num-1]}.svg')
-        else: 
-            raise ValueError('Invalid formulation')    
+            plot_data = [
+                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
+                for i, (key, label) in enumerate(zip(
+                    ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
+                    ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+                    '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
+                    '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
+                ))
+            ]
+
+        for fig_num, data_list, labels, line_types in plot_data:
+            for data, label, line_type in zip(data_list, labels, line_types):
+                plotLines(fig_num, hhs, data, label, line_type)
+
+    # Add legends and save figures
+    for fig_num in range(1, num_plots + 1):
+        plt.figure(fig_num)
+        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        plt.savefig(f'error_{fig_val_list[fig_num - 1]}.svg')
+
     plt.show()
-     
+
+
+    
+   
 else:
+    
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)

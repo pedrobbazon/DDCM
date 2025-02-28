@@ -808,29 +808,29 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         st.rename('Reference.st')
         VTKFile(filename).write(st)
 
-        marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
-        nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    
-        nvs = np.linalg.norm(flux.dat.data[:,:], axis=1)
-        nvet = np.linalg.norm(et.dat.data[:,:], axis=1)
-        nvst = np.linalg.norm(st.dat.data[:,:], axis=1)
-        # nve = gradu.dat.data[:,0]
-        # nvs = flux.dat.data[:,0]
-        # nvet = et.dat.data[:,0]
-        # nvst = st.dat.data[:,0]
-        plt.figure(figsize=(8,6))
-        plt.plot(nvet, nvst, **marker_style,label=r'$\tilde{\mathbf{s}}\left(\tilde{\mathbf{e}}\right)$')
-        plt.plot(nve, nvs, '.k',label=r'$\mathbf{s}\left(\mathbf{e}\right)$')
-        plt.xlabel(r'$\|\mathbf{e}\|$', fontsize=12)
-        plt.ylabel(r'$\|\mathbf{s}\|$', fontsize=12)
-        # plt.xlabel(r'$e_{x}$', fontsize=12)
-        # plt.ylabel(r'$s_{x}$', fontsize=12)
-        plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        plt.legend(loc='best', fancybox=True, shadow=True, fontsize=11)
-        plt.tick_params(axis='both', which='major', labelsize=11)
-        plt.tick_params(axis='both', which='minor', labelsize=11)
-        plt.tight_layout()
-        plt.savefig('stilde_vs_etilde.svg', format='svg')
-        plt.show()
+        # marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
+        # nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    
+        # nvs = np.linalg.norm(flux.dat.data[:,:], axis=1)
+        # nvet = np.linalg.norm(et.dat.data[:,:], axis=1)
+        # nvst = np.linalg.norm(st.dat.data[:,:], axis=1)
+        # # nve = gradu.dat.data[:,0]
+        # # nvs = flux.dat.data[:,0]
+        # # nvet = et.dat.data[:,0]
+        # # nvst = st.dat.data[:,0]
+        # plt.figure(figsize=(8,6))
+        # plt.plot(nvet, nvst, **marker_style,label=r'$\tilde{\mathbf{s}}\left(\tilde{\mathbf{e}}\right)$')
+        # plt.plot(nve, nvs, '.k',label=r'$\mathbf{s}\left(\mathbf{e}\right)$')
+        # plt.xlabel(r'$\|\mathbf{e}\|$', fontsize=12)
+        # plt.ylabel(r'$\|\mathbf{s}\|$', fontsize=12)
+        # # plt.xlabel(r'$e_{x}$', fontsize=12)
+        # # plt.ylabel(r'$s_{x}$', fontsize=12)
+        # plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        # plt.legend(loc='best', fancybox=True, shadow=True, fontsize=11)
+        # plt.tick_params(axis='both', which='major', labelsize=11)
+        # plt.tick_params(axis='both', which='minor', labelsize=11)
+        # plt.tight_layout()
+        # plt.savefig('stilde_vs_etilde.svg', format='svg')
+        # plt.show()
 
 
     return sexact, uexact, gradexact
