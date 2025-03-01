@@ -2186,7 +2186,7 @@ def main_EX91_(formulation='Natural', N=20):
 
 
 # Example of a convergence study in convex and non-convex geometries with a known analytical solution
-def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
+def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2213,40 +2213,82 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
     # These would be the ones corresponding to the analytical solution we propose
 
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.0), 
-              'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
-              'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)), 
+              'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation} 
 
-    # Analytical expressions
+    # We define the analytical expression for the potential field and its gradient
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2)
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
-    def sexact(x):
-        perm = params['perm']
-        return -perm * fd.grad(uexact(x))
     def eexact(x):
         return fd.grad(uexact(x))
-
-    # Forcings 
-    def mysource(x):
-        perm = params['perm']
+  
+    # Propose an analytical expression for lambda
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
+        A = fd.Constant(0.05)
+        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
+    
+    # Propose a flux-gradient relationship based on the dataset  
+    def etilde(x):
+        A = fd.Constant(0.01)        # Amplitude
+        ome = fd.Constant(4.0)       # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
+                             eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
+    def sexact(x):
+        A = fd.Constant(0.045)  # Amplitude
+        ome = fd.Constant(3.0)  # Frequency
+        phi = fd.Constant(0.0)  # Phase angle
+        eps = fd.Constant(1.0e-10)
+        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+        # mst = met + A*fd.sin(ome*fd.pi*met)
+        mst = fd.sqrt(met) + met - A*met**3
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    # by eq.(22)
+    def muexact(x):
+        return etilde(x) - eexact(x)
+    # by eq.(21)
+    def fdual(x):
         zeda = params['zeda']
-        return fd.div(-perm*fd.grad(uexact(x))) + zeda*uexact(x)
+        return zeda*lmbdexact(x) + fd.div(muexact(x))
+    # by eq.(23)
+    def stilde(x):
+        kappa = params['kappa']
+        return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
+    # by eq.(24)
+    def qexact(x):
+        zeda = params['zeda']
+        return zeda*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
     def mysurfaceflux(x):
         return sexact(x)
     def mybcvals(x):
         return uexact(x)
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
+
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
     #________________________________
 
     # This will only be called for visualization purposes
-    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact}
-    ref_prob = PoissonStdProblem(domain, params_anal, 'Pure-Dirichlet', forcings, None, PoissonAnalytical, orders=[3,3])
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, "myrefsol")
 
@@ -2258,7 +2300,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
     #    The idea is to produce some plausible data similar to what an experiment would deliver
 
     # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
 
     # 3. Solve the Data Driven problem: This problem should share the same 
     #    forcings (bcs, sources, etc.) as the standard problem above
@@ -2268,25 +2310,37 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
     print('----------------------------------')
 
     def myObjFunc(g,gdata,s,sdata):
-        return fd.inner(g-gdata, g-gdata)*fd.dx + fd.inner(s-sdata, s-sdata)*fd.dx
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
     if(formulation == 'Natural'):
         ords = [0,1]
     elif(formulation == 'Equal-Order'):
         ords = [1,1]
-        
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+
     ddcm_prob.solve("myddcmsol")
 
+
     # 4. Compute some error norms
-    print('   ... Computing some error norms ...')
+    
+    print('... Computing some error norms ...')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='L2')
-    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type='H1')
-    H1error_lmd = fd.errornorm(fd.Constant(0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-    error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type='L2')
-    error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type='L2')
-    error_mu = fd.errornorm(fd.as_vector([fd.Constant(0),fd.Constant(0)]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
+    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
+    L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
+    if formulation == 'Equal-Order':
+        Hdiverror_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        Hdiverror_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
+        Hdiverror_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
+    else:
+        Hdiverror_s = np.nan
+        Hdiverror_e = np.nan
+        Hdiverror_mu = np.nan
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -2297,7 +2351,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu
+    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
 
 
 # Example of a reference solution based on an analytical expression
@@ -2439,7 +2493,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.045)    # Amplitude
+        A = fd.Constant(0.045)  # Amplitude
         ome = fd.Constant(3.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
@@ -2448,42 +2502,6 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         # mst = met + A*fd.sin(ome*fd.pi*met)
         mst = fd.sqrt(met) + met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
-    
-    def sexact(x):
-        A = fd.Constant(0.045)    # Amplitude
-        eps = fd.Constant(1.0e-10)
-        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
-        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        # mst = met + A*fd.sin(ome*fd.pi*met)
-        mst = fd.sqrt(met) + met - A*met**3
-        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
-    
-    # def sexact(x):
-    #     perm = params['perm']
-    #     return -perm * eexact(x)
-    # Propose an analytical expression for lambda (enforces the continuity equation)
-    # def lmbdexact(x):
-    #     x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
-    #     A = fd.Constant(1.0)
-    #     return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
-    # def lmbdexact(x):
-    #     A = fd.Constant(0.01)    # Amplitude
-    #     ome = fd.Constant(0.25)     # Frequency
-    #     phi = fd.Constant(0.0)   # Phase angle
-    #     eps = fd.Constant(1.0e-10)
-    #     met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
-    #     etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-    #     mst = met + A*fd.sin(ome*fd.pi*met)
-    #     return A*fd.exp(x[0]**2 + x[1]**2)
-    
-
-    # We define etilde and stilde as the known exact gradient added to a small frequency periodic disturbance
-    # def etilde(x):
-    #     A = fd.Constant(0.01)         # Amplitude
-    #     ome = fd.Constant(1.0)       # Frequency
-    #     phi = fd.Constant(0.0)       # Phase angle 
-    #     return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
-    #                          eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     
     # by eq.(22)
     def muexact(x):
@@ -2868,12 +2886,12 @@ elif(main_selector == 94):
         """Initialize all plots with labels, titles, and grids."""
         for fig_num in range(1, num_plots + 1):
             plt.figure(fig_num, figsize=(8, 6))
-            plt.xlabel('$h$', fontsize=11)
-            plt.ylabel('Error', fontsize=11)
-            plt.title(formulation, fontsize=12)
+            plt.xlabel('$h$', fontsize=14)
+            plt.ylabel('Error', fontsize=14)
+            # plt.title(formulation, fontsize=14)
             plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-            plt.tick_params(axis='both', which='major', labelsize=11)
-            plt.tick_params(axis='both', which='minor', labelsize=11)
+            plt.tick_params(axis='both', which='major', labelsize=14)
+            plt.tick_params(axis='both', which='minor', labelsize=14)
 
     # Plot lines on a specific figure
     def plotLines(fig_num, hhs, data, label, line_type='-o'):
@@ -2891,7 +2909,7 @@ elif(main_selector == 94):
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for N in [25, 50]:
+        for N in [25, 50, 100, 200, 400]:
             output = main_EX94_(formulation, N, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
@@ -2931,7 +2949,7 @@ elif(main_selector == 94):
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
         plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'error_{fig_val_list[fig_num - 1]}.svg')
+        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
 
     plt.show()
 
