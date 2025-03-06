@@ -476,6 +476,46 @@ class PoissonDDCMData():
             print(' . Plot= ', time.time() - ti)
 
         return 0
+    
+    def DistributeCoordBased(self, coords_data, flag_plot=False):
+
+        ti = time.time()
+        x = fd.SpatialCoordinate(self.domain.msh)
+        coords = fd.assemble(interpolate(fd.as_vector([x[0], x[1]]), self.domain.VDG0)).dat.data
+
+        if(self.domain.dim == 2):
+            coords_ddcm = np.dstack([coords[:,0], coords[:,1]])[0]
+        elif(self.domain.dim == 3):
+            coords_ddcm = np.dstack([coords[:,0], coords[:,1], coords[:,2]])[0]
+
+        #print(coords_ddcm)
+        #print('kkfkfkfkfkfkfkfk')
+        #print(coords_data)
+
+        print(' . Proj-Int= ', time.time() - ti)
+
+        # Choose those values that are closest to the reference solution
+        # and distribute over the domain (this induces a domain decomposition)
+        ti = time.time()
+        mytree = scipy.spatial.KDTree(coords_data)
+        distances, indexes = mytree.query(coords_ddcm)
+        self.graddata.dat.data[:] = self.sampled_grad[indexes,0:2]
+        self.graddata.rename('GradDataDistrib')
+        self.fluxdata.dat.data[:] = self.sampled_flux[indexes,0:2]
+        self.fluxdata.rename('FluxDataDistrib')
+        print(' . KDTree and query= ', time.time() - ti)
+
+        if(flag_plot):
+            ti = time.time()
+            index_field = fd.Function(self.domain.DG0)
+            index_field.dat.data[:] = indexes.astype(float)
+            index_field.rename('IndexDataDistrib')
+            VTKFile('mydatafields/indexdata.pvd').write(index_field)
+            VTKFile('mydatafields/graddata.pvd').write(self.graddata)
+            VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
+            print(' . Plot= ', time.time() - ti)
+
+        return 0
 
 # 
 # Actual functions containing the DDCM solution
@@ -502,7 +542,7 @@ class DDCMProblem():
         self.orders = orders
         self.ddcm_solution = DDCMSolution()
 
-    def solve(self, dir_outs=None):
+    def solve(self, tt=0.0, dir_outs=None):
 
         print("|> Solving with:\n   - %s() DDCM-formulation" %(self.ddcm_formulation.__name__))
         print("   - Setting type: %s" %(self.setting_type))
@@ -521,7 +561,7 @@ class DDCMProblem():
                                                  self.forcings.dual_volumetric_source,
                                                  self.params,
                                                  self.orders,
-                                                 dir_outs)
+                                                 tt, dir_outs)
         
         self.ddcm_solution.u   = u
         self.ddcm_solution.s   = s 

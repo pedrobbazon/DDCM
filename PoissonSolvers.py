@@ -798,15 +798,17 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         mu.rename('Reference.mu')
         VTKFile(filename).write(mu)
         
-        filename = dir_outs+'/et.pvd'
-        et = fd.assemble(interpolate(etexact(x), Vflux))
-        et.rename('Reference.et')
-        VTKFile(filename).write(et)
+        if(etexact != None):
+            filename = dir_outs+'/et.pvd'
+            et = fd.assemble(interpolate(etexact(x), Vflux))
+            et.rename('Reference.et')
+            VTKFile(filename).write(et)
 
-        filename = dir_outs+'/st.pvd'
-        st = fd.assemble(interpolate(stexact(x), Vflux))
-        st.rename('Reference.st')
-        VTKFile(filename).write(st)
+        if(stexact != None):
+            filename = dir_outs+'/st.pvd'
+            st = fd.assemble(interpolate(stexact(x), Vflux))
+            st.rename('Reference.st')
+            VTKFile(filename).write(st)
 
         # marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
         # nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    
