@@ -477,7 +477,7 @@ class PoissonDDCMData():
 
         return 0
     
-    def DistributeCoordBased(self, coords_data, flag_plot=False):
+    def DistributeCoordBased(self, coords_data, tt=0.0, flag_plot=False):
 
         ti = time.time()
         x = fd.SpatialCoordinate(self.domain.msh)
@@ -506,13 +506,18 @@ class PoissonDDCMData():
         print(' . KDTree and query= ', time.time() - ti)
 
         if(flag_plot):
+            if(tt == 0.0): # This time acts as a parameter over which we do continuation
+                mode = 'w'
+            else:
+                mode = 'a'
+
             ti = time.time()
             index_field = fd.Function(self.domain.DG0)
             index_field.dat.data[:] = indexes.astype(float)
             index_field.rename('IndexDataDistrib')
-            VTKFile('mydatafields/indexdata.pvd').write(index_field)
-            VTKFile('mydatafields/graddata.pvd').write(self.graddata)
-            VTKFile('mydatafields/fluxdata.pvd').write(self.fluxdata)
+            VTKFile('mydatafields/indexdata.pvd', mode=mode).write(index_field, time=tt)
+            VTKFile('mydatafields/graddata.pvd', mode=mode).write(self.graddata, time=tt)
+            VTKFile('mydatafields/fluxdata.pvd', mode=mode).write(self.fluxdata, time=tt)
             print(' . Plot= ', time.time() - ti)
 
         return 0

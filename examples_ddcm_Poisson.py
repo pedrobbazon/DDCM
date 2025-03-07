@@ -2103,7 +2103,7 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     #- Pay attention: this is a concious decision
     # and it may change in other situations
     # >>>> HERE
-    nsd, Ls, Ns = 2, [1.0, 1.0], [64, 64]
+    nsd, Ls, Ns = 2, [1.0, 1.0], [Nsamples*2, Nsamples*2]
     synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
     VCG3 = fd.VectorFunctionSpace(synth_domain.msh, 'CG', degree=3)
     x = fd.SpatialCoordinate(synth_domain.msh)
@@ -2121,7 +2121,7 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     ddcm_data = PoissonDDCMData(domain)
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
     
-    ddcm_data.DistributeCoordBased(xs,  flag_plot=True)
+    ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
 
     print('----------------------------------------------------------')
     print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
