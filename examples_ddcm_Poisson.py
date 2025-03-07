@@ -2213,7 +2213,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     # These would be the ones corresponding to the analytical solution we propose
 
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2231,19 +2231,19 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
   
     # Propose an analytical expression for lambda
     def lmbdexact(x):
-        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
-        A = fd.Constant(0.05)
+        x0, y0  = fd.Constant(-1.0), fd.Constant(-1.0)
+        A = fd.Constant(0.01)
         return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.01)        # Amplitude
-        ome = fd.Constant(4.0)       # Frequency
+        A = fd.Constant(0.05)       # Amplitude
+        ome = fd.Constant(5.0)      # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.045)  # Amplitude
+        A = fd.Constant(0.02)  # Amplitude
         ome = fd.Constant(3.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
@@ -2466,7 +2466,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1e-3), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2493,7 +2493,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.045)  # Amplitude
+        A = fd.Constant(0.04)  # Amplitude
         ome = fd.Constant(3.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
@@ -2771,70 +2771,100 @@ elif(main_selector == 91):
 
 elif(main_selector == 92):
     
-    hhs = [0.1, 0.05, 0.025, 0.0125]
-    # Specify the formulation to be used
-    formulation = 'Natural'  
-    # formulation = 'Equal-Order'
-
-    # Specify each case corner to be used
-    case_corners = [1, 2, 3, 4]
+    # Configuration
+    # formulation = 'Natural'  
+    formulation = 'Equal-Order'
+    
+    case_corner = 2
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
+    hhs = [0.2, 0.1, 0.05]
+    # 0.0125
 
-    # Allocate memory for storing the errors for each case corner and different mesh sizes 
-    L2u = np.empty((len(case_corners), len(hhs)))
-    H1u, H1l, Es, Ee, Em = (np.empty_like(L2u) for _ in range(5))
+    # Define stabilization parameters and figure labels based on formulation
+    if formulation == 'Natural':
+        stab_params = {None: None}
+        fig_val_list = ['u', 'l', 's_e_mu']
+        num_plots = 3
+    elif formulation == 'Equal-Order':
+        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
+    else:
+        raise ValueError('Invalid formulation')
 
-    # Store all the errors in a dictionary 
-    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'Es': Es, 'Ee': Ee, 'Em': Em}
-    conv_rates = {key: [] for key in errors.keys()}
-    norm_labels = {
-        'L2u': '$\|u-u_h\|_{L^2}$', 
-        'H1u': '$\|u-u_h\|_{H^1}$', 
-        'H1l': '$\|\lambda-\lambda_h\|_{H^1}$',
-        'Es': '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
-        'Ee': '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$',
-        'Em': '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$'
-    }
+    # Line styles for plotting
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
+    
+    # Initialize all plots
+    def initializePlots(num_plots, formulation):
+        """Initialize all plots with labels, titles, and grids."""
+        for fig_num in range(1, num_plots + 1):
+            plt.figure(fig_num, figsize=(8, 6))
+            plt.xlabel('$h$', fontsize=14)
+            plt.ylabel('Error', fontsize=14)
+            # plt.title(formulation, fontsize=14)
+            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+            plt.tick_params(axis='both', which='major', labelsize=14)
+            plt.tick_params(axis='both', which='minor', labelsize=14)
 
-    # Loop through each case corner and mesh size
-    for case_corner_index, case_corner in enumerate(case_corners):
-        for hsize_index, hsize in enumerate(hhs):
-            # Call the function
-            L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, hsize, case_corner)
-            errors['L2u'][case_corner_index, hsize_index] = L2error_u
-            errors['H1u'][case_corner_index, hsize_index] = H1error_u
-            errors['H1l'][case_corner_index, hsize_index] = H1error_lmd
-            errors['Es'][case_corner_index, hsize_index] = error_s 
-            errors['Ee'][case_corner_index, hsize_index] = error_e 
-            errors['Em'][case_corner_index, hsize_index] = error_mu
+    # Plot lines on a specific figure
+    def plotLines(fig_num, hhs, data, label, line_type='-o'):
+        """Plot lines on an existing figure."""
+        plt.figure(fig_num)
+        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
 
-    # Generate plots for each error metric
-    for key, value in errors.items():
-        fig, ax = plt.subplots(figsize=(8, 6))
-        for case_corner_index, case_corner in enumerate(case_corners):
-            # Plot
-            ax.loglog(hhs, value[case_corner_index, :], '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
-            # Compute the associated convergence rate
-            p = (np.log(value[case_corner_index, -1] / value[case_corner_index, -2]) /
-                np.log(hhs[-1] / hhs[-2]))
-            conv_rates[key].append(p)
+    # Main loop
+    """Main logic for plotting and saving figures."""
+    initializePlots(num_plots, formulation)
 
-        # Configure the plot
-        ax.set_xlabel('$h$')
-        ax.set_ylabel(norm_labels[key])
-        ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        ax.tick_params(axis='both', which='major')
-        ax.tick_params(axis='both', which='minor')
-        ax.set_title(formulation)
-        ax.legend()
-        # plt.savefig(f'{key}_errors_{formulation}.svg')
-        # plt.show()
+    for param, val in stab_params.items():
+        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
+        print(f'==== Solving for {kwargs} ====')
 
-    # Output
-    headers = ["Norm"] + c_corners_labels
-    table_data = [[err] + [f"{rate:.4f}" for rate in val] for err, val in conv_rates.items()]
-    print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
+        # Collect data for all mesh refinements
+        errors = {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+        for hsize in hhs:
+            output = main_EX92_(formulation, hsize, case_corner, **kwargs)
+            for i, key in enumerate(errors.keys()):
+                errors[key].append(output[i + 1])
+                
+        # Compute convergence rates
+        conv_rates = computeConvergenceRates(hhs, errors)
+        printConvergenceRates(conv_rates)
+
+        # Plot data
+        if formulation == 'Natural':
+            plot_data = [
+                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
+                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
+                (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
+                ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
+                ['-.^', ':p', '--d'])
+            ]
+        else:
+            plot_data = [
+                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
+                for i, (key, label) in enumerate(zip(
+                    ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
+                    ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+                    '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
+                    '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
+                ))
+            ]
+
+        for fig_num, data_list, labels, line_types in plot_data:
+            for data, label, line_type in zip(data_list, labels, line_types):
+                plotLines(fig_num, hhs, data, label, line_type)
+
+    # Add legends and save figures
+    for fig_num in range(1, num_plots + 1):
+        plt.figure(fig_num)
+        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
+
+    plt.show()
      
 elif(main_selector == 93): 
     
@@ -2872,15 +2902,20 @@ elif(main_selector == 94):
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
+                       'No stabilization': None,
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}
+                       }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
         raise ValueError('Invalid formulation')
 
     # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
-
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+                   'No stabilization': '-.h', 
+                   'Fully stabilized': ':v'}
+    
     # Initialize all plots
     def initializePlots(num_plots, formulation):
         """Initialize all plots with labels, titles, and grids."""
@@ -2904,7 +2939,13 @@ elif(main_selector == 94):
     initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
-        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
+        if formulation == 'Natural' or param == 'No stabilization':
+            kwargs = {}
+        elif param == 'Fully stabilized':
+            kwargs = val.copy()
+        else:
+            kwargs = {param:val}
+
         print(f'==== Solving for {kwargs} ====')
 
         # Collect data for all mesh refinements
@@ -2930,7 +2971,7 @@ elif(main_selector == 94):
             ]
         else:
             plot_data = [
-                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
+                (i + 1, [errors[key]], [f'{label} $\, \\{param}={val}$' if param != 'No stabilization' and  param != 'Fully stabilized' else f'{label} $\,$ {param}'], [line_styles[param]])
                 for i, (key, label) in enumerate(zip(
                     ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
                     ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',

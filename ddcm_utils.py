@@ -351,7 +351,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
         elif(case == 2):
             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
-        gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
+        gmsh.model.geo.addPoint(0, 0, 0, 0.1*lc, 3)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
@@ -368,7 +368,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
     elif(case == 3):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
+        gmsh.model.geo.addPoint(0, 0, 0, 0.1*lc, 2)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
@@ -405,7 +405,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
     for line in gmsh.model.getEntities(dim=1):
         onboundary.append(line[1])
     gmsh.model.addPhysicalGroup(1, onboundary, 1)
-    tags = {'onboundary': 1}
+    tags = {'on_boundary': 1}
 
     gmsh.option.setNumber("Mesh.Algorithm", 6)
     gmsh.model.geo.synchronize()
