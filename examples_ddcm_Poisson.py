@@ -2176,6 +2176,124 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     print('----------------------------------------------------------')
 
     return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+
+# On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
+def main_EX942_(formulation='Natural', N=20, Nsamples=3, **kwargs):
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+
+    h = fd.CellDiameter(domain.msh)
+
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
+              'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    #________________________________
+    def mysource(x):
+        return fd.Constant(1.0)
+    def mysurfaceflux(x):
+        return None
+    def mybcvals(x):
+        return fd.Constant(0.123456789)
+    def mydual_source(x):
+        return fd.Constant(0.0)
+    def mylmbd_boundary_vals(x):
+        return fd.Constant(0.0)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals,lmbd_boundary_vals=mylmbd_boundary_vals, dual_volumetric_source=mydual_source)
+    #________________________________
+
+    params_ref = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+    ref_prob = PoissonStdProblem(domain, params_ref, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion
+
+    one_sample_per_element = False
+    if(one_sample_per_element == True): # One point per element centroid
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+    else: # Sample points one a regular grid
+        Nsampx, Nsampy  = Nsamples, Nsamples
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
+    #- Pay attention: this is a concious decision
+    # and it may change in other situations
+    gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
+    gradu_sampled_vals = np.array(gproj.at(xs))
+    flux_sampled_vals = np.array(ref_prob.std_solution.s.at(xs))
+    #-------------------------------------------  
+        
+    # Apply any manipulation/transformation you need to define
+    # the synthetic data (rotations, scalings, removing outliers, etc)
+    gradu_samples = gradu_sampled_vals
+    flux_samples  = flux_sampled_vals
+
+    ddcm_data = PoissonDDCMData(domain)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    
+    ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+
+    ddcm_prob.solve(Nsamples, "myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
     
 #  Example of a convergence study for the Forcheimer's model based on an analytical solution
 def main_EX91_(formulation='Natural', N=20):
@@ -3129,7 +3247,7 @@ elif(main_selector == 94):
 
     plt.show()
 
-elif(main_selector == 941):
+elif(main_selector == 942):
     
     # Configuration
     #formulation = 'Natural'  
@@ -3138,92 +3256,19 @@ elif(main_selector == 941):
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
         stab_params = {None: None}
-        fig_val_list = ['u', 'l', 's_e_mu']
-        num_plots = 3
     elif formulation == 'Equal-Order':
         stab_params = {'No stabilization': None}
         #stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
-        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
-        num_plots = 10
     else:
         raise ValueError('Invalid formulation')
-
-    # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
-
-    # Initialize all plots
-    def initializePlots(num_plots, formulation):
-        """Initialize all plots with labels, titles, and grids."""
-        for fig_num in range(1, num_plots + 1):
-            plt.figure(fig_num, figsize=(8, 6))
-            plt.xlabel('$h$', fontsize=14)
-            plt.ylabel('Error', fontsize=14)
-            # plt.title(formulation, fontsize=14)
-            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-            plt.tick_params(axis='both', which='major', labelsize=14)
-            plt.tick_params(axis='both', which='minor', labelsize=14)
-
-    # Plot lines on a specific figure
-    def plotLines(fig_num, hhs, data, label, line_type='-o'):
-        """Plot lines on an existing figure."""
-        plt.figure(fig_num)
-        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
-
-    # Main loop
-    """Main logic for plotting and saving figures."""
-    initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
         kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
-
-        # Collect data for all mesh refinements
-        hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        Nsamples = [3, 9, 27, 54]
+        Nsamples = [2, 4, 8, 16, 32, 64]
         for N in Nsamples:
-            output = main_EX941_(formulation, Nsamples[3], N, **kwargs)
-            hhs.append(output[0])
-            for i, key in enumerate(errors.keys()):
-                errors[key].append(output[i + 1])
-
-        # Compute convergence rates
-        conv_rates = computeConvergenceRates(hhs, errors)
-        printConvergenceRates(conv_rates)
-
-        # Plot data
-        if formulation == 'Natural':
-            plot_data = [
-                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
-                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
-                (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
-                ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
-                ['-.^', ':p', '--d'])
-            ]
-        else:
-            plot_data = [
-                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
-                for i, (key, label) in enumerate(zip(
-                    ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
-                    ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
-                    '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
-                    '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
-                    '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
-                    '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
-                ))
-            ]
-
-        for fig_num, data_list, labels, line_types in plot_data:
-            for data, label, line_type in zip(data_list, labels, line_types):
-                plotLines(fig_num, hhs, data, label, line_type)
-
-    # Add legends and save figures
-    for fig_num in range(1, num_plots + 1):
-        plt.figure(fig_num)
-        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
-
-    plt.show()
+            output = main_EX942_(formulation, Nsamples[5], N, **kwargs)
    
 else:
-    
+        
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
