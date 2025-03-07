@@ -32,7 +32,7 @@ petsc_opt1 = {
 def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
              flag_setting, volumetric_source, s_boundary_vals, u_boundary_vals,
              lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
-             params, orders, dir_outs):
+             params, orders, tt=0.0, dir_outs='myddcmsol'):
 
     mesh = domain.msh
     
@@ -148,28 +148,30 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     if(dir_outs != None):
 
-        # Split the solution for post-processing
-        #qpl, ppl, gpl, lpl, mpl = split(w)
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
 
         filename = dir_outs+'/s.pvd'
         w.sub(0).rename('DDCM.Flux')
-        VTKFile(filename).write(w.sub(0))
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
 
         filename = dir_outs+'/u.pvd'
         w.sub(1).rename('DDCM.Potential')
-        VTKFile(filename).write(w.sub(1))
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
         
         filename = dir_outs+'/g.pvd'
         w.sub(2).rename('DDCM.gradient(u)')
-        VTKFile(filename).write(w.sub(2))
+        VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
 
         filename = dir_outs+'/l.pvd'
         w.sub(3).rename('DDCM.lambda')
-        VTKFile(filename).write(w.sub(3))
+        VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
 
         filename = dir_outs+'/m.pvd'
         w.sub(4).rename('DDCM.mu')
-        VTKFile(filename).write(w.sub(4))
+        VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
