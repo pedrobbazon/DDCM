@@ -2371,7 +2371,8 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution    
     lc = hsize             # set the characteristic length of the mesh 
-    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc)
+    flag_singularity_refinement = True
+    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
     if(case_corner == 1):
         omega = 1.75*fd.pi
     elif(case_corner == 2):
@@ -2397,7 +2398,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0]**2 + x[1]**2)
+        r = fd.sqrt(x[0]**2 + x[1]**2) 
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
     def eexact(x):
@@ -2493,7 +2494,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
         ords = [1,1]
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
 
-    ddcm_prob.solve("myddcmsol")
+    ddcm_prob.solve(0.0, "myddcmsol")
 
 
     # 4. Compute some error norms
@@ -2619,7 +2620,7 @@ def main_EX93_(formulation='Natural', N=20):
 
 
 # On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
-def main_EX94_(formulation='Natural', N=20, **kwargs):
+def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2640,7 +2641,7 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1e-3), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1e3), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2737,13 +2738,19 @@ def main_EX94_(formulation='Natural', N=20, **kwargs):
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    if(formulation == 'Natural'):
+    if(formulation == 'Natural' and higher_order_poly == False):
         ords = [0,1]
-    elif(formulation == 'Equal-Order'):
+    elif(formulation == 'Natural' and higher_order_poly == True):
+        ords = [1,2]
+    elif(formulation == 'Equal-Order' and higher_order_poly == False):
         ords = [1,1]
+    elif(formulation == 'Equal-Order' and higher_order_poly == True):
+        ords = [2,2]
+    else:
+        raise ValueError('Invalid formulation and polynomial order')
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
-    ddcm_prob.solve("myddcmsol")
+    ddcm_prob.solve(0.0,"myddcmsol")
 
     # 4. Compute some error norms
     
@@ -2948,12 +2955,12 @@ elif(main_selector == 91):
 elif(main_selector == 92):
     
     # Configuration
-    # formulation = 'Natural'  
-    formulation = 'Equal-Order'
+    formulation = 'Natural'  
+    # formulation = 'Equal-Order'
     
     case_corner = 2
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.2, 0.1, 0.05]
+    hhs = [0.1]
     # 0.0125
 
     # Define stabilization parameters and figure labels based on formulation
@@ -3069,8 +3076,9 @@ elif(main_selector == 93):
 elif(main_selector == 94):
     
     # Configuration
-    # formulation = 'Natural'  
-    formulation = 'Equal-Order'
+    formulation = 'Natural'  
+    # formulation = 'Equal-Order'
+    higher_order_poly = False
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3080,7 +3088,8 @@ elif(main_selector == 94):
     elif formulation == 'Equal-Order':
         stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
                        'No stabilization': None,
-                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+                       'Pair':{'beta': 0.5, 'eta': 0.5}
                        }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
@@ -3090,7 +3099,8 @@ elif(main_selector == 94):
     # Line styles for plotting
     line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
                    'No stabilization': '-.h', 
-                   'Fully stabilized': ':v'}
+                   'Fully stabilized': ':v',
+                   'Pair': '-<'}
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3117,7 +3127,7 @@ elif(main_selector == 94):
     for param, val in stab_params.items():
         if formulation == 'Natural' or param == 'No stabilization':
             kwargs = {}
-        elif param == 'Fully stabilized':
+        elif param == 'Fully stabilized' or param == 'Pair':
             kwargs = val.copy()
         else:
             kwargs = {param:val}
@@ -3126,8 +3136,8 @@ elif(main_selector == 94):
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for N in [25, 50, 100, 200, 400]:
-            output = main_EX94_(formulation, N, **kwargs)
+        for N in [100]:
+            output = main_EX94_(formulation, N, higher_order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
                 errors[key].append(output[i + 1])
@@ -3147,7 +3157,12 @@ elif(main_selector == 94):
             ]
         else:
             plot_data = [
-                (i + 1, [errors[key]], [f'{label} $\, \\{param}={val}$' if param != 'No stabilization' and  param != 'Fully stabilized' else f'{label} $\,$ {param}'], [line_styles[param]])
+                (i + 1, [errors[key]], 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Pair']
+                    else f'{label} $\,$ {param} $\, \\beta=0.5, \\eta=0.5$' if param == 'Pair' 
+                    else f'{label} $\,$ {param}'], 
+                    [line_styles[param]]
+                )
                 for i, (key, label) in enumerate(zip(
                     ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
                     ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
@@ -3165,8 +3180,8 @@ elif(main_selector == 94):
     # Add legends and save figures
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
-        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
+        plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        # plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_2_high_poly.svg')
 
     plt.show()
 
