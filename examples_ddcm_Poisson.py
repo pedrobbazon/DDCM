@@ -3078,7 +3078,7 @@ elif(main_selector == 92):
     
     case_corner = 2
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.1]
+    hhs = [0.1, 0.05, 0.025]
     # 0.0125
 
     # Define stabilization parameters and figure labels based on formulation
@@ -3087,14 +3087,21 @@ elif(main_selector == 92):
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
+                       'No stabilization': None,
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+                       'Pair':{'beta': 0.5, 'eta': 0.5}
+                       }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
         raise ValueError('Invalid formulation')
 
     # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+                   'No stabilization': '-.h', 
+                   'Fully stabilized': ':v',
+                   'Pair': '-<'}
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3119,7 +3126,13 @@ elif(main_selector == 92):
     initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
-        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
+        if formulation == 'Natural' or param == 'No stabilization':
+            kwargs = {}
+        elif param == 'Fully stabilized' or param == 'Pair':
+            kwargs = val.copy()
+        else:
+            kwargs = {param:val}
+
         print(f'==== Solving for {kwargs} ====')
 
         # Collect data for all mesh refinements
@@ -3144,7 +3157,12 @@ elif(main_selector == 92):
             ]
         else:
             plot_data = [
-                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
+                (i + 1, [errors[key]], 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Pair']
+                    else f'{label} $\,$ {param} $\, \\beta=0.5, \\eta=0.5$' if param == 'Pair' 
+                    else f'{label} $\,$ {param}'], 
+                    [line_styles[param]]
+                )
                 for i, (key, label) in enumerate(zip(
                     ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
                     ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',

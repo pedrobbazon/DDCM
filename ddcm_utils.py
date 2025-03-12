@@ -341,7 +341,7 @@ def CreateMesh1Inclusions(meshname):
     return filename, tags
 
 
-def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
+def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinement=True):
     # Cases 1, 2 and 3 consider non-convex geometries. 
     # Case 4, on the other hand, consider the only convex geometry
     gmsh.initialize()
@@ -351,11 +351,10 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
         elif(case == 2):
             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
-        gmsh.model.geo.addPoint(0, 0, 0, 0.1*lc, 3)
+        gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
-
         gmsh.model.geo.addLine(1, 2, 1)
         gmsh.model.geo.addLine(2, 3, 2)
         gmsh.model.geo.addLine(3, 4, 3)
@@ -368,7 +367,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
     elif(case == 3):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        gmsh.model.geo.addPoint(0, 0, 0, 0.1*lc, 2)
+        gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
         gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
@@ -401,12 +400,33 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1):
     ps = gmsh.model.addPhysicalGroup(2, [1])
     gmsh.model.setPhysicalName(2, ps, "My surface") 
 
+    # Determine the tag of the boundaries of the domain
     onboundary = []
     for line in gmsh.model.getEntities(dim=1):
         onboundary.append(line[1])
     gmsh.model.addPhysicalGroup(1, onboundary, 1)
     tags = {'on_boundary': 1}
+    
+    # Determine the tag of the singular point
+    singular_marker = []
+    for point in gmsh.model.getEntities(dim=0):
+        dim, tag = point[0], point[1]
+        coords = gmsh.model.getValue(dim, tag, [])
+        if np.all(np.isclose(coords, [0, 0, 0])):
+            singular_marker.append(tag)
 
+    if flag_singularity_refinement:
+        gmsh.model.mesh.field.add("Distance", 1)
+        gmsh.model.mesh.field.setNumbers(1, "NodesList", singular_marker)
+        gmsh.model.mesh.field.add("Threshold", 2)
+        gmsh.model.mesh.field.setNumber(2, "IField", 1)
+        rmin, rmax = 0.1, 0.25
+        gmsh.model.mesh.field.setNumber(2, "LcMin", lc/4)
+        gmsh.model.mesh.field.setNumber(2, "LcMax", 2*lc)
+        gmsh.model.mesh.field.setNumber(2, "DistMin", rmin)
+        gmsh.model.mesh.field.setNumber(2, "DistMax", rmax)
+        gmsh.model.mesh.field.setAsBackgroundMesh(2)
+    
     gmsh.option.setNumber("Mesh.Algorithm", 6)
     gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(2)

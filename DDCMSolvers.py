@@ -118,8 +118,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
     elif(flag_setting == 'Pure-Neumann'):
         
-        L += fd.inner(s_boundary_vals(x),n)*lam*fd.ds(degree=4)
-        L -= fd.inner(mu_boundary_vals(x),n)*u*fd.ds(degree=4)
+        L += fd.inner(s_boundary_vals(x),n)*lam*fd.ds
+        L -= fd.inner(mu_boundary_vals(x),n)*u*fd.ds
         
     elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
         
@@ -130,8 +130,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
         # bottom and top
-        L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
-        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3,degree=4)+fd.ds(4,degree=4))
+        L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3)+fd.ds(4))
+        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
         
     else:
         
