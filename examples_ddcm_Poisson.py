@@ -2516,7 +2516,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0]**2 + x[1]**2) 
+        r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
     def eexact(x):
@@ -2759,7 +2759,7 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1e3), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2773,27 +2773,38 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
         return fd.grad(uexact(x))
     
     # Propose an analytical expression for lambda
-    def lmbdexact(x):
-        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
-        A = fd.Constant(0.05)
-        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
+    # def lmbdexact(x):
+    #     x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
+    #     A = fd.Constant(0.05)
+    #     B = fd.Constant(0.05)
+    #     return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
     
+    # def lmbdexact(x):
+    #     A = fd.Constant(0.75)  # Amplitude 
+    #     k = fd.Constant(0.25)  # Steepness (slope)
+    #     z = x[0] + x[1]        # Input argument (can be adjusted)
+    #     return A / (1.0 + fd.exp(-k * z))
+
+    def lmbdexact(x): 
+        A = fd.Constant(0.05)    # Increase A slightly for more variation
+        ome = fd.Constant(2.0)  # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return  - (A / (ome * fd.pi)) * (
+            fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi)
+        )
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.01)         # Amplitude
+        A = fd.Constant(0.05)        # Amplitude
         ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.04)  # Amplitude
-        ome = fd.Constant(3.0)  # Frequency
-        phi = fd.Constant(0.0)  # Phase angle
+        A = fd.Constant(0.025)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        # mst = met + A*fd.sin(ome*fd.pi*met)
-        mst = fd.sqrt(met) + met - A*met**3
+        mst = met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
@@ -3043,9 +3054,6 @@ elif(main_selector == 90):
     fig_names = ['Darcy_errors_u_lmd','Darcy_errors_s_e_mu']
     plotErrors(hhs, **errors, formulation=formulation, flag_save_fig=flag_save_fig, fig_names=fig_names)
 
-
-       
-    
 elif(main_selector == 91):
     
     # formulation = 'Natural'
@@ -3212,9 +3220,9 @@ elif(main_selector == 93):
 elif(main_selector == 94):
     
     # Configuration
-    formulation = 'Natural'  
-    # formulation = 'Equal-Order'
-    higher_order_poly = False
+    # formulation = 'Natural'  
+    formulation = 'Equal-Order'
+    higher_order_poly = True
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3222,11 +3230,12 @@ elif(main_selector == 94):
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
-                       'No stabilization': None,
-                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-                       'Pair':{'beta': 0.5, 'eta': 0.5}
-                       }
+        # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
+        #                'No stabilization': None,
+        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+        #                'Pair':{'beta': 0.5, 'eta': 0.5}
+        #                }
+        stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
@@ -3272,7 +3281,7 @@ elif(main_selector == 94):
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for N in [100]:
+        for N in [25, 50, 100]:
             output = main_EX94_(formulation, N, higher_order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
@@ -3317,7 +3326,7 @@ elif(main_selector == 94):
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
         plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        # plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_2_high_poly.svg')
+        # plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_1e-3_hpd.svg')
 
     plt.show()
 
