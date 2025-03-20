@@ -1,6 +1,7 @@
 import firedrake as fd
 from firedrake.output import VTKFile
-
+import matplotlib.pyplot as plt
+import scipy.linalg as spla
 from ddcm_classes import *
 #
 #----------------------------------------------------------------
@@ -147,6 +148,19 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
+    # --- Extract Eigenvalues ---
+    # A = fd.assemble(Jac).M.handle  # Get PETSc matrix
+    # A_np = A.toarray()
+
+    # # Compute eigenvalues
+    # eigenvalues = spla.eigvals(A_np)
+    # condition_number = max(abs(eigenvalues)) / min(abs(eigenvalues))
+
+    # print("Eigenvalues:", np.sort(eigenvalues))
+    # print("maximum eigenvalue:", max(abs(eigenvalues)))
+    # print("minimum eigenvalue:", min(abs(eigenvalues)))
+    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Condition Number:", condition_number)
+
     
     # udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
     # lmbddif = fd.assemble(interpolate(w.sub(3) - lmbd_boundary_vals(x), SF))

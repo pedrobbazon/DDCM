@@ -2521,29 +2521,26 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
         return (r**alpha)*fd.sin(alpha*theta)
     def eexact(x):
         return fd.grad(uexact(x))
-  
     # Propose an analytical expression for lambda
-    def lmbdexact(x):
-        x0, y0  = fd.Constant(-1.0), fd.Constant(-1.0)
-        A = fd.Constant(0.01)
-        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
+    def lmbdexact(x): 
+        A = fd.Constant(0.05)   # Increase A slightly for more variation
+        ome = fd.Constant(2.0)  # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return  - (A / (ome * fd.pi)) * ( fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi) )
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.05)       # Amplitude
-        ome = fd.Constant(5.0)      # Frequency
+        A = fd.Constant(0.05)        # Amplitude
+        ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.02)  # Amplitude
-        ome = fd.Constant(3.0)  # Frequency
-        phi = fd.Constant(0.0)  # Phase angle
+        A = fd.Constant(0.025)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        # mst = met + A*fd.sin(ome*fd.pi*met)
-        mst = fd.sqrt(met) + met - A*met**3
+        mst = met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
@@ -2786,7 +2783,7 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
     #     return A / (1.0 + fd.exp(-k * z))
 
     def lmbdexact(x): 
-        A = fd.Constant(0.05)    # Increase A slightly for more variation
+        A = fd.Constant(0.05)   # Increase A slightly for more variation
         ome = fd.Constant(2.0)  # Frequency
         phi = fd.Constant(0.0)   # Phase angle 
         return  - (A / (ome * fd.pi)) * (
@@ -3081,13 +3078,12 @@ elif(main_selector == 91):
 elif(main_selector == 92):
     
     # Configuration
-    formulation = 'Natural'  
-    # formulation = 'Equal-Order'
+    # formulation = 'Natural'  
+    formulation = 'Equal-Order'
     
-    case_corner = 2
+    case_corner = 3
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.1, 0.05, 0.025]
-    # 0.0125
+    hhs = [0.2, 0.1, 0.05, 0.025]
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3095,11 +3091,11 @@ elif(main_selector == 92):
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
-                       'No stabilization': None,
-                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-                       'Pair':{'beta': 0.5, 'eta': 0.5}
+        stab_params = {'No stabilization': None,
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
+                       'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
                        }
+        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
@@ -3109,7 +3105,8 @@ elif(main_selector == 92):
     line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
                    'No stabilization': '-.h', 
                    'Fully stabilized': ':v',
-                   'Pair': '-<'}
+                   'Partially stabilized': '-<'
+                   }
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3136,7 +3133,7 @@ elif(main_selector == 92):
     for param, val in stab_params.items():
         if formulation == 'Natural' or param == 'No stabilization':
             kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Pair':
+        elif param == 'Fully stabilized' or param == 'Partially stabilized':
             kwargs = val.copy()
         else:
             kwargs = {param:val}
@@ -3166,8 +3163,8 @@ elif(main_selector == 92):
         else:
             plot_data = [
                 (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Pair']
-                    else f'{label} $\,$ {param} $\, \\beta=0.5, \\eta=0.5$' if param == 'Pair' 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
+                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
                     else f'{label} $\,$ {param}'], 
                     [line_styles[param]]
                 )
@@ -3222,7 +3219,7 @@ elif(main_selector == 94):
     # Configuration
     # formulation = 'Natural'  
     formulation = 'Equal-Order'
-    higher_order_poly = True
+    higher_order_poly = False
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3233,9 +3230,12 @@ elif(main_selector == 94):
         # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
         #                'No stabilization': None,
         #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Pair':{'beta': 0.5, 'eta': 0.5}
+        #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
         #                }
         stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
+        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+        #                'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
+        #                }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
@@ -3245,7 +3245,8 @@ elif(main_selector == 94):
     line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
                    'No stabilization': '-.h', 
                    'Fully stabilized': ':v',
-                   'Pair': '-<'}
+                   'Partially stabilized': '-<'
+                   }
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3272,7 +3273,7 @@ elif(main_selector == 94):
     for param, val in stab_params.items():
         if formulation == 'Natural' or param == 'No stabilization':
             kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Pair':
+        elif param == 'Fully stabilized' or param == 'Partially stabilized':
             kwargs = val.copy()
         else:
             kwargs = {param:val}
@@ -3281,7 +3282,7 @@ elif(main_selector == 94):
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for N in [25, 50, 100]:
+        for N in [25, 50, 100, 200, 400]:
             output = main_EX94_(formulation, N, higher_order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
@@ -3303,8 +3304,8 @@ elif(main_selector == 94):
         else:
             plot_data = [
                 (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Pair']
-                    else f'{label} $\,$ {param} $\, \\beta=0.5, \\eta=0.5$' if param == 'Pair' 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
+                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
                     else f'{label} $\,$ {param}'], 
                     [line_styles[param]]
                 )
@@ -3326,8 +3327,7 @@ elif(main_selector == 94):
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
         plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        # plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_1e-3_hpd.svg')
-
+        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
     plt.show()
 
 elif(main_selector == 942):
