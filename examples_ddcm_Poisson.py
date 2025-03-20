@@ -2536,7 +2536,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.025)  # Amplitude
+        A = fd.Constant(0.0)  # 0.025 Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
@@ -3081,9 +3081,9 @@ elif(main_selector == 92):
     # formulation = 'Natural'  
     formulation = 'Equal-Order'
     
-    case_corner = 3
+    case_corner = 2
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.2, 0.1, 0.05, 0.025]
+    hhs = [0.1, 0.05, 0.025]
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3093,7 +3093,7 @@ elif(main_selector == 92):
     elif formulation == 'Equal-Order':
         stab_params = {'No stabilization': None,
                        'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
-                       'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
+                       'Partially stabilized':{'alpha': 0.125, 'eta': 0.5}
                        }
         # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
@@ -3186,7 +3186,7 @@ elif(main_selector == 92):
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
         plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
+        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}_2.svg')
 
     plt.show()
      
