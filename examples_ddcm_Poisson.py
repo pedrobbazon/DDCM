@@ -2109,6 +2109,7 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     x = fd.SpatialCoordinate(synth_domain.msh)
     g = fd.assemble(interpolate(eexact(x),VCG3))
     s = fd.assemble(interpolate(sexact(x),VCG3))
+    
     gradu_sampled_vals = np.array(g.at(xs))
     flux_sampled_vals = np.array(s.at(xs))
     #-------------------------------------------  
