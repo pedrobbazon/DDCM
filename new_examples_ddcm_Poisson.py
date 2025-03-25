@@ -174,12 +174,17 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     
     
     # Propose an manufactured potential field and its associated gradient and also the exact flux
-    def uexact(x):
-        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
-
-    def eexactnp(x):
-        return -np.pi*(np.sin(np.pi*x[0])*np.cos(np.pi*x[1]) + np.cos(np.pi*x[0])*np.sin(np.pi*x[1]))
+    #def uexact(x):
+    #    return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     
+    def uexact(x):
+        return x[0]*(x[0] - Ls[0])*x[1]*(x[1] - Ls[1])
+
+    #def eexactnp(x):
+    #    return [-np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), -np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
+    def eexactnp(x):
+        return [(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), (2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
+
     def eexact(x):
         return fd.grad(uexact(x))
 
@@ -189,12 +194,15 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     def sexact(x):
         return -fd.grad(uexact(x))
     
+    #def sexactnp(x):
+    #    return [np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
+    def sexactnp(x):
+        return [-(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), -(2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
+    
     def muexact(x):
         return fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
-    
     def fdual(x):
         return fd.Constant(0.0)
-    
     def qexact(x):
         zeda = params['zeda']
         return zeda*uexact(x) + fd.div(sexact(x))
@@ -242,9 +250,11 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     gradu_sampled_vals = np.array(g.at(xs))
     flux_sampled_vals = np.array(s.at(xs))
     '''
-    print(eexact(xs))
-    raise Exception('kdkdkdkd1  ')
-    #print(gradu_sampled_vals)
+    #print(xs)
+    #print(np.array(eexactnp(xs)).T)
+    #raise Exception('kdkdkdkd1  ')
+    gradu_sampled_vals = np.array(eexactnp(xs)).T
+    flux_sampled_vals = np.array(sexactnp(xs)).T
     #-------------------------------------------  
         
     # Apply any manipulation/transformation you need to define
@@ -278,9 +288,10 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
         ords = [2,2]
     else:
         raise ValueError('Invalid formulation and polynomial order')
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
 
-    ddcm_prob.solve(0.0,"myddcmsol")
+    print(Nsamples)
+    ddcm_prob.solve(tt=Nsamples,dir_outs="myddcmsol")
 
     # 4. Compute some error norms
     
@@ -393,15 +404,13 @@ def printConvergenceRates(conv_rates):
 # ===== RUN ===== #
 import sys
 
-
-
 main_selector = np.int32(sys.argv[1])
 
 if(main_selector == 2):
     
     # Configuration
-    #formulation = 'Natural'  
-    formulation = 'Equal-Order'
+    formulation = 'Natural'  
+    #formulation = 'Equal-Order'
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -415,9 +424,12 @@ if(main_selector == 2):
     for param, val in stab_params.items():
         kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
-        Nsamples = [2, 4, 8, 16, 32, 64]
-        for N in Nsamples:
-            output = main_EX2_(formulation, Nsamples[5], N, **kwargs)
+        Nhs = [16, 32, 64, 128]
+        Nsamples = [[2,4,8,16], [2,4,8,16,32], [2,4,8,16,32,64], [2,4,8,16,32,64,128]]
+        for k, Nh in enumerate(Nhs):
+            for N in Nsamples[k]:
+                output = main_EX2_(formulation, Nh, N, **kwargs)
+                print(output)
    
 else:
         
