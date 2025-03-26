@@ -178,12 +178,14 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     #    return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     
     def uexact(x):
-        return x[0]*(x[0] - Ls[0])*x[1]*(x[1] - Ls[1])
+        return fd.sin(fd.pi*x[0])*fd.sin(fd.pi*x[1])
 
     #def eexactnp(x):
     #    return [-np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), -np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
+    #def eexactnp(x):
+    #    return [(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), (2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
     def eexactnp(x):
-        return [(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), (2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
+        return [np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1]), np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1])]
 
     def eexact(x):
         return fd.grad(uexact(x))
@@ -196,8 +198,10 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     
     #def sexactnp(x):
     #    return [np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
+    #def sexactnp(x):
+    #    return [-(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), -(2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
     def sexactnp(x):
-        return [-(2*x[:,0] - Ls[0])*x[:,1]*(x[:,1] - Ls[1]), -(2*x[:,1] - Ls[1])*x[:,0]*(x[:,0] - Ls[0])]
+        return [-np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1]), -np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1])]
     
     def muexact(x):
         return fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
@@ -215,7 +219,7 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
                    'exact-mu': muexact, 'exact-etilde': None, 'exact-stilde': None}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
-    ref_prob.solve(0.0, "myrefsol")
+    ref_prob.solve(tt=N, dir_outs="myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -386,8 +390,8 @@ main_selector = np.int32(sys.argv[1])
 if(main_selector == 2):
     
     # Configuration
-    #formulation = 'Natural'  
-    formulation = 'Equal-Order'
+    formulation = 'Natural'  
+    #formulation = 'Equal-Order'
     
     if formulation == 'Natural':
         stab_params = {None: None}
@@ -441,7 +445,7 @@ if(main_selector == 2):
         kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
         Nhs = [25, 50, 100, 200]
-        Nsamples = [16,32,64,128,256,512,1024,2048,4096]
+        Nsamples = [16,32,64,128,256,512,1024,2048,4096,8192]
         for N in Nsamples:
             print('||------------------------------------------------')
             print('||> Running mesh convergence for Nsamples=', N)
