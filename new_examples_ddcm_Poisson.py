@@ -399,7 +399,7 @@ if(main_selector == 2):
         #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
         #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
         #                }
-        stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
+        stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta': 0.5}}
         #stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
         #               'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
         #              }
@@ -412,7 +412,7 @@ if(main_selector == 2):
     line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
                    'No stabilization': '-.h', 
                    'Fully stabilized': ':v',
-                   'Partially stabilized': '-<'
+                   'Minimally stabilized': '-<'
                    }
     
     # Initialize all plots
@@ -441,7 +441,7 @@ if(main_selector == 2):
         kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
         Nhs = [25, 50, 100, 200]
-        Nsamples = [16,32,64,128,256,512,1024,2048]
+        Nsamples = [16,32,64,128,256,512,1024,2048,4096]
         for N in Nsamples:
             print('||------------------------------------------------')
             print('||> Running mesh convergence for Nsamples=', N)
@@ -469,8 +469,8 @@ if(main_selector == 2):
             else:
                 plot_data = [
                     (i + 1, [errors[key]], 
-                        [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
-                        else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
+                        [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Minimally stabilized']
+                        else f'{label} $\,\\alpha=0.125, \\eta=0.5$' if param == 'Minimally stabilized' 
                         else f'{label} $\,$ {param}'], 
                         [line_styles[param]]
                     )
