@@ -159,8 +159,8 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-
+    mymeshfile, tags = CreateMeshSquare('squaremesh', hsize)
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
 
@@ -238,33 +238,11 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
         xlsg, ylsg = np.meshgrid(xls, yls)
         xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
 
-    #- Pay attention: this is a concious decision
-    # and it may change in other situations
-    '''
-    nsd, Ls, Ns = 2, [1.0, 1.0], [Nsamples*2, Nsamples*2]
-    synth_domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
-    VCG3 = fd.VectorFunctionSpace(synth_domain.msh, 'CG', degree=3)
-    x = fd.SpatialCoordinate(synth_domain.msh)
-    g = fd.assemble(interpolate(eexact(x),VCG3))
-    s = fd.assemble(interpolate(sexact(x),VCG3))
-    gradu_sampled_vals = np.array(g.at(xs))
-    flux_sampled_vals = np.array(s.at(xs))
-    '''
-    #print(xs)
-    #print(np.array(eexactnp(xs)).T)
-    #raise Exception('kdkdkdkd1  ')
-    gradu_sampled_vals = np.array(eexactnp(xs)).T
-    flux_sampled_vals = np.array(sexactnp(xs)).T
-    #-------------------------------------------  
-        
-    # Apply any manipulation/transformation you need to define
-    # the synthetic data (rotations, scalings, removing outliers, etc)
-    gradu_samples = gradu_sampled_vals
-    flux_samples  = flux_sampled_vals
-
+    # Use the numpy version of the functions eexact and sexact for this:
+    gradu_samples = np.array(eexactnp(xs)).T
+    flux_samples  = np.array(sexactnp(xs)).T
     ddcm_data = PoissonDDCMData(domain)
     ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
-    
     ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
 
     # 3. Solve the Data Driven problem: This problem should share the same 
@@ -288,9 +266,8 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
         ords = [2,2]
     else:
         raise ValueError('Invalid formulation and polynomial order')
+    
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
-
-    print(Nsamples)
     ddcm_prob.solve(tt=Nsamples,dir_outs="myddcmsol")
 
     # 4. Compute some error norms
@@ -409,28 +386,109 @@ main_selector = np.int32(sys.argv[1])
 if(main_selector == 2):
     
     # Configuration
-    formulation = 'Natural'  
-    #formulation = 'Equal-Order'
-
-    # Define stabilization parameters and figure labels based on formulation
+    #formulation = 'Natural'  
+    formulation = 'Equal-Order'
+    
     if formulation == 'Natural':
         stab_params = {None: None}
+        fig_val_list = ['u', 'l', 's_e_mu']
+        num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'No stabilization': None}
-        #stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+        # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
+        #                'No stabilization': None,
+        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+        #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
+        #                }
+        stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
+        #stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
+        #               'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
+        #              }
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
     else:
         raise ValueError('Invalid formulation')
+
+    # Line styles for plotting
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+                   'No stabilization': '-.h', 
+                   'Fully stabilized': ':v',
+                   'Partially stabilized': '-<'
+                   }
+    
+    # Initialize all plots
+    def initializePlots(num_plots, formulation):
+        """Initialize all plots with labels, titles, and grids."""
+        for fig_num in range(1, num_plots + 1):
+            plt.figure(fig_num, figsize=(8, 6))
+            plt.xlabel('$h$', fontsize=14)
+            plt.ylabel('Error', fontsize=14)
+            # plt.title(formulation, fontsize=14)
+            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+            plt.tick_params(axis='both', which='major', labelsize=14)
+            plt.tick_params(axis='both', which='minor', labelsize=14)
+
+    # Plot lines on a specific figure
+    def plotLines(fig_num, hhs, data, label, line_type='-o'):
+        """Plot lines on an existing figure."""
+        plt.figure(fig_num)
+        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
+
+    # Main loop
+    """Main logic for plotting and saving figures."""
+    initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
         kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
-        Nhs = [16, 32, 64, 128]
-        Nsamples = [[2,4,8,16], [2,4,8,16,32], [2,4,8,16,32,64], [2,4,8,16,32,64,128]]
-        for k, Nh in enumerate(Nhs):
-            for N in Nsamples[k]:
+        Nhs = [25, 50, 100, 200]
+        Nsamples = [16,32,64,128,256,512,1024,2048]
+        for N in Nsamples:
+            print('||------------------------------------------------')
+            print('||> Running mesh convergence for Nsamples=', N)
+            hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+            for k, Nh in enumerate(Nhs):
                 output = main_EX2_(formulation, Nh, N, **kwargs)
-                print(output)
-   
+                hhs.append(output[0])
+                for i, key in enumerate(errors.keys()):
+                    errors[key].append(output[i + 1])
+            print('||> Done Nsamples=', N)
+            print('||------------------------------------------------')
+            # Compute convergence rates
+            conv_rates = computeConvergenceRates(hhs, errors)
+            printConvergenceRates(conv_rates)
+
+            # Plot data
+            if formulation == 'Natural':
+                plot_data = [
+                    (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
+                    (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
+                    (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
+                    ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
+                    ['-.^', ':p', '--d'])
+                ]
+            else:
+                plot_data = [
+                    (i + 1, [errors[key]], 
+                        [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
+                        else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
+                        else f'{label} $\,$ {param}'], 
+                        [line_styles[param]]
+                    )
+                    for i, (key, label) in enumerate(zip(
+                        ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
+                        ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+                        '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+                        '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+                        '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
+                        '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
+                    ))
+                ]
+
+            for fig_num, data_list, labels, line_types in plot_data:
+                for data, label, line_type in zip(data_list, labels, line_types):
+                    plotLines(fig_num, hhs, data, label, line_type)
+
+            plt.show()
 else:
         
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)

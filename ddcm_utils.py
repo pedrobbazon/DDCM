@@ -437,3 +437,39 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
     gmsh.finalize()
 
     return filename, tags
+
+def CreateMeshSquare(meshname, lc=0.1):
+    gmsh.initialize()
+    gmsh.model.geo.addPoint(0, 0, 0, lc, 1)
+    gmsh.model.geo.addPoint(1, 0, 0, lc, 2)
+    gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
+    gmsh.model.geo.addPoint(0, 1, 0, lc, 4)
+    gmsh.model.geo.addLine(1, 2, 1)
+    gmsh.model.geo.addLine(2, 3, 2)
+    gmsh.model.geo.addLine(3, 4, 3)
+    gmsh.model.geo.addLine(4, 1, 4)
+    gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
+    gmsh.model.geo.addPlaneSurface([1], 1)
+    gmsh.model.geo.synchronize()
+    gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
+    
+    ps = gmsh.model.addPhysicalGroup(2, [1])
+    gmsh.model.setPhysicalName(2, ps, "My surface") 
+
+    # Determine the tag of the boundaries of the domain
+    onboundary = []
+    for line in gmsh.model.getEntities(dim=1):
+        onboundary.append(line[1])
+    gmsh.model.addPhysicalGroup(1, onboundary, 1)
+    tags = {'on_boundary': 1}
+
+    gmsh.option.setNumber("Mesh.Algorithm", 2)
+    gmsh.model.geo.synchronize()
+    gmsh.model.mesh.generate(2)
+    
+    filename = meshname+".msh"
+    gmsh.write(filename)
+    gmsh.write(meshname+".vtk") # For visualization in Paraview
+    gmsh.finalize()
+
+    return filename, tags
