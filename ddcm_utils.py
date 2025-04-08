@@ -421,7 +421,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.mesh.field.add("Threshold", 2)
         gmsh.model.mesh.field.setNumber(2, "IField", 1)
         rmin, rmax = 0.1, 0.25
-        gmsh.model.mesh.field.setNumber(2, "LcMin", lc/4)
+        gmsh.model.mesh.field.setNumber(2, "LcMin", lc/2)
         gmsh.model.mesh.field.setNumber(2, "LcMax", 2*lc)
         gmsh.model.mesh.field.setNumber(2, "DistMin", rmin)
         gmsh.model.mesh.field.setNumber(2, "DistMax", rmax)

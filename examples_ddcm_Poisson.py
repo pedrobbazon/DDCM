@@ -2735,7 +2735,7 @@ def main_EX93_(formulation='Natural', N=20):
 
 
 # On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
-def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs):
+def main_EX94_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2864,14 +2864,18 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    if(formulation == 'Natural' and higher_order_poly == False):
+    if(formulation == 'Natural' and order_poly == 'Linear'):
         ords = [0,1]
-    elif(formulation == 'Natural' and higher_order_poly == True):
+    elif(formulation == 'Natural' and order_poly == 'Quadratic'):
         ords = [1,2]
-    elif(formulation == 'Equal-Order' and higher_order_poly == False):
+    elif(formulation == 'Natural' and order_poly == 'Cubic'):
+        ords = [2,3]
+    elif(formulation == 'Equal-Order' and order_poly == 'Linear'):
         ords = [1,1]
-    elif(formulation == 'Equal-Order' and higher_order_poly == True):
+    elif(formulation == 'Equal-Order' and order_poly == 'Quadratic'):
         ords = [2,2]
+    elif(formulation == 'Equal-Order' and order_poly == 'Cubic'):
+        ords = [3,3]
     else:
         raise ValueError('Invalid formulation and polynomial order')
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
@@ -2979,17 +2983,31 @@ def computeConvergenceRates(hhs, errors):
     return conv_rates
 
 from tabulate import tabulate
-def printConvergenceRates(conv_rates):
+def printConvergenceRates(formulation, order_poly, param, conv_rates):
     headers = ["Norm", "Convergence rate"]
     table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
+    table = tabulate(table_data, headers=headers, tablefmt="github")
+    # Save the table
+    if formulation == 'Natural':
+        with open(f'{formulation}_table_{order_poly}.txt','w') as f:
+            f.write(table)   
+    elif formulation == 'Equal-Order':
+        if param == 'Unstabilized': 
+            with open(f'{formulation}_table_{param}_{order_poly}.txt','w') as f:
+                f.write(table)
+        elif param == 'Fully stabilized' or 'Minimally stabilized':
+            words = param.split()
+            with open(f'{formulation}_table_{words[0]}_{words[1]}_{order_poly}.txt','w') as f:
+                f.write(table)
+    else:
+        raise ValueError('Invalid formulation!')
+    # Print the convergence rates
     print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
+    print(table)
     
    
 # ===== RUN ===== #
 import sys
-
-
 
 main_selector = np.int32(sys.argv[1])
 
@@ -3078,35 +3096,36 @@ elif(main_selector == 91):
 elif(main_selector == 92):
     
     # Configuration
-    # formulation = 'Natural'  
-    formulation = 'Equal-Order'
+    formulation = 'Natural'  
+    # formulation = 'Equal-Order'
+    order_poly = 'Linear'
     
-    case_corner = 2
+    case_corner = 3
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.1, 0.05, 0.025]
-
+    hhs = [0.1, 0.05, 0.025, 0.0125]
+    
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
         stab_params = {None: None}
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        stab_params = {'No stabilization': None,
+        stab_params = {'Unstabilized': None,
                        'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
-                       'Partially stabilized':{'alpha': 0.125, 'eta': 0.5}
+                       'Minimally stabilized':{'alpha': 0.125, 'eta': 0.5}
                        }
-        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
         raise ValueError('Invalid formulation')
 
     # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
-                   'No stabilization': '-.h', 
-                   'Fully stabilized': ':v',
-                   'Partially stabilized': '-<'
-                   }
+    # line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+    #                'Unstabilized': '-.h', 
+    #                'Fully stabilized': ':v',
+    #                'Minimally stabilized': '-<'
+    #                }
+    line_styles = {'Unstabilized': 'r--o', 'Fully stabilized': 'b-.s','Minimally stabilized': 'g:^'}
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3131,9 +3150,9 @@ elif(main_selector == 92):
     initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
-        if formulation == 'Natural' or param == 'No stabilization':
+        if formulation == 'Natural' or param == 'Unstabilized':
             kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Partially stabilized':
+        elif param == 'Fully stabilized' or param == 'Minimally stabilized':
             kwargs = val.copy()
         else:
             kwargs = {param:val}
@@ -3149,22 +3168,22 @@ elif(main_selector == 92):
                 
         # Compute convergence rates
         conv_rates = computeConvergenceRates(hhs, errors)
-        printConvergenceRates(conv_rates)
+        printConvergenceRates(formulation, order_poly, param, conv_rates)
 
         # Plot data
         if formulation == 'Natural':
             plot_data = [
-                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
-                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
+                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['r--o', 'b-.s']),
+                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['r--o', 'b-.s']),
                 (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
                 ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
-                ['-.^', ':p', '--d'])
+                ['r--o', 'b-.s', 'g:^'])
             ]
         else:
             plot_data = [
                 (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
-                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['Unstabilized', 'Fully stabilized', 'Minimally stabilized']
+                    # else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Minimally stabilized' 
                     else f'{label} $\,$ {param}'], 
                     [line_styles[param]]
                 )
@@ -3185,8 +3204,8 @@ elif(main_selector == 92):
     # Add legends and save figures
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
-        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}_2.svg')
+        plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}_3.svg')
 
     plt.show()
      
@@ -3219,7 +3238,7 @@ elif(main_selector == 94):
     # Configuration
     # formulation = 'Natural'  
     formulation = 'Equal-Order'
-    higher_order_poly = False
+    order_poly = 'Cubic'
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3228,25 +3247,25 @@ elif(main_selector == 94):
         num_plots = 3
     elif formulation == 'Equal-Order':
         # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
-        #                'No stabilization': None,
-        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
+        #                'Unstabilized': None,
+        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}
         #                }
-        stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
-        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
-        #                }
+        stab_params = {'Unstabilized': None,
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
+                       'Minimally stabilized':{'alpha': 0.125, 'eta':0.5}
+                    }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
         raise ValueError('Invalid formulation')
 
     # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
-                   'No stabilization': '-.h', 
-                   'Fully stabilized': ':v',
-                   'Partially stabilized': '-<'
-                   }
+    # line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+    #                'Unstabilized': '-.h', 
+    #                'Fully stabilized': ':v',
+    #                'Minimally stabilized': '-<'
+    #                }
+    line_styles = {'Unstabilized': 'r--o', 'Fully stabilized': 'b-.s','Minimally stabilized': 'g:^'}
     
     # Initialize all plots
     def initializePlots(num_plots, formulation):
@@ -3271,9 +3290,9 @@ elif(main_selector == 94):
     initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
-        if formulation == 'Natural' or param == 'No stabilization':
+        if formulation == 'Natural' or param == 'Unstabilized':
             kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Partially stabilized':
+        elif param == 'Fully stabilized' or param == 'Minimally stabilized':
             kwargs = val.copy()
         else:
             kwargs = {param:val}
@@ -3282,30 +3301,30 @@ elif(main_selector == 94):
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for N in [25, 50, 100, 200, 400]:
-            output = main_EX94_(formulation, N, higher_order_poly, **kwargs)
+        for N in [25, 50, 100, 200]:
+            output = main_EX94_(formulation, N, order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
                 errors[key].append(output[i + 1])
 
         # Compute convergence rates
         conv_rates = computeConvergenceRates(hhs, errors)
-        printConvergenceRates(conv_rates)
+        printConvergenceRates(formulation, order_poly, param, conv_rates)
 
         # Plot data
         if formulation == 'Natural':
             plot_data = [
-                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
-                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
+                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['r--o', 'b-.s']),
+                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['r--o', 'b-.s']),
                 (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
                 ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
-                ['-.^', ':p', '--d'])
+                ['r--o', 'b-.s', 'g:^'])
             ]
         else:
             plot_data = [
                 (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
-                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['Unstabilized', 'Fully stabilized', 'Minimally stabilized']
+                    # else f'{label} $\,\\alpha=0.125, \\eta=0.5$' if param == 'Minimally stabilized' 
                     else f'{label} $\,$ {param}'], 
                     [line_styles[param]]
                 )
@@ -3327,7 +3346,7 @@ elif(main_selector == 94):
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
         plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
+        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_{order_poly}.svg')  
     plt.show()
 
 elif(main_selector == 942):
