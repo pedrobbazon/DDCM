@@ -437,3 +437,113 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
     gmsh.finalize()
 
     return filename, tags
+
+def CreateMeshSquare(meshname, lc=0.1):
+    gmsh.initialize()
+    gmsh.model.geo.addPoint(0, 0, 0, lc, 1)
+    gmsh.model.geo.addPoint(1, 0, 0, lc, 2)
+    gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
+    gmsh.model.geo.addPoint(0, 1, 0, lc, 4)
+    gmsh.model.geo.addLine(1, 2, 1)
+    gmsh.model.geo.addLine(2, 3, 2)
+    gmsh.model.geo.addLine(3, 4, 3)
+    gmsh.model.geo.addLine(4, 1, 4)
+    gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
+    gmsh.model.geo.addPlaneSurface([1], 1)
+    gmsh.model.geo.synchronize()
+    gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
+    
+    ps = gmsh.model.addPhysicalGroup(2, [1])
+    gmsh.model.setPhysicalName(2, ps, "My surface") 
+
+    # Determine the tag of the boundaries of the domain
+    onboundary = []
+    for line in gmsh.model.getEntities(dim=1):
+        onboundary.append(line[1])
+    gmsh.model.addPhysicalGroup(1, onboundary, 1)
+    tags = {'on_boundary': 1}
+
+    gmsh.option.setNumber("Mesh.Algorithm", 2)
+    gmsh.model.geo.synchronize()
+    gmsh.model.mesh.generate(2)
+    
+    filename = meshname+".msh"
+    gmsh.write(filename)
+    gmsh.write(meshname+".vtk") # For visualization in Paraview
+    gmsh.finalize()
+
+    return filename, tags
+
+
+def CreateMeshTaylorSheet(meshname, lc=0.1):
+    L = 6.0
+    H = 2.0
+    L1 = 1.0
+    L2 = L - 2.0*L1
+    kk = 1.5
+    a = 0.35
+    lc1 = lc
+    lc2 = 2*lc
+    deltax = lc1
+    Nparts = int(L2 / deltax)
+
+    tags = {'right_wall': 1, 'top_wall': 2, 'left_wall': 3, 'bottom_left_wall': 4, 'sheet_wall': 5, 'bottom_right_wall': 6}
+    gmsh.initialize()
+    gmsh.model.geo.addPoint(L, 0, 0, lc1, 1)
+    gmsh.model.geo.addPoint(L, H, 0, lc2, 2)
+    gmsh.model.geo.addPoint(0.0, H, 0, lc2, 3)
+    gmsh.model.geo.addPoint(0, 0, 0, lc1, 4)
+    xx = L1
+    npoints = 4
+    for n in range(Nparts+1):
+        yy = a*np.sin(2*kk*np.pi*(xx-L1)/L2)
+        gmsh.model.geo.addPoint(xx, yy, 0, lc1, 5+n)
+        xx += deltax
+        npoints += 1
+        
+    gmsh.model.geo.addLine(1, 2, 1)
+    gmsh.model.geo.addLine(2, 3, 2)
+    gmsh.model.geo.addLine(3, 4, 3)
+    gmsh.model.geo.addLine(4, 5, 4)
+    right = [1]
+    top = [2]
+    left = [3]
+    bottom_left = [4]
+    lst_lines = [1,2,3,4]
+    nlines = 4
+    sheet = []
+    for n in range(Nparts):
+        gmsh.model.geo.addLine(5+n, 5+n+1, 5+n)
+        lst_lines.append(5+n)
+        sheet.append(5+n)
+        nlines += 1
+
+    gmsh.model.geo.addLine(npoints, 1, nlines+1)
+    lst_lines.append(nlines+1)
+    bottom_right = [nlines+1]
+    nlines += 1
+    gmsh.model.geo.addCurveLoop(lst_lines, 1)
+    gmsh.model.geo.addPlaneSurface([1], 1)
+    gmsh.model.geo.synchronize()
+    
+    gmsh.model.addPhysicalGroup(1, left, tags['left_wall'])
+    gmsh.model.addPhysicalGroup(1, right, tags['right_wall'])
+    gmsh.model.addPhysicalGroup(1, top, tags['top_wall'])
+    gmsh.model.addPhysicalGroup(1, bottom_left, tags['bottom_left_wall'])
+    gmsh.model.addPhysicalGroup(1, bottom_right, tags['bottom_right_wall'])
+    gmsh.model.addPhysicalGroup(1, sheet, tags['sheet_wall'])
+
+    ps = gmsh.model.addPhysicalGroup(2, [1])
+    gmsh.model.setPhysicalName(2, ps, "My surface") 
+
+    gmsh.option.setNumber("Mesh.Algorithm", 2)
+    gmsh.model.geo.synchronize()
+    gmsh.model.mesh.generate(2)
+    
+    filename = meshname+".msh"
+    gmsh.write(filename)
+    gmsh.write(meshname+".vtk") # For visualization in Paraview
+    gmsh.finalize()
+
+    mymesh = Mesh(filename)
+    return mymesh, tags
