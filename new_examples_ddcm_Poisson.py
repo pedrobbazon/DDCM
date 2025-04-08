@@ -159,8 +159,11 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    mymeshfile, tags = CreateMeshSquare('squaremesh', hsize)
+    #mymeshfile, tags = CreateMeshSquare('squaremesh', hsize)
+    mymeshfile, tags = CreateMeshTaylorSheet('taylorsheet', 0.1)
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
+    raise Exception('ddddddd')
+
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
 
@@ -493,6 +496,26 @@ if(main_selector == 2):
                     plotLines(fig_num, hhs, data, label, line_type)
 
             plt.show()
+elif(main_selector == 3):
+    
+    # Configuration
+    #formulation = 'Natural'  
+    formulation = 'Equal-Order'
+
+    stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta': 0.5}}
+
+    for param, val in stab_params.items():
+        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
+        print(f'==== Solving for {kwargs} ====')
+        Nhs = [60]
+        Nsamples = [2,3,4,5,6,20,1000]
+        for N in Nsamples:
+            print('||------------------------------------------------')
+            print('||> Running mesh convergence for Nsamples=', N)
+            for k, Nh in enumerate(Nhs):
+                output = main_EX2_(formulation, Nh, N, **kwargs)
+            print('||> Done Nsamples=', N)
+            print('||------------------------------------------------')
 else:
         
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
