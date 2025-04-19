@@ -1,0 +1,65 @@
+%=============================================
+% --- Page size
+\usepackage[top=1in, bottom=1in, left=1.5in, right=1.5in]{geometry}
+
+%=============================================
+% --- Extra color package that enables table coloring and other functionalities
+\usepackage[dvipsnames, table, xcdraw]{xcolor}  
+
+%=============================================
+% --- Font and Typography ---
+\usepackage[utf8]{inputenc}        
+\usepackage{sans} 
+\usepackage{pifont} 
+
+%=============================================
+% --- Graphics and Hyperlinks ---
+\usepackage{graphicx}              
+\usepackage{caption,subcaption}    
+\usepackage{hyperref}              
+\hypersetup{                       
+	colorlinks=true,               
+	linkcolor=blue,                
+	filecolor=magenta,             
+	urlcolor=cyan,                 
+	citecolor=ForestGreen          
+}
+\graphicspath{{Figures/PDFs}}
+
+%=============================================
+% --- Math packages ---
+\usepackage{amsmath}               
+\usepackage{amssymb}               
+\usepackage{amsfonts}              
+\usepackage{amsthm}                
+\usepackage{mathtools}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+
+%%=============================================
+% --- List and Box Customization ---
+\usepackage{enumitem}  % Customizable lists
+%\usepackage{tcolorbox} % Colored boxes
+\usepackage[breakable,skins]{tcolorbox}
+
+\theoremstyle{style-one}
+\newtheorem{definition}{Definition}[section]  	% Definition environment
+\newtheorem{proposition}{Proposition}[section]  % Proposition environment
+\newtheorem{theorem}{Theorem}[section]  		% Theorem environment
+\newtheorem{example}{Example}[section]          % Example environment
+\newtheorem{exercise}{Exercise}[section]        % Exercise environment
+\newtheorem{lemma}{Lemma}[section]              % Lemma environment
+\newtheorem{problem}{Problem}[section]          % Problem environment
+
+
+% --- Unnumbered Theorems --- 
+\newtheorem*{definition*}{Definition}  % Unnumbered definition environment
+\newtheorem*{corollary}{Corollary}     % Unnumbered corollary environment
+\newtheorem*{remark}{Remark}
+
+\newtheorem*{problem*}{Problem}  % Unnumbered problem environment
+
+
+%=============================================
