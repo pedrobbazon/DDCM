@@ -146,7 +146,7 @@ def main_EX1_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     return 0
     
 # On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
-def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False, **kwargs):
+def main_EX2_(formulation='Natural', N=20, Nsamples=3, order_poly = 'Linear', **kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -159,10 +159,12 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
     hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    
     #mymeshfile, tags = CreateMeshSquare('squaremesh', hsize)
-    mymeshfile, tags = CreateMeshTaylorSheet('taylorsheet', 0.1)
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
-    raise Exception('ddddddd')
+    # mymeshfile, tags = CreateMeshTaylorSheet('taylorsheet', 0.1)
+    # domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
+    # raise Exception('ddddddd')
 
     #________________________________
     # These would be the ones corresponding to the analytical solution we propose
@@ -263,14 +265,18 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    if(formulation == 'Natural' and higher_order_poly == False):
+    if(formulation == 'Natural' and order_poly == 'Linear'):
         ords = [0,1]
-    elif(formulation == 'Natural' and higher_order_poly == True):
+    elif(formulation == 'Natural' and order_poly == 'Quadratic'):
         ords = [1,2]
-    elif(formulation == 'Equal-Order' and higher_order_poly == False):
+    elif(formulation == 'Natural' and order_poly == 'Cubic'):
+        ords = [2,3]
+    elif(formulation == 'Equal-Order' and order_poly == 'Linear'):
         ords = [1,1]
-    elif(formulation == 'Equal-Order' and higher_order_poly == True):
+    elif(formulation == 'Equal-Order' and order_poly == 'Quadratic'):
         ords = [2,2]
+    elif(formulation == 'Equal-Order' and order_poly == 'Cubic'):
+        ords = [3,3]
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
@@ -310,80 +316,69 @@ def main_EX2_(formulation='Natural', N=20, Nsamples=3, higher_order_poly = False
     
 
 
-# ===== AUXILIARY FUNCTIONS ===== #
+# ===== Some auxiliary classes ===== #
 
-def plotErrors(hhs=[], L2u=[], H1u=[], L2l=[], H1l=[], EsL2=[], EeL2=[], EmL2=[], EsHdiv=[], EeHdiv=[],
-               EmHdiv=[], formulation='Natural', flag_save_fig=False, fig_names = [], flag_plot_fig = True):
-    fig, ax = plt.subplots(figsize=(8,6))
-    if L2u:
-        ax.loglog(hhs,L2u,'-or',label='$\\|u-u_h\\|_{L^2}$')
-    if H1u:
-        ax.loglog(hhs,H1u,'-ob',label='$\\|u-u_h\\|_{H^1}$')
-    if L2l:
-        ax.loglog(hhs,L2l,'-og',label='$\\|\\lambda-\\lambda_h\\|_{L^2}$')
-    if H1l:
-        ax.loglog(hhs,H1l,'-om',label='$\\|\\lambda-\\lambda_h\\|_{H^1}$')
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    if ax.has_data():
-        ax.legend()
-    ax.grid(which='both',linestyle='--',linewidth=0.5,alpha=0.7)
-    ax.set_title(formulation)
-    ax.tick_params(axis='both',which='major')
-    ax.tick_params(axis='both',which='minor')
-    if flag_save_fig:
-        plt.savefig(f'{fig_names[0]}.svg')
-    if flag_plot_fig:
-        plt.show()
-    
-    fig, ax = plt.subplots(figsize=(8,6))
-    if EsL2:
-        ax.loglog(hhs,EsL2,'-og',label='$\\|\\mathbf{s}-\\mathbf{s}_h\\|_{L^2}$')
-    if EeL2:
-        ax.loglog(hhs,EeL2,'-oc',label='$\\|\\mathbf{e}-\\mathbf{e}_h\\|_{L^2}$')
-    if EmL2:
-        ax.loglog(hhs,EmL2,'-ok',label='$\\|\\boldsymbol{\\mu}-\\boldsymbol{\\mu}_h\\|_{L^2}$')
-    
-    if formulation == 'Equal-Order':
-        if EsHdiv:
-            ax.loglog(hhs,EsHdiv,'--^g',label='$\\|\\mathbf{s}-\\mathbf{s}_h\\|_{\\text{Hdiv}}$')
-        if EeHdiv:
-            ax.loglog(hhs,EeHdiv,'--^c',label='$\\|\\mathbf{e}-\\mathbf{e}_h\\|_{\\text{Hdiv}}$')
-        if EmHdiv:
-            ax.loglog(hhs,EmHdiv,'--^k',label='$\\|\\boldsymbol{\\mu}-\\boldsymbol{\\mu}_h\\|_{\\text{Hdiv}}$')
-    
-    ax.set_xlabel('$h$')
-    ax.set_ylabel('Error')
-    if ax.has_data():
-        ax.legend()
-    ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-    ax.tick_params(axis='both', which='major')
-    ax.tick_params(axis='both', which='minor')
-    ax.set_title(formulation)
-    if flag_save_fig:
-        plt.savefig(f'{fig_names[1]}.svg')
-    if flag_plot_fig:
-        plt.show()
-        
-    
-def computeConvergenceRates(hhs, errors):
-    """Compute convergence rates for each error type."""
-    conv_rates = {}
-    for key, value in errors.items():
-        if np.all(np.isnan(value)):
-            conv_rates[key] = [np.nan] 
-        else:
-            p = (np.log(value[-1] / value[-2]) / np.log(hhs[-1] / hhs[-2]))
-            conv_rates[key] = [p]  
-    return conv_rates
+
+# -------------------------------------------------------------------------
+# This class handles the computation, printing and writing of convergences 
 
 from tabulate import tabulate
-def printConvergenceRates(conv_rates):
-    headers = ["Norm", "Convergence rate"]
-    table_data = [[norm] + [f"{rate:.4}" for rate in val] for norm, val in conv_rates.items()]
-    print("Estimated Convergence Rates:")
-    print(tabulate(table_data, headers=headers, tablefmt="github"))
-    
+class ConvergenceRates:
+    def __init__(self):
+        self.conv_rates = {}
+        self.filename = None
+        
+    def compute_conv_rates(self, hhs, errors):
+        for sample_key, inner_dict in errors.items():
+            self.conv_rates[sample_key] = {}  
+            for norm_key, values in inner_dict.items():
+                if np.all(np.isnan(values)):
+                    self.conv_rates[sample_key][norm_key] = np.nan
+                else:
+                    p = np.log(values[-1] / values[-2]) / np.log(hhs[-1] / hhs[-2])
+                    self.conv_rates[sample_key][norm_key] = p
+
+        
+    def generate_filename(self, formulation, order_poly, param=None):
+        if formulation == 'Natural':
+            self.filename = f'{formulation}_table_{order_poly}.txt'
+        elif formulation == 'Equal-Order':                
+            if param == 'Unstabilized': 
+                self.filename = f'{formulation}_table_{param}_{order_poly}.txt'
+            else:
+                words = param.split()
+                self.filename = f'{formulation}_table_{words[0]}_{words[1]}_{order_poly}.txt'
+        else:
+            raise ValueError(f"Invalid formulation")
+                
+    def write_conv_rates(self, formulation, order_poly, param=None):
+        with open(self.filename, 'w') as f: 
+            for sample_key, inner_dict in self.conv_rates.items():
+                headers = ["Norm", "Convergence rate"]
+                table_data = [[norm, f"{val:.4f}"] for norm, val in inner_dict.items()]
+                table = tabulate(table_data, headers=headers, tablefmt="github")                
+                
+                # Write to file
+                f.write("\n||------------------------------------------------\n")
+                f.write(f"||> Convergence rates for: {sample_key}\n")
+                f.write(f"|| Formulation: {formulation}\n")
+                if formulation == 'Equal-Order':
+                    f.write(f"|| Stabilization: {param}\n")
+                f.write(f"|| Polynomial order: {order_poly}\n")
+                f.write("||------------------------------------------------\n")
+                f.write(table + "\n")
+                
+                # Print to console
+                print("\n||------------------------------------------------")
+                print(f"||> Convergence rates for: {sample_key}")
+                print(f"|| Formulation: {formulation}")
+                if formulation == 'Equal-Order':
+                    print(f"|| Stabilization: {param}")
+                print(f"|| Polynomial order: {order_poly}")
+                print("||------------------------------------------------")
+                print(table)
+   
+# -------------------------------------------------------------------------
    
 # ===== RUN ===== #
 import sys
@@ -392,110 +387,157 @@ main_selector = np.int32(sys.argv[1])
 
 if(main_selector == 2):
     
-    # Configuration
-    formulation = 'Natural'  
-    #formulation = 'Equal-Order'
+    # -------------------------------------------------------------------------
+    
+    # Set formulation and polynomial order to be used
+    # formulation = 'Natural'  
+    formulation = 'Equal-Order'
+    order_poly = 'Linear'
+
+    # -------------------------------------------------------------------------
+    # Set parameters based on the selected formulation
     
     if formulation == 'Natural':
         stab_params = {None: None}
-        fig_val_list = ['u', 'l', 's_e_mu']
-        num_plots = 3
+        norm_list = ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2']
+        norm_labels = {
+            'L2u': '$\\|u - u_h\\|_{L^2}$',
+            'H1u': '$\\|u - u_h\\|_{H^1}$',
+            'L2l': '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+            'H1l': '$\\|\\lambda - \\lambda_h\\|_{H^1}$',
+            'EsL2': '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+            'EeL2': '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+            'EmL2': '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'
+        }
     elif formulation == 'Equal-Order':
-        # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
-        #                'No stabilization': None,
-        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
-        #                }
-        stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta': 0.5}}
-        #stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #               'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
-        #              }
-        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
-        num_plots = 10
+        
+        # Uncomment only the one we want to use
+        stab_params = {'Unstabilized': None}
+        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
+        # stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta':0.5}}
+        
+        norm_list = ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']
+        norm_labels = {
+            'L2u': '$\\|u - u_h\\|_{L^2}$',
+            'H1u': '$\\|u - u_h\\|_{H^1}$',
+            'L2l': '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+            'H1l': '$\\|\\lambda - \\lambda_h\\|_{H^1}$',
+            'EsL2': '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+            'EeL2': '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+            'EmL2': '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
+            'EsHdiv':'$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$',
+            'EeHdiv':'$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$',
+            'EmHdiv':'$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$'  
+        }
     else:
         raise ValueError('Invalid formulation')
-
-    # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
-                   'No stabilization': '-.h', 
-                   'Fully stabilized': ':v',
-                   'Minimally stabilized': '-<'
-                   }
+    # -------------------------------------------------------------------------
     
-    # Initialize all plots
-    def initializePlots(num_plots, formulation):
-        """Initialize all plots with labels, titles, and grids."""
-        for fig_num in range(1, num_plots + 1):
-            plt.figure(fig_num, figsize=(8, 6))
-            plt.xlabel('$h$', fontsize=14)
-            plt.ylabel('Error', fontsize=14)
-            # plt.title(formulation, fontsize=14)
-            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-            plt.tick_params(axis='both', which='major', labelsize=14)
-            plt.tick_params(axis='both', which='minor', labelsize=14)
-
-    # Plot lines on a specific figure
-    def plotLines(fig_num, hhs, data, label, line_type='-o'):
-        """Plot lines on an existing figure."""
-        plt.figure(fig_num)
-        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
-
-    # Main loop
-    """Main logic for plotting and saving figures."""
-    initializePlots(num_plots, formulation)
-
-    for param, val in stab_params.items():
-        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
-        print(f'==== Solving for {kwargs} ====')
-        Nhs = [25, 50, 100, 200]
-        Nsamples = [16,32,64,128,256,512,1024,2048,4096,8192]
-        for N in Nsamples:
-            print('||------------------------------------------------')
-            print('||> Running mesh convergence for Nsamples=', N)
-            hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-            for k, Nh in enumerate(Nhs):
-                output = main_EX2_(formulation, Nh, N, **kwargs)
-                hhs.append(output[0])
-                for i, key in enumerate(errors.keys()):
-                    errors[key].append(output[i + 1])
-            print('||> Done Nsamples=', N)
-            print('||------------------------------------------------')
-            # Compute convergence rates
-            conv_rates = computeConvergenceRates(hhs, errors)
-            printConvergenceRates(conv_rates)
-
-            # Plot data
-            if formulation == 'Natural':
-                plot_data = [
-                    (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
-                    (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
-                    (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
-                    ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
-                    ['-.^', ':p', '--d'])
-                ]
+    # All this section is just for visualization purposes (do not modify)
+    norm_to_fig = {norm: i+1 for i, norm in enumerate(norm_labels.keys())}
+    norm_marker = {
+        'L2u': 'o', 'H1u': 'o', 'L2l': 's', 'H1l': 's',
+        'EsL2': '^', 'EeL2': 'p', 'EmL2': 'd',
+        'EsHdiv': '^', 'EeHdiv': 'p', 'EmHdiv': 'd'
+    }
+    
+    class PlotError:
+        def __init__(self, num_plots=1):
+            self.num_plots = num_plots
+            self.figures = {}
+            self._initialize_plots()
+            
+        def _initialize_plots(self):
+            for fig_num in range(1, self.num_plots + 1):
+                fig = plt.figure(fig_num, figsize=(8, 6))
+                ax = fig.add_subplot(111)
+                ax.set_xlabel('$h$', fontsize=14)
+                ax.set_ylabel('Error', fontsize=14)
+                ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+                ax.tick_params(axis='both', which='major', labelsize=14)
+                ax.tick_params(axis='both', which='minor', labelsize=14)
+                self.figures[fig_num] = {'figure': fig, 'axis': ax}
+                    
+        def plot_lines(self, fig_num, x_data, y_data, marker, color, legend):
+            if fig_num not in self.figures:
+                raise ValueError(f"Figure {fig_num} not initialized")
+            ax = self.figures[fig_num]['axis']
+            ax.loglog(x_data, y_data, marker=marker, color=color, label=legend,  ls = '--', lw=2)
+                
+        def save_figure(self, fig_num, filename):
+            if fig_num in self.figures:
+                fig = self.figures[fig_num]['figure']
+                fig.savefig(filename)
             else:
-                plot_data = [
-                    (i + 1, [errors[key]], 
-                        [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Minimally stabilized']
-                        else f'{label} $\,\\alpha=0.125, \\eta=0.5$' if param == 'Minimally stabilized' 
-                        else f'{label} $\,$ {param}'], 
-                        [line_styles[param]]
-                    )
-                    for i, (key, label) in enumerate(zip(
-                        ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
-                        ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
-                        '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
-                        '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
-                        '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
-                        '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
-                    ))
-                ]
-
-            for fig_num, data_list, labels, line_types in plot_data:
-                for data, label, line_type in zip(data_list, labels, line_types):
-                    plotLines(fig_num, hhs, data, label, line_type)
-
+                raise ValueError(f"Figure {fig_num} not initialized")
+        
+        def show(self): 
             plt.show()
+    # -------------------------------------------------------------------------
+    
+    # Main computation loop (personalize as you need)
+    for param, val in stab_params.items():
+        if formulation == 'Natural' or param == 'Unstabilized':
+            kwargs = {}
+        elif param in ['Fully stabilized', 'Minimally stabilized']:
+            kwargs = val.copy()
+        else:
+            kwargs = {param:val}
+        
+        print(f'==== Solving for {kwargs} ====')
+        Nhs = [25, 50, 100, 200]                    
+        Nsamples = [64, 128, 256, 512, 1024, 2048] 
+        Nsample_list = [str(x) for x in Nsamples]
+        errors = {sample: {norm: [] for norm in norm_list} for sample in Nsample_list}
+
+        for N in Nsamples:
+            print(f'||> Running mesh convergence for Nsamples={N}')
+            hhs = []
+            for Nh in Nhs:
+                output = main_EX2_(formulation, Nh, N, order_poly, **kwargs)
+                hhs.append(output[0])
+                for i, key in enumerate(norm_list):
+                    errors[str(N)][key].append(output[i+1])
+            print('||> Done')
+
+    # -------------------------------------------------------------------------
+    
+    # Compute, print and save convergence rates
+    conv_rates = ConvergenceRates()
+    conv_rates.compute_conv_rates(hhs, errors)
+    conv_rates.generate_filename(formulation, order_poly, param)
+    conv_rates.write_conv_rates(formulation, order_poly, param)   
+    # -------------------------------------------------------------------------
+    
+    # Plot and save the convergence curves
+    colors = ['r', 'b', 'g', 'c', 'm', 'y']
+    color_samples = dict(zip(Nsample_list, colors))
+    
+    plotter = PlotError(num_plots=len(norm_list))
+    for norm, fig_num in norm_to_fig.items():
+        for sample in Nsample_list:
+            plotter.plot_lines(fig_num, hhs, errors[sample][norm], norm_marker[norm], color_samples[sample], f'$N_d = {sample}$')
+        
+        # Add the legend
+        ax = plotter.figures[fig_num]['axis']
+        ax.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True, title=norm_labels[norm], title_fontsize=12)
+        
+        # Save 
+        if formulation == 'Natural':
+            filename = f'Quadricula_{formulation}_error_{norm}_{order_poly}.svg'
+        else:
+            if param == 'Unstabilized':
+                filename = f'Quadricula_{formulation}_error_{norm}_{order_poly}_Unstabilized.svg'
+            else:
+                words = param.split()
+                filename = f'Quadricula_{formulation}_error_{norm}_{order_poly}_{words[0]}_{words[1]}.svg'
+        
+        plotter.save_figure(fig_num, filename)
+    # Show 
+    plotter.show()
+
+    # -------------------------------------------------------------------------
+        
 elif(main_selector == 3):
     
     # Configuration

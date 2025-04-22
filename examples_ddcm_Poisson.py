@@ -3239,7 +3239,7 @@ elif(main_selector == 94):
     # Configuration
     # formulation = 'Natural'  
     formulation = 'Equal-Order'
-    order_poly = 'Cubic'
+    order_poly = 'Quadratic'
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
