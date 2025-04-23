@@ -1,66 +1,65 @@
 \section{Numerical experiments}
 
 
-In this section, we analyze the convergence properties of the discrete finite element approximation problem, considering two formulations: (\textbf{I}) natural formulation, and (\textbf{II}) equal-order formulation. For the former, we consider 
-
+In what follows we slightly change the notation and adopt bold symbols for the vector fields 
+$\eP,~\sP$ and $\mP$.
+In this section, we analyze the convergence properties of the discrete finite element approximation problem, considering the two formulations: (\textbf{I}) natural formulation, and (\textbf{II}) equal-order formulation. For the former, we consider 
 \begin{equation}\label{eq:natural_func_spaces}
 	\left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right) \in \CG^{D}_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \CG^{D}_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} 
 \end{equation} 
-
 while, for the latter, we seek 
-
 \begin{equation}\label{eq:equal_order_func_spaces}
 \left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right)  \in \CG^{D}_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times   \CG^{D}_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
 \end{equation}
 
+Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. The discrete solutions considered in this study were taken considering $k \in \{0, 1, 2\}$ for both formulations, which amounts to using linear, quadratic and cubic polynomial for the scalar fields $\uP$ and $\lP$. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior in each case and for both formulations is evaluated through a manufactured solution chosen as a reference case. 
 
-Here, the $k \in \mathbb{N}_{0}$ stands the piecewise polynomial degree used to construct the finite element approximation space. The discrete solutions considered in this study were taken considering $k \in \{0, 1, 2\}$ for both formulations. To access the convergence properties under the regularity of the computational domain, we consider both convex and non-convex geometries. The convergence behavior in each case and for both formulations is evaluated through a manufactured solution chosen as a reference case. 
+\subsection{Test case 1: a convex domain}
 
-\subsection{Numerical convergence under convex domain}
-
-Let $\Omega \subset \mathbb{R}^{d_{\Omega}}$ with $d_{\Omega} = 2$ such that $\Omega = [0,1]\times[0,1]$ and whose boundary is defined as $\partial \Omega = \Gamma_{\text{left}} \cup \Gamma_{\text{right}} \cup \Gamma_{\text{bottom}} \cup \Gamma_{\text{top}}$, being the intersections pairwise disjoint. Consider the smooth field $\uP \in \mathcal{C}^{\infty}(\Omega)$ defined by:
-
+Let us first explain the procedure to construct a manufactured solution for 
+this problem. First, consider the smooth field $\uP \in \mathcal{C}^{\infty}(\Omega)$ 
+defined by:
 \begin{equation}
 	\uP:\Omega \to \mathbb{R},\quad \uP = \cos(\pi x)\cos(\pi y),
 \end{equation}
-
-and whose gradient can be easily derived:
-
+whose gradient is given by:
 \begin{equation*}
 	\begin{aligned}
 	\eP: \Omega \to \mathbb{R}^{2}, \quad \eP = [-\pi\sin(\pi x)\cos(\pi y), -\pi \cos(\pi x)\sin(\pi y)]^{\top}. \\
 	\end{aligned}
 \end{equation*}
-
-Upon examining the optimality conditions in their strong form, it might be tempting to assume trivial null fields for $\lP: \Omega \rightarrow \mathbb{R}$ and $\mP: \Omega \rightarrow \mathbb{R}^{2} $, implying that $\eP = \etP $ and $\sP = \stP$. However, such assumptions generally do not reflect practical scenarios, as measured data $(\etP,\stP)$ typically include experimental uncertainties and may not satisfy the governing equations exactly. To circumvent this and remain consistent with future works, we introduce analytically defined expressions for the scalar multiplier $\lP$ and the fields $\etP$ and $\sP$:
-
+Also define 
+$$
+\lP: \Omega \rightarrow \mathbb{R},\qquad \lP = -\frac{1}{40\,\pi}\,\left[\cos\left(2\,\pi\,x \right) + \cos\left(2\,\pi\,y \right)\right] \\ \\
+$$
+and
+$$
+\sP:\Omega \rightarrow \mathbb{R}^2, \qquad \sP = -\dfrac{\eP}{\|\eP\|}\, \left(\|\eP\| - \dfrac{1}{40}\,\|\eP\|^{3}\right)
+$$
+At this point, just for the purpose of assessment of the convergence properties of the discrete formulations 
+under general conditions, it is convenient to 
+introduce an additional source term to the right hand side of eq. (\ref{eq:dif1}), i.e.,
 \begin{equation}
-	\left\lbrace
-	\begin{array}{lrcl}
-	\lP: \Omega \rightarrow \mathbb{R},& \lP &=& -\frac{A_{\lP}}{\omega_{\lP}\,\pi}\,\left[\cos\left(\omega_{\lP}\,\pi\,x + \phi_{\lP}\right) + \cos\left(\omega_{\lP}\,\pi\,y + \phi_{\lP}\right)\right] \\ \\
-	\etP:\Omega \rightarrow \mathbb{R}^2,& \etP &=& \eP + \left[A_{\etP}\,\sin\left(\omega_{\etP}\,\pi\,x + \phi_{\etP} \right), A_{\etP}\,\sin\left(\omega_{\etP}\,\pi\,y + \phi_{\etP} \right) \right]^{\top} \\ \\
-	\sP:\Omega \rightarrow \mathbb{R}^2, & \sP &=& \frac{\eP}{\|\eP\|}\, \left(\|\eP\| - A_{\sP}\,\|\eP\|^{3}\right)
-	\end{array}
-	\right.
+	\zeta \lP  + \nabla \cdot \mP  =  f
 \end{equation}
+By examining the optimality conditions in their strong form (\ref{eq:dif1})-(\ref{eq:dif5}) we
+proceed as follows in order to construct the manufactured solution for the remaining fields.
+First take
+$$
+\etP:\Omega \rightarrow \mathbb{R}^2, \qquad \etP = \eP + \frac{1}{20} \left[\sin\left(4\,\pi\,x \right), \sin\left(4\,\pi\,y\right) \right]^{\top}
+$$
+as being a perturbation of $\eP$, from which $\mP$ can be obtained using eq. (\ref{eq:dif2}).
+Now, $\stP$ can be computed using eq. (\ref{eq:dif3}) and the source 
+terms $f$ and $q$ are computed by substituting into eqs. (\ref{eq:dif1}) e (\ref{eq:dif4}). 
+In the numerical experiments we take $\kappa = 1$ and $\zeta = 1$.
 
-with parameters summarized in Table \ref{tab:manufac_param}.
+Notice that, this way, the fields $\eP$ and $\sP$ satisfy a sort of constitutive relation, whereas
+the values realized by the fields $\etP$ and $\stP$ at the different points throughout the domain
+does not necessarily do. This mimics practical scenarios in which $(\etP,\stP)$ are 
+obtained from measured data.
 
-\begin{table}[h!]
-	\centering
-	\caption{Summary of the parameters used in the manufactured analytical fields: amplitude ($A$), frequency ($\omega$), and phase angle ($\phi$), for the scalar Lagrange multiplier ($\lP$), and for the data fields ($\etP$) and ($\sP$).}
-	\begin{tabular}{l c c c}
-						& $\lP$ & $\etP$ & $\sP$ 	\\  \hline
-	Amplitude & $A_{\lP} = 0.05$ & $ A_{\etP} = 0.05$ & $A_{\sP} = 0.025$ \\
-	Frequency & $\omega_{\lP} = 2.0 $ & $\omega_{\etP} = 4.0 $ & $-$\\ 
-	Phase angle & $\phi_{\lP} = 0.0$ & $\phi_{\etP} = 0.0$ & $-$ \\
-	\bottomrule[1.25pt]
-	\end{tabular}
-	\label{tab:manufac_param}
-\end{table}
-
-It should be emphasized that the chosen fields are not arbitrary. Instead, we propose a physically consistent flux-gradient relation, represented by the fields $(\eP, \sP)$, such that the corresponding experimental data $(\etP, \stP)$ can be obtained by introducing controlled perturbations. These perturbations simulate noise or uncertainties commonly encountered in experimental measurements. With these fields defined, the function $\mP: \Omega \to \mathbb{R}^{2}$ becomes fully determined by equation~(22). Additionally, the dual volumetric source term, denoted by $f: \Omega \to \mathbb{R}$, is explicitly defined through the right-hand side of equation~(21). Subsequently, the experimental flux field $\stP: \Omega \to \mathbb{R}^{2}$ is obtained directly using equation~(23). Finally, the volumetric source term $q: \Omega \to \mathbb{R}$ is evaluated from equation~(24). To complete the definition of the boundary-value problem, we impose mixed Dirichlet–Neumann boundary conditions as follows:
-
+Let $\Omega \subset \mathbb{R}^{2}$ such that $\Omega = [0,1]\times[0,1]$ whose boundary is defined as $\partial \Omega = \Gamma_{\text{left}} \cup \Gamma_{\text{right}} \cup \Gamma_{\text{bottom}} \cup \Gamma_{\text{top}}$.
+The problem is solved imposing the following boundary conditions
 \begin{equation}
 	\left\lbrace
 	\begin{array}{rclll}
@@ -71,11 +70,13 @@ It should be emphasized that the chosen fields are not arbitrary. Instead, we pr
 	\end{array}
 	\right.
 \end{equation}
-
-where $\mathsf{g}$ represents the boundary values derived from the manufactured analytical fields.
-
-In order to illustrate the manufactured fields introduced previously, Figure~\ref{fig:all_fields_ref}(a) shows the functional relationship between the norms of the exact flux $\sP$ and the exact gradient $\eP$, along with the corresponding relationship for their perturbed counterparts ($\stP$, $\etP$). The exact flux-gradient relationship is depicted as a strictly monotonic curve, whereas the perturbed relationship is represented by a distribution of data points around the exact constitutive law. Additionally, Figures~\ref{fig:all_fields_ref}(b) to \ref{fig:all_fields_ref}(h) illustrate the individual manufactured fields, including both the exact solutions and their synthetic experimental data counterparts.
-
+where the values in the right hand side are computed from the manufactured analytical fields.
+In order to illustrate this manufactured solution, Figure~\ref{fig:all_fields_ref}(a) shows
+a plot of the norm of $\sP$ as a function of the norm of $\eP$, along with their counteparts 
+$\stP$ and $\etP$ evaluated over a computational mesh. 
+Notice that the exact flux-gradient relationship is depicted as a strictly monotonic curve (thick black
+line), whereas the fields $\stP$ and $\etP$ (blue dots) exhibit a certain distribution around the 
+former.
 \begin{figure}[h!]
 	\centering
 	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|s\|~\mbox{vs.}~\|e\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $u$, $\lP$, $e$, $s$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
@@ -84,71 +85,12 @@ In order to illustrate the manufactured fields introduced previously, Figure~\re
 	\input{Figures/PDFs/all_fields_ref.pdf_tex}
 	\label{fig:all_fields_ref}
 \end{figure}
+We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
 
-In the sequel, we introduce some definitions:
-
-\begin{definition}[Mesh]\label{def:mesh}
-	Let $\Omega$ be a domain in $\mathbb{R}^d$. A mesh is a union of a finite number $N_{\text{e}}$ of compact, connected, Lipschitz sets $K_i$ with non-empty interior such that $\{K_i\}_{1 \leq i \leq N_{\text{e}}}$ forms a \textbf{partition} of $\Omega$, i.e.,
-	
-	\begin{equation*}
-		\overline{\Omega} = \bigcup_{i=1}^{N_{\text{e}}} K_i 
-		\qquad \text{and} \qquad 
-		\text{int}({K}_i) \cap \text{int}({K}_j) = \emptyset \quad ~\mbox{for}~ i \neq j
-	\end{equation*}
-	
-	The subsets $K_i$ are called mesh cells or mesh elements.
-\end{definition}
-
-So, hereafter, the finite element mesh $\{K_i\}_{1 \leq i \leq N_{\text{e}}}$ is denoted by $\mathcal{T}_h$, where the subscript $h$ refers to the level of refinement of the mesh. Concretely, setting:
-
-\begin{equation*}
-	\forall K \in \mathcal{T}_h, \quad h_K = \text{diam}(K) = \max_{x_1, x_2 \in K} \|x_1 - x_2\|_d,
-\end{equation*}
+We first examine the natural formulation (\textbf{I}) with no stabilization. By setting $ k = 0 $ in eq. \ref{eq:natural_func_spaces}, the scalar fields satisfy $ \uP_{h}, \lP_{h} \in \CG_{1}^{D} \subset H^{1}(\Omega) $.  
 
 
-being $\|\cdot\|_d$ the Euclidean norm in $\mathbb{R}^d$, the parameter $h$ is defined by
-
-\begin{equation*}
-	h = \max_{K \in \mathcal{T}_h} h_K.
-\end{equation*}
-
-\begin{definition}[Conformal meshes]\label{def:geo_conformal}
-	Let $\Omega$ be a domain in $\mathbb{R}^d$ and let 
-	$\mathcal{T}_h = \{K_i\}_{1 \leq i \leq N_{\text{e}}}$ be a mesh of $\Omega$. 
-	The mesh $\mathcal{T}_h$ is said to be geometrically conformal if the following matching criterion is satisfied: For all $K_m$ and $K_n$ having a non-empty $(d-1)$-dimensional intersection, say $F = K_m \cap K_n$, there is a face $\widehat{F}$ of $\widehat{K}$ and renumberings of the geometric nodes of $K_m$ and $K_n$ such that $F = T_m(\widehat{F}) = T_n(\widehat{F})$ and
-	\begin{equation*}
-		T_m|_{\widehat{F}} = T_n|_{\widehat{F}}
-	\end{equation*}
-\end{definition}
-
-
-\begin{definition}[Shape-regularity]\label{def:shape_regularity}
-	A family of meshes $\{\mathcal{T}_h\}_{h > 0}$ is said to be shape-regular if there exists $\sigma_0$ such that
-	\begin{equation*}
-		\forall h, \, \forall K \in \mathcal{T}_h, \quad \sigma_K = \frac{h_K}{\rho_K} \leq \sigma_0.	
-	\end{equation*}
-
-	where $\rho_K$ stands for the inner diameter of the largest ball inscribed in $K$
-\end{definition}
-
-
-In light of the definitions given above and the manufactured solutions introduced previously, the convergence analysis is, thus, established by considering a sequence of geometrically conformal and shape-regular meshes $\{\mathcal{T}_{h \downarrow}\}_{h>0}$. Concretely, Table \ref{tab:sequence_meshes} summarizes the selected sequence of meshes for each polynomial degree.
-
-\begin{table}[h!]
-	\centering
-	\caption{Sequences of mesh sizes $h$ used for each polynomial degree $k$ in the convergence study.}
-	\begin{tabular}{c c }
-		Polynomial degree  & Sequence of meshes \\ \hline 
-		$k = 0$ & \multirow{2}{*}{$\{\mathcal{T}_{h \downarrow}\}_{h>0} = \{0.04, 0.02, 0.01, 0.005\}$}\\ 
-		$k = 1$ &\ \\
-		$k = 2$ & $\{\mathcal{T}_{h \downarrow}\}_{h>0} = \{0.1, 0.05, 0.025, 0.0125\}$\\
-		\bottomrule[1.25pt]
-	\end{tabular}
-	\label{tab:sequence_meshes}
-\end{table}
-
-
-In this context, we first examine the natural formulation without introducing any stabilization parameters. By setting $ k = 0 $ in equation~\ref{eq:natural_func_spaces}, the scalar fields satisfy $ \uP_{h}, \lP_{h} \in \CG_{1}^{D} \subset H^{1}(\Omega) $. Then, assuming a unitary reaction coefficient, i.e., $ \zeta = 1 $, and sufficient regularity of the domain geometry, Theorem~2 ensures that the convergence rate of the global error is governed by the dominant term in the mesh-dependent norm. In this case, the dominant contribution is of order $ \mathcal{O}(h) $, as the errors in $ \nabla \uP_h $ and $ \nabla \lP_h $ scale as $ \mathcal{O}(h) $, whereas the errors in $ \eP_h $, $ \sP_h $, and $\mP_h $ scale as $ \mathcal{O}(h^2) $. The numerical results shown in Figures~\ref{fig:convergence_scalar_linear}(a) and~\ref{fig:convergence_scalar_linear}(b) are in agreement with these theoretical error estimates.
+Theorem~2 ensures that the convergence rate of the global error is governed by the dominant term in the mesh-dependent norm. In this case, the dominant contribution is of order $ \mathcal{O}(h) $, as the errors in $ \nabla \uP_h $ and $ \nabla \lP_h $ scale as $ \mathcal{O}(h) $, whereas the errors in $ \eP_h $, $ \sP_h $, and $\mP_h $ scale as $ \mathcal{O}(h^2) $. The numerical results shown in Figures~\ref{fig:convergence_scalar_linear}(a) and~\ref{fig:convergence_scalar_linear}(b) are in agreement with these theoretical error estimates.
 
 Similarly, Figures ~\ref{fig:convergence_scalar_linear}(c)--\ref{fig:convergence_scalar_linear}(d) and Figures ~\ref{fig:convergence_scalar_linear}(e)--\ref{fig:convergence_scalar_linear}(f) present the convergence behavior of $ \uP_{h} $ and $ \lP_{h} $ in the equal-order formulation, respectively, and under the same configuration employed previously. For both fields, the $ L^{2} $- and $ H^{1} $- norms were analyzed. In this case, the convergence rates are identical to those observed in the natural formulation. This behavior is in agreement with theory since these fields are approximated by the same space of discrete functions in both formulations. Furthermore, no differences were observed between the convergence rates of the unstabilized, minimally stabilized, or fully stabilized formulations for $\uP_{h}$ and $\lP_{h}$ in both standards, although the fully stabilized formulation presented a better error behavior for the $H^{1}$-norm for $\lP_{h}$, as shown in Figure \ref{fig:convergence_scalar_linear}(f).
 
