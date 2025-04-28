@@ -9,12 +9,11 @@ whereas, for the latter, we seek
 \begin{equation}\label{eq:equal_order_func_spaces}
 \left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right)  \in \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
 \end{equation}
-Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, which amounts to using linear, quadratic and cubic polynomials for the scalar fields $\uP$ and $\lP$. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed through by computing the error with respect to a manufactured solution.
+Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic and cubic polynomials for the scalar fields $\uP$ and $\lP$ in the natural formulation as well as for the vector fields $\sP$, $\eP$ and $\mP$ in the equal order formulation. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to a manufactured solution.
 
 \subsection{Test case 1: a convex domain}
 
-Let us first explain the procedure to construct the manufactured solution for 
-this test problem. First, consider the smooth field $\uP$ defined by:
+Let us first describe the procedure for constructing the manufactured solution for this test problem. First, consider the smooth field $\uP$ defined by:
 \begin{equation}
 	\uP:\Omega \to \mathbb{R},\quad \uP = \cos(\pi x)\cos(\pi y),
 \end{equation}
@@ -32,31 +31,31 @@ and
 \begin{equation}
 \sP:\Omega \rightarrow \mathbb{R}^2, \qquad \sP = -\dfrac{\eP}{\|\eP\|}\, \left(\|\eP\| - \dfrac{1}{40}\,\|\eP\|^{3}\right) \label{eq:constlaw}
 \end{equation}
-At this point, just for the purpose of assessment of the convergence properties of the discrete formulations 
-under general conditions, it is convenient to 
-introduce an additional source term to the right hand side of eq. (\ref{eq:dif1}), i.e.,
+At this stage, solely for the purpose of assessing the convergence properties of the discrete formulations under general conditions, it is convenient to introduce an additional source term on the right-hand side of eq. (\ref{eq:dif1}), i.e.,
 \begin{equation}
 	\zeta \lP  + \nabla \cdot \mP  =  f
 \end{equation}
 This amounts to adding the term $-({f , u})$ to the Lagrangian (\ref{eq:lagrangian}).
 By examining the optimality conditions in their strong form (\ref{eq:dif1})-(\ref{eq:dif5}),
-we proceed as follows in order to construct the manufactured solution for the remaining fields.
+we proceed as follows to construct the manufactured solution for the remaining fields.
 First take
 $$
 \etP:\Omega \rightarrow \mathbb{R}^2, \qquad \etP = \eP + \frac{1}{20} \left[\sin\left(4\,\pi\,x \right), \sin\left(4\,\pi\,y\right) \right]^{\top}
 $$
 as being a perturbation of $\eP$, from which $\mP$ can be obtained using eq. (\ref{eq:dif2}).
-Now, $\stP$ can be computed using eq. (\ref{eq:dif3}) and the source 
-terms $f$ and $q$ are computed by substituting into eqs. (\ref{eq:dif1}) e (\ref{eq:dif4}). 
+Now, $\stP$ is computed using eq. (\ref{eq:dif3}) and finally, the source 
+terms $f$ and $q$ are obtained after substituting the proposed fields 
+into eqs. (\ref{eq:dif1}) e (\ref{eq:dif4}). 
 In the numerical experiments we take $\kappa = 1$ and $\zeta = 1$.
 Notice that, in this way, the fields $\eP$ and $sP$ satisfy a type of 
 constitutive relationship, which according to (\ref{eq:constlaw}) is essentially
 a linear law plus a cubic perturbation term, whereas the values taken by the fields 
 $\etP$ and $\stP$ at different points throughout the domain do not necessarily do so. 
 This mimics practical scenarios in which these are obtained from experimental 
-measurements or synthetic data.
-
-Let $\Omega \subset \mathbb{R}^{2}$ such that $\Omega = [0,1]\times[0,1]$ whose boundary is defined as $\partial \Omega = \Gamma_{\text{left}} \cup \Gamma_{\text{right}} \cup \Gamma_{\text{bottom}} \cup \Gamma_{\text{top}}$.
+measurements or synthetic data. This is illustrated in part (a) of figure \ref{fig:all_fields_ref} which shows
+a plot of the norm of $\sP$ as a function of the norm of $\eP$, along with their counteparts $\stP$ and $\etP$ evaluated over a computational mesh. 
+Notice that the exact flux-gradient relationship is depicted as a strictly monotonic curve (thick black line), whereas the fields $\stP$ and $\etP$ (blue dots) exhibit a certain dispersion around the former. Contours of the different fields are also shown in the
+figure considering the computational domain $\Omega$ to be the unit square $[0,1]^2$. The boundary of $\Omega$ is defined as $\partial \Omega = \Gamma_{\text{left}} \cup \Gamma_{\text{right}} \cup \Gamma_{\text{bottom}} \cup \Gamma_{\text{top}}$.
 The problem is solved imposing the following boundary conditions
 \begin{equation}
 	\left\lbrace
@@ -68,13 +67,7 @@ The problem is solved imposing the following boundary conditions
 	\end{array}
 	\right.
 \end{equation}
-where the values in the right hand side are computed from the manufactured analytical fields.
-In order to illustrate this manufactured solution, Figure~\ref{fig:all_fields_ref}(a) shows
-a plot of the norm of $\sP$ as a function of the norm of $\eP$, along with their counteparts 
-$\stP$ and $\etP$ evaluated over a computational mesh. 
-Notice that the exact flux-gradient relationship is depicted as a strictly monotonic curve (thick black
-line), whereas the fields $\stP$ and $\etP$ (blue dots) exhibit a certain distribution around the 
-former.
+where the values in the right hand side are computed from the manufactured fields.
 \begin{figure}[h!]
 	\centering
 	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|s\|~\mbox{vs.}~\|e\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $u$, $\lP$, $e$, $s$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
@@ -85,33 +78,24 @@ former.
 \end{figure}
 We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
 
-First, Figure \ref{fig:convergence_scalar_linear} shows the $ L^{2} $- and $ H^{1} $- error norms for
-the scalar fields $\uP$ and $\lP$ by taking $k=0$, for both the natural (subfigures (a) and (b)) 
-and equal order formulations (subfigures (c)-(f)). In the latter case, the Unstabilized, Minimally stabilized and Fully stabilized cases are considered. In all cases, the convergence rates agree well with the 
-expected theoretical error estimate, which is order $ \mathcal{O}(h) $ in the $ H^{1} $-norm (see Theorem~2).
-Also, the error in the $ L^{2} $-norm converges with order $ \mathcal{O}(h^2) $.
+Moving to the results, Figure \ref{fig:convergence_scalar_linear} shows the $L^{2}$- and $H^{1}$-error norms for the scalar fields $\uP$ and $\lP$ with $k=0$, for both the natural formulation (subfigures (a) and (b)) and the equal-order formulations (subfigures (c)-(f)). In the latter case, the unstabilized, minimally stabilized, and fully stabilized variants are considered. In all cases, the convergence rates are consistent with the expected theoretical error estimate, which is of order $\mathcal{O}(h)$ in the $H^{1}$-norm (see Theorem~2). Also, the error in the $ L^{2} $-norm converges with order $ \mathcal{O}(h^2) $.
 No significative differences are observed between the different equal order variants.
 Figure~\ref{fig:convergence_vector_linear} shows the corresponding errors for the vector fields
-$\sP$, $\eP$ and $\mP$ in the $ L^{2} $-norm. For the natural formulation linear convergence 
-is observed for all fields, whereas the equal order formulation exhibits a superlinear
-behavior, almost reaching $ \mathcal{O}(h^2) $. 
+$\sP$, $\eP$ and $\mP$ in the $ L^{2} $-norm. For the natural formulation linear convergence is observed for all fields, whereas the equal order formulation exhibits superlinear behavior, almost reaching $ \mathcal{O}(h^2) $. 
 
-The corresponding numerical results for $\text{P}2$-elements ($k=1$) and $\text{P}3$-elements ($k=2$) 
-are shown in Figures~\ref{fig:convergence_scalar_quadratic} and ~\ref{fig:convergence_scalar_cubic}
+The corresponding numerical results for $\text{P}2$-elements ($k=1$) and $\text{P}3$-elements ($k=2$) are shown in Figures~\ref{fig:convergence_scalar_quadratic} and ~\ref{fig:convergence_scalar_cubic}
 for the scalar fields and Figures~\ref{fig:convergence_vector_quadratic} and ~\ref{fig:convergence_vector_cubic}
 for the vector fields. Notice the superior behavior of the Minimally and Fully stabilized 
-variants with respect to the Unstabilized case, reaching, respectively, second and third order 
-convergence rates for scalar fields $\uP$ and $\lP$ and for the vector
-field $\eP$ and $\mP$. The convergence rate is better than expected
-for the flux $\sP$ attaining $ \mathcal{O}(h^3) $ for quadratics and $ \mathcal{O}(h^3) $ 
+variants with respect to the Unstabilized case, reaching, respectively, second and third order convergence rates for the scalar fields $\uP$ and $\lP$ and for the vector
+fields $\eP$ and $\mP$. The convergence rate is better than expected
+for the flux $\sP$ attaining $ \mathcal{O}(h^3) $ for quadratics and $ \mathcal{O}(h^4) $ 
 for cubics. Notably, in all cases, the Fully stabilized case exhibited the lowest error values.
 
-
-Although we do not have theoretical error estimates in $ \text{H(div)} $-norm, 
+Although we do not have theoretical error estimates in the $ \text{H(div)} $-norm, 
 convergence rates are also reported. Figures \ref{fig:convergence_vector_linear_hdiv}, 
 \ref{fig:convergence_vector_quadratic_hdiv} and \ref{fig:convergence_vector_cubic_hdiv}
 show the results for $k=0$, $k=1$ and $k=2$, respectively.
-Note that the fully stabilized formulation consistently produced the most favorable results in all three cases. For $ \text{P}1 $-elements, no significant differences were observed in the convergence behavior of the flux $ \sP_{h} $ across the unstabilized, minimally stabilized, and fully stabilized formulations, with the corresponding error curves largely overlapping. In contrast, for $ \eP $ and $ \mP $, the fully stabilized formulation exhibited sub-linear convergence, unlike the unstabilized case. However, it achieved lower error magnitudes. For $ \text{P}2 $-elements, the fully stabilized formulation yielded the best performance. In particular, it was the only one to attain second-order convergence for the flux $ \sP $, and exhibited the smallest errors for $ \eP_{h} $ and $ \mP_{h} $. A similar trend was observed for $ \text{P}3 $-elements. 
+Note that the fully stabilized formulation consistently yielded the most favorable results in all three cases. For $ \text{P}1 $-elements, no significant differences were observed in the convergence behavior of the flux $ \sP_{h} $ across the Unstabilized, Minimally stabilized, and Fully stabilized formulations, with the corresponding error curves largely overlapping. In contrast, for $ \eP $ and $ \mP $, the Fully stabilized formulation exhibited sub-linear convergence, unlike the Unstabilized case. However, it achieved lower error magnitudes. For $ \text{P}2 $-elements, the Fully stabilized formulation exhibited the best performance. In particular, it was the only one to attain second-order convergence for the flux $ \sP $, and exhibited the smallest errors for $ \eP_{h} $ and $ \mP_{h} $. A similar trend was observed for $ \text{P}3 $-elements. 
 
 As a final comment, it is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is largely independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $ \zeta $ over several orders of magnitude, from $ 10^{-3} $ to $ 10^{3} $.
 
