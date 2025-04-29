@@ -35,7 +35,7 @@ At this stage, solely for the purpose of assessing the convergence properties of
 \begin{equation}
 	\zeta \lP  + \nabla \cdot \mP  =  f
 \end{equation}
-This amounts to adding the term $-({f , u})$ to the Lagrangian (\ref{eq:lagrangian}).
+This amounts to adding the term $-({f , \uP})$ to the Lagrangian (\ref{eq:lagrangian}).
 By examining the optimality conditions in their strong form (\ref{eq:dif1})-(\ref{eq:dif5}),
 we proceed as follows to construct the manufactured solution for the remaining fields.
 First take
@@ -70,7 +70,7 @@ The problem is solved imposing the following boundary conditions
 where the values in the right hand side are computed from the manufactured fields.
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|s\|~\mbox{vs.}~\|e\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $u$, $\lP$, $e$, $s$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
+	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $\uP$, $\lP$, $\eP$, $\sP$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/all_fields_ref.pdf_tex}
@@ -104,7 +104,8 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) and (b) show the convergence of the scalar quantities $\uP_{h}$ and $\lP_{h}$ in the natural formulation with $k=0$, measured in the $\|\cdot\|_{L^{2}}$ and $\|\cdot\|_{H^{1}}$ norms, respectively. Figures (c) and (d) illustrate the convergence of the field $u$ in the equal-order formulation with $k=0$, evaluated in the same norms. The results are reported for three stabilization configurations: unstabilized, minimally stabilized ($ \alpha, \eta $), and fully stabilized. Similarly, Figures~(e) and (f) present the convergence of $ \lP_{h} $ in the equal-order formulation under the same stabilization settings and norms.}
+	\caption{Convergence of scalar fields $\uP$ and $\lP$ with $k=0$. Figures~(a)--(b) show results for the natural formulation, and (c)--(f) for the equal-order formulation, evaluated in the $L^{2}$- and $H^{1}$-norms. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).
+	}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_scalar_linear.pdf_tex}
@@ -114,7 +115,8 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the natural formulation with $k=0$, measured in the $\|\cdot\|_{L^{2}}$ norm, respectively. Figures (b), (c) and (d) illustrate the convergence of the fields $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=0$, also in the $\|\cdot\|_{L^{2}}$. The results are presented for three stabilization configurations: the unstabilized, the fully stabilized, and the minimally stabilzed $(\alpha,\eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=0$, evaluated in the $L^{2}$-norm. Figure~(a) shows results for the natural formulation, and Figures~(b)--(d) for the equal-order formulation. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).
+	}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_linear.pdf_tex}
@@ -124,7 +126,8 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) to (c) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=0$, measured in the $\|\cdot\|_{\text{Hdiv}}$ norm, respectively. For all of them, three stabilization configurations are considered: the unstabilized, the fully stabilized, and the and the minimally stabilized $(\alpha, \eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=0$ in the equal-order formulation, evaluated in the $\text{Hdiv}$-norm. Figures~(a)--(c) present results for three stabilization configurations: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).
+	}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_linear_hdiv.pdf_tex}
@@ -138,7 +141,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) and (b) show the convergence of the scalar quantities $u$ and $\lP_{h}$ in the natural formulation with $k=1$, measured in the $\|\cdot\|_{L^{2}}$ and $\|\cdot\|_{H^{1}}$ norms, respectively. Figures (c) and (d) illustrate the convergence of the field $\uP_{h}$ in the equal-order formulation with $k=1$, also in the $\|\cdot\|_{L^{2}}$ and $\|\cdot\|_{H^{1}}$. The latter considers three cases: the unstabilized, the fully stabilized, and the minimally stabilized $(\alpha, \eta)$. Similarly, Figures (e) and (f) present the convergence of $\lP_{h}$ in the equal-order formulation under the same stabilization configurations and norms as used for $\uP_{h}$.}
+	\caption{Convergence of scalar fields $\uP$ and $\lP$ with $k=1$. Figures~(a)--(b) show results for the natural formulation, and (c)--(f) for the equal-order formulation, evaluated in the $L^{2}$- and $H^{1}$-norms. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_scalar_quadratic.pdf_tex}
@@ -146,10 +149,9 @@ As a final comment, it is worth mentioning that additional numerical experiments
 \end{figure}
 
 
-
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the natural formulation with $k=1$, measured in the $\|\cdot\|_{L^{2}}$ norm, respectively. Figures (b), (c) and (d) illustrate the convergence of the fields $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=1$, also in the $\|\cdot\|_{L^{2}}$. The latter considers three cases: the unstabilized, the fully stabilized, and the and the minimally stabilized $(\alpha, \eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=1$, evaluated in the $L^{2}$-norm. Figure~(a) shows results for the natural formulation, and Figures~(b)--(d) for the equal-order formulation. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_quadratic.pdf_tex}
@@ -158,7 +160,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) to (c) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=1$, measured in the $\|\cdot\|_{\text{Hdiv}}$ norm, respectively. For all of them, three cases are considered: the unstabilized, the fully stabilized, and the and the minimally stabilized $(\alpha, \eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=1$ in the equal-order formulation, evaluated in the $\text{Hdiv}$-norm. Figures~(a)--(c) present results for three stabilization configurations: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_quadratic_hdiv.pdf_tex}
@@ -172,7 +174,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 % k = 2
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) and (b) show the convergence of the scalar quantities $\uP_{h}$ and $\lP_{h}$ in the natural formulation with $k=2$, measured in the $\|\cdot\|_{L^{2}}$ and $\|\cdot\|_{H^{1}}$ norms, respectively. Figures (c) and (d) illustrate the convergence of the field $\uP_{h}$ in the equal-order formulation with $k=2$, also in the $\|\cdot\|_{L^{2}}$ and $\|\cdot\|_{H^{1}}$. The latter considers three cases: the unstabilized, the fully stabilized, and the minimally stabilized $(\alpha, \eta)$. Similarly, Figures (e) and (f) present the convergence of $\lP_{h}$ in the equal-order formulation under the same stabilization configurations and norms as used for $\uP_{h}$.}
+	\caption{Convergence of scalar fields $\uP$ and $\lP$ with $k=2$. Figures~(a)--(b) show results for the natural formulation, and (c)--(f) for the equal-order formulation, evaluated in the $L^{2}$- and $H^{1}$-norms. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_scalar_cubic.pdf_tex}
@@ -183,7 +185,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the natural formulation with $k=2$, measured in the $\|\cdot\|_{L^{2}}$ norm, respectively. Figures (b), (c) and (d) illustrate the convergence of the fields $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=2$, also in the $\|\cdot\|_{L^{2}}$. The latter considers three cases: the unstabilized, the fully stabilized, and the and the minimally stabilized $(\alpha, \eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=2$, evaluated in the $L^{2}$-norm. Figure~(a) shows results for the natural formulation, and Figures~(b)--(d) for the equal-order formulation. Three stabilization configurations are compared: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_cubic.pdf_tex}
@@ -192,7 +194,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) to (c) show the convergence of the vector quantities $\sP_{h}$, $\eP_{h}$, and $\mP_{h}$ in the equal-order formulation with $k=2$, measured in the $\|\cdot\|_{\text{Hdiv}}$ norm, respectively. For all of them, three cases are considered: the unstabilized, the fully stabilized, and the and the minimally stabilized $(\alpha, \eta)$.}
+	\caption{Convergence of vector fields $\sP$, $\eP$, and $\mP$ with $k=2$ in the equal-order formulation, evaluated in the $\text{Hdiv}$-norm. Figures~(a)--(c) present results for three stabilization configurations: Unstabilized, Fully stabilized, and Minimally stabilized ($\alpha$, $\eta$).}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_cubic_hdiv.pdf_tex}
@@ -209,14 +211,14 @@ Figure \ref{fig:geometries_non_convex} for three different internal angles, name
 We manufacture a solution by taking the scalar field $u$ as being:
 \begin{equation*}
 	\begin{aligned}
-	&u: \Omega \rightarrow \mathbb{R}, \quad u = r^{\nu}\,\sin(\nu\,\theta) \\
+	&\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = r^{\nu}\,\sin(\nu\,\theta) \\
 	&\mbox{where}~r = \sqrt{\left(x^{2}+y^{2}\right)}, \quad \theta = \arctan{\left(\frac{y}{x}\right)}, \quad  \nu = \frac{\pi}{\psi},~\mbox{with}~\psi = 2\pi-\phi
 	\end{aligned}
 \end{equation*}
 The corresponding gradient field is then given by
 \begin{equation*}
 	\begin{aligned}
-	e: \Omega \rightarrow \mathbb{R}^{2}, \quad e = \nu\,r^{\nu-2}\left[x\,\sin(\nu\,\theta)-y\,\cos(\nu\,\theta),y\,\sin(\nu\,\theta)+x\,\cos(\nu\,\theta)\right]^{\top}
+	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \nu\,r^{\nu-2}\left[x\,\sin(\nu\,\theta)-y\,\cos(\nu\,\theta),y\,\sin(\nu\,\theta)+x\,\cos(\nu\,\theta)\right]^{\top}
 	\end{aligned}
 \end{equation*}
 In this setting, the expressions for $\lP$, $\etP$ are taken to be the same as those used in the preceding numerical experiment. For $\sP$ we simply consider the linear relation $\sP = -\eP$.
@@ -337,7 +339,7 @@ element $ K \in \mathcal{T}_h $, the assigned data point to that element is give
 where $\| \cdot \|$ stands for the Euclidean norm. In this way, the data fields $(\etP, \stP)$
 have an elementwise constant representation. Although this does not introduce any approximation error
 when the vector fields are in $[\DG_0]^2$, this is an approximation otherwise.
-For the numerical experiments, we consider only $ k=0 $) for both formulations 
+For the numerical experiments, we consider only ($ k=0 $) for both formulations 
 (\textbf{I} and \textbf{II}) and assume pure Dirichlet boundary conditions.
 \begin{figure}[h!]
 	\centering
@@ -348,9 +350,18 @@ For the numerical experiments, we consider only $ k=0 $) for both formulations
 	\label{fig:compound_Nsamples}
 \end{figure}
 
+
+Figures~\ref{fig:quadricula_convergence_natural_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} show the mesh convergence behavior for the scalar fields $\uP$ and $\lP$ in the $L^{2}$- and $H^{1}$-norms, as well as for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^{2}$-norm, for different values of $N_{\mbox{\tiny samples}}$. Figure~\ref{fig:quadricula_convergence_natural_linear} corresponds to the natural formulation, whereas Figures~\ref{fig:quadricula_convergence_equal_order_unstabilized_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} correspond to the equal order formulation variants: Unstabilized, Fully stabilized, and Minimally stabilized, respectively.
+
+For the natural formulation, the mesh convergence orders approach the theoretical error estimates as the number of sample subdomains $N_{\mbox{\tiny samples}}$ increases. A similar trend is observed for the variants of the equal order formulation. In particular, the field $\uP$ exhibits $\mathcal{O}(h^{2}) $in the $L^{2}$ norm and $ \mathcal{O}(h) $ in the $H^{1}$ norm in all formulations, with only small variations in the error magnitude.
+
+Similarly, nearly linear convergence rates are observed for the vector fields $\sP$, $\eP$, and $\mP$ in all formulations, with the natural formulation achieving consistent linear convergence for all three fields. Linear convergence is further achieved for the vector fields with $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 512$ in the natural formulation, while approximately $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 2048$ are required to observe the same convergence behavior for the equal order variants. Despite this, the equal order formulations tend to exhibit smaller error magnitudes.
+
+As a final observation, the field $\lP$ does not consistently achieve the expected convergence rates in $ H^{1} $-norm, except in the Unstabilized equal order variant. However, increasing $N_{\mbox{\tiny samples}}$ systematically reduces the associated errors, indicating an overall improvement in the approximation quality.
+
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under natural formulation across different number of subdomains $ N_{d} $.}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under natural formulation across different number of subdomains $ N_{\mbox{\tiny samples}}$.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_natural_linear.pdf_tex}
@@ -360,7 +371,7 @@ For the numerical experiments, we consider only $ k=0 $) for both formulations
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Unstabilized equal order formulation across different number of subdomains $ N_{d} $.}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Unstabilized equal order formulation across different number of subdomains $ N_{\mbox{\tiny samples}} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf_tex}
@@ -369,7 +380,7 @@ For the numerical experiments, we consider only $ k=0 $) for both formulations
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Fully stabilized equal order formulation across different number of subdomains $ N_{d} $.}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Fully stabilized equal order formulation across different number of subdomains $ N_{\mbox{\tiny samples}} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf_tex}
@@ -379,7 +390,7 @@ For the numerical experiments, we consider only $ k=0 $) for both formulations
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Minimally stabilized equal order formulation across different number of subdomains $ N_{d} $.}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Minimally stabilized equal order formulation across different number of subdomains $ N_{\mbox{\tiny samples}} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.pdf_tex}
