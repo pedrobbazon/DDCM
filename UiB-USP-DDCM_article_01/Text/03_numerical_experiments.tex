@@ -312,31 +312,33 @@ These results confirm that the convergence behavior is primarily dictated by the
 \newpage
 \subsection{Test case 3: data assignation}
 
-As a final numerical experiment, we consider a convex domain such as that defined in Section~\ref{sec:test_case1}. The objective is to assess numerical consistency of the discrete problem by evaluating mesh convergence as a function of the amount of experimental data pairs $ (\etP, \stP) $ assigned to each element of the partitioned domain. 
-
-To this end, we first consider a structured partition of the computational domain into $N_{d}$ non-overlapping rectangular subdomains $ \{\Omega_k\}_{k=1}^{N_{d}} $. For each subdomain $ \Omega_k $, let $\mathbf{x}_{d,k}^{c} \in \Omega$ denotes its centroid, in which there is a unique experimental data value  $(\etP_k, \stP_k)$ associated. The values for  $(\etP_k, \stP_k)$, in particular, are taken by proposing a manufactured field $\uP$ such as follows: 
+In the previous numerical examples the fields $ (\etP, \stP) $ were available at each integration
+point on $\Omega$. Now, as a final numerical experiment we assess consistency of the discrete 
+formulation also as a function of the amount of data pairs $ (\etP, \stP) $ with the aim 
+to mimic a more realistic scenario in data-driven applications. To this end, we consider a structured partition of the computational domain into $N_{\mbox{\tiny samples}}$ non-overlapping rectangular subdomains $ \{\Omega_i\}_{i=1}^{N_{\mbox{\tiny samples}}} $. For each subdomain $ \Omega_i $, let $\mathbf{x}_{i}^{c} \in \Omega$ denotes its centroid, in which there is a unique associated data value $(\etP_i, \stP_i)$. The values for $(\etP_i, \stP_i)$, in particular, are taken by proposing the manufactured field $\uP$: 
 \begin{equation}
 	\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = \sin(\pi x)\sin(\pi y),
 \end{equation}
 whose gradient is given by:
 \begin{equation}
-	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \pi \, \left[\\cos(\pi x)\sin(\pi y), \sin(\pi x)\cos(\pi y) \right]^{\top}.
+	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \pi \, \left[\cos(\pi x)\sin(\pi y), \sin(\pi x)\cos(\pi y) \right]^{\top}.
 \end{equation}
-Here, just for the sake of simplicity, we consider $ \sP = -\eP $ and further assume $\lP  = 0$, $ \mP = \left[0,0\right]^{\top}$. This way, the experimental data fields $(\etP, \stP)$ coincides with the exact ones $(\eP, \sP)$ we would deliver to solve the problem (eq. \ref{eq:dif2} and eq.~\ref{eq:dif3}). Additionally, one might conclude from eq.~\ref{eq:dif4} that: 
+For the sake of simplicity, we consider $ \sP = -\eP $ and further assume $\lP  = 0$, $ \mP = \left[0,0\right]^{\top}$. This way, the data fields $(\etP, \stP)$ coincide with $(\eP, \sP)$ 
+in the exact setting, as seen by looking at Eqs. (\ref{eq:dif2})-(\ref{eq:dif3}). 
+Additionally, from eq.~(\ref{eq:dif4}) we have: 
 $$
 q: \Omega \rightarrow \mathbb{R}, \quad q = \left(1 + 2\pi^2 \right)\sin(\pi x)\sin(\pi y).
 $$
-The process by which we assign to each element of the mesh a corresponding value of $ (\etP_k, \stP_k) $ is given as follows: First, let $ \{\mathbf{x}_K^{c}\} $ denote the set of the centroids of each mesh element $ K \in \mathcal{T}_h $. Then, being $ \{\mathbf{x}_{d,k}^{c}\}_{k=1}^{N_d} \subset \Omega $  the set of the centroids of each subdomains $ \Omega_k $ we define a element-wise constant approximation of the data over the mesh by assigning to each element the data associated with its nearest sampling center, i.e.:
+Now, the process by which we assign to each element of the mesh a corresponding value $ (\etP_i, \stP_i) $ in the data set is by geometrical proximity, i.e., if we denote by $ \mathbf{x}_K^{c} $ the centroid of mesh 
+element $ K \in \mathcal{T}_h $, the assigned data point to that element is given by
 \begin{equation}
-	(\etP_h, \stP_h)(\mathbf{x}_{K}^{c}) := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{i} \| \mathbf{x}_K^{c} - \mathbf{x}_{d,i}^{c} \|
+	(\etP_h, \stP_h)(\mathbf{x}_{K}^{c}) := (\etP_i, \stP_i) \quad \text{where} \quad i = \arg\min_{j} \| \mathbf{x}_K^{c} - \mathbf{x}_{j}^{c} \|
 \end{equation}
-where $\| \cdot \|$ stands for the Euclidean norm. 
-It's worth mentioning that for equal order formulation, the assignation is instead performed at the mesh nodes (vertices) $ \{\mathbf{x}_{K}^{v}\} \subset \Omega $, yielding:	
-\begin{equation}
-	(\etP_h, \stP_h)(\mathbf{x}_{K}^{v}) := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{i} \| \mathbf{x}_{K}^{v} - \mathbf{x}_{d,i}^{c} \|.
-\end{equation}
-For both formulations (\textbf{I} and \textbf{II}) we consider only $ \text{P}1 $-elements ($ k=0 $), and assume pure Dirichlet boundary conditions. 
-
+where $\| \cdot \|$ stands for the Euclidean norm. In this way, the data fields $(\etP, \stP)$
+have an elementwise constant representation. Although this does not introduce any approximation error
+when the vector fields are in $[\DG_0]^2$, this is an approximation otherwise.
+For the numerical experiments, we consider only $ k=0 $) for both formulations 
+(\textbf{I} and \textbf{II}) and assume pure Dirichlet boundary conditions.
 \begin{figure}[h!]
 	\centering
 	\caption{...}
