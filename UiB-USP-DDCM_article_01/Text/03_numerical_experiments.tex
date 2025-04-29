@@ -11,7 +11,7 @@ whereas, for the latter, we seek
 \end{equation}
 Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic and cubic polynomials for the scalar fields $\uP$ and $\lP$ in the natural formulation as well as for the vector fields $\sP$, $\eP$ and $\mP$ in the equal order formulation. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to a manufactured solution.
 
-\subsection{Test case 1: a convex domain}
+\subsection{Test case 1: a convex domain}\label{sec:test_case1}
 
 Let us first describe the procedure for constructing the manufactured solution for this test problem. First, consider the smooth field $\uP$ defined by:
 \begin{equation}
@@ -45,9 +45,9 @@ $$
 as being a perturbation of $\eP$, from which $\mP$ can be obtained using eq. (\ref{eq:dif2}).
 Now, $\stP$ is computed using eq. (\ref{eq:dif3}) and finally, the source 
 terms $f$ and $q$ are obtained after substituting the proposed fields 
-into eqs. (\ref{eq:dif1}) e (\ref{eq:dif4}). 
+into eqs. (\ref{eq:dif1}) and (\ref{eq:dif4}). 
 In the numerical experiments we take $\kappa = 1$ and $\zeta = 1$.
-Notice that, in this way, the fields $\eP$ and $sP$ satisfy a type of 
+Notice that, in this way, the fields $\eP$ and $\sP$ satisfy a type of 
 constitutive relationship, which according to (\ref{eq:constlaw}) is essentially
 a linear law plus a cubic perturbation term, whereas the values taken by the fields 
 $\etP$ and $\stP$ at different points throughout the domain do not necessarily do so. 
@@ -202,7 +202,7 @@ As a final comment, it is worth mentioning that additional numerical experiments
 
 \cleardoublepage
 \newpage
-\subsection{Test case 2: a non-convex domain}
+\subsection{Test case 2: a non-convex domain}\label{sec:test_case2}
 
 In this case we consider the classical problem with a re-entrant corner, whose geometry is depicted in 
 Figure \ref{fig:geometries_non_convex} for three different internal angles, namely, $\phi =\pi/4,~\pi/2$ and $3\pi/4$. The corner is located at the origin $(0, 0)$. 
@@ -219,11 +219,8 @@ The corresponding gradient field is then given by
 	e: \Omega \rightarrow \mathbb{R}^{2}, \quad e = \nu\,r^{\nu-2}\left[x\,\sin(\nu\,\theta)-y\,\cos(\nu\,\theta),y\,\sin(\nu\,\theta)+x\,\cos(\nu\,\theta)\right]^{\top}
 	\end{aligned}
 \end{equation*}
-In this setting, the expressions for $\lP$, $\etP$ are taken to be the same as
-those used in the preceding numerical experiment. For $\sP$ we simply consider
-the linear relation $\sP = -\eP$.
-Also, we assume pure Dirichlet boundary conditions for $\uP$ and $\lP$ based
-on the manufactured solution.
+In this setting, the expressions for $\lP$, $\etP$ are taken to be the same as those used in the preceding numerical experiment. For $\sP$ we simply consider the linear relation $\sP = -\eP$.
+Also, we assume pure Dirichlet boundary conditions for $\uP$ and $\lP$ based on the manufactured solution.
 \begin{figure}[h!]
 	\centering
 	\caption{Illustration of the three non-convex geometries considered.}
@@ -232,11 +229,8 @@ on the manufactured solution.
 	\input{Figures/PDFs/geometries_non_convex.pdf_tex}
 	\label{fig:geometries_non_convex}
 \end{figure}
-Figure~\ref{fig:all_fields_ref_non_convex} illustrates the manufactured fields.
-Again, we also show the behavior of the norm of $\sP$ as a function of the norm
-of  $\eP$ and their counterparts $ \stP, \etP $
-It is worth noticing that the cubic term considered in the previous experiment
-has been suppressed so as to not exacerbate the singular behavior of the solution.
+Figure~\ref{fig:all_fields_ref_non_convex} illustrates the manufactured fields. Again, we also show the behavior of the norm of $\sP$ as a function of the norm of  $\eP$ and their counterparts $ \stP, \etP $
+It is worth noticing that the cubic term considered in the previous experiment has been suppressed so as to not exacerbate the singular behavior of the solution.
 \begin{figure}[h!]
 	\centering
 	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $\uP$, $\lP$, $\eP$, $\sP$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
@@ -285,7 +279,6 @@ Focusing on the scalar field $ \uP_h $ in the natural formulation, we observe th
 When comparing the same fields under the equal-order formulation, the convergence rates remain similar in magnitude to those obtained with the natural formulation, with no substantial improvement. Among the equal-order variants, we highlight the enhanced convergence of $ \uP $ and $ \lP $ in the $ H^1 $-norm achieved by the Minimally and Fully stabilized formulations, compared to the Unstabilized case. However, no further improvements are observed in the $ L^2 $-norm for either field when stabilization is applied.
 For the vector fields $ \sP_h $, $ \eP_h $, and $ \mP_h $, we observe that the convergence rates in the $ L^2 $-norm remain nearly identical across all formulations and geometries. Notable improvements in convergence are primarily associated with increasing the interior angle at the re-entrant corner, with higher accuracy consistently achieved when transitioning from acute to obtuse geometries. 
 These results confirm that the convergence behavior is primarily dictated by the corner-induced singularity. While stabilization enhances robustness -- especially in the $H^1$-norm for scalar fields -- it does not overcome the inherent regularity limitations imposed by the geometry. 
-
 \begin{table}[h!]
 	\centering
 	\caption{Estimated convergence rates in the $ L^2 $-norm for the vector fields $ \sP_h $, $ \eP_h $, and $ \mP_h $, under various stabilization schemes and for different reentrant corner angles $ \psi \in \left\{ \frac{7\pi}{4}, \frac{3\pi}{2}, \frac{5\pi}{4} \right\} $.}
@@ -317,65 +310,45 @@ These results confirm that the convergence behavior is primarily dictated by the
 
 
 \newpage
-\subsection{Numerical convergence under data assignation}
+\subsection{Test case 3: data assignation}
 
-As a final numerical experiment we focus on the mesh convergence under data assignation. To this and, let $\Omega \subset \mathbb{R}^2$ be a bounded Lipschitz domain, discretized by a geometrically conformal and shape-regular finite element mesh $\mathcal{T}_h = \{K_i\}_{i=1}^{N_e}$. The objective is to assess the numerical consistency of the discrete problem with respect to the quantity of available experimental data. For this purpose, we consider a structured partition of the computational domain, into $ N_d $ non-overlapping rectangular subdomains $ \{\Omega_k\}_{k=1}^{N_{sd}} $, such that:
+As a final numerical experiment, we consider a convex domain such as that defined in Section~\ref{sec:test_case1}. The objective is to assess numerical consistency of the discrete problem by evaluating mesh convergence as a function of the amount of experimental data pairs $ (\etP, \stP) $ assigned to each element of the partitioned domain. 
 
-\begin{equation*}
-	\overline{\Omega} = \bigcup_{k=1}^{N_d} \Omega_k, \quad \text{with} \quad \text{int}(\Omega_k) \cap \text{int}(\Omega_\ell) = \emptyset \quad \text{for } k \neq \ell.
-\end{equation*}
-
-Each subdomain $ \Omega_k $ is centered at $ x_k^c \in \Omega $, and associated with experimental data $ (\etP_k, \stP_k) $. The experimental data, in this case, is based on a manufactured solution we are proposing to work with. Specifically, we admit the smooth field $\uP$ as being: 
-
-\begin{equation*}
+To this end, we first consider a structured partition of the computational domain into $N_{d}$ non-overlapping rectangular subdomains $ \{\Omega_k\}_{k=1}^{N_{d}} $. For each subdomain $ \Omega_k $, let $\mathbf{x}_{d,k}^{c} \in \Omega$ denotes its centroid, in which there is a unique experimental data value  $(\etP_k, \stP_k)$ associated. The values for  $(\etP_k, \stP_k)$, in particular, are taken by proposing a manufactured field $\uP$ such as follows: 
+\begin{equation}
 	\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = \sin(\pi x)\sin(\pi y),
-\end{equation*}
-
-whose gradient is simply given by:
-
-\begin{equation*}
-	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \left[\pi \cos(\pi x)\sin(\pi y), \pi \sin(\pi x)\cos(\pi y) \right]^{\top}
-\end{equation*}
-
-The exact flux is defined as the negative of the gradient, that is:
-
-\begin{equation*}
-	\sP: \Omega \rightarrow \mathbb{R}^{2}, \quad \sP = \left[-\pi \cos(\pi x)\sin(\pi y), -\pi \sin(\pi x)\cos(\pi y)\right]^{\top}
-\end{equation*}
-
-Moreover, we set the Lagrange multipliers to zero:
-
-\begin{equation*}
-	\begin{aligned}
-		&\lP: \Omega \rightarrow \mathbb{R}, \quad  \lP  = 0\\
-		&\mP: \Omega \rightarrow \mathbb{R}^{2}, \quad \mP = \left[0,0\right]^{\top}
-	\end{aligned}
-\end{equation*}
-
-Finally, one might conclude that the source term can be written as:
-
-\begin{equation*}
-	q: \Omega \rightarrow \mathbb{R}, \quad q = \left( \zeta + 2\pi^2 \right)\sin(\pi x)\sin(\pi y)
-\end{equation*}
-
-Due to the purposes of the experiment, we opted to consider only pure Dirichlet boundary conditions together with $ \text{P}1 $-elements ($ k=0 $) for both natural and equal-order formulations. 
-
-In this setting, let $ \{x_K\} $ denote the centroids of the mesh elements $ K \in \mathcal{T}_h $, and let $ \{x_k^c\}_{k=1}^{N_d} \subset \Omega $ be the centers of the subdomains $ \{\Omega_k\} $, where each $ x_k^c $ is associated with an experimental data pair $ (\etP_k, \stP_k) $. We then define a piecewise-constant approximation of the data over the mesh by assigning to each element the data associated with its nearest sampling center:
-
-\begin{equation*}
-	(\etP_h, \stP_h)|_K := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{j} \| x_K - x_j^c \|.
-\end{equation*}
-
-For the equal-order formulation, the assignation is instead performed at the mesh nodes $ \{x_a\} \subset \Omega $, yielding:
-
-\begin{equation*}
-	(\etP_h, \stP_h)(x_a) := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{j} \| x_a - x_j^c \|.
-\end{equation*}
-
+\end{equation}
+whose gradient is given by:
+\begin{equation}
+	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \pi \, \left[\\cos(\pi x)\sin(\pi y), \sin(\pi x)\cos(\pi y) \right]^{\top}.
+\end{equation}
+Here, just for the sake of simplicity, we consider $ \sP = -\eP $ and further assume $\lP  = 0$, $ \mP = \left[0,0\right]^{\top}$. This way, the experimental data fields $(\etP, \stP)$ coincides with the exact ones $(\eP, \sP)$ we would deliver to solve the problem (eq. \ref{eq:dif2} and eq.~\ref{eq:dif3}). Additionally, one might conclude from eq.~\ref{eq:dif4} that: 
+$$
+q: \Omega \rightarrow \mathbb{R}, \quad q = \left(1 + 2\pi^2 \right)\sin(\pi x)\sin(\pi y).
+$$
+The process by which we assign to each element of the mesh a corresponding value of $ (\etP_k, \stP_k) $ is given as follows: First, let $ \{\mathbf{x}_K^{c}\} $ denote the set of the centroids of each mesh element $ K \in \mathcal{T}_h $. Then, being $ \{\mathbf{x}_{d,k}^{c}\}_{k=1}^{N_d} \subset \Omega $  the set of the centroids of each subdomains $ \Omega_k $ we define a element-wise constant approximation of the data over the mesh by assigning to each element the data associated with its nearest sampling center, i.e.:
+\begin{equation}
+	(\etP_h, \stP_h)(\mathbf{x}_{K}^{c}) := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{i} \| \mathbf{x}_K^{c} - \mathbf{x}_{d,i}^{c} \|
+\end{equation}
+where $\| \cdot \|$ stands for the Euclidean norm. 
+It's worth mentioning that for equal order formulation, the assignation is instead performed at the mesh nodes (vertices) $ \{\mathbf{x}_{K}^{v}\} \subset \Omega $, yielding:	
+\begin{equation}
+	(\etP_h, \stP_h)(\mathbf{x}_{K}^{v}) := (\etP_k, \stP_k) \quad \text{where} \quad k = \arg\min_{i} \| \mathbf{x}_{K}^{v} - \mathbf{x}_{d,i}^{c} \|.
+\end{equation}
+For both formulations (\textbf{I} and \textbf{II}) we consider only $ \text{P}1 $-elements ($ k=0 $), and assume pure Dirichlet boundary conditions. 
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence for the the scalar fields $ \uP_{h} $ and $ \lP_{h} $ in the $ \|\cdot\|_{L^{2}} $ and $ \|\cdot\|_{H^{1}} $ and vector fields $ \eP_{h} $, $ \sP_{h} $ and $ \mP_{h} $ in $ \|\cdot\|_{L^{2}} $ under natural formulation across different number of subdomains $ N_{d} $}
+	\caption{...}
+	\fontsize{8pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/compound_Nsamples.pdf_tex}
+	\label{fig:compound_Nsamples}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under natural formulation across different number of subdomains $ N_{d} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_natural_linear.pdf_tex}
@@ -383,14 +356,9 @@ For the equal-order formulation, the assignation is instead performed at the mes
 \end{figure}
 
 
-\vfill
-\begin{remark}
-	Notably, since the dual fields are identically null, the experimental data pair $(\etP, \stP)$ coincides with the exact fields $(\eP, \sP)$ we would deliver to solve the problem. 
-\end{remark}
-
 \begin{figure}[h!]
 	\centering
-	\caption{Unstabilized}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Unstabilized equal order formulation across different number of subdomains $ N_{d} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf_tex}
@@ -399,7 +367,7 @@ For the equal-order formulation, the assignation is instead performed at the mes
 
 \begin{figure}[h!]
 	\centering
-	\caption{Fully stabilized}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Fully stabilized equal order formulation across different number of subdomains $ N_{d} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf_tex}
@@ -409,7 +377,7 @@ For the equal-order formulation, the assignation is instead performed at the mes
 
 \begin{figure}[h!]
 	\centering
-	\caption{Minimally stabilized}
+	\caption{Mesh convergence for the scalar fields $ \uP $ and $ \lP $ in the $ L^{2} $ and $ H^{1} $-norms and vector fields $ \eP $, $ \sP $ and $ \mP$ in $ L^{2} $-norm under Minimally stabilized equal order formulation across different number of subdomains $ N_{d} $.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.pdf_tex}

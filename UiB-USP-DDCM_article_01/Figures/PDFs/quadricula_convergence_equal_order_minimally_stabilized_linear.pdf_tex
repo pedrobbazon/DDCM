@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{595.27559055bp}%
+    \setlength{\unitlength}{533.47831666bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,17 +50,17 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.41428571)%
+  \begin{picture}(1,1.57204239)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{quadricula_convergence_equal_order_minimally_stabilized_linear.pdf}}%
-    \put(0.26452717,1.06077002){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
-    \put(0.71242799,1.06077002){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
-    \put(0.26507755,0.70198844){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
-    \put(0.71242799,0.70198844){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
-    \put(0.26450584,0.34320686){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
-    \put(0.71489832,0.34320686){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
-    \put(0.58051151,0.1071183){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
+    \put(0.58798308,0.11595927){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{quadricula_convergence_equal_order_minimally_stabilized_linear.pdf}}%
+    \put(0.23539562,1.18008048){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
+    \put(0.73518056,1.18008048){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
+    \put(0.23600976,0.77973822){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
+    \put(0.73518056,0.77973822){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
+    \put(0.23537182,0.37939596){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
+    \put(0.73793704,0.37939596){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
   \end{picture}%
 \endgroup%

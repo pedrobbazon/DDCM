@@ -412,9 +412,9 @@ if(main_selector == 2):
     elif formulation == 'Equal-Order':
         
         # Uncomment only the one we want to use
-        stab_params = {'Unstabilized': None}
+        # stab_params = {'Unstabilized': None}
         # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
-        # stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta':0.5}}
+        stab_params = {'Minimally stabilized':{'alpha': 0.125, 'eta':0.5}}
         
         norm_list = ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']
         norm_labels = {
