@@ -314,13 +314,13 @@ These results confirm that the convergence behavior is primarily dictated by the
 \newpage
 \subsection{Test case 3: data assignation}
 
-In the previous numerical examples, the exact values of $ (\etP, \stP) $ were available at every integration
-point in $\Omega$. As a final numerical experiment, we now assess the consistency of the discrete 
-formulation as a function of the number of available data pairs $ (\etP, \stP) $, aiming 
+In the previous numerical examples, the exact values of $ (\etP, \stP) $ were available at every integration point in $\Omega$, such that we could assess the convergence
+properties of the finite element formulation. 
+Now, as a final numerical experiment, we assess the consistency of the discrete 
+formulation with respect to the number of available data pairs $ (\etP, \stP) $, aiming 
 to mimic a more realistic scenario for data-driven applications. 
 
-To this end, we consider a structured partition of the computational domain into $N_{\mbox{\tiny samples}}$ non-overlapping rectangular subdomains $ \{\Omega_i\}_{i=1}^{N_{\mbox{\tiny samples}}} $ where the solution will 
-be sampled. For each subdomain $ \Omega_i $, let $\mathbf{x}_{i}^{c} \in \Omega$ denotes its centroid, at which a unique data pair $(\etP_i, \stP_i)$ is associated. For this problem we consider the manufactured solution: 
+To this end, we consider a structured cartesian grid of the computational domain into $N_{\mbox{\tiny samples}} = N_d \times N_d$ non-overlapping quadrilateral subdomains $ \{\Omega_i\}_{i=1}^{N_{\mbox{\tiny samples}}} $ where the solution will be sampled. For each subdomain $ \Omega_i $, let $\mathbf{x}_{i}^{c} \in \Omega$ denotes its centroid, at which a unique data pair $(\etP_i, \stP_i)$ is associated. For this problem we consider the manufactured solution: 
 \begin{equation}
 	\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = \sin(\pi x)\sin(\pi y),
 \end{equation}
@@ -335,13 +335,15 @@ $$
 q: \Omega \rightarrow \mathbb{R}, \quad q = \left(1 + 2\pi^2 \right)\sin(\pi x)\sin(\pi y).
 $$
 
-The values of $(\etP_i, \stP_i)$ are thus obtained by evaluating the manufactured fields $(\eP, \sP)$ at $\mathbf{x}_{i}^{c}$. To assign a data pair $ (\etP_i, \stP_i) $ from the dataset to each element of the mesh, we use a geometric proximity criterion, i.e., denoting by $ \mathbf{x}_K^{c} $ the centroid of mesh 
+The values of $\{(\etP_i, \stP_i)\}_{i=1}^{N_{\mbox{\tiny samples}}}$ are thus obtained by evaluating the manufactured fields $(\eP, \sP)$ at $\mathbf{x}_{i}^{c}$. To assign a data pair $ (\etP_i, \stP_i) $ from the dataset to each element of the mesh, we use a geometric proximity criterion, i.e., denoting by $ \mathbf{x}_K^{c} $ the centroid of mesh 
 element $ K \in \mathcal{T}_h $, the data point assigned to element $K$ is given by
 \begin{equation}
 	(\etP_h, \stP_h)(\mathbf{x}_{K}^{c}) := (\etP_i, \stP_i) \quad \text{where} \quad i = \arg\min_{j} \| \mathbf{x}_K^{c} - \mathbf{x}_{j}^{c} \|_2
 \end{equation}
 where $\| \cdot \|_2$ stands for the Euclidean norm. Notice that, in this way, the data fields $(\etP, \stP)$
-have an elementwise constant representation over $\Omega$. This does not introduce any additional
+have an elementwise constant representation over $\Omega$ in which all the elements of
+$\mathcal{T}_h$ that are close to a sampled point share the same value. 
+This does not introduce any additional
 approximation error only when the vector fields are in $[\DG_0]^2$.
 Finally, in the numerical experiments, we consider only $ k=0 $ for both formulations 
 (\textbf{I} and \textbf{II}) and assume pure Dirichlet boundary conditions.
@@ -354,7 +356,7 @@ formulation (\textbf{II}), the pressure for this case being very similar to the 
 The results can be compared to the most refined partition, which encompasses $1000 \times 1000$
 samples and is indistinguishable from the exact solution. 
 The coarsest samplings produce pressure fields that exhibit a pyramidal shape with
-as many faces as number of samples considered. Clearly, the $20 \times 20$ solution 
+as many faces as number of samples considered. The $20 \times 20$ solution 
 already shows a high degree of similarity to the exact one.
 \begin{figure}[h!]
 	\centering
@@ -373,6 +375,7 @@ The domain is discretized with a unstructured mesh of characteristic size $h$ wh
 is also successively refined, such that there is no conformity between the sampling
 subdomains and the mesh elements. Figures~\ref{fig:quadricula_convergence_natural_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} show the mesh convergence behavior for the scalar fields $\uP$ and $\lP$ in the $L^{2}$- and $H^{1}$-norms, as well as for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^{2}$-norm, for different values of $N_{\mbox{\tiny samples}}$. Figure~\ref{fig:quadricula_convergence_natural_linear} corresponds to the natural formulation, whereas Figures~\ref{fig:quadricula_convergence_equal_order_unstabilized_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} correspond to the equal order formulation variants: Unstabilized, Fully stabilized, and Minimally stabilized, respectively.
 
+The first point to note is that the number of data samples limits the convergence rate of the method. Specifically, for a fixed number of data points, refining the finite element mesh eventually leads to error stagnation. However, as the number of samples increases, the method begins to exhibit consistent convergence—at least within the range of $h$ values considered.
 For the natural formulation, the mesh convergence orders approach the theoretical error estimates as the number of sample subdomains $N_{\mbox{\tiny samples}}$ increases. A similar trend is observed for the variants of the equal order formulation. In particular, the field $\uP$ exhibits $\mathcal{O}(h^{2}) $in the $L^{2}$ norm and $ \mathcal{O}(h) $ in the $H^{1}$ norm in all formulations, with only small variations in the error magnitude.
 
 Similarly, nearly linear convergence rates are observed for the vector fields $\sP$, $\eP$, and $\mP$ in all formulations, with the natural formulation achieving consistent linear convergence for all three fields. Linear convergence is further achieved for the vector fields with $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 512$ in the natural formulation, while approximately $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 2048$ are required to observe the same convergence behavior for the equal order variants. Despite this, the equal order formulations tend to exhibit smaller error magnitudes.
