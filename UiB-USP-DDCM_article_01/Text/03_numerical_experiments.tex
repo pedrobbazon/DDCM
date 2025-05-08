@@ -11,6 +11,15 @@ whereas, for the latter, we seek
 \end{equation}
 Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic and cubic polynomials for the scalar fields $\uP$ and $\lP$ in the natural formulation as well as for the vector fields $\sP$, $\eP$ and $\mP$ in the equal order formulation. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to a manufactured solution.
 
+For the equal-order formulation we consider in turn three variants, namely, 
+the Unstabilized case, the Fully stabilized case and a Minimally stabilized case.
+For the Unstabilized case we set all parameters to zero, 
+for the Fully stabilized case we assume the parameters given in 
+(\ref{eq:paramsopt}) whereas for the Minimally stabilized case
+we set all parameters to zero except for $\alpha$ and $\eta$.
+This latter case, is the minimum requirement for stability as can be deduced
+from (\ref{eq:Bhparams}).
+
 \subsection{Test case 1: a convex domain}\label{sec:test_case1}
 
 Let us first describe the procedure for constructing the manufactured solution for this test problem. First, consider the smooth field $\uP$ defined by:
@@ -70,7 +79,8 @@ The problem is solved imposing the following boundary conditions
 where the values in the right hand side are computed from the manufactured fields.
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $\uP$, $\lP$, $\eP$, $\sP$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
+	\caption{Figure (a) presents the functional relationship between the norm of the flux and the gradient $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) shows
+		$\uP$, $\lP$, $\eP$, $\sP$, and $\mP$.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/all_fields_ref.pdf_tex}
@@ -235,7 +245,7 @@ Figure~\ref{fig:all_fields_ref_non_convex} illustrates the manufactured fields. 
 It is worth noticing that the cubic term considered in the previous experiment has been suppressed so as to not exacerbate the singular behavior of the solution.
 \begin{figure}[h!]
 	\centering
-	\caption{Figure (a) presents the functional relationship between flux and gradient norms for both exact and perturbed cases: $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) presents the $L^{2}(\Omega)$-orthogonal projections of fields $\uP$, $\lP$, $\eP$, $\sP$, and $\mP$ onto the corresponding function spaces defined by the natural formulation, respectively.}
+	\caption{Figure (a) presents the functional relationship between the norm of the flux and the gradient $\|\sP\|~\mbox{vs.}~\|\eP\|$, and $\|\stP\|~\mbox{vs.}~\|\etP\|$, respectively. Figure (b) to (f) show $\uP$, $\lP$, $\eP$, $\sP$, and $\mP$.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/all_fields_ref_non_convex.pdf_tex}
