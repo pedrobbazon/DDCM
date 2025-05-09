@@ -1,15 +1,17 @@
 \section{Numerical experiments}
 
 
-In this section, we analyze the convergence properties of the finite element approximation to the proposed problem, considering the two formulations: (\textbf{I}) natural formulation, and (\textbf{II}) equal-order formulation. For the former, we consider 
+In this section, we analyze the convergence properties of the finite element approximation to the proposed problem, considering two different choices of finite element spaces: (\textbf{I}) natural formulation, in which we take 
 \begin{equation}\label{eq:natural_func_spaces}
 	\left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right) \in \CG_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \CG_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} 
 \end{equation} 
-whereas, for the latter, we seek 
+and (\textbf{II}) an equal-order formulation, in which we take
 \begin{equation}\label{eq:equal_order_func_spaces}
 \left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right)  \in \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
 \end{equation}
-Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic and cubic polynomials for the scalar fields $\uP$ and $\lP$ in the natural formulation as well as for the vector fields $\sP$, $\eP$ and $\mP$ in the equal order formulation. To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to a manufactured solution.
+Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic or cubic polynomials for the scalar fields $\uP$ and $\lP$ in both formulations. Indeed, the natural formulation
+considers one degree less for the vector fields $\sP$, $\eP$ and $\mP$, whereas for the equal-order formulation, the degree is the same for all fields. 
+To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to manufactured solutions.
 
 For the equal-order formulation we consider in turn three variants, namely, 
 the Unstabilized case, the Fully stabilized case and a Minimally stabilized case.
