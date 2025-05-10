@@ -43,50 +43,17 @@
 
 \section{Conclusions}
 
-This work presents the finite element discretization of
-the optimality conditions that appear when solving 
-an optimization problem in the emerging field of 
-Data-Driven computational mechanics.
-We consider the case of the balance law that corresponds to 
-the prototypical diffusion-reaction problem and seek for 
-a potential field $u$ (e.g., a concentration or a temperature), 
-its gradient and the flux $(\eP,\sP)$. In the context of the 
-Data-Driven paradigm, the constitutive behavior, relating
-gradients and fluxes can be thought as given by functions
-$(\etP,\stP)$ originated from experimental data and, as consequence,
-do not necessarily satisfy the conservation law. The data-driven
-problem, then, consist in finding the fields $(u,\eP, \sP)$ that are
-closest to the data, subject to the compatibility and equilibrium
-constraints.
+This work presents a finite element discretization of the optimality conditions arising from an optimization problem in the emerging field of Data-Driven Computational Mechanics.
+We consider the balance law associated with a diffusion-reaction problem and seek a potential field $u$ (e.g., a concentration or temperature), along with its gradient and corresponding flux $(\eP, \sP)$.
+Within the Data-Driven framework, the constitutive relationship between gradients and fluxes is represented by functions $(\etP, \stP)$ derived from experimental data. As a result, these data pairs may not satisfy the governing conservation laws. The Data-Driven problem then consists of finding the fields $(u, \eP, \sP)$ that are closest to the given data, while satisfying the compatibility and equilibrium constraints.
 
-We first analyze the well-posedness of such problem in the continuous setting
-and second, we propose a family of finite element discretizations to approximate
-it. One the one hand, a natural formulation, in which the scalar fields are 
-approximated by continuous piecewise polynomial functions and the vector fields
-by discontinuous piecewise polynomials with one degree less. On the other hand,
-an equal-order formulation with and without stabilizations, that allow to 
-use the same continuous interpolation for all fields. 
+We begin by analyzing the well-posedness of the optimality conditions in the continuous setting. Then, we propose a family of finite element discretizations to approximate them.
+On the one hand, we consider a natural formulation in which the scalar fields are approximated using continuous piecewise polynomial functions, while the vector fields are represented by discontinuous piecewise polynomials of one degree lower.
+On the other hand, we investigate equal-order formulations, both with and without stabilization, which allow the use of the same continuous interpolation for all fields.
 
-The convergence properties of the discrete formulations were assessed 
-by conducting numerical experiments in 2D and computing the error
-with respect to manufactured solutions, in both convex and non-convex
-geometries. In all these experiments the data fields $(\etP,\stP)$ were
-assumed to be given and available at any point. However, in a final numerical 
-experiment we also tested the consistency of the formulation with respect
-to the amount of available data points, which is a more representative
-case of interest in data-driven applications.
+The convergence properties of the discrete formulations were assessed through numerical experiments in 2D, using manufactured solutions to compute the error in both convex and non-convex domains. In all these experiments, the data fields $(\etP, \stP)$ were assumed to be known and available at every point in the domain. However, in a final numerical test, we also examined the consistency of the formulation with respect to the number of available data points, which better reflects scenarios typically encountered in data-driven applications.
 
-This work can be seen as a first step towards the resolution 
-of the full optimization problem that emerges in DDCM, in which
-the assignment of the experimental data over the domain 
-needs also to be determine. In this sense,
-many possible directions can be taken to solve this mixed-integer
-nonlinear program (MINLP), among them, the alternating direction schemes, 
-in which the data is first distributed based on a current solution, 
-and in the sequence, the optimality conditions are solved, so as to update
-the solution and repeat the process iteratively. Extensions to 
-other physical problems, such as elasticity and porous media
-flows is also the subject of ongoing work.
+This work represents a first step toward solving the full optimization problem that arises in Data-Driven Computational Mechanics (DDCM), where the assignment of experimental data throughout the domain must also be determined. In this context, several directions can be pursued to address the resulting mixed-integer nonlinear program (MINLP). One promising approach involves alternating direction schemes, in which data is first assigned based on the current solution, followed by solving the optimality conditions to update the fields, and repeating this process iteratively. Extensions of the method to other physical problems, such as elasticity and flow in porous media, are also the subject of ongoing research.
  
 
 %=============================================
