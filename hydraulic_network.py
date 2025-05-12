@@ -1,7 +1,6 @@
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
-#from firedrake.__future__ import interpolate
 
 from ddcm_classes import *
 from ddcm_utils import *
