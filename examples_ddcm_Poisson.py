@@ -1273,7 +1273,7 @@ def main_EX50_(N=20):
         mu = fd.Constant(1.0)
         kappa = fd.Constant(1.0)
         return fd.as_vector([-beta*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[0]/kappa,
-                             -beta*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[1]/kappa])
+                             -beta*x[1]*fd.sqrt(x[0]**2 + x[1]**2) - mu*x[1]/kappa])
 
     def mysource(x):
         return fd.Constant(2.0)
@@ -2489,8 +2489,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     
     # 1. Create (or import) the computational domain/mesh and Compute a reference solution    
     lc = hsize             # set the characteristic length of the mesh 
-    flag_singularity_refinement = True
-    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
+    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc)
     if(case_corner == 1):
         omega = 1.75*fd.pi
     elif(case_corner == 2):
@@ -2506,7 +2505,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     # These would be the ones corresponding to the analytical solution we propose
 
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2516,31 +2515,34 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
+        r = fd.sqrt(x[0]**2 + x[1]**2)
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
     def eexact(x):
         return fd.grad(uexact(x))
+  
     # Propose an analytical expression for lambda
-    def lmbdexact(x): 
-        A = fd.Constant(0.05)   # Increase A slightly for more variation
-        ome = fd.Constant(2.0)  # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return  - (A / (ome * fd.pi)) * ( fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi) )
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
+        A = fd.Constant(0.05)
+        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
     
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.05)        # Amplitude
+        A = fd.Constant(0.01)        # Amplitude
         ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.0)  # 0.025 Amplitude
+        A = fd.Constant(0.045)  # Amplitude
+        ome = fd.Constant(3.0)  # Frequency
+        phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
+        # mst = met + A*fd.sin(ome*fd.pi*met)
+        mst = fd.sqrt(met) + met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
@@ -2609,7 +2611,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
         ords = [1,1]
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
 
-    ddcm_prob.solve(0.0, "myddcmsol")
+    ddcm_prob.solve("myddcmsol")
 
 
     # 4. Compute some error norms
@@ -2642,6 +2644,151 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     print('----------------------------------------------------------')
 
     return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+
+# On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
+def main_EX945_(formulation='Natural', N=20, Nsamples=3, **kwargs):
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+
+    h = fd.CellDiameter(domain.msh)
+
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
+              'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
+              'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
+              'ls': h, 'lmu': h, 'formulation': formulation} 
+    
+    params_ref = {'eta': fd.Constant(1.e-12), 'mu_over_kappa': fd.Constant(1.0), 'beta_x_rho': fd.Constant(10.0)}
+
+    #________________________________
+    def uexact(x):
+        betaF = params_ref['beta_x_rho']
+        mu_over_kappa = params_ref['mu_over_kappa']
+        return -betaF*((x[0]**2 + x[1]**2)*fd.sqrt(x[0]**2 + x[1]**2)/3) - mu_over_kappa*(x[0]**2 + x[1]**2)/2
+
+    def sexact(x):
+        return fd.as_vector([x[0], x[1]])
+    
+    def gradexact(x):
+        betaF = params_ref['beta_x_rho']
+        mu_over_kappa = params_ref['mu_over_kappa']
+        return fd.as_vector([-betaF*x[0]*fd.sqrt(x[0]**2 + x[1]**2) - mu_over_kappa*x[0],
+                             -betaF*x[1]*fd.sqrt(x[0]**2 + x[1]**2) - mu_over_kappa*x[1]])
+
+    def mysource(x):
+        return fd.div(sexact(x)) + params['zeda']*uexact(x)
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    
+    def lmbdexact(x):
+        return fd.Constant(0.0)
+    def muexact(x):
+        return fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+    def fdual(x):
+        return fd.Constant(0.0)
+    
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
+
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
+
+    #________________________________
+
+    ref_prob = PoissonStdProblem(domain, params_ref, 'Pure-Dirichlet', forcings, FLM_ForcheimerReg, PoissonDualMixedHdiv, orders=[2,1])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion
+
+    one_sample_per_element = False
+    if(one_sample_per_element == True): # One point per element centroid
+        X = interpolate(domain.msh.coordinates, domain.VDG0)
+        xs = fd.assemble(X).dat.data
+    else: # Sample points one a regular grid
+        Nsampx, Nsampy  = Nsamples, Nsamples
+        Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+        xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+        yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+        xlsg, ylsg = np.meshgrid(xls, yls)
+        xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
+    #- Pay attention: this is a concious decision
+    # and it may change in other situations
+    gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
+    gradu_sampled_vals = np.array(gproj.at(xs))
+    flux_sampled_vals = np.array(ref_prob.std_solution.s.at(xs))
+    #-------------------------------------------  
+        
+    # Apply any manipulation/transformation you need to define
+    # the synthetic data (rotations, scalings, removing outliers, etc)
+    gradu_samples = gradu_sampled_vals
+    flux_samples  = flux_sampled_vals
+
+    ddcm_data = PoissonDDCMData(domain)
+    ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+    
+    ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
+
+    print('----------------------------------------------------------')
+    print('|::| Synthetic data computation/distribution: %d data points' %(ddcm_data.sampled_grad.shape[0]))
+    print('----------------------------------------------------------')
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural'):
+        ords = [0,1]
+    elif(formulation == 'Equal-Order'):
+        ords = [1,1]
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords, params=params)
+
+    ddcm_prob.solve(Nsamples, "myddcmsol")
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return 0
 
 
 # Example of a reference solution based on an analytical expression
@@ -2735,7 +2882,7 @@ def main_EX93_(formulation='Natural', N=20):
 
 
 # On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
-def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs):
+def main_EX94_(formulation='Natural', N=20, **kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -2756,7 +2903,7 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(0.001), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2770,38 +2917,27 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
         return fd.grad(uexact(x))
     
     # Propose an analytical expression for lambda
-    # def lmbdexact(x):
-    #     x0, y0  = fd.Constant(0.5), fd.Constant(0.5)
-    #     A = fd.Constant(0.05)
-    #     B = fd.Constant(0.05)
-    #     return fd.exp(A*((x[0]-x0)**2 + (x[1]-y0)**2))
+    def lmbdexact(x):
+        x0, y0  = fd.Constant(0.0), fd.Constant(0.0)
+        A = fd.Constant(0.05)
+        return A*(fd.Constant(1.0)*((x[0]-x0)**2 + (x[1]-y0)**2))
     
-    # def lmbdexact(x):
-    #     A = fd.Constant(0.75)  # Amplitude 
-    #     k = fd.Constant(0.25)  # Steepness (slope)
-    #     z = x[0] + x[1]        # Input argument (can be adjusted)
-    #     return A / (1.0 + fd.exp(-k * z))
-
-    def lmbdexact(x): 
-        A = fd.Constant(0.05)   # Increase A slightly for more variation
-        ome = fd.Constant(2.0)  # Frequency
-        phi = fd.Constant(0.0)   # Phase angle 
-        return  - (A / (ome * fd.pi)) * (
-            fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi)
-        )
     # Propose a flux-gradient relationship based on the dataset  
     def etilde(x):
-        A = fd.Constant(0.05)        # Amplitude
+        A = fd.Constant(0.01)         # Amplitude
         ome = fd.Constant(4.0)       # Frequency
         phi = fd.Constant(0.0)       # Phase angle 
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
     def sexact(x):
-        A = fd.Constant(0.025)  # Amplitude
+        A = fd.Constant(0.045)  # Amplitude
+        ome = fd.Constant(3.0)  # Frequency
+        phi = fd.Constant(0.0)  # Phase angle
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
+        # mst = met + A*fd.sin(ome*fd.pi*met)
+        mst = fd.sqrt(met) + met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
@@ -2864,19 +3000,13 @@ def main_EX94_(formulation='Natural', N=20, higher_order_poly = False, **kwargs)
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    if(formulation == 'Natural' and higher_order_poly == False):
+    if(formulation == 'Natural'):
         ords = [0,1]
-    elif(formulation == 'Natural' and higher_order_poly == True):
-        ords = [1,2]
-    elif(formulation == 'Equal-Order' and higher_order_poly == False):
+    elif(formulation == 'Equal-Order'):
         ords = [1,1]
-    elif(formulation == 'Equal-Order' and higher_order_poly == True):
-        ords = [2,2]
-    else:
-        raise ValueError('Invalid formulation and polynomial order')
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords, params=params)
 
-    ddcm_prob.solve(0.0,"myddcmsol")
+    ddcm_prob.solve("myddcmsol")
 
     # 4. Compute some error norms
     
@@ -3051,6 +3181,9 @@ elif(main_selector == 90):
     fig_names = ['Darcy_errors_u_lmd','Darcy_errors_s_e_mu']
     plotErrors(hhs, **errors, formulation=formulation, flag_save_fig=flag_save_fig, fig_names=fig_names)
 
+
+       
+    
 elif(main_selector == 91):
     
     # formulation = 'Natural'
@@ -3077,118 +3210,70 @@ elif(main_selector == 91):
 
 elif(main_selector == 92):
     
-    # Configuration
-    # formulation = 'Natural'  
-    formulation = 'Equal-Order'
-    
-    case_corner = 2
+    hhs = [0.1, 0.05, 0.025, 0.0125]
+    # Specify the formulation to be used
+    formulation = 'Natural'  
+    # formulation = 'Equal-Order'
+
+    # Specify each case corner to be used
+    case_corners = [1, 2, 3, 4]
     c_corners_labels = ['$\\frac{7\pi}{4}$', '$\\frac{3\pi}{2}$', '$\\frac{5\pi}{4}$','$\\frac{\pi}{2}$']
-    hhs = [0.1, 0.05, 0.025]
 
-    # Define stabilization parameters and figure labels based on formulation
-    if formulation == 'Natural':
-        stab_params = {None: None}
-        fig_val_list = ['u', 'l', 's_e_mu']
-        num_plots = 3
-    elif formulation == 'Equal-Order':
-        stab_params = {'No stabilization': None,
-                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
-                       'Partially stabilized':{'alpha': 0.125, 'eta': 0.5}
-                       }
-        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
-        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
-        num_plots = 10
-    else:
-        raise ValueError('Invalid formulation')
+    # Allocate memory for storing the errors for each case corner and different mesh sizes 
+    L2u = np.empty((len(case_corners), len(hhs)))
+    H1u, H1l, Es, Ee, Em = (np.empty_like(L2u) for _ in range(5))
 
-    # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
-                   'No stabilization': '-.h', 
-                   'Fully stabilized': ':v',
-                   'Partially stabilized': '-<'
-                   }
-    
-    # Initialize all plots
-    def initializePlots(num_plots, formulation):
-        """Initialize all plots with labels, titles, and grids."""
-        for fig_num in range(1, num_plots + 1):
-            plt.figure(fig_num, figsize=(8, 6))
-            plt.xlabel('$h$', fontsize=14)
-            plt.ylabel('Error', fontsize=14)
-            # plt.title(formulation, fontsize=14)
-            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-            plt.tick_params(axis='both', which='major', labelsize=14)
-            plt.tick_params(axis='both', which='minor', labelsize=14)
+    # Store all the errors in a dictionary 
+    errors = {'L2u': L2u, 'H1u': H1u, 'H1l': H1l, 'Es': Es, 'Ee': Ee, 'Em': Em}
+    conv_rates = {key: [] for key in errors.keys()}
+    norm_labels = {
+        'L2u': '$\|u-u_h\|_{L^2}$', 
+        'H1u': '$\|u-u_h\|_{H^1}$', 
+        'H1l': '$\|\lambda-\lambda_h\|_{H^1}$',
+        'Es': '$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$', 
+        'Ee': '$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$',
+        'Em': '$\|\\boldsymbol{\mu}-\\boldsymbol{\mu}_h\|_{L^2}$'
+    }
 
-    # Plot lines on a specific figure
-    def plotLines(fig_num, hhs, data, label, line_type='-o'):
-        """Plot lines on an existing figure."""
-        plt.figure(fig_num)
-        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
+    # Loop through each case corner and mesh size
+    for case_corner_index, case_corner in enumerate(case_corners):
+        for hsize_index, hsize in enumerate(hhs):
+            # Call the function
+            L2error_u, H1error_u, H1error_lmd, error_s, error_e, error_mu = main_EX92_(formulation, hsize, case_corner)
+            errors['L2u'][case_corner_index, hsize_index] = L2error_u
+            errors['H1u'][case_corner_index, hsize_index] = H1error_u
+            errors['H1l'][case_corner_index, hsize_index] = H1error_lmd
+            errors['Es'][case_corner_index, hsize_index] = error_s 
+            errors['Ee'][case_corner_index, hsize_index] = error_e 
+            errors['Em'][case_corner_index, hsize_index] = error_mu
 
-    # Main loop
-    """Main logic for plotting and saving figures."""
-    initializePlots(num_plots, formulation)
+    # Generate plots for each error metric
+    for key, value in errors.items():
+        fig, ax = plt.subplots(figsize=(8, 6))
+        for case_corner_index, case_corner in enumerate(case_corners):
+            # Plot
+            ax.loglog(hhs, value[case_corner_index, :], '-o', label=f'$\omega=${c_corners_labels[case_corner_index]}')
+            # Compute the associated convergence rate
+            p = (np.log(value[case_corner_index, -1] / value[case_corner_index, -2]) /
+                np.log(hhs[-1] / hhs[-2]))
+            conv_rates[key].append(p)
 
-    for param, val in stab_params.items():
-        if formulation == 'Natural' or param == 'No stabilization':
-            kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Partially stabilized':
-            kwargs = val.copy()
-        else:
-            kwargs = {param:val}
+        # Configure the plot
+        ax.set_xlabel('$h$')
+        ax.set_ylabel(norm_labels[key])
+        ax.grid(which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+        ax.tick_params(axis='both', which='major')
+        ax.tick_params(axis='both', which='minor')
+        ax.set_title(formulation)
+        ax.legend()
+        # plt.savefig(f'{key}_errors_{formulation}.svg')
+        # plt.show()
 
-        print(f'==== Solving for {kwargs} ====')
-
-        # Collect data for all mesh refinements
-        errors = {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
-        for hsize in hhs:
-            output = main_EX92_(formulation, hsize, case_corner, **kwargs)
-            for i, key in enumerate(errors.keys()):
-                errors[key].append(output[i + 1])
-                
-        # Compute convergence rates
-        conv_rates = computeConvergenceRates(hhs, errors)
-        printConvergenceRates(conv_rates)
-
-        # Plot data
-        if formulation == 'Natural':
-            plot_data = [
-                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['-o', '-o']),
-                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['--s', '--s']),
-                (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
-                ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
-                ['-.^', ':p', '--d'])
-            ]
-        else:
-            plot_data = [
-                (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
-                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
-                    else f'{label} $\,$ {param}'], 
-                    [line_styles[param]]
-                )
-                for i, (key, label) in enumerate(zip(
-                    ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
-                    ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
-                    '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
-                    '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
-                    '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
-                    '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
-                ))
-            ]
-
-        for fig_num, data_list, labels, line_types in plot_data:
-            for data, label, line_type in zip(data_list, labels, line_types):
-                plotLines(fig_num, hhs, data, label, line_type)
-
-    # Add legends and save figures
-    for fig_num in range(1, num_plots + 1):
-        plt.figure(fig_num)
-        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
-        plt.savefig(f'Non-convex_geo_{formulation}_error_{fig_val_list[fig_num - 1]}_2.svg')
-
-    plt.show()
+    # Output
+    headers = ["Norm"] + c_corners_labels
+    table_data = [[err] + [f"{rate:.4f}" for rate in val] for err, val in conv_rates.items()]
+    print("Estimated Convergence Rates:")
+    print(tabulate(table_data, headers=headers, tablefmt="github"))
      
 elif(main_selector == 93): 
     
@@ -3219,7 +3304,6 @@ elif(main_selector == 94):
     # Configuration
     # formulation = 'Natural'  
     formulation = 'Equal-Order'
-    higher_order_poly = False
 
     # Define stabilization parameters and figure labels based on formulation
     if formulation == 'Natural':
@@ -3227,27 +3311,15 @@ elif(main_selector == 94):
         fig_val_list = ['u', 'l', 's_e_mu']
         num_plots = 3
     elif formulation == 'Equal-Order':
-        # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
-        #                'No stabilization': None,
-        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Partially stabilized':{'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
-        #                }
-        stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}}
-        # stab_params = {'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}, 
-        #                'Partially stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'eta': 0.5}
-        #                }
+        stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     else:
         raise ValueError('Invalid formulation')
 
     # Line styles for plotting
-    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
-                   'No stabilization': '-.h', 
-                   'Fully stabilized': ':v',
-                   'Partially stabilized': '-<'
-                   }
-    
+    line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 'No stabilization': '-.h'}
+
     # Initialize all plots
     def initializePlots(num_plots, formulation):
         """Initialize all plots with labels, titles, and grids."""
@@ -3271,19 +3343,13 @@ elif(main_selector == 94):
     initializePlots(num_plots, formulation)
 
     for param, val in stab_params.items():
-        if formulation == 'Natural' or param == 'No stabilization':
-            kwargs = {}
-        elif param == 'Fully stabilized' or param == 'Partially stabilized':
-            kwargs = val.copy()
-        else:
-            kwargs = {param:val}
-
+        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
         print(f'==== Solving for {kwargs} ====')
 
         # Collect data for all mesh refinements
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
         for N in [25, 50, 100, 200, 400]:
-            output = main_EX94_(formulation, N, higher_order_poly, **kwargs)
+            output = main_EX94_(formulation, N, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
                 errors[key].append(output[i + 1])
@@ -3303,12 +3369,7 @@ elif(main_selector == 94):
             ]
         else:
             plot_data = [
-                (i + 1, [errors[key]], 
-                    [f'{label} $\, \\{param}={val}$' if param not in ['No stabilization', 'Fully stabilized', 'Partially stabilized']
-                    else f'{label} $\,\\alpha=0.125, \\beta=0.5, \\eta=0.5$' if param == 'Partially stabilized' 
-                    else f'{label} $\,$ {param}'], 
-                    [line_styles[param]]
-                )
+                (i + 1, [errors[key]], [f'{label} $\,\\{param}={val}$' if param != 'No stabilization' else f'{label} $\,$ {param}'], [line_styles[param]])
                 for i, (key, label) in enumerate(zip(
                     ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
                     ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
@@ -3326,8 +3387,9 @@ elif(main_selector == 94):
     # Add legends and save figures
     for fig_num in range(1, num_plots + 1):
         plt.figure(fig_num)
-        plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        plt.legend(loc='best', fontsize=11, ncol=2, fancybox=True, shadow=True)
         plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}.svg')
+
     plt.show()
 
 elif(main_selector == 942):
@@ -3350,8 +3412,29 @@ elif(main_selector == 942):
         print(f'==== Solving for {kwargs} ====')
         Nsamples = [2, 4, 8, 16, 32, 64]
         for N in Nsamples:
-            output = main_EX942_(formulation, Nsamples[5], N, **kwargs)
-   
+            output = main_EX942_(formulzation, Nsamples[5], N, **kwargs)
+
+elif(main_selector == 945):
+    
+    # Configuration
+    formulation = 'Natural'  
+    #formulation = 'Equal-Order'
+
+    # Define stabilization parameters and figure labels based on formulation
+    if formulation == 'Natural':
+        stab_params = {None: None}
+    elif formulation == 'Equal-Order':
+        stab_params = {'No stabilization': None}
+        #stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 'No stabilization': None}
+    else:
+        raise ValueError('Invalid formulation')
+
+    for param, val in stab_params.items():
+        kwargs = {} if formulation == 'Natural' or param == 'No stabilization' else {param: val}
+        print(f'==== Solving for {kwargs} ====')
+        Nsamples = [2, 4, 8, 16, 32, 64]
+        for N in Nsamples:
+            output = main_EX945_(formulation, Nsamples[5], N, **kwargs)
 else:
         
     print('\n   ||||>>> Main selector option not recognized: ', main_selector)
