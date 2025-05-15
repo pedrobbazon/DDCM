@@ -43,6 +43,7 @@ At this stage, solely for the purpose of assessing the convergence properties of
 	\zeta \lP  + \nabla \cdot \mP  =  f
 \end{equation}
 This amounts to adding the term $-({f , \uP})$ to the Lagrangian (\ref{eq:lagrangian}).
+Notice that the addition of this term does not change the analysis from previous sections.
 By examining the optimality conditions in their strong form (\ref{eq:dif1})-(\ref{eq:dif5}),
 we proceed as follows to construct the manufactured solution for the remaining fields.
 First take
@@ -380,7 +381,7 @@ Now, we quantitatively assess the convergence of the method under these conditio
 increasingly refined sampling partitions, from $64 \times 64$ up to $2048 \times 2048$.
 The domain is discretized with a unstructured mesh of characteristic size $h$ which
 is also successively refined, such that there is no conformity between the sampling
-subdomains and the mesh elements. Figures~\ref{fig:quadricula_convergence_natural_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} show the mesh convergence behavior for the scalar fields $\uP$ and $\lP$ in the $L^{2}$- and $H^{1}$-norms, as well as for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^{2}$-norm, for different values of $N_{\mbox{\tiny samples}}$. Figure~\ref{fig:quadricula_convergence_natural_linear} corresponds to the natural formulation, whereas Figures~\ref{fig:quadricula_convergence_equal_order_unstabilized_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} correspond to the equal order formulation variants: Unstabilized, Fully stabilized, and Minimally stabilized, respectively.
+subdomains and the mesh elements. Figures~\ref{fig:quadricula_convergence_natural_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} show the mesh convergence behavior for the scalar fields $\uP$ and $\lP$ in the $L^{2}$- and $H^{1}$-norms, as well as for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^{2}$-norm, for different values of $N_{\mbox{\tiny samples}}$. Figure~\ref{fig:quadricula_convergence_natural_linear} corresponds to the natural formulation, whereas Figures~\ref{fig:quadricula_convergence_equal_order_unstabilized_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} correspond to the equal order formulation variants: Unstabilized, Fully Stabilized, and Minimally Stabilized, respectively.
 
 The first point to note is that the number of data samples limits the convergence rate of the method. Specifically, for a fixed number of data points, refining the finite element mesh eventually leads to error stagnation. However, as the number of samples increases, the method begins to exhibit consistent convergence—at least within the range of $h$ values considered.
 For the natural formulation, the mesh convergence orders approach the theoretical error estimates as the number of sample subdomains $N_{\mbox{\tiny samples}}$ increases. A similar trend is observed for the variants of the equal order formulation. In particular, the field $\uP$ exhibits $\mathcal{O}(h^{2}) $in the $L^{2}$ norm and $ \mathcal{O}(h) $ in the $H^{1}$ norm in all formulations, with only small variations in the error magnitude.
@@ -414,7 +415,7 @@ a suitable candidates for data-driven applications.
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence results for the scalar fields $\uP$ and $\lP$ in the $L^2$ and $H^1$ norms, and for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^2$ norm, using the Fully stabilized equal-order formulation across various numbers of subdomains $N_{\mbox{\tiny samples}}$.}
+	\caption{Mesh convergence results for the scalar fields $\uP$ and $\lP$ in the $L^2$ and $H^1$ norms, and for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^2$ norm, using the Fully Stabilized equal-order formulation across various numbers of subdomains $N_{\mbox{\tiny samples}}$.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf_tex}
@@ -424,7 +425,7 @@ a suitable candidates for data-driven applications.
 
 \begin{figure}[h!]
 	\centering
-	\caption{Mesh convergence results for the scalar fields $\uP$ and $\lP$ in the $L^2$ and $H^1$ norms, and for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^2$ norm, using the Minimally stabilized equal-order formulation across various numbers of subdomains $N_{\mbox{\tiny samples}}$.}
+	\caption{Mesh convergence results for the scalar fields $\uP$ and $\lP$ in the $L^2$ and $H^1$ norms, and for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^2$ norm, using the Minimally Stabilized equal-order formulation across various numbers of subdomains $N_{\mbox{\tiny samples}}$.}
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.pdf_tex}
