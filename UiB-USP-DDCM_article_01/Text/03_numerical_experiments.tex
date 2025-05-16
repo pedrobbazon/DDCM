@@ -22,17 +22,17 @@ For the Minimally Stabilized case, all parameters are set to zero except for $\a
 
 Let us first describe the procedure for constructing the manufactured solution for this test problem. First, consider the smooth field $\uP$ defined by:
 \begin{equation}
-	\uP:\Omega \to \mathbb{R},\quad \uP = \cos(\pi x)\cos(\pi y),
+	\uP:\Omega \to \mathbb{R},\quad \uP(x,y) = \cos(\pi x)\cos(\pi y),
 \end{equation}
 whose gradient is given by:
 \begin{equation*}
 	\begin{aligned}
-	\eP: \Omega \to \mathbb{R}^{2}, \quad \eP = -\pi \, [\sin(\pi x)\cos(\pi y), \cos(\pi x)\sin(\pi y)]^{\top}. \\
+	\eP: \Omega \to \mathbb{R}^{2}, \quad \eP(x,y) = -\pi \, [\sin(\pi x)\cos(\pi y), \cos(\pi x)\sin(\pi y)]^{\top}. \\
 	\end{aligned}
 \end{equation*}
 Also define 
 $$
-\lP: \Omega \rightarrow \mathbb{R},\qquad \lP = -\frac{1}{40\,\pi}\,\left[\cos\left(2\,\pi\,x \right) + \cos\left(2\,\pi\,y \right)\right] \\ \\
+\lP: \Omega \rightarrow \mathbb{R},\qquad \lP(x,y) = -\frac{1}{40\,\pi}\,\left[\cos\left(2\,\pi\,x \right) + \cos\left(2\,\pi\,y \right)\right] \\ \\
 $$
 and
 \begin{equation}
@@ -43,12 +43,12 @@ At this stage, solely for the purpose of assessing the convergence properties of
 	\zeta \lP  + \nabla \cdot \mP  =  f
 \end{equation}
 This amounts to adding the term $-({f , \uP})$ to the Lagrangian (\ref{eq:lagrangian}).
-Notice that the addition of this term does not change the analysis from previous sections.
+Notice that the addition of this linear term does not affect the convergence analysis from previous sections.
 By examining the optimality conditions in their strong form (\ref{eq:dif1})-(\ref{eq:dif5}),
 we proceed as follows to construct the manufactured solution for the remaining fields.
 First take
 $$
-\etP:\Omega \rightarrow \mathbb{R}^2, \qquad \etP = \eP + \frac{1}{20} \left[\sin\left(4\,\pi\,x \right), \sin\left(4\,\pi\,y\right) \right]^{\top}
+\etP:\Omega \rightarrow \mathbb{R}^2, \qquad \etP(x,y) = \eP(x,y) + \frac{1}{20} \left[\sin\left(4\,\pi\,x \right), \sin\left(4\,\pi\,y\right) \right]^{\top}
 $$
 as being a perturbation of $\eP$, from which $\mP$ can be obtained using eq. (\ref{eq:dif2}).
 Now, $\stP$ is computed using eq. (\ref{eq:dif3}) and finally, the source 
@@ -104,9 +104,9 @@ Although we do not have theoretical error estimates in the $ \text{H(div)} $-nor
 convergence rates are also reported. Figures \ref{fig:convergence_vector_linear_hdiv}, 
 \ref{fig:convergence_vector_quadratic_hdiv} and \ref{fig:convergence_vector_cubic_hdiv}
 show the results for $k=0$, $k=1$ and $k=2$, respectively.
-Note that the fully stabilized formulation consistently yielded the most favorable results in all three cases. For $ \text{P}1 $-elements, no significant differences were observed in the convergence behavior of the flux $ \sP_{h} $ across the Unstabilized, Minimally stabilized, and Fully stabilized formulations, with the corresponding error curves largely overlapping. In contrast, for $ \eP $ and $ \mP $, the Fully stabilized formulation exhibited sub-linear convergence, unlike the Unstabilized case. However, it achieved lower error magnitudes. For $ \text{P}2 $-elements, the Fully stabilized formulation exhibited the best performance. In particular, it was the only one to attain second-order convergence for the flux $ \sP $, and exhibited the smallest errors for $ \eP_{h} $ and $ \mP_{h} $. A similar trend was observed for $ \text{P}3 $-elements. 
+Note that the fully stabilized formulation consistently yielded the most favorable results in all three cases. For $ \text{P}_1 $-elements, no significant differences were observed in the convergence behavior of the flux $ \sP_{h} $ across the Unstabilized, Minimally stabilized, and Fully stabilized formulations, with the corresponding error curves largely overlapping. In contrast, for $ \eP $ and $ \mP $, the Fully stabilized formulation exhibited sub-linear convergence, unlike the Unstabilized case. However, it achieved lower error magnitudes. For $ \text{P}_2 $-elements, the Fully stabilized formulation exhibited the best performance. In particular, it was the only one to attain second-order convergence for the flux $ \sP $, and exhibited the smallest errors for $ \eP_{h} $ and $ \mP_{h} $. A similar trend was observed for $ \text{P}_3 $-elements. 
 
-As a final comment, it is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is largely independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $ \zeta $ over several orders of magnitude, from $ 10^{-3} $ to $ 10^{3} $.
+As a final comment, it is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is rather independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $\zeta$ over several orders of magnitude.
 
 %=============================================
 % k = 0
@@ -216,18 +216,18 @@ As a final comment, it is worth mentioning that additional numerical experiments
 \subsection{Test case 2: a non-convex domain}\label{sec:test_case2}
 
 In this case we consider the classical problem with a re-entrant corner, whose geometry is depicted in 
-Figure \ref{fig:geometries_non_convex} for three different internal angles, namely, $\phi =\pi/4,~\pi/2$ and $3\pi/4$. The corner is located at the origin $(0, 0)$. 
+Figure \ref{fig:geometries_non_convex} for three different external angles, namely, $\phi =\pi/4,~\pi/2$ and $3\pi/4$. The corner is located at the origin $(0, 0)$. 
 We manufacture a solution by taking the scalar field $u$ as being:
 \begin{equation*}
 	\begin{aligned}
-	&\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = r^{\nu}\,\sin(\nu\,\theta) \\
+	&\uP: \Omega \rightarrow \mathbb{R}, \quad \uP(x,y) = r^{\nu}\,\sin(\nu\,\theta) \\
 	&\mbox{where}~r = \sqrt{\left(x^{2}+y^{2}\right)}, \quad \theta = \arctan{\left(\frac{y}{x}\right)}, \quad  \nu = \frac{\pi}{\psi},~\mbox{with}~\psi = 2\pi-\phi
 	\end{aligned}
 \end{equation*}
 The corresponding gradient field is then given by
 \begin{equation*}
 	\begin{aligned}
-	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \nu\,r^{\nu-2}\left[x\,\sin(\nu\,\theta)-y\,\cos(\nu\,\theta),y\,\sin(\nu\,\theta)+x\,\cos(\nu\,\theta)\right]^{\top}
+	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP(x,y) = \nu\,r^{\nu-2}\left[x\,\sin(\nu\,\theta)-y\,\cos(\nu\,\theta),y\,\sin(\nu\,\theta)+x\,\cos(\nu\,\theta)\right]^{\top}
 	\end{aligned}
 \end{equation*}
 In this setting, the expressions for $\lP$ and $\etP$ are taken to be the same as those used in the preceding numerical experiment. For $\sP$ we simply consider the linear relation $\sP = -\eP$.
@@ -331,17 +331,17 @@ to mimic a more realistic scenario for data-driven applications.
 
 To this end, we consider a structured cartesian grid of the computational domain into $N_{\mbox{\tiny samples}} = N_d \times N_d$ non-overlapping quadrilateral subdomains $ \{\Omega_i\}_{i=1}^{N_{\mbox{\tiny samples}}} $ where the solution will be sampled. For each subdomain $ \Omega_i $, let $\mathbf{x}_{i}^{c} \in \Omega$ denotes its centroid, at which a unique data pair $(\etP_i, \stP_i)$ is associated. For this problem we consider the manufactured solution: 
 \begin{equation}
-	\uP: \Omega \rightarrow \mathbb{R}, \quad \uP = \sin(\pi x)\sin(\pi y),
+	\uP: \Omega \rightarrow \mathbb{R}, \quad \uP(x,y) = \sin(\pi x)\sin(\pi y),
 \end{equation}
 whose gradient is given by:
 \begin{equation}
-	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP = \pi \, \left[\cos(\pi x)\sin(\pi y), \sin(\pi x)\cos(\pi y) \right]^{\top}.
+	\eP: \Omega \rightarrow \mathbb{R}^{2}, \quad \eP(x,y) = \pi \, \left[\cos(\pi x)\sin(\pi y), \sin(\pi x)\cos(\pi y) \right]^{\top}.
 \end{equation}
 For the sake of simplicity, we consider $ \sP = -\eP $ and further assume $\lP  = 0$, $ \mP = \left[0,0\right]^{\top}$,
 such that, the data fields $(\etP, \stP)$ coincide with $(\eP, \sP)$ in the exact setting. 
 Additionally, for the source term in Eq.~(\ref{eq:dif4}) we have: 
 $$
-q: \Omega \rightarrow \mathbb{R}, \quad q = \left(1 + 2\pi^2 \right)\sin(\pi x)\sin(\pi y).
+q: \Omega \rightarrow \mathbb{R}, \quad q(x,y) = \left(1 + 2\pi^2 \right)\sin(\pi x)\sin(\pi y).
 $$
 
 The values of $\{(\etP_i, \stP_i)\}_{i=1}^{N_{\mbox{\tiny samples}}}$ are thus obtained by evaluating the manufactured fields $(\eP, \sP)$ at $\mathbf{x}_{i}^{c}$. To assign a data pair $ (\etP_i, \stP_i) $ from the dataset to each element of the mesh, we use a geometric proximity criterion, i.e., denoting by $ \mathbf{x}_K^{c} $ the centroid of mesh 
@@ -383,17 +383,12 @@ The domain is discretized with a unstructured mesh of characteristic size $h$ wh
 is also successively refined, such that there is no conformity between the sampling
 subdomains and the mesh elements. Figures~\ref{fig:quadricula_convergence_natural_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} show the mesh convergence behavior for the scalar fields $\uP$ and $\lP$ in the $L^{2}$- and $H^{1}$-norms, as well as for the vector fields $\eP$, $\sP$, and $\mP$ in the $L^{2}$-norm, for different values of $N_{\mbox{\tiny samples}}$. Figure~\ref{fig:quadricula_convergence_natural_linear} corresponds to the natural formulation, whereas Figures~\ref{fig:quadricula_convergence_equal_order_unstabilized_linear} to~\ref{fig:quadricula_convergence_equal_order_minimally_stabilized_linear} correspond to the equal order formulation variants: Unstabilized, Fully Stabilized, and Minimally Stabilized, respectively.
 
-<<<<<<< HEAD
 For the natural formulation, the mesh convergence orders approach the theoretical error estimates as the number of sample subdomains $N_{\mbox{\tiny samples}}$ increases. A similar trend is observed for the variants of the equal order formulation. In particular, the field $\uP$ exhibits $\mathcal{O}(h^{2}) $ in the $L^{2}$-norm and $ \mathcal{O}(h) $ in the $H^{1}$-norm in all formulations, with only small variations in the error magnitude.
 
 Similarly, nearly linear convergence rates are observed for the vector fields $\sP$, $\eP$, and $\mP$ in all formulations, with the natural formulation achieving consistent linear convergence for all three fields. Linear convergence is further achieved for the vector fields with $N_{\mbox{\tiny samples}} = 512 \times 512$ in the natural formulation, while approximately $N_{\mbox{\tiny samples}}  = 2048 \times 2048$ are required to observe the same convergence behavior for the equal order variants. Despite this, the equal order formulations tend to exhibit smaller error magnitudes.
 
-=======
-The first point to note is that the number of data samples limits the convergence rate of the method. Specifically, for a fixed number of data points, refining the finite element mesh eventually leads to error stagnation. However, as the number of samples increases, the method begins to exhibit consistent convergence—at least within the range of $h$ values considered.
-For the natural formulation, the mesh convergence orders approach the theoretical error estimates as the number of sample subdomains $N_{\mbox{\tiny samples}}$ increases. A similar trend is observed for the variants of the equal order formulation. In particular, the field $\uP$ exhibits $\mathcal{O}(h^{2}) $in the $L^{2}$ norm and $ \mathcal{O}(h) $ in the $H^{1}$ norm in all formulations, with only small variations in the error magnitude.
+The first point to note is that the number of data samples limits the convergence rate of the method. Specifically, for a fixed number of data points, refining the finite element mesh eventually leads to error stagnation. However, as the number of samples increases, the method begins to exhibit convergence, at least within the range of $h$ values considered.
 
-Similarly, nearly linear convergence rates are observed for the vector fields $\sP$, $\eP$, and $\mP$ in all formulations, with the natural formulation achieving consistent linear convergence for all three fields. Linear convergence is further achieved for the vector fields with $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 512$ in the natural formulation, while approximately $N_{\mbox{\tiny samples}} \times N_{\mbox{\tiny samples}} = 2048$ are required to observe the same convergence behavior for the equal order variants. Despite this, the equal order formulations tend to exhibit smaller error magnitudes.
->>>>>>> 2f46ca3719c86647664dd086a5ee7ac18e975a53
 As a final observation, the field $\lP$ does not consistently achieve the expected convergence rates in $ H^{1} $-norm, except in the Unstabilized equal order variant. However, increasing $N_{\mbox{\tiny samples}}$ systematically reduces the associated errors, indicating an overall improvement in the approximation quality.
 
 These results already show a consistency with respect to mesh refinement and size of

@@ -5,9 +5,9 @@ We consider a reaction-diffusion problem governed by the conservation law
 	\nabla \cdot \sP + \zeta\,\uP = q
 	\label{eq:conservation}
 \end{equation}
-posed on a regular domain $\Omega \subset \mathbb{R}^{d_{\Omega}}$. In eq.~(\ref{eq:conservation}) the symbol $\nabla$ represents the vector of partial derivatives, so that $\nabla \cdot \sP$ is the divergence of the vector field $\sP$, which represents the flux. Also, $\uP$ is the concentration of the conserved quantity, $\zeta \in L^{\infty}(\Omega)$ is the (possibly position-dependent) reaction coefficient and $q\in H^1(\Omega)'$ is the source. In thermal applications $\uP$ is the temperature, $\sP$ is the heat flux and $q-\zeta \uP$ is a heat source that depends linearly on the temperature. In weakly compressible flow in porous media $\uP$ is the pressure and $\sP$ is the fluid flux.
+posed on a regular domain $\Omega \subset \mathbb{R}^{d_{\Omega}}$. In eq.~(\ref{eq:conservation}) the symbol $\nabla$ represents the vector of partial derivatives, so that $\nabla \cdot \sP$ is the divergence of the vector field $\sP$, which represents the flux. Also, $\uP$ is the concentration of the conserved quantity, $\zeta \in L^{\infty}(\Omega)$ is the (possibly position-dependent) reaction coefficient and $q\in L^2(\Omega)$ is the source. In thermal applications $\uP$ is the temperature, $\sP$ is the heat flux and $q-\zeta \uP$ is a heat source that depends linearly on the temperature. In weakly compressible flow in porous media $\uP$ is the pressure and $\sP$ is the fluid flux.
 
-The boundary of $\Omega$, denoted by $\partial \Omega$, is divided into a Dirichlet part $\partial \Omega_D$, where $\uP=\uP_D$ is imposed, and a Neumann part $\partial\Omega_N$, in which $\sP \cdot \mathbf{\check{n}}=H$ is imposed. Hereafter, we assume homogeneous boundary conditions throughout, i.e., $\uP_D = 0$ and $H = 0$.
+The boundary of $\Omega$, denoted by $\partial \Omega$, is divided into a Dirichlet part $\partial \Omega_D$, where $\uP=\uP_D$ is imposed, and a Neumann part $\partial\Omega_N$, in which $\sP \cdot \mathbf{\check{n}}=H$ is imposed. Hereafter, we assume for simplicity homogeneous boundary conditions throughout, i.e., $\uP_D = 0$ and $H = 0$.
 
 Let us also define the field $\eP$ as the gradient of $\uP$,
 \begin{equation}
