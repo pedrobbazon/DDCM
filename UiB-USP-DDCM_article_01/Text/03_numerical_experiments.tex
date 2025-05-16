@@ -1,16 +1,28 @@
 \section{Numerical experiments}
 
 
-In this section, we analyze the convergence properties of the finite element approximation to the proposed problem, considering two different choices of finite element spaces: (\textbf{I}) natural formulation, in which we take 
+In this section, we analyze the convergence properties of the finite element approximation to the proposed problem. We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
+Let us define the discrete spaces associated to $\mathcal{T}_h$
+$$
+\CG_{k}(\mathcal{T}_h) = \{v \in C^0(\Omega), v|_K \in \mathbb{P}_k(K), K \in \mathcal{T}_h\}
+$$
+and 
+$$
+\DG_{k}(\mathcal{T}_h) = \{v, v|_K \in \mathbb{P}_k(K), K \in \mathcal{T}_h\}
+$$
+where $\mathbb{P}_k(K)$ is the space of polynomials of degree $k$ on $K$.
+
+Two different choices of finite element spaces is then considered to approximate
+the optimization problem, namely, a \textbf{natural formulation}, in which we take 
 \begin{equation}\label{eq:natural_func_spaces}
 	\left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right) \in \CG_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \left[\DG_{k}\right]^{d_{\Omega}} \times \CG_{k+1} \times \left[\DG_{k}\right]^{d_{\Omega}} 
 \end{equation} 
-and (\textbf{II}) an equal-order formulation, in which we take
+and an \textbf{equal-order formulation}, in which we take
 \begin{equation}\label{eq:equal_order_func_spaces}
 \left(\uP_{h}, \eP_{h}, \sP_{h}, \lP_{h}, \mP_{h}\right)  \in \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \left[\CG_{k+1}\right]^{d_{\Omega}} \times \CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
 \end{equation}
-Here, the $k \in \mathbb{N}_{0}$ stands for the piecewise polynomial degree used to construct the finite element approximation space. In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic or cubic polynomials for the scalar fields $\uP$ and $\lP$ in both formulations. Indeed, the natural formulation
-considers one degree less for the vector fields $\sP$, $\eP$ and $\mP$, whereas for the equal-order formulation, the degree is the same for all fields. 
+In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic or cubic polynomials for the scalar fields $\uP$ and $\lP$ in both formulations. Indeed, the natural formulation
+considers one degree lower for the vector fields $\sP$, $\eP$ and $\mP$, whereas for the equal-order formulation, the degree is the same for all fields. 
 To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to manufactured solutions.
 
 For the equal-order formulation, we consider three variants: the Unstabilized case, the Fully Stabilized case, and the Minimally Stabilized case.
@@ -85,7 +97,6 @@ where the values in the right hand side are computed from the manufactured field
 	\input{Figures/PDFs/all_fields_ref.pdf_tex}
 	\label{fig:all_fields_ref}
 \end{figure}
-We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
 
 Moving to the results, Figure \ref{fig:convergence_scalar_linear} shows the $L^{2}$- and $H^{1}$-error norms for the scalar fields $\uP$ and $\lP$ with $k=0$, for both the natural formulation (subfigures (a) and (b)) and the equal-order formulations (subfigures (c)-(f)). In the latter case, the unstabilized, minimally stabilized, and fully stabilized variants are considered. In all cases, the convergence rates are consistent with the expected theoretical error estimate, which is of order $\mathcal{O}(h)$ in the $H^{1}$-norm (see Theorem~2). Also, the error in the $ L^{2} $-norm converges with order $ \mathcal{O}(h^2) $.
 No significative differences are observed between the different equal order variants.
@@ -355,13 +366,13 @@ $\mathcal{T}_h$ that are close to a sampled point share the same value.
 This does not introduce any additional
 approximation error only when the vector fields are in $[\DG_0]^2$.
 Finally, in the numerical experiments, we consider only $ k=0 $ for both formulations 
-(\textbf{I} and \textbf{II}) and assume pure Dirichlet boundary conditions.
+and assume pure Dirichlet boundary conditions.
 
 To illustrate the solution obtained with this approach, figure \ref{fig:compound_Nsamples} shows
-contour plots of pressure and flux for the natural formulation (\textbf{I}) 
+contour plots of pressure and flux for the natural formulation 
 varying the number of subdomains from $2\times 2$ samples up to $20 \times 20$. 
 In the last row of figures, we also show contours of flux for the equal order
-formulation (\textbf{II}), the pressure for this case being very similar to the former. 
+formulation, the pressure for this case being very similar to the former. 
 The results can be compared to the most refined partition, which encompasses $1000 \times 1000$
 samples and is indistinguishable from the exact solution. 
 The coarsest samplings produce pressure fields that exhibit a pyramidal shape with
