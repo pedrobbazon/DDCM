@@ -21,6 +21,12 @@
 
 \maketitle
 
+\begin{abstract}
+	In this work, we investigate an optimization problem that appears when dealing with the paradigm of Data-Driven Computational Mechanics. In the context of the diffusion-reaction problem, such an optimization problem seeks for the set of continuous primal fields (i.e., a potential field, its gradient and the flux) that satisfies the physical conservation law and the geometrical compatibility at predefined discrete fields (i.e., reconstructed gradient and flux that locally look like the data sets). Moreover, we consider a reaction term in the physical conservation law that automatically couples all the optimality conditions and thus, adding an interesting twist to the problem. First, we establish the well-posedness in the continuous setting and second, we propose a finite-element discretization that consistently approximates the underlying continuous problem while preserving the saddle-point structure and improving the stability properties when compared to plain discretizations. Finally and to substantiate our claims, we present a set of examples that illustrates the advantages of the proposed approach.
+\end{abstract}
+
+\textbf{Keywords:} data-driven computational mechanics, optimization problem, diffusion-reaction problem, stabilized finite elements. 
+
 %=============================================
 % --- Introduction --- 
 \include{Text/01_introduction}
@@ -34,6 +40,24 @@
 \include{Text/03_numerical_experiments}
 
 %=============================================
+
+\section{Conclusions}
+
+This work presents a finite element discretization of the optimization problem arising from an optimization problem in the emerging field of Data-Driven Computational Mechanics.
+We consider the balance law associated with a diffusion-reaction problem and seek a potential field $u$ (e.g., a concentration or temperature), along with its gradient and corresponding flux $(\eP, \sP)$.
+Within the Data-Driven framework, the constitutive relationship between gradients and fluxes is represented by functions $(\etP, \stP)$ derived from experimental data. As a result, these data pairs may not satisfy the governing conservation laws. The Data-Driven problem then consists of finding the fields $(u, \eP, \sP)$ that are closest to the given data, while satisfying the compatibility and equilibrium constraints.
+
+We begin by analyzing the well-posedness of the optimization problem in the continuous setting. Then, we propose a family of finite element discretizations to approximate them.
+On the one hand, we consider a natural formulation in which the scalar fields are approximated using continuous piecewise polynomial functions, while the vector fields are represented by discontinuous piecewise polynomials of one degree lower.
+On the other hand, we investigate equal-order formulations, both with and without stabilization, which allow the use of the same continuous interpolation for all fields.
+
+The convergence properties of the discrete formulations were assessed through numerical experiments in 2D, using manufactured solutions to compute the error in both convex and non-convex domains. In all these experiments, the data fields $(\etP, \stP)$ were assumed to be known and available at every point in the domain. However, in a final numerical test, we also examined the consistency of the formulation with respect to the number of available data points, which better reflects scenarios typically encountered in data-driven applications.
+
+This work represents a first step toward solving the full optimization problem that arises in Data-Driven Computational Mechanics (DDCM), where the assignment of experimental data throughout the domain must also be determined. In this context, several directions can be pursued to address the resulting mixed-integer nonlinear program (MINLP) when computed with FEM. One promising approach involves alternating direction schemes, in which data is first assigned based on the current solution, followed by solving the optimality conditions to update the fields, and repeating this process iteratively. Extensions of the method to other physical problems, such as elasticity and flow in porous media, are also the subject of ongoing research.
+ 
+
+%=============================================
+
 % --- References ---
 \bibliographystyle{plain}
 \bibliography{bibliography}

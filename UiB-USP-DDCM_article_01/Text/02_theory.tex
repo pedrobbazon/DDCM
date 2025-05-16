@@ -17,9 +17,7 @@ Let us also define the field $\eP$ as the gradient of $\uP$,
 
 This equation can be viewed as a compatibility condition. We call a vector field $\eP$ compatible if there exists a scalar field $\uP$ such that $\eP=\nabla \uP$.
 
-Now, suppose that two vector fields $\stP$ and $\etP$ are given in $\Omega$. These fields will both be assumed in $\left[L^2(\Omega)\right]^{d_{\Omega}}$ and thus possibly discontinuous. Since they originate from a measured dataset, it is generally the case that $\stP$ does not satisfy the conservation law, and $\etP$ does not satisfy the compatibility condition. \textcolor{blue}{Moreover, they are concomitant, in the sense that each sample $\etP$ corresponds to the same spatial location as $\stP$ -- that is, they form coupled observations of gradient and flux at the same point in the domain --.}
-
-\textcolor{red}{CGG: we have to make more clear that the fields $\etP$ and $\stP$ are concomitant.}
+Now, suppose that two vector fields $\stP$ and $\etP$ are given in $\Omega$. These fields will both be assumed in $\left[L^2(\Omega)\right]^{d_{\Omega}}$ and thus possibly discontinuous. Since they originate from a measured dataset, it is generally the case that $\stP$ does not satisfy the conservation law, and $\etP$ does not satisfy the compatibility condition. Moreover, they are concomitant, in the sense that each sample $\etP$ corresponds to the same spatial location as $\stP$ -- that is, they form coupled observations of gradient and flux at the same point in the domain --.
 
 The goal, therefore, is to determine the best approximations to $\stP$ and $\etP$ within the space of feasible fields, that is, those that are both conservative and compatible. The scalar field $\uP$ emerges naturally as a by-product of this reconstruction.
 
@@ -142,7 +140,7 @@ together with
 	Problem P2 has a unique solution.
 	
 	\begin{proof}
-		Following the theory of mixed problems \cite{brezzifortin,ernguermond} one needs to show that $a(\cdot,\cdot)$ and $b(\cdot,\cdot)$ are continuous, that $a(\cdot,\cdot)$ is coercive in $\delta Z$, with
+		Following the theory of mixed problems \cite{brezzi-fortin,ern-guermond} one needs to show that $a(\cdot,\cdot)$ and $b(\cdot,\cdot)$ are continuous, that $a(\cdot,\cdot)$ is coercive in $\delta Z$, with
 		\begin{eqnarray}
 			\delta Z&=&\{x\in X~|~b(x,y)=0\, \quad \forall y\in Y\}\nonumber \\
 			&=&\{(\uP,\eP,\sP)\in X \mid \eP-\nabla \uP=0, ~\nabla \cdot \sP + \zeta \uP =0,~\left. ~\sP \cdot \mathbf{\check{n}}\right |_{\partial\Omega_N} = 0  \}~,
@@ -158,7 +156,6 @@ together with
 			\|x\|_X &=& \|(\uP,\eP,\sP)\|_X = \sqrt{\|\nabla \uP\|^2+\|\eP\|^2+\kappa \|\sP\|^2}~,\\
 			\|y\|_Y &=& \|(\lP,\mP)\|_Y=\sqrt{\frac{1}{\kappa}\left \| \nabla \lP \right \|^2+\left\|\mP \right \|^2}~.
 		\end{eqnarray}
-		\noindent \textcolor{red}{CGG: why not to consider $\frac{1}{\ell_\Omega}\|u\|^2$ and $\frac{1}{\ell_\Omega k }\|\lP\|^2$ in the norm definition?}
 		
 		They were chosen so that they have the same units. It is easy to see that both $X$ and $Y$ are Hilbert spaces, and that $a(\cdot,\cdot)$ and $b(\cdot,\cdot)$ are continuous. Notice that
 		\begin{equation*}
@@ -169,8 +166,6 @@ together with
 			a(x,x)= \frac12 \|\eP\|^2 +\frac12 \|\nabla \uP\|^2+ \kappa \|\sP\|^2 \geq \frac12 \|x\|_X^2~.
 		\end{equation*}
 		and, thus, coercivity holds with constant equal to $\frac12$.
-		
-		\noindent \textcolor{red}{CGG: we can distribute with $c_1\|\nabla u \|^2 + (1-c_1) \|e\|^2$ and $c_1 \in (0,1)$.}
 		
 		It remains to show that there exists $K_b>0$ such that:
 		\begin{equation*}
@@ -214,9 +209,8 @@ Also, we assume that $E_h$, $S_h$ and $M_h$ are subspaces of $[L^2(\Omega)]^d_{\
 		\end{eqnarray}
 	\end{problem*}
 \end{tcolorbox}
-
-\textcolor{blue}{in which we kept the saddle-point structure by adding the squared norms of the optimality conditions for the dual variables and subtracting the square norms of the optimality conditions for the primal ones.}
-
+\noindent
+in which we kept the saddle-point structure by adding the squared norms of the optimality conditions for the dual variables and subtracting the square norms of the optimality conditions for the primal ones.
 
 %\noindent{\bf Discrete Problem P2$_h$:} Find $(x_h,y_h)=\left ( u_h, e_h, s_h, \lP_h, \mP_h\right ) \subset X_h\times Y_h$ such that 
 %\begin{equation}
@@ -236,8 +230,6 @@ Also, we assume that $E_h$, $S_h$ and $M_h$ are subspaces of $[L^2(\Omega)]^d_{\
 %& & - \frac{\beta \ell_{\mP}^2 }{2}\, \|\nabla \cdot \bar{\mP} + \zeta\, \bar{\lP} \|_h^2~.
 %\end{eqnarray}
 
-\noindent \textcolor{red}{CGG: To keep the saddle-point structure, the squared norms of the optimality conditions for the dual variables are added and the squared norms of the optimality conditions for the primal variables are subtracted.}
-
 The mesh-dependent norm $\|\cdot\|_h$ is defined as satisfying
 \begin{equation}
 \|f\|_h^2 = \sum_K \|f\|^2_{L^2(K)} 
@@ -247,10 +239,6 @@ with the sum performed over all elements $K$ of the mesh. The associated scalar 
 Above, $\alpha$, $\theta$ and $\beta$ are positive non-dimensional coefficients, and $\ell_{\sP}$ and $\ell_{\mP}$ are length scales to be determined later on. The function $\tilde{\mathcal{L}}$ is an augmented Lagrangian, of which the saddle point is the solution of P2$_h$. 
 
 The optimality conditions of P2$_h$ are:
-
-\noindent \textcolor{red}{CGG: (37) fourth term - $\ell_{\sP}$ instead of $\ell_f$}
-
-%\noindent \textcolor{red}{CGG: (38) third term - $(1+\gamma)$ instead of $(1-\gamma)$}
 
 \begin{eqnarray}
 	\alpha \left ( \nabla \uP_h, \nabla \delta \uP \right ) + \theta \kappa \ell_{\sP}^2  \left ( \zeta^2 \uP_h, \delta \uP \right ) - \alpha \left ( \eP_h,\nabla \delta \uP \right ) + & & \nonumber \\ 
@@ -392,14 +380,14 @@ The terms added to the Lagrangian allow us to work in a norm with improved contr
 		~&+&~ (\alpha - 4 \alpha^2 - \theta \kappa \ell_{\sP}^2 \|\zeta\|_{\infty}^2 c_{\mbox{\scriptsize{PF}}}^2 \ell_{\Omega}^2)\, \|\nabla \uP_h\|^2 + \nonumber \\
 		~&+&~\frac12 \theta \kappa \ell_{\sP}^2 \|\nabla \cdot \sP_h\|^2 + \nonumber \\
 		~&+&~\frac12 \beta \ell_{\mP}^2 \| \nabla \cdot \mP_h\|^2 + \nonumber \\
-		~&+&~\left ( \frac{\eta}{\kappa}-\beta \ell_{\mP}^2 \|\zeta\|_{\infty}^2 c_{\mbox{\scriptsize{PF}}}^2 \ell_{\Omega}^2 \right ) \|\nabla \lP_h\|^2 + \gamma \|\mP_h\|^2~.
+		~&+&~\left ( \frac{\eta}{\kappa}-\beta \ell_{\mP}^2 \|\zeta\|_{\infty}^2 c_{\mbox{\scriptsize{PF}}}^2 \ell_{\Omega}^2 \right ) \|\nabla \lP_h\|^2 + \gamma \|\mP_h\|^2~. \label{eq:Bhparams}
 	\end{eqnarray}
 	Taking
-	$$
+	\begin{equation}
 	\alpha = \frac{1}{8}, \quad \theta=\frac12,\quad \beta=\frac12,
 	\quad \gamma=\alpha, \quad \eta = \frac12,
-	\quad \ell_{\sP} = \ell_{\mP} = h, 
-	$$
+	\quad \ell_{\sP} = \ell_{\mP} = h, \label{eq:paramsopt}
+	\end{equation}
 	we get
 	\begin{eqnarray*}
 		B_h\left ( (x_h,y_h),(x_h,y_h) \right ) &\geq  &
