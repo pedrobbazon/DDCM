@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: Text/01_introduction.aux
+A level-1 auxiliary file: Text/02_theory.aux
+A level-1 auxiliary file: Text/03_numerical_experiments.aux
+The style file: plain.bst
+Database file #1: bibliography.bib
+Warning--I'm ignoring Badia2010's extra "volume" field
+--line 819 of file bibliography.bib
+Warning--can't use both author and editor fields in brezzi-fortin
+Warning--empty publisher in brezzi-fortin
+Warning--can't use both author and editor fields in ern-guermond
+Warning--empty publisher in ern-guermond
+You've used 20 entries,
+            2118 wiz_defined-function locations,
+            635 strings with 7261 characters,
+and the built_in function-call counts, 6523 in all, are:
+= -- 648
+> -- 309
+< -- 2
++ -- 127
+- -- 100
+* -- 474
+:= -- 1116
+add.period$ -- 60
+call.type$ -- 20
+change.case$ -- 107
+chr.to.int$ -- 0
+cite$ -- 24
+duplicate$ -- 226
+empty$ -- 493
+format.name$ -- 100
+if$ -- 1319
+int.to.chr$ -- 0
+int.to.str$ -- 20
+missing$ -- 23
+newline$ -- 103
+num.names$ -- 40
+pop$ -- 89
+preamble$ -- 1
+purify$ -- 90
+quote$ -- 0
+skip$ -- 155
+stack$ -- 0
+substring$ -- 461
+swap$ -- 28
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 74
+warning$ -- 4
+while$ -- 68
+width$ -- 22
+write$ -- 218
+(There were 5 warnings)

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian">
+<Collection>
+<DataSet timestep="64" file="graddata/graddata_0.vtu" />
+<DataSet timestep="64" file="graddata/graddata_1.vtu" />
+<DataSet timestep="128" file="graddata/graddata_2.vtu" />
+<DataSet timestep="128" file="graddata/graddata_3.vtu" />
+<DataSet timestep="64" file="graddata/graddata_4.vtu" />
+<DataSet timestep="64" file="graddata/graddata_5.vtu" />
+<DataSet timestep="128" file="graddata/graddata_6.vtu" />
+<DataSet timestep="128" file="graddata/graddata_7.vtu" />
+<DataSet timestep="64" file="graddata/graddata_8.vtu" />
+<DataSet timestep="64" file="graddata/graddata_9.vtu" />
+<DataSet timestep="128" file="graddata/graddata_10.vtu" />
+<DataSet timestep="128" file="graddata/graddata_11.vtu" />
+</Collection>
+</VTKFile>

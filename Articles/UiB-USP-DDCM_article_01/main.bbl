@@ -1,0 +1,124 @@
+\begin{thebibliography}{10}
+
+\bibitem{Ammari2004}
+H.~Ammari and H.~Kang.
+\newblock {\em Reconstruction of Small Inhomogeneities from Boundary
+  Measurements}.
+\newblock Springer, 2004.
+
+\bibitem{Babuska1970}
+Ivo Babuška.
+\newblock Finite element method for domains with corners.
+\newblock {\em Computing}, 6(3–4):264--273, September 1970.
+
+\bibitem{Babuska1972}
+Ivo Babuška and Michael~B. Rosenzweig.
+\newblock A finite element scheme for domains with corners.
+\newblock {\em Numerische Mathematik}, 20(1):1--21, February 1972.
+
+\bibitem{Badia2010}
+S.~Badia and R.~Codina.
+\newblock Stabilized continuous and discontinuous {G}alerkin techniques for
+  {D}arcy flow.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering}, 199,
+  2010.
+
+\bibitem{Bochev2006}
+P.~Bochev and C.~Dohrmann.
+\newblock A computational study of stabilized, low-order {$C^0$} finite element
+  approximations of {D}arcy equations.
+\newblock {\em Computational Mechanics}, 38:323--333, 2006.
+
+\bibitem{brezzi-fortin}
+F.~Brezzi and M.~Fortin.
+\newblock {\em {Mixed and Hybrid Finite Element Methods}}.
+\newblock 1991.
+
+\bibitem{Burman2023}
+E.~Burman, P.~Hansbo, and M.~Larson.
+\newblock The augmented {L}agrangian method as a framework for stabilised
+  methods in computational mechanics.
+\newblock {\em Archives of Computational Methods in Engineering},
+  30:2579--2604, 2023.
+
+\bibitem{Conti2018}
+S.~Conti, S.~M{\"{u}}ller, and M.~Ortiz.
+\newblock Data-driven problems in elasticity.
+\newblock {\em Archive for Rational Mechanics and Analysis}, 229:79--123, 2018.
+
+\bibitem{Conti2020}
+S.~Conti, S.~M{\"{u}}ller, and M.~Ortiz.
+\newblock Data-driven finite elasticity.
+\newblock {\em Archive for Rational Mechanics and Analysis}, 237:1--33, 2020.
+
+\bibitem{ern-guermond}
+A.~Ern and J.L. Guermond.
+\newblock {\em {Theory and Practice of Finite Elements}}, volume 159.
+\newblock 2004.
+
+\bibitem{Galetzka2020}
+A.~Galetzka, D.~Loukrezis, and H.~{De Gersem}.
+\newblock Data-driven solvers for strongly nonlinear material response.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  122:1538--1562, 2021.
+
+\bibitem{Gebhardt2024a}
+C.~Gebhardt, S.~Lange, and M.~Steinbach.
+\newblock Formulating and heuristic solving of contact problems in hybrid
+  data-driven computational mechanics.
+\newblock {\em Communications in Nonlinear Science and Numerical Simulation},
+  134:108031, 2024.
+
+\bibitem{Gebhardt2024b}
+C.~Gebhardt, S.~Lange, and M.~Steinbach.
+\newblock On the mathematical structure and numerical solution of
+  discrete-continuous optimization problems in ddcm.
+\newblock {\em Submitted to \textit{Zeitschrift f{\"u}r angewandte Mathematik
+  und Physik} - ZAMP}, pages 1--26, 2024.
+
+\bibitem{Gebhardt:2020a}
+C.~G. Gebhardt, D.~Schillinger, M.~C. Steinbach, and R.~Rolfes.
+\newblock A framework for data-driven structural analysis in general elasticity
+  based on nonlinear optimization: The static case.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering}, 365,
+  2020.
+
+\bibitem{Gebhardt:2020b}
+C.~G. Gebhardt, M.~C. Steinbach, D.~Schillinger, and R.~Rolfes.
+\newblock A framework for data-driven structural analysis in general elasticity
+  based on nonlinear optimization: The dynamic case.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  121:5447--5468, 2020.
+
+\bibitem{Kirchdoerfer2016}
+T.~Kirchdoerfer and M.~Ortiz.
+\newblock Data-driven computational mechanics.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  304:81--101, 2016.
+
+\bibitem{Kirchdoerfer2018}
+T.~Kirchdoerfer and M.~Ortiz.
+\newblock Data-driven computational dynamics.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  113:1697--1710, 2018.
+
+\bibitem{Kirchdoerfer2017}
+Trenton Kirchdoerfer and Michael Ortiz.
+\newblock Data driven computing with noisy material data sets.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  326:622--641, 2017.
+
+\bibitem{Masud2002}
+A.~Masud and T.~Hughes.
+\newblock A stabilized mixed finite element method for {D}arcy flow.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  191:4341--4370, 2002.
+
+\bibitem{Ponti2021}
+L.~Ponti, S.~Perotto, and L.~Sangalli.
+\newblock A {PDE}-regularized smoothing method for space–time data over
+  manifolds with application to medical data.
+\newblock {\em International Journal for Numerical Methods in Biomedical
+  Engineering}, 38:e3650, 2022.
+
+\end{thebibliography}
