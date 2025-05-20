@@ -2,28 +2,43 @@
 	
 	\section{Firedrake Implementation}
 	
-	The different finite element formulations have been implemented in the
+	The different formulations introduced in the previous 
+	sections have been implemented in the
 	finite element platform Firedrake \cite{firedrake}. The implementation
-	of such formulations is greatly simplified thanks to the use of the
-	automatic differentiation capabilities available.
+	of such formulations is greatly simplified by using the
+	automatic differentiation tools available.
 	Therefore the idea is to define the discrete Lagrangian (\ref{eq:discLag})
-	and compute the its variations by means of a \texttt{derivative}
+	and compute its variations by means of a \texttt{derivative}
 	function. The implementation is essentially \\
-	break into several section to facilitate the explanation
-	(some details are omitted for simplicity)
+	break into several section to facilitate the explanation.
+	Some details are omitted for simplicity, however, 
+	the code can be made available upon request.
 	
 	\begin{itemize}
 	\item \textbf{Problem definition:}
 	
+	\lstinputlisting[language=Python]{Text/probdef.py}
+	
+	The keyword \texttt{formulation} can also be set to \texttt{"Equal-Order"}
+	and the different parameters set to its desired value.
+	The user must also specify two functions defining the fields
+	$\etP$ and $\stP$, i.e.,
+	
+	\lstinputlisting[language=Python]{Text/eTsT.py}
+	
 	\item \textbf{Lagrangian functional:}
+	
+	The \texttt{ufl} language \cite{uff_fenics} allows the
+	expressive specification of the operators
+	involved in the variational formulation of the problem.
+	The first thing is to specify the Lagrangian function: 
+	
+	\lstinputlisting[language=Python]{Text/eTsT.py}
 	
 	\item \textbf{Boundary conditions:}
 	
 	\item \textbf{Resolution:}
 	
 	\end{itemize}	
-	
-	
-	The code can be made available upon request.
-	
+
 	
