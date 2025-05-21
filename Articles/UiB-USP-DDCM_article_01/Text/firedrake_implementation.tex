@@ -2,17 +2,9 @@
 	
 	\section{Firedrake Implementation}
 	
-	The different formulations introduced in the previous 
-	sections have been implemented in the
-	finite element platform Firedrake \cite{firedrake}. The implementation
-	of such formulations is greatly simplified by using the
-	automatic differentiation tools available.
-	Therefore the idea is to define the discrete Lagrangian (\ref{eq:discLag})
-	and compute its variations by means of a \texttt{derivative}
-	function. The implementation is 
-	broken into several sections to facilitate the explanation.
-	Some details are omitted for simplicity, however, 
-	the code can be made available upon request.
+The different formulations introduced in the previous sections have been implemented using the finite element platform Firedrake \cite{firedrake}. This implementation is significantly simplified by the availability of automatic differentiation tools. The approach involves defining the discrete Lagrangian in equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} function.
+
+For clarity, the implementation is organized into several sections. Some details are omitted for simplicity, but the complete code can be provided upon request.
 
 	In the first place all the physical and numerical parameters must be properly
 	initialize:

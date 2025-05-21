@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  21 MAY 2025 16:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  21 MAY 2025 16:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1541,23 +1541,23 @@ page group included in a single page
 
  (./Text/firedrake_implementation.tex
 
-LaTeX Warning: Citation `firedrake' on page 37 undefined on input line 7.
+LaTeX Warning: Citation `firedrake' on page 37 undefined on input line 5.
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2020/03/24 1.8d listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 19.
+nput line 11.
 
 (./Text/probdef.py
 LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 
-5.
+7.
  (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 ))
 (./Text/eTsT.py)
 
-LaTeX Warning: Citation `uff_fenics' on page 37 undefined on input line 26.
+LaTeX Warning: Citation `ufl_fenics' on page 37 undefined on input line 18.
 
 (./Text/lagrangian.py [37
 
@@ -1578,9 +1578,9 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 876F52AF0DA5E68115F854458568D716;1678.
  ) 
 Here is how much of TeX's memory you used:
- 29436 strings out of 480129
- 575621 string characters out of 5893409
- 1309762 words of memory out of 5000000
+ 29437 strings out of 480129
+ 575636 string characters out of 5893409
+ 1321735 words of memory out of 5000000
  46590 multiletter control sequences out of 15000+600000
  488956 words of font info for 102 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
@@ -1610,10 +1610,10 @@ ts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmtt8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
 onts/symbols/msbm10.pfb>
-Output written on main.pdf (40 pages, 12849864 bytes).
+Output written on main.pdf (40 pages, 12849972 bytes).
 PDF statistics:
- 8323 PDF objects out of 8907 (max. 8388607)
- 5595 compressed objects within 56 object streams
- 228 named destinations out of 1000 (max. 500000)
+ 8325 PDF objects out of 8907 (max. 8388607)
+ 5597 compressed objects within 56 object streams
+ 229 named destinations out of 1000 (max. 500000)
  313 words of extra memory for PDF output out of 10000 (max. 10000000)
 
