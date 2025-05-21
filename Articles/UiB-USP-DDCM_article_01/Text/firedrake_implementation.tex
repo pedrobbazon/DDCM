@@ -5,7 +5,8 @@
 	The different formulations introduced in the previous sections have 
 	been implemented using the finite element platform Firedrake \cite{firedrake}. 
 	This implementation is significantly simplified by the availability of automatic differentiation tools. The approach involves defining the discrete Lagrangian in 
-	equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} function.
+	equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} 
+	function.
 
 	For clarity, the implementation is organized into several sections. 
 	Some details are omitted for simplicity, but the complete code can be 
@@ -16,8 +17,13 @@
 	\texttt{\textquotesingle Natural\textquotesingle}, 
 	and the associated parameters should be adjusted according 
 	to the chosen formulation.
-	Additionally, the user must define two functions representing the fields $\etP$ and $\stP$, as well as the source term $q$ in the balance equation. That is,
+	Additionally, the user must define two functions representing 
+	the fields $\etP$ and $\stP$, as well as the source term $q$ 
+	in the balance equation. That is,
 	\lstinputlisting[language=Python]{Text/eTsT.py}	
+	This implementation can be used to solve problems similar to Test Cases 1 and 2. 
+	However, to handle more general scenarios, such as in Test Case 3,
+	an appropriate data distribution strategy must be implemented.
 	The UFL language \cite{ufl_fenics} provides an expressive way to 
 	define the operators involved in the variational formulation. 
 	The first step is to specify the finite element spaces, define the 
@@ -33,5 +39,4 @@
 	\lstinputlisting[language=Python]{Text/solve.py}
 	This formulation can be modified to account for nonlinear effects, 
 	for instance, when the reaction term depends nonlinearly on $\uP$.
-	In this example, 
 	
