@@ -2,37 +2,36 @@
 	
 	\section{Firedrake Implementation}
 	
-The different formulations introduced in the previous sections have been implemented using the finite element platform Firedrake \cite{firedrake}. This implementation is significantly simplified by the availability of automatic differentiation tools. The approach involves defining the discrete Lagrangian in equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} function.
+	The different formulations introduced in the previous sections have 
+	been implemented using the finite element platform Firedrake \cite{firedrake}. 
+	This implementation is significantly simplified by the availability of automatic differentiation tools. The approach involves defining the discrete Lagrangian in 
+	equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} function.
 
-For clarity, the implementation is organized into several sections. Some details are omitted for simplicity, but the complete code can be provided upon request.
-
-	In the first place all the physical and numerical parameters must be properly
-	initialize:
+	For clarity, the implementation is organized into several sections. 
+	Some details are omitted for simplicity, but the complete code can be 
+	provided upon request.
+	First, all physical and numerical parameters must be properly initialized:
 	\lstinputlisting[language=Python]{Text/probdef.py}
-	The keyword \texttt{formulation} can also be set to \texttt{\textquotesingle Natural\textquotesingle} and the different parameters set to their desired 
-	value, depending on the formulation adopted.
-	The user must also specify two functions defining the fields
-	$\etP$ and $\stP$ and the source term $q$ in the balance equation, 
-	i.e.,
+	The keyword \texttt{formulation} can be set to 
+	\texttt{\textquotesingle Natural\textquotesingle}, 
+	and the associated parameters should be adjusted according 
+	to the chosen formulation.
+	Additionally, the user must define two functions representing the fields $\etP$ and $\stP$, as well as the source term $q$ in the balance equation. That is,
 	\lstinputlisting[language=Python]{Text/eTsT.py}	
-	The \texttt{ufl} language \cite{ufl_fenics} allows the
-	expressive specification of the operators
-	involved in the variational formulation.
-	The first thing is to specify the finite element spaces,
-	the symbols for the different variables $\stP, \uP, \eP, \lP$ and $\mP$ 
-	and the expression of the Lagrangian function: 
+	The UFL language \cite{ufl_fenics} provides an expressive way to 
+	define the operators involved in the variational formulation. 
+	The first step is to specify the finite element spaces, define the 
+	symbols corresponding to the variables $\stP$, $\uP$, $\eP$, $\lP$, and $\mP$, 
+	and express the Lagrangian function:
 	\lstinputlisting[language=Python]{Text/lagrangian.py}
-	The boundary conditions must also be specified. In this simple
-	example homogeneous Dirichlet boundary conditions are imposed on 
-	the whole boundary, however more sophisticated 
-	cases, like mixed Dirichlet-Neumann conditions 
-	can easily be incorporated. 
-	The problem can be finally solved by invoking
-	a \texttt{PETSc} solver available in the \texttt{Firedrake}
-	platform:
+	Boundary conditions must also be defined. In this simple example, 
+	homogeneous Dirichlet boundary conditions are imposed on the entire 
+	boundary. However, more complex cases, such as mixed Dirichlet–Neumann 
+	conditions, can be easily incorporated.
+	Finally, the problem is solved using a PETSc solver provided by 
+	the Firedrake platform:
 	\lstinputlisting[language=Python]{Text/solve.py}
-	This formulation can be change to account for non-linear effects.
-	This would be the case for instance if the reaction term above depends 
-	in a non-linear manner of $u$.
-	
+	This formulation can be modified to account for nonlinear effects, 
+	for instance, when the reaction term depends nonlinearly on $\uP$.
+	In this example, 
 	
