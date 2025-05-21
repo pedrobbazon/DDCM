@@ -9,38 +9,38 @@
 	automatic differentiation tools available.
 	Therefore the idea is to define the discrete Lagrangian (\ref{eq:discLag})
 	and compute its variations by means of a \texttt{derivative}
-	function. The implementation is essentially \\
-	break into several section to facilitate the explanation.
+	function. The implementation is 
+	broken into several sections to facilitate the explanation.
 	Some details are omitted for simplicity, however, 
 	the code can be made available upon request.
-	
-	\begin{itemize}
-	\item \textbf{Problem definition:}
-	
+
+	In the first place all the physical and numerical parameters must be properly
+	initialize:
 	\lstinputlisting[language=Python]{Text/probdef.py}
-	
-	The keyword \texttt{formulation} can also be set to \texttt{"Equal-Order"}
-	and the different parameters set to its desired value.
+	The keyword \texttt{formulation} can also be set to \texttt{\textquotesingle Natural\textquotesingle} and the different parameters set to their desired 
+	value, depending on the formulation adopted.
 	The user must also specify two functions defining the fields
-	$\etP$ and $\stP$, i.e.,
-	
-	\lstinputlisting[language=Python]{Text/eTsT.py}
-	
-	\item \textbf{Lagrangian functional:}
-	
+	$\etP$ and $\stP$ and the source term $q$ in the balance equation, 
+	i.e.,
+	\lstinputlisting[language=Python]{Text/eTsT.py}	
 	The \texttt{ufl} language \cite{uff_fenics} allows the
 	expressive specification of the operators
-	involved in the variational formulation of the problem.
-	The first thing is to specify the Lagrangian function: 
-	
+	involved in the variational formulation.
+	The first thing is to specify the finite element spaces,
+	the symbols for the different variables $\stP, \uP, \eP, \lP$ and $\mP$ 
+	and the expression of the Lagrangian function: 
 	\lstinputlisting[language=Python]{Text/lagrangian.py}
-	
-	\item \textbf{Boundary conditions:}
-	
-	\item \textbf{Resolution:}
-	
+	The boundary conditions must also be specified. In this simple
+	example homogeneous Dirichlet boundary conditions are imposed on 
+	the whole boundary, however more sophisticated 
+	cases, like mixed Dirichlet-Neumann conditions 
+	can easily be incorporated. 
+	The problem can be finally solved by invoking
+	a \texttt{PETSc} solver available in the \texttt{Firedrake}
+	platform:
 	\lstinputlisting[language=Python]{Text/solve.py}
+	This formulation can be change to account for non-linear effects.
+	This would be the case for instance if the reaction term above depends 
+	in a non-linear manner of $u$.
 	
-	\end{itemize}	
-
 	
