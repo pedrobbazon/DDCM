@@ -8,11 +8,12 @@ import os
 
 '''
 This class has the following attributes: it computes the convergence rates
-given the characteristic mesh size h and the errors. Notice that the error should be 
-a dictionary whose keys are the norms and whose values are lists. Also, it generates 
-a table summarizing the errors as a function of h as well as the final convergence rates per norm. 
-As output, it produces a .txt file and a .npy file. The former is just for consulting, whereas 
-the later is used to generate the graphs later on. 
+given the characteristic mesh size h and the errors. Notice that the error 
+should be a dictionary whose keys are the norms and whose values are lists. 
+Also, it generates a table summarizing the errors as a function of h as well 
+as the final convergence rates per norm. As output, it produces a .txt file 
+and a .npy file. The former is just for consulting, whereas the later is 
+used to generate the graphs later on. 
 '''
 
 class DDCM_save_results:
@@ -23,9 +24,7 @@ class DDCM_save_results:
         self.formulation = formulation
         
     def compute_convergence_rates(self):
-        '''
-        Compute the convergence rate based on the two last errors and mesh sizes
-        '''
+        ''' Compute the convergence rate based on the two last errors and mesh sizes '''
         conv_rates = {}
         for key, value in self.errors.items():
             if np.all(np.isnan(value)):
@@ -35,46 +34,56 @@ class DDCM_save_results:
                 conv_rates[key] = [p]  
         return conv_rates
 
-    def save_results(self, order_poly, filename_base, foldername):
-        '''
-        Save the results in a table (txt formats)
-        '''
-        conv_rates = self.compute_convergence_rates()
-        headers = ['Norm'] + [f'{size}' for size in self.hhs] + ['Convergence Rate']
+    def _format_table(self, conv_rates):
+        headers = ['Norm'] + [f'{h}' for h in self.hhs] + ['Convergence Rate']
         table_data = []
-        
-        # Define each row
-        for norm, error in self.errors.items():
-            row = [norm] + error + conv_rates[norm]
+
+        for norm, error_list in self.errors.items():
+            row = [norm] + error_list + conv_rates[norm]
             table_data.append(row)
-                   
-        # Generate table for txt output
-        table = tabulate(table_data, headers=headers, tablefmt="github")
-                   
-        # Print the results
-        print(f"\nResults for {self.formulation} formulation ({order_poly}):")
-        print(table)
-        
-        # We save all the results in a folder
-        subfolder = os.path.join(foldername, order_poly)
-        if not os.path.exists(subfolder):
-            os.makedirs(subfolder)
-            
-        # .txt file
-        txt_filename = f'{filename_base}.txt'
-        txt_path = os.path.join(subfolder, txt_filename)
+
+        table_str = tabulate(table_data, headers=headers, tablefmt="github")
+        return table_str, table_data, headers
+    
+    def _save_txt(self, table_str, txt_path):
+        """Save the formatted table as a .txt file."""
         with open(txt_path, 'w') as f:
-            f.write(table)
-                
-        # .npy file for further visualization
-        results_dict = {
+            f.write(table_str)
+
+    def _save_npy(self, data_dict, npy_path):
+        """Save the results dictionary as a .npy file."""
+        np.save(npy_path, data_dict, allow_pickle=True)
+
+    def save_results(self, order_poly, filename_base, foldername):
+        # 1: Compute convergence rates
+        conv_rates = self.compute_convergence_rates()
+
+        # 2: Format table
+        table_str, table_data, headers = self._format_table(conv_rates)
+
+        # 3: Print to terminal
+        print(f"\nResults for {self.formulation} formulation ({order_poly}):")
+        print(table_str)
+
+        # 4: Create output directory
+        subfolder = os.path.join(foldername, order_poly)
+        os.makedirs(subfolder, exist_ok=True)
+
+        # 5: Save to .txt
+        txt_path = os.path.join(subfolder, f'{filename_base}.txt')
+        self._save_txt(table_str, txt_path)
+
+        # 6: Save to .npy
+        npy_path = os.path.join(subfolder, f'{filename_base}.npy')
+        data_dict = {
             'h': self.hhs,
             'errors': self.errors,
             'conv_rates': conv_rates
         }
-        npy_filename = f'{filename_base}.npy'
-        npy_path = os.path.join(subfolder,npy_filename)
-        np.save(npy_path, results_dict, allow_pickle=True)
-                
-        return table
+        self._save_npy(data_dict, npy_path)
+
+        return table_str
+
+    
+    
     

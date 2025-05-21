@@ -513,9 +513,9 @@ def get_stab_params(formulation):
         return {None: None}
     elif formulation == 'Equal-Order':
         return {
-            'Unstabilized': None,
+            # 'Unstabilized': None,
             'Fully stabilized': {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
-            'Minimally stabilized': {'alpha': 0.125, 'eta': 0.5}
+            # 'Minimally stabilized': {'alpha': 0.125, 'eta': 0.5}
         }
     else:
         raise ValueError("Invalid formulation")
@@ -547,16 +547,16 @@ def run_test_case_1(formulation, order_poly, foldername):
 
         hhs = []
         errors = {key: [] for key in norm_list}
-        for N in [25, 50, 100, 200]:
+        for N in [100]:
             output = main_EX1_(formulation, N, order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors):
                 errors[key].append(output[i + 1])
 
-        filename_base = get_filename_base(formulation, 'convex', param)
-        os.makedirs(foldername, exist_ok=True)
-        results = DDCM_save_results(hhs, errors, formulation)
-        results.save_results(order_poly, filename_base, foldername)
+        # filename_base = get_filename_base(formulation, 'convex', param)
+        # os.makedirs(foldername, exist_ok=True)
+        # results = DDCM_save_results(hhs, errors, formulation)
+        # results.save_results(order_poly, filename_base, foldername)
 
 # ------------------------------
 # Test Case 2: Non-Convex Domain
@@ -578,7 +578,7 @@ def run_test_case_2(formulation, order_poly, foldername, case_corner):
             for i, key in enumerate(errors):
                 errors[key].append(output[i + 1])
 
-        filename_base = get_filename_base(formulation, order_poly, label, param)
+        filename_base = get_filename_base(formulation, label, param)
         os.makedirs(foldername, exist_ok=True)
         results = DDCM_save_results(hhs, errors, formulation)
         results.save_results(order_poly, filename_base, foldername)
@@ -589,7 +589,7 @@ def run_test_case_2(formulation, order_poly, foldername, case_corner):
 def run_test_case_3(formulation, order_poly, foldername, Nsamples_list):
     stab_params = get_stab_params(formulation)
     norm_list = get_norm_list(formulation)
-    Nhs = [25, 50]
+    Nhs = [25, 50, 100, 200]
 
     for param, val in stab_params.items():
         kwargs = {} if val is None else val.copy()
@@ -605,7 +605,7 @@ def run_test_case_3(formulation, order_poly, foldername, Nsamples_list):
                 for i, key in enumerate(errors):
                     errors[key].append(output[i + 1])
 
-            filename_base = get_filename_base(formulation, order_poly, f'Ns{Ns}', param)
+            filename_base = get_filename_base(formulation, f'Ns{Ns}', param)
             os.makedirs(foldername, exist_ok=True)
             results = DDCM_save_results(hhs, errors, formulation)
             results.save_results(order_poly, filename_base, foldername)
@@ -616,7 +616,7 @@ def run_test_case_3(formulation, order_poly, foldername, Nsamples_list):
 if __name__ == "__main__":
     main_selector = int(sys.argv[1])
 
-    formulation = 'Natural'  # or 'Natural'
+    formulation = 'Equal-Order'  # or 'Natural'
     order_poly = 'Linear'
 
     if main_selector == 1:
@@ -624,6 +624,6 @@ if __name__ == "__main__":
     elif main_selector == 2:
         run_test_case_2(formulation, order_poly, '02_test_case_non_convex_domain', case_corner=3)
     elif main_selector == 3:
-        run_test_case_3(formulation, order_poly, '03_test_case_data_assignation', Nsamples_list=[64, 128])
+        run_test_case_3(formulation, order_poly, '03_test_case_data_assignation', Nsamples_list=[64, 128, 256, 512, 1024, 2048])
     else:
         raise ValueError("Invalid main_selector. Choose 1, 2, or 3.")

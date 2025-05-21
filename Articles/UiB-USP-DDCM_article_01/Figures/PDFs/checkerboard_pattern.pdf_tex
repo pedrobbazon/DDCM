@@ -1,0 +1,86 @@
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'checkerboard_pattern.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{588.85983445bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.30560024)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.09939868,0.00238108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
+    \put(0.35234184,0.00238108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
+    \put(0.60606552,0.00238108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
+    \put(0.85854855,0.00238108){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{checkerboard_pattern.pdf}}%
+    \put(0.03586082,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-4.6e-05}\end{tabular}}}}%
+    \put(0.20671427,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.0e-04}\end{tabular}}}}%
+    \put(0.08909316,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}%
+    \put(0.12127007,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{3e-5}\end{tabular}}}}%
+    \put(0.15921959,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{6e-5}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{checkerboard_pattern.pdf}}%
+    \put(0.2887625,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-2.1e-04}\end{tabular}}}}%
+    \put(0.45961601,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.9e-04}\end{tabular}}}}%
+    \put(0.35283807,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-5e-5}\end{tabular}}}}%
+    \put(0.40574069,0.29982081){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{5e-5}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{checkerboard_pattern.pdf}}%
+    \put(0.54203293,0.29980218){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-8.7e-05}\end{tabular}}}}%
+    \put(0.71295365,0.29980218){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{9.6e-05}\end{tabular}}}}%
+    \put(0.59356159,0.29980218){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-2e-5}\end{tabular}}}}%
+    \put(0.63102974,0.30003148){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1e-5}\end{tabular}}}}%
+    \put(0.66874476,0.29980218){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4e-5}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{checkerboard_pattern.pdf}}%
+    \put(0.79340107,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-1.4e-04}\end{tabular}}}}%
+    \put(0.9677561,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.6e-04}\end{tabular}}}}%
+    \put(0.8403822,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-5e-5}\end{tabular}}}}%
+    \put(0.86833939,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}%
+    \put(0.89642926,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{5e-5}\end{tabular}}}}%
+    \put(0.92737857,0.29955644){\color[rgb]{0,0,0.15686275}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1e-4}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{checkerboard_pattern.pdf}}%
+  \end{picture}%
+\endgroup%

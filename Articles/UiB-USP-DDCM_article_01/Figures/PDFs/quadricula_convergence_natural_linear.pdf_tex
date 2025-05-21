@@ -1,4 +1,4 @@
-%% Creator: Inkscape 1.4.1 (1:1.4.1+202503302257+93de688d07), www.inkscape.org
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
 %% Accompanies image file 'quadricula_convergence_natural_linear.pdf' (pdf, eps, ps)
 %%
@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{533.47827341bp}%
+    \setlength{\unitlength}{533.47831666bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,16 +50,16 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.5732042)%
+  \begin{picture}(1,1.57359276)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
-    \put(0.23537183,0.37925302){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
+    \put(0.23537178,0.37964164){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
+    \put(0.2353956,1.18136988){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
+    \put(0.73518054,1.18136988){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
+    \put(0.23600975,0.78050572){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
+    \put(0.73518054,0.78050572){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
+    \put(0.73793711,0.37964164){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{quadricula_convergence_natural_linear.pdf}}%
-    \put(0.23539565,1.18098133){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
-    \put(0.73518059,1.18098133){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
-    \put(0.23600979,0.78011713){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
-    \put(0.73518059,0.78011713){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}$\end{tabular}}}}%
-    \put(0.73793715,0.37925302){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
-    \put(0.62630896,0.06885255){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
+    \put(0.62630892,0.06924136){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
   \end{picture}%
 \endgroup%

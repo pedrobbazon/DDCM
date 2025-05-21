@@ -148,22 +148,14 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
-    # --- Extract Eigenvalues ---
-    # A = fd.assemble(Jac).M.handle  # Get PETSc matrix
-    # A_np = A.toarray()
-
-    # # Compute eigenvalues
-    # eigenvalues = spla.eigvals(A_np)
-    # condition_number = max(abs(eigenvalues)) / min(abs(eigenvalues))
-
-    # print("Eigenvalues:", np.sort(eigenvalues))
-    # print("maximum eigenvalue:", max(abs(eigenvalues)))
-    # print("minimum eigenvalue:", min(abs(eigenvalues)))
-    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Condition Number:", condition_number)
-
-    
-    # udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
+    udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
     # lmbddif = fd.assemble(interpolate(w.sub(3) - lmbd_boundary_vals(x), SF))
+    
+    # Check if the inner product between s and g is always negative 
+    # DG0 = fd.FunctionSpace(mesh, family="DG", degree=0)
+    # s_inner_g = fd.Function(DG0)
+    # s_inner_g.interpolate(fd.inner(w.sub(0), w.sub(2)))
+    
     
     if(dir_outs != None):
 
@@ -192,9 +184,13 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         w.sub(4).rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
         
-        # filename = dir_outs+'/udif.pvd'
-        # udif.rename('DDCM.udif')
-        # VTKFile(filename, mode=mode).write(udif, time=tt)
+        # filename = dir_outs+'/s_inner_g.pvd'
+        # s_inner_g.rename('DDCM.s_inner_g')
+        # VTKFile(filename, mode=mode).write(s_inner_g, time=tt)
+        
+        filename = dir_outs+'/udif.pvd'
+        udif.rename('DDCM.udif')
+        VTKFile(filename, mode=mode).write(udif, time=tt)
         
         # filename = dir_outs+'/lmbddif.pvd'
         # lmbddif.rename('DDCM.lmbddif')
