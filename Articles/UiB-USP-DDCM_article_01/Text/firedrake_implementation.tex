@@ -37,6 +37,7 @@
 	Finally, the problem is solved using a PETSc solver provided by 
 	the Firedrake platform:
 	\lstinputlisting[language=Python]{Text/solve.py}
-	This formulation can be modified to account for nonlinear effects, 
+	In this implementation, we have omitted the artificial forcing term $f$, introduced in equation (\ref{eq:balance_with_f}), for simplicity. This term was included solely for 
+	the purpose of verifying the method against manufactured solutions. Last but not least, notice that the implementation can be easily modified to account for nonlinear effects, 
 	for instance, when the reaction term depends nonlinearly on $\uP$.
 	
