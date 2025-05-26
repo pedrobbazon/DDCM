@@ -2,45 +2,42 @@
 	
 	\section{Firedrake Implementation}
 	
-	The different formulations introduced in the previous 
-	sections have been implemented in the
-	finite element platform Firedrake \cite{firedrake}. The implementation
-	of such formulations is greatly simplified by using the
-	automatic differentiation tools available.
-	Therefore the idea is to define the discrete Lagrangian (\ref{eq:discLag})
-	and compute its variations by means of a \texttt{derivative}
-	function. The implementation is essentially \\
-	break into several section to facilitate the explanation.
-	Some details are omitted for simplicity, however, 
-	the code can be made available upon request.
-	
-	\begin{itemize}
-	\item \textbf{Problem definition:}
-	
-	\lstinputlisting[language=Python]{Text/probdef.py}
-	
-	The keyword \texttt{formulation} can also be set to \texttt{"Equal-Order"}
-	and the different parameters set to its desired value.
-	The user must also specify two functions defining the fields
-	$\etP$ and $\stP$, i.e.,
-	
-	\lstinputlisting[language=Python]{Text/eTsT.py}
-	
-	\item \textbf{Lagrangian functional:}
-	
-	The \texttt{ufl} language \cite{uff_fenics} allows the
-	expressive specification of the operators
-	involved in the variational formulation of the problem.
-	The first thing is to specify the Lagrangian function: 
-	
-	\lstinputlisting[language=Python]{Text/lagrangian.py}
-	
-	\item \textbf{Boundary conditions:}
-	
-	\item \textbf{Resolution:}
-	
-	\lstinputlisting[language=Python]{Text/solve.py}
-	
-	\end{itemize}	
+	The different formulations introduced in the previous sections have 
+	been implemented using the finite element platform Firedrake \cite{firedrake}. 
+	This implementation is significantly simplified by the availability of automatic differentiation tools. The approach involves defining the discrete Lagrangian in 
+	equation (\ref{eq:discLag}) and computing its variations using a \texttt{derivative} 
+	function.
 
+	For clarity, the implementation is organized into several sections. 
+	Some details are omitted for simplicity, but the complete code can be 
+	provided upon request.
+	First, all physical and numerical parameters must be properly initialized:
+	\lstinputlisting[language=Python]{Text/probdef.py}
+	The keyword \texttt{formulation} can be set to 
+	\texttt{\textquotesingle Natural\textquotesingle}, 
+	and the associated parameters should be adjusted according 
+	to the chosen formulation.
+	Additionally, the user must define two functions representing 
+	the fields $\etP$ and $\stP$, as well as the source term $q$ 
+	in the balance equation. That is,
+	\lstinputlisting[language=Python]{Text/eTsT.py}	
+	This implementation can be used to solve problems similar to Test Cases 1 and 2. 
+	However, to handle more general scenarios, such as in Test Case 3,
+	an appropriate data distribution strategy must be implemented.
+	The UFL language \cite{ufl_fenics} provides an expressive way to 
+	define the operators involved in the variational formulation. 
+	The first step is to specify the finite element spaces, define the 
+	symbols corresponding to the variables $\stP$, $\uP$, $\eP$, $\lP$, and $\mP$, 
+	and express the Lagrangian function:
+	\lstinputlisting[language=Python]{Text/lagrangian.py}
+	Boundary conditions must also be defined. In this simple example, 
+	homogeneous Dirichlet boundary conditions are imposed on the entire 
+	boundary. However, more complex cases, such as mixed Dirichlet–Neumann 
+	conditions, can be easily incorporated.
+	Finally, the problem is solved using a PETSc solver provided by 
+	the Firedrake platform:
+	\lstinputlisting[language=Python]{Text/solve.py}
+	In this implementation, we have omitted the artificial forcing term $f$, introduced in equation (\ref{eq:balance_with_f}), for simplicity. This term was included solely for 
+	the purpose of verifying the method against manufactured solutions. Last but not least, notice that the implementation can be easily modified to account for nonlinear effects, 
+	for instance, when the reaction term depends nonlinearly on $\uP$.
 	
