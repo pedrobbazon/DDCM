@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  21 MAY 2025 15:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.3.16)  23 MAY 2025 10:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1261,7 +1261,7 @@ Overfull \hbox (1.68259pt too wide) detected at line 254
  []
 
 (./Figures/PDFs/geometries_non_convex.pdf_tex
-<Figures/PDFs/geometries_non_convex.pdf, id=4678, page=1, 609.27625pt x 201.753
+<Figures/PDFs/geometries_non_convex.pdf, id=4627, page=1, 609.27625pt x 201.753
 75pt>
 File: Figures/PDFs/geometries_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/geometries_non_convex.pdf, page 1>
@@ -1290,28 +1290,28 @@ LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <5.5> not available
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <5.5> not available
 (Font)              size <5> substituted on input line 57.
 
-<Figures/PDFs/geometries_non_convex.pdf, id=4679, page=2, 609.27625pt x 201.753
+<Figures/PDFs/geometries_non_convex.pdf, id=4628, page=2, 609.27625pt x 201.753
 75pt>
 File: Figures/PDFs/geometries_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/geometries_non_convex.pdf, page 2>
 Package pdftex.def Info: Figures/PDFs/geometries_non_convex.pdf , page2 used on
  input line 69.
 (pdftex.def)             Requested size: 397.485pt x 131.62477pt.
-<Figures/PDFs/geometries_non_convex.pdf, id=4680, page=3, 609.27625pt x 201.753
+<Figures/PDFs/geometries_non_convex.pdf, id=4629, page=3, 609.27625pt x 201.753
 75pt>
 File: Figures/PDFs/geometries_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/geometries_non_convex.pdf, page 3>
 Package pdftex.def Info: Figures/PDFs/geometries_non_convex.pdf , page3 used on
  input line 71.
 (pdftex.def)             Requested size: 397.485pt x 131.62477pt.
-<Figures/PDFs/geometries_non_convex.pdf, id=4681, page=4, 609.27625pt x 201.753
+<Figures/PDFs/geometries_non_convex.pdf, id=4630, page=4, 609.27625pt x 201.753
 75pt>
 File: Figures/PDFs/geometries_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/geometries_non_convex.pdf, page 4>
 Package pdftex.def Info: Figures/PDFs/geometries_non_convex.pdf , page4 used on
  input line 73.
 (pdftex.def)             Requested size: 397.485pt x 131.62477pt.
-<Figures/PDFs/geometries_non_convex.pdf, id=4682, page=5, 609.27625pt x 201.753
+<Figures/PDFs/geometries_non_convex.pdf, id=4631, page=5, 609.27625pt x 201.753
 75pt>
 File: Figures/PDFs/geometries_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/geometries_non_convex.pdf, page 5>
@@ -1319,42 +1319,42 @@ Package pdftex.def Info: Figures/PDFs/geometries_non_convex.pdf , page5 used on
  input line 75.
 (pdftex.def)             Requested size: 397.485pt x 131.62477pt.
 ) (./Figures/PDFs/all_fields_ref_non_convex.pdf_tex
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4684, page=1, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4633, page=1, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 1>
 Package pdftex.def Info: Figures/PDFs/all_fields_ref_non_convex.pdf , page1 use
 d on input line 62.
 (pdftex.def)             Requested size: 397.485pt x 215.78197pt.
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4685, page=2, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4634, page=2, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 2>
 Package pdftex.def Info: Figures/PDFs/all_fields_ref_non_convex.pdf , page2 use
 d on input line 70.
 (pdftex.def)             Requested size: 397.485pt x 215.78197pt.
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4686, page=3, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4635, page=3, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 3>
 Package pdftex.def Info: Figures/PDFs/all_fields_ref_non_convex.pdf , page3 use
 d on input line 75.
 (pdftex.def)             Requested size: 397.485pt x 215.78197pt.
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4687, page=4, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4636, page=4, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 4>
 Package pdftex.def Info: Figures/PDFs/all_fields_ref_non_convex.pdf , page4 use
 d on input line 80.
 (pdftex.def)             Requested size: 397.485pt x 215.78197pt.
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4688, page=5, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4637, page=5, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 5>
 Package pdftex.def Info: Figures/PDFs/all_fields_ref_non_convex.pdf , page5 use
 d on input line 85.
 (pdftex.def)             Requested size: 397.485pt x 215.78197pt.
-<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4689, page=6, 632.3625pt x 343.
+<Figures/PDFs/all_fields_ref_non_convex.pdf, id=4638, page=6, 632.3625pt x 343.
 2825pt>
 File: Figures/PDFs/all_fields_ref_non_convex.pdf Graphic file (type pdf)
 <use Figures/PDFs/all_fields_ref_non_convex.pdf, page 6>
@@ -1410,7 +1410,7 @@ x.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 pdfTeX warning: /usr/bin/pdflatex (file ./Figures/PDFs/all_fields_ref_non_conve
 x.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >] [28] (./Figures/PDFs/compound_Nsamples.pdf_tex
-<Figures/PDFs/compound_Nsamples.pdf, id=4829, page=1, 13231.4325pt x 10200.1075
+<Figures/PDFs/compound_Nsamples.pdf, id=4778, page=1, 13231.4325pt x 10200.1075
 pt>
 File: Figures/PDFs/compound_Nsamples.pdf Graphic file (type pdf)
 <use Figures/PDFs/compound_Nsamples.pdf, page 1>
@@ -1423,7 +1423,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [29] [30 <./Figures/PDFs/compound_Nsamples.pdf>]
 (./Figures/PDFs/quadricula_convergence_natural_linear.pdf_tex
-<Figures/PDFs/quadricula_convergence_natural_linear.pdf, id=4909, page=1, 536.0
+<Figures/PDFs/quadricula_convergence_natural_linear.pdf, id=4858, page=1, 536.0
 025pt x 843.15pt>
 File: Figures/PDFs/quadricula_convergence_natural_linear.pdf Graphic file (type
  pdf)
@@ -1439,8 +1439,8 @@ LaTeX Warning: Float too large for page by 43.04964pt on input line 428.
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 (./Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf_tex
-<Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf, id=49
-10, page=1, 531.9875pt x 841.1425pt>
+<Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf, id=48
+59, page=1, 531.9875pt x 841.1425pt>
 File: Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf G
 raphic file (type pdf)
 <use Figures/PDFs/quadricula_convergence_equal_order_unstabilized_linear.pdf, p
@@ -1459,7 +1459,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 (./Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf_
 tex
 <Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf, i
-d=4911, page=1, 536.0025pt x 840.13875pt>
+d=4860, page=1, 536.0025pt x 840.13875pt>
 File: Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.p
 df Graphic file (type pdf)
 <use Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pd
@@ -1468,7 +1468,7 @@ Package pdftex.def Info: Figures/PDFs/quadricula_convergence_equal_order_fully_
 stabilized_linear.pdf , page1 used on input line 62.
 (pdftex.def)             Requested size: 397.485pt x 623.01335pt.
 <Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pdf, i
-d=4912, page=2, 536.0025pt x 840.13875pt>
+d=4861, page=2, 536.0025pt x 840.13875pt>
 File: Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.p
 df Graphic file (type pdf)
 <use Figures/PDFs/quadricula_convergence_equal_order_fully_stabilized_linear.pd
@@ -1487,7 +1487,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 (./Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.
 pdf_tex
 <Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.pd
-f, id=4913, page=1, 536.0025pt x 842.14626pt>
+f, id=4862, page=1, 536.0025pt x 842.14626pt>
 File: Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_line
 ar.pdf Graphic file (type pdf)
 <use Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linea
@@ -1496,7 +1496,7 @@ Package pdftex.def Info: Figures/PDFs/quadricula_convergence_equal_order_minima
 lly_stabilized_linear.pdf , page1 used on input line 62.
 (pdftex.def)             Requested size: 397.485pt x 624.50204pt.
 <Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linear.pd
-f, id=4914, page=2, 536.0025pt x 842.14626pt>
+f, id=4863, page=2, 536.0025pt x 842.14626pt>
 File: Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_line
 ar.pdf Graphic file (type pdf)
 <use Figures/PDFs/quadricula_convergence_equal_order_minimally_stabilized_linea
@@ -1602,10 +1602,10 @@ cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
 12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><
 /usr/share/texmf/fonts/type1/public/cm-super/sfss1200.pfb>
-Output written on main.pdf (40 pages, 12852550 bytes).
+Output written on main.pdf (40 pages, 12853630 bytes).
 PDF statistics:
- 8317 PDF objects out of 8907 (max. 8388607)
- 5589 compressed objects within 56 object streams
+ 8266 PDF objects out of 8907 (max. 8388607)
+ 5555 compressed objects within 56 object streams
  226 named destinations out of 1000 (max. 500000)
  313 words of extra memory for PDF output out of 10000 (max. 10000000)
 
