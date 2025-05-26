@@ -60,7 +60,7 @@
     \put(0.23537182,0.37939596){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
     \put(0.73793704,0.37939596){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{quadricula_convergence_equal_order_minimally_stabilized_linear.pdf}}%
-    \put(0.58798308,0.11595927){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
+    \put(0.62453552,0.07097081){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{quadricula_convergence_equal_order_minimally_stabilized_linear.pdf}}%
   \end{picture}%
 \endgroup%

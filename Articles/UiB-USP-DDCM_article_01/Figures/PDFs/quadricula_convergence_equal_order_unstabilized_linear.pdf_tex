@@ -60,6 +60,6 @@
     \put(0.23730431,0.38247014){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}$\end{tabular}}}}%
     \put(0.74246314,0.38247014){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{quadricula_convergence_equal_order_unstabilized_linear.pdf}}%
-    \put(0.58586481,0.11607098){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
+    \put(0.63122175,0.07071314){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(g)}$\end{tabular}}}}%
   \end{picture}%
 \endgroup%

@@ -1,4 +1,4 @@
-%% Creator: Inkscape 1.4.1 (1:1.4.1+202503302257+93de688d07), www.inkscape.org
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
 %% Accompanies image file 'all_fields_ref_non_convex.pdf' (pdf, eps, ps)
 %%
@@ -56,37 +56,38 @@
     \put(0.14963213,0.2823685){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
     \put(0.43170188,0.28064513){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}~u$\end{tabular}}}}%
     \put(0.71942193,0.28052142){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}~\lambda$\end{tabular}}}}%
-    \put(0.1256167,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}~\mathbf{e}$\end{tabular}}}}%
-    \put(0.43186322,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}~\mathbf{s}$\end{tabular}}}}%
+    \put(0.1256167,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}~\mathbf{s}$\end{tabular}}}}%
+    \put(0.43186322,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(e)}~\mathbf{\tilde{s}}$\end{tabular}}}}%
     \put(0.7210563,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(f)}~\boldsymbol{\mu}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{all_fields_ref_non_convex.pdf}}%
-    \put(0.60148688,0.5137444){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-4.5e-09}\end{tabular}}}}}%
-    \put(0.60148688,0.33223381){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.2}\end{tabular}}}}}%
-    \put(0.60148688,0.47425063){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.2}\end{tabular}}}}}%
-    \put(0.60148688,0.44635683){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.4}\end{tabular}}}}}%
-    \put(0.60148688,0.41639664){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.6}\end{tabular}}}}}%
-    \put(0.60148688,0.38850288){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.8}\end{tabular}}}}}%
-    \put(0.60148688,0.360926){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
+    \put(0.60192309,0.5134881){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}}%
+    \put(0.60192309,0.33753175){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.2}\end{tabular}}}}}%
+    \put(0.60192309,0.48487666){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.2}\end{tabular}}}}}%
+    \put(0.60192309,0.45593636){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.4}\end{tabular}}}}}%
+    \put(0.60192309,0.42485214){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.6}\end{tabular}}}}}%
+    \put(0.60192309,0.39591187){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.8}\end{tabular}}}}}%
+    \put(0.60192309,0.36730039){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{all_fields_ref_non_convex.pdf}}%
-    \put(0.8901238,0.50652325){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-1.6e-02}\end{tabular}}}}}%
-    \put(0.8901238,0.34014452){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.6e-02}\end{tabular}}}}}%
-    \put(0.8901238,0.44893437){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.005}\end{tabular}}}}}%
-    \put(0.8901238,0.39801944){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.005}\end{tabular}}}}}%
+    \put(0.89102166,0.51357012){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-1.6e-02}\end{tabular}}}}}%
+    \put(0.89102166,0.33295283){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.6e-02}\end{tabular}}}}}%
+    \put(0.89102166,0.45105283){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.005}\end{tabular}}}}}%
+    \put(0.89102166,0.39578064){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.005}\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=3]{all_fields_ref_non_convex.pdf}}%
-    \put(0.89060186,0.23241553){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.0}\end{tabular}}}}}%
-    \put(0.89060186,0.06850441){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{7.1e-02}\end{tabular}}}}}%
-    \put(0.89060186,0.16527108){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.03}\end{tabular}}}}}%
-    \put(0.89060186,0.11891908){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.05}\end{tabular}}}}}%
+    \put(0.89197078,0.24193656){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.0}\end{tabular}}}}}%
+    \put(0.89197078,0.05981323){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{7.1e-02}\end{tabular}}}}}%
+    \put(0.89197078,0.16733168){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.03}\end{tabular}}}}}%
+    \put(0.89197078,0.11582949){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.05}\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=4]{all_fields_ref_non_convex.pdf}}%
-    \put(0.3129757,0.22363332){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4.9e-01}\end{tabular}}}}}%
-    \put(0.3129757,0.06262264){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{5.4}\end{tabular}}}}}%
-    \put(0.3129757,0.17597994){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
-    \put(0.3129757,0.12940956){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
+    \put(0.30548916,0.23094614){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4.9e-01}\end{tabular}}}}}%
+    \put(0.30548916,0.05204543){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{5.4}\end{tabular}}}}}%
+    \put(0.30548916,0.17799801){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
+    \put(0.30548916,0.12625312){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=5]{all_fields_ref_non_convex.pdf}}%
-    \put(0.60190932,0.22277164){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4.9e-01}\end{tabular}}}}}%
-    \put(0.60190932,0.06176095){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{5.4}\end{tabular}}}}}%
-    \put(0.60190932,0.17511826){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
-    \put(0.60190932,0.12854788){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
+    \put(0.60227917,0.23448672){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4.7e-01}\end{tabular}}}}}%
+    \put(0.60227917,0.05929733){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{4.1e+00}\end{tabular}}}}}%
+    \put(0.60227917,0.17304759){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
+    \put(0.60227917,0.11687465){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=6]{all_fields_ref_non_convex.pdf}}%
+    \put(0.1256167,0.00343831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(d)}~\mathbf{s}$\end{tabular}}}}%
   \end{picture}%
 \endgroup%

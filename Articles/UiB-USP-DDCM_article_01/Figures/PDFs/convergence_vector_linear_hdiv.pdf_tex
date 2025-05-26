@@ -1,6 +1,6 @@
-%% Creator: Inkscape 1.4.1 (1:1.4.1+202503302257+93de688d07), www.inkscape.org
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'convergence_vector_low_poly_hdiv.pdf' (pdf, eps, ps)
+%% Accompanies image file 'convergence_vector_linear_hdiv.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{533.47827341bp}%
+    \setlength{\unitlength}{533.47831666bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,12 +50,12 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.81536349)%
+  \begin{picture}(1,0.81536342)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
-    \put(0.25136254,0.41677514){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
-    \put(0.75180168,0.41677518){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
-    \put(0.49804,0.00318027){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
+    \put(0.25136252,0.41677511){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(a)}$\end{tabular}}}}%
+    \put(0.75180158,0.41677515){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(b)}$\end{tabular}}}}%
+    \put(0.49803995,0.00318027){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mbox{(c)}$\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{convergence_vector_linear_hdiv.pdf}}%
   \end{picture}%
 \endgroup%
