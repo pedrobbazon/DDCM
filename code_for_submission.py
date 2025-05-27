@@ -316,10 +316,6 @@ poisson.save_poisson(tt=0.0, dir_outs='test_mypoissonrefsol')
 # ---------------------------------------
 # DDCM problem
 # ---------------------------------------
-'''
-Read or sample some synthetic data from a standard solution: 
-The idea is to produce some plausible data similar to what an experiment would deliver
-'''
 print('Solving the DDCM problem')
 ddcm = DDCMProblem(mesh, pars, exact_fields, orders=[0,1])
 ddcm.solve_ddcm()
@@ -329,3 +325,27 @@ ddcm.save_ddcm(tt=0.0, dir_outs='test_myddcmsol')
 # Complete
 # ---------------------------------------
 print('Done!')
+
+
+
+'''
+def ddcm_results(field, name, dir_outs, mode, tt):
+    # Create directory
+    filename = os.path.join(dir_outs, f"{name}.pvd")
+    field.rename(f"DDCM.{name}")
+    VTKFile(filename, mode=mode).write(field, time=tt)
+
+
+tt=0.0
+dir_outs = 'new_myddcmsol'
+fields = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+mode = 'w' if tt == 0.0 else 'a'
+for field, name in zip(fields, ['s', 'u', 'e', 'l', 'm']):
+    ddcm_results(field, name, dir_outs, mode, tt)
+#------------------------------------------------------------
+'''
+
+
+
+
+
