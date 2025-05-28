@@ -1,5 +1,7 @@
 # Import firedrake
 import firedrake as fd
+from firedrake.output import VTKFile
+
 
 # Geometry  
 Lx, Ly = 1.0, 1.0
@@ -82,7 +84,17 @@ dw = fd.TestFunction(W)
 dL = fd.derivative(L, w, dw)
 # Jacobian
 Jac = fd.derivative(dL, w)
-# solve problem
+# Solve problem
 bclist = [fd.DirichletBC(W.sub(1), fd.Constant(0.0), 'on_boundary'), 
         fd.DirichletBC(W.sub(3), fd.Constant(0.0), 'on_boundary')]
 fd.solve(dL == 0, w, bcs=bclist, J=Jac)
+
+# Save results
+s, u, e, lam, mu = w.subfunctions
+s.rename('DDCM.s')
+u.rename('DDCM.u')
+e.rename('DDCM.e')
+lam.rename('DDCM.lam')
+mu.rename('DDCM.mu')
+output = fd.VTKFile('output.pvd')
+output.write(s, u, e, lam, mu)
