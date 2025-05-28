@@ -10,7 +10,7 @@ Database file #1: bibliography.bib
 Warning--I'm ignoring Badia2010's extra "volume" field
 --line 819 of file bibliography.bib
 Warning--I didn't find a database entry for "firedrake"
-Warning--I didn't find a database entry for "uff_fenics"
+Warning--I didn't find a database entry for "ufl_fenics"
 Warning--can't use both author and editor fields in brezzi-fortin
 Warning--empty publisher in brezzi-fortin
 Warning--can't use both author and editor fields in ern-guermond
