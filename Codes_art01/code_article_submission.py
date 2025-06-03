@@ -2,7 +2,6 @@
 import firedrake as fd
 from firedrake.output import VTKFile
 
-
 # Geometry  
 Lx, Ly = 1.0, 1.0
 Nx, Ny = 100, 100

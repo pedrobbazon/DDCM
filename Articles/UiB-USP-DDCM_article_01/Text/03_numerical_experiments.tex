@@ -115,10 +115,15 @@ convergence rates are also reported. Figures \ref{fig:convergence_vector_linear_
 show the results for $k=0$, $k=1$ and $k=2$, respectively.
 Note that the Fully stabilized formulation yielded the most favorable results in all three cases. For $ \text{P}_1 $-elements, no significant differences were observed in the convergence behavior of the flux $ \sP_{h} $ across the Unstabilized, Minimally stabilized, and Fully stabilized formulations, with the corresponding error curves largely overlapping. In contrast, for $ \eP $ and $ \mP $, the Fully stabilized formulation exhibited sub-linear convergence, unlike the Unstabilized case. However, it achieved lower error magnitudes. For $ \text{P}_2 $-elements, the Fully stabilized formulation exhibited the best performance. In particular, it was the only one to attain second-order convergence for the flux $ \sP $, and exhibited the smallest errors for $ \eP_{h} $ and $ \mP_{h} $. A similar trend was observed for $ \text{P}_3 $-elements. 
 
-As a final comment, it is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is rather independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $\zeta$ over several orders of magnitude.
-%============================================
-%Checkerboard pattern
+It is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is rather independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $\zeta$ over several orders of magnitude.
 
+In what follows, we illustrate the stability properties of the approximation of the Natural formulation and the variants of the equal-order formulation by evaluating the difference \( \uP_{h} - \uP \) on a sufficiently fine mesh. Figure~\ref{fig:checkerboard_pattern} presents the corresponding results. We observe that no spurious modes can be identified in either the Natural formulation or the Fully stabilized variant. In the Minimally stabilized variant, a subtle checkerboard pattern appears near the boundaries. In contrast, in the Unstabilized case, spurious modes are manifested throughout the entire domain. This behavior is explained by the fact that the space \( N_{h} \subset Y_{h} := L_{h} \times M_{h} \), defined as
+$$
+N_h = \left\{ y_{h} \in Y_{h} \,\middle|\,
+b(x_h, y_{h}) = 0 \quad \forall x_h \in X_h \right\},
+$$
+is nontrivial.
+%Checkerboard pattern
 \begin{figure}[h!]
 	\centering
 	\caption{Figures~(a)--(d) show the difference $\uP_{h} - \uP$ for the Natural formulation, and for the equal-order Unstabilized, Fully stabilized, and Minimally stabilized formulations, respectively. }
@@ -127,8 +132,30 @@ As a final comment, it is worth mentioning that additional numerical experiments
 	\input{Figures/PDFs/checkerboard_pattern.pdf_tex}
 	\label{fig:checkerboard_pattern}
 \end{figure}
+As a final comment, we emphasize that the manufactured fields $ \eP $ and $ \sP $ were constructed to be physically admissible in the sense that they do not violate the second law of thermodynamics -- the \textit{Clausius–Duhem inequality} \cite{Reddy2013,Gurtin2013} --. Accordingly, the following condition must hold:
+$$
+-\sP(\mathbf{x}) \cdot \eP(\mathbf{x}) \geq 0, \quad \forall \mathbf{x} \in \Omega
+$$ 
+However, even though the discrete approximations $ \eP_{h} $ and $ \sP_{h} $ converge to the manufactured fields in norm, this does not guarantee that they satisfy the second law pointwise. Therefore, for all the problems addressed in this work, we have explicitly verified the physical admissibility between flux and gradient fields, and no violations were identified. 
 
-\textcolor{red}{Add a paragraph commenting the checkerboard pattern in the Unstabilized formulation}
+
+%where the bilinear form $b(x, y)$ is:
+%\begin{equation}
+%	b(x, y) = (\mu, e - \nabla u) - (\nabla \lambda, s) + (\lambda, \zeta u).
+%\end{equation}
+%
+%Thus:
+%\begin{equation}
+%	N_h = \left\{ (\lambda_h, \mu_h) \in L_h \times M_h ~\middle|~
+%	\begin{aligned}
+%		&(\mu_h, e_h - \nabla u_h) - (\nabla \lambda_h, s_h) + (\lambda_h, \zeta u_h) = 0 \\
+%		&\quad \forall (u_h, e_h, s_h) \in U_h \times E_h \times S_h
+%	\end{aligned}
+%	\right\}.
+%\end{equation}
+
+ 
+
 
 %=============================================
 % k = 0
@@ -413,9 +440,10 @@ The first point to note is that the number of data samples limits the convergenc
 
 As a final observation, the field $\lP$ does not achieve the expected convergence rates in $ H^{1} $-norm, except in the Unstabilized equal order variant. However, increasing $N_{\mbox{\tiny samples}}$ systematically reduces the associated errors, indicating an overall improvement in the approximation quality.
 
-These results already show a consistency with respect to mesh refinement and size of
-the sample set for the different finite element formulations assessed which makes them 
-a suitable candidates for data-driven applications. 
+These results already show a consistency with respect to mesh refinement and size of the sample set for the different finite element formulations assessed which makes them a suitable candidates for data-driven applications. 
+
+
+
 
 \begin{figure}[h!]
 	\centering

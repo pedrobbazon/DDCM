@@ -326,8 +326,6 @@ ddcm.save_ddcm(tt=0.0, dir_outs='test_myddcmsol')
 # ---------------------------------------
 print('Done!')
 
-
-
 '''
 def ddcm_results(field, name, dir_outs, mode, tt):
     # Create directory

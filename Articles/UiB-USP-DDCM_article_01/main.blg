@@ -15,45 +15,45 @@ Warning--can't use both author and editor fields in brezzi-fortin
 Warning--empty publisher in brezzi-fortin
 Warning--can't use both author and editor fields in ern-guermond
 Warning--empty publisher in ern-guermond
-You've used 20 entries,
+You've used 22 entries,
             2118 wiz_defined-function locations,
-            638 strings with 7313 characters,
-and the built_in function-call counts, 6523 in all, are:
-= -- 648
-> -- 309
+            654 strings with 7700 characters,
+and the built_in function-call counts, 7066 in all, are:
+= -- 701
+> -- 334
 < -- 2
-+ -- 127
-- -- 100
-* -- 474
-:= -- 1116
-add.period$ -- 60
-call.type$ -- 20
-change.case$ -- 107
++ -- 139
+- -- 108
+* -- 505
+:= -- 1212
+add.period$ -- 68
+call.type$ -- 22
+change.case$ -- 117
 chr.to.int$ -- 0
-cite$ -- 24
-duplicate$ -- 226
-empty$ -- 493
-format.name$ -- 100
-if$ -- 1319
+cite$ -- 26
+duplicate$ -- 250
+empty$ -- 537
+format.name$ -- 108
+if$ -- 1433
 int.to.chr$ -- 0
-int.to.str$ -- 20
-missing$ -- 23
-newline$ -- 103
-num.names$ -- 40
-pop$ -- 89
+int.to.str$ -- 22
+missing$ -- 27
+newline$ -- 115
+num.names$ -- 44
+pop$ -- 101
 preamble$ -- 1
-purify$ -- 90
+purify$ -- 98
 quote$ -- 0
-skip$ -- 155
+skip$ -- 167
 stack$ -- 0
-substring$ -- 461
-swap$ -- 28
+substring$ -- 473
+swap$ -- 30
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 74
+type$ -- 78
 warning$ -- 4
-while$ -- 68
-width$ -- 22
-write$ -- 218
+while$ -- 72
+width$ -- 24
+write$ -- 246
 (There were 7 warnings)

@@ -152,11 +152,25 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # lmbddif = fd.assemble(interpolate(w.sub(3) - lmbd_boundary_vals(x), SF))
     
     # Check if the inner product between s and g is always negative 
-    # DG0 = fd.FunctionSpace(mesh, family="DG", degree=0)
-    # s_inner_g = fd.Function(DG0)
-    # s_inner_g.interpolate(fd.inner(w.sub(0), w.sub(2)))
+    DG0 = fd.FunctionSpace(mesh, family="DG", degree=0)
+    s_inner_g = fd.Function(DG0)
+    inner_product = fd.inner(w.sub(0), w.sub(2))
+    s_inner_g.interpolate(fd.conditional(inner_product <= 0, 1.0, 0.0))
+    
+    area = fd.assemble(s_inner_g * fd.dx)
+    print('-----------------------------------------')
+    print(f"Area based on the opposite sign: {area}")
+    print('-----------------------------------------')
+    
+    # fig, axes = plt.subplots()
+    # contours = fd.pyplot.tricontourf(s_inner_g, axes=axes, cmap="inferno")
+    # axes.set_aspect("equal")
+    # fig.colorbar(contours)
+    # plt.savefig('figure_salkd.svg')
+    # fig.show()
     
     
+
     if(dir_outs != None):
 
         if(tt == 0.0): # This time acts as a parameter over which we do continuation
@@ -184,9 +198,9 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         w.sub(4).rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
         
-        # filename = dir_outs+'/s_inner_g.pvd'
-        # s_inner_g.rename('DDCM.s_inner_g')
-        # VTKFile(filename, mode=mode).write(s_inner_g, time=tt)
+        filename = dir_outs+'/s_inner_g.pvd'
+        s_inner_g.rename('DDCM.s_inner_g')
+        VTKFile(filename, mode=mode).write(s_inner_g, time=tt)
         
         filename = dir_outs+'/udif.pvd'
         udif.rename('DDCM.udif')

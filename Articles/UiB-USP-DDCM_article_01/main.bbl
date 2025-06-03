@@ -90,6 +90,13 @@ C.~G. Gebhardt, M.~C. Steinbach, D.~Schillinger, and R.~Rolfes.
 \newblock {\em International Journal for Numerical Methods in Engineering},
   121:5447--5468, 2020.
 
+\bibitem{Gurtin2013}
+Morton~E. Gurtin, Eliot Fried, and Lallit Anand.
+\newblock {\em The mechanics and thermodynamics of continua}.
+\newblock Cambridge University Press, Cambridge [u.a.], 1. paperback ed.
+  edition, 2013.
+\newblock Includes bibliographical references and index.
+
 \bibitem{Kirchdoerfer2016}
 T.~Kirchdoerfer and M.~Ortiz.
 \newblock Data-driven computational mechanics.
@@ -120,5 +127,11 @@ L.~Ponti, S.~Perotto, and L.~Sangalli.
   manifolds with application to medical data.
 \newblock {\em International Journal for Numerical Methods in Biomedical
   Engineering}, 38:e3650, 2022.
+
+\bibitem{Reddy2013}
+Junuthula~Narasimha Reddy.
+\newblock {\em An Introduction to Continuum Mechanics}.
+\newblock Cambridge University Press, New York, 2nd ed. edition, 2013.
+\newblock Description based on publisher supplied metadata and other sources.
 
 \end{thebibliography}

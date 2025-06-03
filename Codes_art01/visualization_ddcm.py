@@ -83,70 +83,73 @@ def run_plots_test_case1(foldername, order_poly):
         3 if 'Minimally' in x else 4))
 
     h = data_forms[filenames_sorted[0]]['h']
-    
+
     # Relate the data to the figure
     norm_to_fig = {
         1: [
-            {'data': data_forms[filenames_sorted[0]]['error']['L2u'],  'marker': 'r--o', 'label': r'$\|u - u_h\|_{L^2} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[1]]['error']['L2u'],  'marker': 'b-.s', 'label': r'$\|u - u_h\|_{L^2} \,$ Unstabilized'},
-            {'data': data_forms[filenames_sorted[2]]['error']['L2u'],  'marker': 'g:^', 'label': r'$\|u - u_h\|_{L^2} \,$  Fully stabilized'},
+            {'data': data_forms[filenames_sorted[0]]['error']['L2u'],  'marker': 'g:^', 'label': r'$\|u - u_h\|_{L^2} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[1]]['error']['L2u'],  'marker': 'r--o', 'label': r'$\|u - u_h\|_{L^2} \,$ Unstabilized'},
+            {'data': data_forms[filenames_sorted[2]]['error']['L2u'],  'marker': 'b-.s', 'label': r'$\|u - u_h\|_{L^2} \,$  Fully stabilized'},
             {'data': data_forms[filenames_sorted[3]]['error']['L2u'],  'marker': 'm--p', 'label': r'$\|u - u_h\|_{L^2} \,$  Minimally stabilized'},
         ],
         2:[
-            {'data': data_forms[filenames_sorted[0]]['error']['H1u'],  'marker': 'r--o', 'label': r'$\|u - u_h\|_{H^1} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[1]]['error']['H1u'],  'marker': 'b-.s', 'label': r'$\|u - u_h\|_{H^1} \,$ Unstabilized'},
-            {'data': data_forms[filenames_sorted[2]]['error']['H1u'],  'marker': 'g:^', 'label': r'$\|u - u_h\|_{H^1} \,$ Fully stabilized'},
+            {'data': data_forms[filenames_sorted[0]]['error']['H1u'],  'marker': 'g:^', 'label': r'$\|u - u_h\|_{H^1} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[1]]['error']['H1u'],  'marker': 'r--o', 'label': r'$\|u - u_h\|_{H^1} \,$ Unstabilized'},
+            {'data': data_forms[filenames_sorted[2]]['error']['H1u'],  'marker': 'b-.s', 'label': r'$\|u - u_h\|_{H^1} \,$ Fully stabilized'},
             {'data': data_forms[filenames_sorted[3]]['error']['H1u'],  'marker': 'm--p', 'label': r'$\|u - u_h\|_{H^1} \,$ Minimally stabilized'},        
         ],
         3: [
-            {'data': data_forms[filenames_sorted[0]]['error']['L2l'],  'marker': 'r--o', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[1]]['error']['L2l'],  'marker': 'b-.s', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$ Unstabilized'},
-            {'data': data_forms[filenames_sorted[2]]['error']['L2l'],  'marker': 'g:^', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$  Fully stabilized'},
+            {'data': data_forms[filenames_sorted[0]]['error']['L2l'],  'marker': 'g:^', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[1]]['error']['L2l'],  'marker': 'r--o', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$ Unstabilized'},
+            {'data': data_forms[filenames_sorted[2]]['error']['L2l'],  'marker': 'b-.s', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$  Fully stabilized'},
             {'data': data_forms[filenames_sorted[3]]['error']['L2l'],  'marker': 'm--p', 'label': r'$\|\lambda - \lambda_h\|_{L^2} \,$  Minimally stabilized'},
         ],
         4:[
-            {'data': data_forms[filenames_sorted[0]]['error']['H1l'],  'marker': 'r--o', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[1]]['error']['H1l'],  'marker': 'b-.s', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Unstabilized'},
-            {'data': data_forms[filenames_sorted[2]]['error']['H1l'],  'marker': 'g:^', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Fully stabilized'},
+            {'data': data_forms[filenames_sorted[0]]['error']['H1l'],  'marker': 'g:^', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[1]]['error']['H1l'],  'marker': 'r--o', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Unstabilized'},
+            {'data': data_forms[filenames_sorted[2]]['error']['H1l'],  'marker': 'b-.s', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Fully stabilized'},
             {'data': data_forms[filenames_sorted[3]]['error']['H1l'],  'marker': 'm--p', 'label': r'$\|\lambda - \lambda_h\|_{H^1} \,$ Minimally stabilized'},        
         ],
         5:[
-            {'data': data_forms[filenames_sorted[0]]['error']['EsL2'], 'marker': 'r--o', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[0]]['error']['EeL2'], 'marker': 'b-.s', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Natural'},
-            {'data': data_forms[filenames_sorted[0]]['error']['EmL2'], 'marker': 'g:^',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Natural'}
+            {'data': data_forms[filenames_sorted[0]]['error']['EsL2'], 'marker': 'g:^', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[0]]['error']['EeL2'], 'marker': 'y--o', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Natural'},
+            {'data': data_forms[filenames_sorted[0]]['error']['EmL2'], 'marker': 'c-.s',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Natural'}
         ],
         6:[
+            {'data': data_forms[filenames_sorted[0]]['error']['EsL2'], 'marker': 'g:^', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Natural'},
             {'data': data_forms[filenames_sorted[1]]['error']['EsL2'], 'marker': 'r--o', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EsL2'], 'marker': 'b-.s', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EsL2'], 'marker': 'g:^',  'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EsL2'], 'marker': 'm--p',  'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2} \,$ Minimally stabilized'}
         ],
         7:[
+            {'data': data_forms[filenames_sorted[0]]['error']['EeL2'], 'marker': 'g:^', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Natural'},
             {'data': data_forms[filenames_sorted[1]]['error']['EeL2'], 'marker': 'r--o', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EeL2'], 'marker': 'b-.s', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EeL2'], 'marker': 'g:^',  'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EeL2'], 'marker': 'm--p',  'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2} \,$ Minimally stabilized'}
             
         ],  
         8:[
+            {'data': data_forms[filenames_sorted[0]]['error']['EmL2'], 'marker': 'g:^',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Natural'},
             {'data': data_forms[filenames_sorted[1]]['error']['EmL2'], 'marker': 'r--o', 'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EmL2'], 'marker': 'b-.s', 'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EmL2'], 'marker': 'g:^',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EmL2'], 'marker': 'm--p',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2} \,$ Minimally stabilized'}
             
         ],   
         9:[
             {'data': data_forms[filenames_sorted[1]]['error']['EsHdiv'], 'marker': 'r--o', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EsHdiv'], 'marker': 'b-.s', 'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EsHdiv'], 'marker': 'g:^',  'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EsHdiv'], 'marker': 'm--p',  'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv} \,$ Minimally stabilized'}
         ],
         10:[
             {'data': data_forms[filenames_sorted[1]]['error']['EeHdiv'], 'marker': 'r--o', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EeHdiv'], 'marker': 'b-.s', 'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EeHdiv'], 'marker': 'g:^',  'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EeHdiv'], 'marker': 'm--p',  'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv} \,$ Minimally stabilized'}
             
         ],  
         11:[
             {'data': data_forms[filenames_sorted[1]]['error']['EmHdiv'], 'marker': 'r--o', 'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv} \,$ Unstabilized'},
             {'data': data_forms[filenames_sorted[2]]['error']['EmHdiv'], 'marker': 'b-.s', 'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv} \,$ Fully stabilized'},
-            {'data': data_forms[filenames_sorted[3]]['error']['EmHdiv'], 'marker': 'g:^',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv} \,$ Minimally stabilized'}
+            {'data': data_forms[filenames_sorted[3]]['error']['EmHdiv'], 'marker': 'm--p',  'label': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv} \,$ Minimally stabilized'}
             
         ], 
     }
@@ -223,7 +226,7 @@ def run_plots_test_case3(foldername, order_poly):
 # ---------------------------
 if __name__ == "__main__":
     main_selector = int(sys.argv[1])
-    order_poly = 'Linear'
+    order_poly = 'Cubic'
 
     if main_selector == 1:
         run_plots_test_case1('01_test_case_convex_domain', order_poly)
