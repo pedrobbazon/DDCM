@@ -16,11 +16,11 @@
 
  kap = pars['kappa'] # assert units in objective function
  # Proximity function
- dgrad, dflux = g-gt, s-st
+ dgrad, dflux = e-etilde(x), s-stilde(x)
  L = 0.5*inner(dgrad,dgrad)*dx + 0.5*kap*inner(dflux,dflux)*dx
 
  # Balance and Compatibility constraint
- L -= (inner(s, grad(lam)) + inner(pars['zeda']*u - q(x), lam))*dx
+ L -= (inner(s, grad(lam)) + inner(pars['zeta']*u - q(x), lam))*dx
  L += inner(e - grad(u), mu)*dx
     
  # Stabilization terms
@@ -34,8 +34,8 @@
    ST = kap*(s-st) - grad(lam)
    L -= (0.5*pars['eta']/kap)*inner(ST,ST)*dx
 
-   BT = div(s) + pars['zeda']*u - q(x)
+   BT = div(s) + pars['zeta']*u - q(x)
    L += (0.5*pars['theta']*kap*pars['ls']**2)*inner(BT,BT)*dx
 
-   MT = div(mu) + pars['zeda']*lam
+   MT = div(mu) + pars['zeta']*lam
    L -= (0.5*pars['beta']*pars['lmu']**2)*inner(MT,MT)*dx
