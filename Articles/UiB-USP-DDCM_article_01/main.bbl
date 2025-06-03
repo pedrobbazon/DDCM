@@ -1,5 +1,13 @@
 \begin{thebibliography}{10}
 
+\bibitem{Alnaes2014}
+Martin~S. Alnæs, Anders Logg, Kristian~B. Ølgaard, Marie~E. Rognes, and
+  Garth~N. Wells.
+\newblock Unified form language: A domain-specific language for weak
+  formulations of partial differential equations.
+\newblock {\em ACM Transactions on Mathematical Software}, 40(2):1--37,
+  February 2014.
+
 \bibitem{Ammari2004}
 H.~Ammari and H.~Kang.
 \newblock {\em Reconstruction of Small Inhomogeneities from Boundary
@@ -96,6 +104,18 @@ Morton~E. Gurtin, Eliot Fried, and Lallit Anand.
 \newblock Cambridge University Press, Cambridge [u.a.], 1. paperback ed.
   edition, 2013.
 \newblock Includes bibliographical references and index.
+
+\bibitem{FiredrakeUserManual}
+David~A. Ham, Paul H.~J. Kelly, Lawrence Mitchell, Colin~J. Cotter, Robert~C.
+  Kirby, Koki Sagiyama, Nacime Bouziani, Sophia Vorderwuelbecke, Thomas~J.
+  Gregory, Jack Betteridge, Daniel~R. Shapero, Reuben~W. Nixon-Hill, Connor~J.
+  Ward, Patrick~E. Farrell, Pablo~D. Brubeck, India Marsden, Thomas~H. Gibson,
+  Miklós Homolya, Tianjiao Sun, Andrew T.~T. McRae, Fabio Luporini, Alastair
+  Gregory, Michael Lange, Simon~W. Funke, Florian Rathgeber, Gheorghe-Teodor
+  Bercea, and Graham~R. Markall.
+\newblock {\em Firedrake User Manual}.
+\newblock Imperial College London and University of Oxford and Baylor
+  University and University of Washington, first edition edition, 5 2023.
 
 \bibitem{Kirchdoerfer2016}
 T.~Kirchdoerfer and M.~Ortiz.

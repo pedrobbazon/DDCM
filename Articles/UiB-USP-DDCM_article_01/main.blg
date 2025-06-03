@@ -9,51 +9,49 @@ The style file: plain.bst
 Database file #1: bibliography.bib
 Warning--I'm ignoring Badia2010's extra "volume" field
 --line 819 of file bibliography.bib
-Warning--I didn't find a database entry for "firedrake"
-Warning--I didn't find a database entry for "ufl_fenics"
 Warning--can't use both author and editor fields in brezzi-fortin
 Warning--empty publisher in brezzi-fortin
 Warning--can't use both author and editor fields in ern-guermond
 Warning--empty publisher in ern-guermond
-You've used 22 entries,
+You've used 24 entries,
             2118 wiz_defined-function locations,
-            654 strings with 7700 characters,
-and the built_in function-call counts, 7066 in all, are:
-= -- 701
-> -- 334
+            667 strings with 8690 characters,
+and the built_in function-call counts, 8487 in all, are:
+= -- 814
+> -- 500
 < -- 2
-+ -- 139
-- -- 108
-* -- 505
-:= -- 1212
-add.period$ -- 68
-call.type$ -- 22
-change.case$ -- 117
++ -- 205
+- -- 172
+* -- 660
+:= -- 1475
+add.period$ -- 74
+call.type$ -- 24
+change.case$ -- 155
 chr.to.int$ -- 0
-cite$ -- 26
-duplicate$ -- 250
-empty$ -- 537
-format.name$ -- 108
-if$ -- 1433
+cite$ -- 28
+duplicate$ -- 270
+empty$ -- 579
+format.name$ -- 172
+if$ -- 1685
 int.to.chr$ -- 0
-int.to.str$ -- 22
-missing$ -- 27
-newline$ -- 115
-num.names$ -- 44
-pop$ -- 101
+int.to.str$ -- 24
+missing$ -- 28
+newline$ -- 125
+num.names$ -- 48
+pop$ -- 137
 preamble$ -- 1
-purify$ -- 98
+purify$ -- 134
 quote$ -- 0
-skip$ -- 167
+skip$ -- 179
 stack$ -- 0
-substring$ -- 473
-swap$ -- 30
+substring$ -- 499
+swap$ -- 33
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 78
+type$ -- 86
 warning$ -- 4
-while$ -- 72
-width$ -- 24
-write$ -- 246
-(There were 7 warnings)
+while$ -- 78
+width$ -- 26
+write$ -- 268
+(There were 5 warnings)
