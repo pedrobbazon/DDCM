@@ -1,7 +1,6 @@
 \section{Numerical experiments}
 
-
-In this section, we analyze the convergence properties of the finite element approximation to the proposed problem. We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
+In this section, we numerically assess the convergence properties of the finite element approximation to the proposed problem. We consider a sequence of finite element conformal and shape-regular partitions of the computational domain $\mathcal{T}_h$ with characteristic mesh size $h$. 
 Let us define the discrete spaces associated to $\mathcal{T}_h$
 $$
 \CG_{k}(\mathcal{T}_h) = \{v \in C^0(\Omega), v|_K \in \mathbb{P}_k(K)~\forall K \in \mathcal{T}_h\}
@@ -24,9 +23,9 @@ and an \textbf{equal-order formulation}, in which we take
 In the numerical tests we take $k \in \{0, 1, 2\}$ for both formulations, corresponding to the use of linear, quadratic or cubic polynomials for the scalar fields $\uP$ and $\lP$ in both formulations. Indeed, the Natural formulation
 considers one degree lower for the vector fields $\sP$, $\eP$ and $\mP$, whereas for the equal-order formulation, the degree is the same for all fields. 
 To assess the convergence properties of the method we consider both convex and non-convex geometries in two spatial dimensions. The convergence behavior is assessed by computing the error with respect to manufactured solutions.
-Finally, for the equal-order formulation, we consider three variants: a Unstabilized method, the Fully Stabilized method, and the Minimally Stabilized method.
-In the Unstabilized method, all stabilization parameters are set to zero.
-In the Fully Stabilized method, the parameters are chosen according to equation (\ref{eq:paramsopt}). For the Minimally Stabilized method, all parameters are set to zero except for $\alpha$ and $\eta$, which represent the minimum requirements for stability, as indicated in equation (\ref{eq:Bhparams}).
+%Finally, for the equal-order formulation, we consider three variants: a Unstabilized method, the Fully Stabilized method, and the Minimally Stabilized method.
+%In the Unstabilized method, all stabilization parameters are set to zero.
+%In the Fully Stabilized method, the parameters are chosen according to equation (\ref{eq:paramsopt}). For the %Minimally Stabilized method, all parameters are set to zero except for $\alpha$ and $\eta$, which represent the %minimum requirements for stability, as indicated in equation (\ref{eq:Bhparams}).
 
 \subsection{Test case 1: a convex domain}\label{sec:test_case1}
 
@@ -117,13 +116,9 @@ Note that the Fully stabilized formulation yielded the most favorable results in
 
 It is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is rather independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $\zeta$ over several orders of magnitude.
 
-In what follows, we illustrate the stability properties of the approximation of the Natural formulation and the variants of the equal-order formulation by evaluating the difference \( \uP_{h} - \uP \) on a sufficiently fine mesh. Figure~\ref{fig:checkerboard_pattern} presents the corresponding results. We observe that no spurious modes can be identified in either the Natural formulation or the Fully stabilized variant. In the Minimally stabilized variant, a subtle checkerboard pattern appears near the boundaries. In contrast, in the Unstabilized case, spurious modes are manifested throughout the entire domain. This behavior is explained by the fact that the space \( N_{h} \subset Y_{h} := L_{h} \times M_{h} \), defined as
-$$
-N_h = \left\{ y_{h} \in Y_{h} \,\middle|\,
-b(x_h, y_{h}) = 0 \quad \forall x_h \in X_h \right\},
-$$
-is nontrivial.
-%Checkerboard pattern
+In what follows, we illustrate the stability properties of the approximation for the Natural and 
+the equal-order formulations by evaluating the difference \( \uP_{h} - \uP \) on a sufficiently fine mesh. Figure~\ref{fig:checkerboard_pattern} presents the corresponding results. We observe that no spurious modes 
+are present in either the Natural formulation or the Fully stabilized formulation. In the Minimally stabilized formulation, a subtle checkerboard pattern appears near the boundaries. In contrast, in the Unstabilized case, spurious modes are manifested throughout the entire domain as expected.
 \begin{figure}[h!]
 	\centering
 	\caption{Figures~(a)--(d) show the difference $\uP_{h} - \uP$ for the Natural formulation, and for the equal-order Unstabilized, Fully stabilized, and Minimally stabilized formulations, respectively. }
@@ -132,30 +127,12 @@ is nontrivial.
 	\input{Figures/PDFs/checkerboard_pattern.pdf_tex}
 	\label{fig:checkerboard_pattern}
 \end{figure}
-As a final comment, we emphasize that the manufactured fields $ \eP $ and $ \sP $ were constructed to be physically admissible in the sense that they do not violate the second law of thermodynamics -- the \textit{Clausius–Duhem inequality} \cite{Reddy2013,Gurtin2013} --. Accordingly, the following condition must hold:
+
+As a final comment, we emphasize that the manufactured fields $ \eP $ and $ \sP $ were constructed to be physically admissible in the sense that they do not violate the second law of thermodynamics, the \textit{Clausius–Duhem inequality} \cite{Reddy2013,Gurtin2013}. Accordingly, the following condition must hold:
 $$
 -\sP(\mathbf{x}) \cdot \eP(\mathbf{x}) \geq 0, \quad \forall \mathbf{x} \in \Omega
 $$ 
-However, even though the discrete approximations $ \eP_{h} $ and $ \sP_{h} $ converge to the manufactured fields in norm, this does not guarantee that they satisfy the second law pointwise. Therefore, for all the problems addressed in this work, we have explicitly verified the physical admissibility between flux and gradient fields, and no violations were identified. 
-
-
-%where the bilinear form $b(x, y)$ is:
-%\begin{equation}
-%	b(x, y) = (\mu, e - \nabla u) - (\nabla \lambda, s) + (\lambda, \zeta u).
-%\end{equation}
-%
-%Thus:
-%\begin{equation}
-%	N_h = \left\{ (\lambda_h, \mu_h) \in L_h \times M_h ~\middle|~
-%	\begin{aligned}
-%		&(\mu_h, e_h - \nabla u_h) - (\nabla \lambda_h, s_h) + (\lambda_h, \zeta u_h) = 0 \\
-%		&\quad \forall (u_h, e_h, s_h) \in U_h \times E_h \times S_h
-%	\end{aligned}
-%	\right\}.
-%\end{equation}
-
- 
-
+Even though the discrete approximations $ \eP_{h} $ and $ \sP_{h} $ converge to the manufactured fields in norm, this does not guarantee that they satisfy the second law pointwise. Therefore, for all problems solved in this work, we have explicitly verified the physical admissibility between flux and gradient fields, and no violations were identified. 
 
 %=============================================
 % k = 0

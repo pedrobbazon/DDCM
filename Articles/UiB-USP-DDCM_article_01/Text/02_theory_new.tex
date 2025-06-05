@@ -174,7 +174,6 @@ together with
 		\begin{equation*}
 			\sup_{(\uP,\eP,\sP)\in X} \frac{\left (\mP,\eP-\nabla \uP \right ) - \left (\nabla \lP, \sP \right ) + \left ( \lP, \zeta \uP \right )}{\|(\uP,\eP,\sP)\|_X} \geq k_b \, \|(\lP,\mP)\|_{Y}~, \qquad \forall (\lP,\mP)\in Y~.
 		\end{equation*}
-	
 		To this end, we can take $\uP=0$, $\eP=\mP$ and $\sP=-\frac{1}{\kappa}\nabla \lP$ to get
 		\begin{equation*}
 			\sup_{(\uP,\eP,\sP)\in X} \frac{\left (\mP,\eP-\nabla \uP \right ) - \left (\nabla \lP, \sP \right ) + \left ( \lP, \zeta\,\uP \right )}{\|(\uP,\eP,\sP)\|_X} 
@@ -305,7 +304,7 @@ When such is the case, as we will see, no stabilization is required. The coeffic
 $$
 \alpha = \gamma = \eta = \theta = \beta = 0~.
 $$
-The typical spaces for this formulation is continuous piecewise $P_k$ for $U_h$ and $L_h$, and discontinuous, piecewise $P_{k-1}$ for $M_h$, $S_h$ and $E_h$.
+The typical spaces for this formulation is continuous piecewise $P_{k+1}$ for $U_h$ and $L_h$, and discontinuous, piecewise $P_{k}$ for $M_h$, $S_h$ and $E_h$, $k \ge 0$.
 
 \item[(b)] {\bf Equal-order formulation}. It corresponds to choosing the same $H^1$-conforming finite element space for all unknown fields, typically a continuous piecewise $P_k$ approximation. Equal-order formulations require stabilization. We consider three choices of the stabilization parameters:
 
