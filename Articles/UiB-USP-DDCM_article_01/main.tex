@@ -56,10 +56,12 @@
 % Python for inline
 \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
 
+\usepackage{authblk}
+
 %=============================================
 			  % MAIN DOCUMENT 
 %=============================================
-\title{Numerical approximation of an optimization problem that appears in  data-driven Computational Mechanics}
+\title{Numerical approximation of a PDE--constrained Optimization problem that appears in  Data-Driven Computational Mechanics}
 
 \date{\the \year}
 
@@ -67,11 +69,32 @@
 
 \maketitle
 
+%\begin{frontmatter} 
+
+\iffalse	
+\author[1]{Pedro B. Bazon}%\ead{pedro.bazon@usp.br}
+
+\author[1]{Roberto F. Ausas}%\ead{rfausas@icmc.usp.br}
+
+\author[1]{Gustavo C. Buscaglia}%\ead{gustavo.buscaglia@icmc.usp.br}
+
+\author[2]{Cristian G. Gebhardt}%\ead{cristian.gebhardt@uib.no}
+
+
+\affil[1]{Instituto de Ci\^encias Matem\'aticas e de Computa\c{c}\~ao, Universidade de S\~ao Paulo,\\ Av. Trab. S\~ao Carlense 400, 13566-590, São Carlos-SP, Brazil}
+
+\affil[2]{University of Bergen, Geophysical Institute and Bergen Offshore Wind Centre,\\ All\'{e}gaten 70, 5007 Bergen, Norway.}
+
+\corref{cor1}\cortext[cor1]{Corresponding author}
+\fi
+
 \begin{abstract}
 	In this work, we investigate an optimization problem that appears when dealing with the paradigm of Data-Driven Computational Mechanics. In the context of the diffusion-reaction problem, such an optimization problem seeks for the set of continuous primal fields (i.e., a potential field, its gradient and the flux) that satisfies the physical conservation law and the geometrical compatibility at predefined discrete fields (i.e., reconstructed gradient and flux that locally look like the data sets). Moreover, we consider a reaction term in the physical conservation law that automatically couples all the optimality conditions and thus, adding an interesting twist to the problem. First, we establish the well-posedness in the continuous setting and second, we propose a finite-element discretization that consistently approximates the underlying continuous problem while preserving the saddle-point structure and improving the stability properties when compared to plain discretizations. Finally and to substantiate our claims, we present a set of examples that illustrates the advantages of the proposed approach.
 \end{abstract}
 
 \textbf{Keywords:} data-driven computational mechanics, optimization problem, diffusion-reaction problem, stabilized finite elements. 
+
+%\end{frontmatter}
 
 %=============================================
 % --- Introduction --- 
@@ -88,6 +111,13 @@
 %=============================================
 % --- Conclusions ---
 \include{Text/04_conclusion}
+
+\section{Acknowledments}
+
+RFA and GCB thankfully acknowledge financial support from the São Paulo Research Foundation (FAPESP) under grants 2013/07375-0 and 2023/14427-8, and from the National Council for Scientific and Technological Development - CNPq under grants 308704/2022-3 and 309786/2021-5.
+PBB thankfully acknowledge for the support provided by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior – Brazil (CAPES), Finance Code 88887.975792/2024-00.
+CGG gratefully acknowledges the financial support from the European Research Council through the ERC Consolidator Grant ``DATA-DRIVEN OFFSHORE'' (Project ID 101083157).
+
 
 %=============================================
 % --- Appendix ---

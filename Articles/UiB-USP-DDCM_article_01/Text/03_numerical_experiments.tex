@@ -283,9 +283,11 @@ It is worth noticing that the cubic term considered in the previous experiment h
 \end{figure}
 For all these geometries, it can be shown that $\uP$ possesses fewer than $\nu+1$ derivatives in $L^{2}$, implying that $\uP \in H^{1}(\Omega)$, but $\uP \notin H^{2}(\Omega)$. Consequently, no improvement in the convergence rate is expected from polynomial refinement and therefore we only use $\text{P}_1$-elements.
 In order to better capture the solution, a local mesh refinement near the singularity is employed, as illustrated in Figure~\ref{fig:geometries_non_convex}(a).
-We assess the convergence behavior with respect to different corner angles. Specifically, for the values $ \phi \in \left\{ \frac{\pi}{4}, \frac{\pi}{2}, \frac{3\pi}{4} \right\} $, the corresponding values of $ \psi $ are $ \left\{ \frac{7\pi}{4}, \frac{3\pi}{2}, \frac{5\pi}{4} \right\} $. Consequently, the scalar field $ \uP $ belong to the spaces $ H^{11/7 - \varepsilon}(\Omega) $, $ H^{5/3 - \varepsilon}(\Omega) $, and $ H^{9/5 - \varepsilon}(\Omega) $, for all $ \varepsilon > 0 $. Error estimates for finite element schemes in domains with corners have been extensively studied in the literature, for instance by \cite{Babuska1972, Babuska1970}. As a result, the convergence rate of $ \uP $ in both $ L^{2} $-norm  and $ H^{1} $-norms are expected to be restricted by the singular behavior at the reentrant corner and one may anticipate convergence rates of $\mathcal{O}(h^{1+4/7-\varepsilon})$, $ \mathcal{O}(h^{1+2/3-\varepsilon}) $ and $ \mathcal{O}(h^{1+4/5-\varepsilon}) $ for all $ \varepsilon > 0 $ in $L^{2}$-norm, and $\mathcal{O}(h^{4/7-\varepsilon})$, $ \mathcal{O}(h^{2/3-\varepsilon}) $ and $ \mathcal{O}(h^{4/5-\varepsilon}) $ for all $ \varepsilon > 0 $ in $H^{1}$-norm. 
-Table~\ref{tab:scalar_errors} summarizes the convergence rates for the scalar fields in both $ L^{2} $- and $ H^{1} $-norms, considering the Natural formulation, the equal-order formulation, and its stabilized variants, across the three corner angles. Similarly, Table~\ref{tab:vector_errors} reports the convergence rates of the vector fields in the $ L^{2} $-norm.
-Focusing on the scalar field $ \uP $ in the Natural formulation, we observe that the convergence in the $ H^1 $-norm closely approaches the theoretical upper bounds. In the $ L^2 $-norm, the convergence rate approximately doubles that of the $ H^1 $-norm, as expected from standard interpolation theory. The field $ \lP $ exhibits slightly better convergence than $ \uP $, particularly in the $ H^1 $-norm.
+We assess the convergence behavior with respect to different corner angles. Specifically, for the values $ \phi \in \left\{ \frac{\pi}{4}, \frac{\pi}{2}, \frac{3\pi}{4} \right\} $, the corresponding values of $ \psi $ are $ \left\{ \frac{7\pi}{4}, \frac{3\pi}{2}, \frac{5\pi}{4} \right\} $. Consequently, the scalar field $ \uP $ belong to the spaces $ H^{11/7 - \varepsilon}(\Omega) $, $ H^{5/3 - \varepsilon}(\Omega) $, and $ H^{9/5 - \varepsilon}(\Omega) $, for all $ \varepsilon > 0 $. Error estimates for finite element schemes in domains with corners have been extensively studied in the literature, for instance by \cite{Babuska1972, Babuska1970}. As a result, the convergence rate of $ \uP $ in both $ L^{2} $-norm  and $ H^{1} $-norms are expected to be restricted by the singular behavior at the reentrant corner and one may anticipate convergence rates limited by $\mathcal{O}(h^{1+4/7-\varepsilon})$, $ \mathcal{O}(h^{1+2/3-\varepsilon}) $ and $ \mathcal{O}(h^{1+4/5-\varepsilon}) $ for all $ \varepsilon > 0 $ in $L^{2}$-norm, and $\mathcal{O}(h^{4/7-\varepsilon})$, $ \mathcal{O}(h^{2/3-\varepsilon}) $ and $ \mathcal{O}(h^{4/5-\varepsilon}) $ for all $ \varepsilon > 0 $ in $H^{1}$-norm. 
+Table~\ref{tab:scalar_errors} summarizes the convergence rates for the scalar fields in the $ H^{1} $-norms, considering the Natural formulation and the Equal-order formulations, across the three corner angles. The suboptimal rates seen for the Unstabilized method are highlighted.
+
+Similarly, Table~\ref{tab:vector_errors} reports the convergence rates of the vector fields in the $ L^{2} $-norm.
+Focusing on the scalar field $ \uP $ in the Natural formulation, we observe that the convergence in the $ H^1 $-norm closely approaches the theoretical upper bounds. The field $ \lP $ exhibits slightly better convergence than $ \uP $, particularly in the $ H^1 $-norm.
 \begin{table}[h!]
 	\centering
 	\caption{Estimated convergence rates for the scalar fields $ \uP_h $ and $ \lP_h $ in the $ L^2 $- and $ H^1 $-norms using different stabilization schemes and reentrant corner angles $ \psi \in \left\{ \frac{7\pi}{4}, \frac{3\pi}{2}, \frac{5\pi}{4} \right\} $.}
@@ -295,29 +297,58 @@ Focusing on the scalar field $ \uP $ in the Natural formulation, we observe that
 		%\rowcolor{black!30!white} 
 		Formulation & Norms & $\psi = \frac{7\pi}{4}$ & $\psi = \frac{3\pi}{2}$ & $\psi = \frac{5\pi}{4}$ \\ [2pt]
 		\hline
-		\multirow{4}{*}{Natural}				 & $\|u-\uP_{h}\|_{L^{2}}$ & 1.14  & 1.44  & 1.65  \\
-		                                 & $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72  & 0.81 \\
-		                                 & $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.22  & 1.68 & 1.97  \\
+		Interpolation                   &  & 0.57 & 0.66 & 0.80 \\  
+		\hline
+		\multirow{2}{*}{Natural}		& $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72  & 0.81 \\
 		                                 & $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.99  & 0.99 & 0.99  \\
 		\hline
-		\multirow{4}{*}{Unstabilized}    & $\|u-\uP_{h}\|_{L^{2}}$ & 1.43 & 1.65 & 1.61 \\
-		                                 & $\|u-\uP_{h}\|_{H^{1}}$ & 0.46 & 0.59 & 0.64 \\
-		                                 & $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.16 & 1.30 & 2.16 \\
-		                                 & $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.46 & 0.30 & 1.24 \\
+		\multirow{2}{*}{Unstabilized}    & $\|u-\uP_{h}\|_{H^{1}}$ & \textbf{0.46} & \textbf{0.59} & \textbf{0.64} \\
+		                                 & $\|\lP-\lP_{h}\|_{H^{1}}$ & \textbf{0.46} & \textbf{0.30} & 1.24 \\
 		\hline
-		\multirow{4}{*}{Fully stabilized} & $\|u-\uP_{h}\|_{L^{2}}$ & 1.20 & 1.64 & 1.84 \\
-		                                 & $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72 & 0.81 \\
-		                                 & $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.10 & 1.39 & 1.82 \\
-		                                 & $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.82 & 0.99 \\
+		\multirow{2}{*}{Minimally stabilized} & $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.73 & 0.81 \\
+		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.78 & 0.98 \\
 		\hline
-		\multirow{4}{*}{Minimally stabilized} & $\|u-\uP_{h}\|_{L^{2}}$ & 1.16 & 1.51 & 1.82 \\
-		                                     & $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.73 & 0.81 \\
-		                                     & $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.11 & 1.48 & 1.93 \\
-		                                     & $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.78 & 0.98 \\
+		\multirow{2}{*}{Fully stabilized} & $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72 & 0.81 \\
+		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.82 & 0.99 \\
 		\bottomrule
 	\end{tabular}
 	\label{tab:scalar_errors}
 \end{table}
+
+%\begin{table}[h!]
+%	\centering
+%	\caption{Estimated convergence rates for the scalar fields $ \uP_h $ and $ \lP_h $ in the $ L^2 $- and $ H^1 $-norms using different stabilization schemes and reentrant corner angles $ \psi \in \left\{ \frac{7\pi}{4}, \frac{3\pi}{2}, \frac{5\pi}{4} \right\} $.}
+%	%\rowcolors{3}{black!10!white}{white}
+%	\begin{tabular}{l l l l l}
+%		\toprule
+%		%\rowcolor{black!30!white} 
+%		Formulation & Norms & $\psi = \frac{7\pi}{4}$ & $\psi = \frac{3\pi}{2}$ & $\psi = \frac{5\pi}{4}$ \\ [2pt]
+%		\hline
+%		\multirow{4}{*}{Natural}				 & $\|u-\uP_{h}\|_{L^{2}}$ & 1.14  & 1.44  & 1.65  \\
+%		& $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72  & 0.81 \\
+%		& $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.22  & 1.68 & 1.97  \\
+%		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.99  & 0.99 & 0.99  \\
+%		\hline
+%		\multirow{4}{*}{Unstabilized}    & $\|u-\uP_{h}\|_{L^{2}}$ & 1.43 & 1.65 & 1.61 \\
+%		& $\|u-\uP_{h}\|_{H^{1}}$ & 0.46 & 0.59 & 0.64 \\
+%		& $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.16 & 1.30 & 2.16 \\
+%		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.46 & 0.30 & 1.24 \\
+%		\hline
+%		\multirow{4}{*}{Fully stabilized} & $\|u-\uP_{h}\|_{L^{2}}$ & 1.20 & 1.64 & 1.84 \\
+%		& $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.72 & 0.81 \\
+%		& $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.10 & 1.39 & 1.82 \\
+%		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.82 & 0.99 \\
+%		\hline
+%		\multirow{4}{*}{Minimally stabilized} & $\|u-\uP_{h}\|_{L^{2}}$ & 1.16 & 1.51 & 1.82 \\
+%		& $\|u-\uP_{h}\|_{H^{1}}$ & 0.57 & 0.73 & 0.81 \\
+%		& $\|\lP-\lP_{h}\|_{L^{2}}$ & 1.11 & 1.48 & 1.93 \\
+%		& $\|\lP-\lP_{h}\|_{H^{1}}$ & 0.60 & 0.78 & 0.98 \\
+%		\bottomrule
+%	\end{tabular}
+%	\label{tab:scalar_errors}
+%\end{table}
+
+
 When comparing the same fields under the equal-order formulation, the convergence rates remain similar in magnitude to those obtained with the Natural formulation, with no substantial improvement. Among the equal-order variants, we highlight the enhanced convergence of $ \uP $ and $ \lP $ in the $ H^1 $-norm achieved by the Minimally and Fully stabilized formulations, compared to the Unstabilized case. However, no further improvements are observed in the $ L^2 $-norm for either field when stabilization is applied.
 For the vector fields $ \sP$, $ \eP $, and $ \mP $, we observe that the convergence rates in the $ L^2 $-norm remain nearly identical across all formulations and geometries. Improvements in convergence are primarily associated with increasing the interior angle at the re-entrant corner, with higher accuracy achieved when transitioning from acute to obtuse geometries. 
 These results confirm that the convergence behavior is primarily dictated by the corner-induced singularity. While stabilization enhances robustness -- especially in the $H^1$-norm for scalar fields -- it does not overcome the inherent regularity limitations imposed by the geometry. 
@@ -330,6 +361,8 @@ These results confirm that the convergence behavior is primarily dictated by the
 		%\rowcolor{black!30!white} 
 		Formulation & Norms & $\psi = \frac{7\pi}{4}$ & $\psi = \frac{3\pi}{2}$ & $\psi = \frac{5\pi}{4}$ \\ [2pt]
 		\hline
+		Interpolation                   &  & 0.57 & 0.66 & 0.80 \\
+		\hline  
 		\multirow{3}{*}{Natural}    & $\|\mathbf{s}-\sP_{h}\|_{L^{2}}$ & 0.57 & 0.73 & 0.83  \\
 		                                 & $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.57 & 0.72 & 0.81 \\
 		                                 & $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.58 & 0.73 & 0.87 \\
@@ -338,13 +371,13 @@ These results confirm that the convergence behavior is primarily dictated by the
 		                                 & $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.56 & 0.72 & 0.84 \\
 		                                 & $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.64 & 0.69 & 0.97 \\
 		\hline
-		\multirow{3}{*}{Fully stabilized} & $\|\mathbf{s}-\sP_{h}\|_{L^{2}}$ & 0.56 & 0.72 & 0.84 \\
-		                                 & $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.82 \\
-		                                 & $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.89 \\
+				\multirow{3}{*}{Minimally stabilized} & $\|\mathbf{s}-\sP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.82 \\
+		& $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.55 & 0.72 & 0.82 \\
+		& $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.58 & 0.69 & 0.83 \\
 		\hline
-		\multirow{3}{*}{Minimally stabilized} & $\|\mathbf{s}-\sP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.82 \\
-		                                     & $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.55 & 0.72 & 0.82 \\
-		                                     & $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.58 & 0.69 & 0.83 \\
+		\multirow{3}{*}{Fully stabilized} & $\|\mathbf{s}-\sP_{h}\|_{L^{2}}$ & 0.56 & 0.72 & 0.84 \\
+		& $\|\mathbf{e}-\eP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.82 \\
+		& $\|\mP-\mP_{h}\|_{L^{2}}$ & 0.55 & 0.73 & 0.89 \\
 		\bottomrule
 	\end{tabular}
 	\label{tab:vector_errors}
