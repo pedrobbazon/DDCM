@@ -117,8 +117,13 @@ Note that the Fully stabilized formulation yielded the most favorable results in
 It is worth mentioning that additional numerical experiments were carried out to evaluate the effect of each individual stabilization parameter in isolation and compared to the Unstabilized, Minimally stabilized, and Fully stabilized cases. The results are not reported here for the sake of brevity, however, they displayed only minor variations in magnitude and exhibited convergence rates consistent with those of the main reference cases. Furthermore, numerical experiments confirmed that the convergence behavior is rather independent of the reaction coefficient $ \zeta $, as similar results were obtained when varying $\zeta$ over several orders of magnitude.
 
 In what follows, we illustrate the stability properties of the approximation for the Natural and 
-the equal-order formulations by evaluating the difference \( \uP_{h} - \uP \) on a sufficiently fine mesh. Figure~\ref{fig:checkerboard_pattern} presents the corresponding results. We observe that no spurious modes 
-are present in either the Natural formulation or the Fully stabilized formulation. In the Minimally stabilized formulation, a subtle checkerboard pattern appears near the boundaries. In contrast, in the Unstabilized case, spurious modes are manifested throughout the entire domain as expected.
+the equal-order formulations by evaluating the difference $\uP_{h} - \uP$ on a sufficiently fine mesh. Figure~\ref{fig:checkerboard_pattern} presents the corresponding results. We observe that no spurious modes 
+are present in either the Natural formulation or the Equal-order Fully stabilized method. 
+In the Minimally stabilized method, a subtle checkerboard pattern appears near the boundaries. In contrast, in the Unstabilized method, spurious modes are manifested throughout the entire 
+domain as expected. However, it is worth mentioning that this pattern becomes evident 
+only when we plot the pointwise values of the error $\uP_{h} - \uP$ and the norm of 
+this error tends to zero (with suboptimal order) when the mesh is refined,
+ as it will be seen later on.
 \begin{figure}[h!]
 	\centering
 	\caption{Figures~(a)--(d) show the difference $\uP_{h} - \uP$ for the Natural formulation, and for the equal-order Unstabilized, Fully stabilized, and Minimally stabilized formulations, respectively. }
