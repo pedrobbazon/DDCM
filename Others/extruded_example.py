@@ -1,6 +1,8 @@
+from firedrake import *
+
 m = UnitIntervalMesh(10)
 mh = MeshHierarchy(m, refinement_levels=1)
-hierarchy = ExtrudedMeshHierarchy(mh, 1, base_layer=20, refinement_ratio=1, extrusion_type='uniform')
+hierarchy = ExtrudedMeshHierarchy(mh, 1, base_layer=20, refinement_ratio=3, extrusion_type='uniform')
 mesh = hierarchy[-1]
 
 RT = FunctionSpace(mesh, 'RTCF', 1)
@@ -25,6 +27,7 @@ eqn = (inner(u,w) - div(w)*p + div(u)*q)*dx - inner(f, w) * dx
 v_basis = VectorSpaceBasis(constant=True, comm=COMM_WORLD)
 nullspace = MixedVectorSpaceBasis(W, [W.sub(0), v_basis])
 
+
 params_direct = {
         'snes_type':'ksponly',
         'ksp_type': 'gmres',
@@ -38,3 +41,6 @@ params_direct = {
 nprob = NonlinearVariationalProblem(eqn, U, bcs=bcs)
 nsolver = NonlinearVariationalSolver(nprob, nullspace=nullspace, solver_parameters=params_direct)
 nsolver.solve()
+
+print(U.sub(0).dat.data[:].shape)
+print(U.sub(1).dat.data[:].shape)
