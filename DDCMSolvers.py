@@ -77,14 +77,14 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     alpha = params['alpha']
     beta  = params['beta']
     gamma = params['gamma']
-    eta  = params['eta']
+    eta   = params['eta']
     ls    = params['ls']
     lmu   = params['lmu']
     q     = volumetric_source
-    f = dual_volumetric_source
+    f     = dual_volumetric_source
     # Lagrangian:
     # Proximity function
-    L  = J
+    L = J
 
     # Balance and Compatibility constraint
     L -= fd.inner(s, fd.grad(lam)) * fd.dx
@@ -202,6 +202,194 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
+def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
+                flag_setting, volumetric_source, s_boundary_vals, u_boundary_vals,
+                lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
+                params, orders, tt=0.0, dir_outs='myddcmsol'):
+
+    mesh = domain.msh
+    
+    orderS, orderU = orders
+
+    formulation = params['formulation']
+    if(formulation == 'Natural'):
+        DGtype = 'DG'
+        if(flag_quads):
+            DGtype = 'DQ'
+        SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+        VF =  fd.VectorFunctionSpace(mesh, family=DGtype, degree=orderS)
+    elif(formulation == 'Equal-Order' or formulation == 'VMS-PRIMAL'):
+        SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+        VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+    elif(formulation == 'VMS-DUAL'):
+        SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
+        VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
+    else:
+        raise ValueError('Formulation not recognized in DDCMStab')
+
+    # Mixed space: 
+    # In this formulation we assume all scalar fields are approximated 
+    # in the same space SF and all vector fields in the same space VF
+    #   s    u    e    lam  mu
+    W = VF * SF * VF * SF * VF
+
+    x = fd.SpatialCoordinate(mesh)
+    n = fd.FacetNormal(mesh)
+
+    # Unknown field
+    w = fd.Function(W)
+    s, u, e, lam, mu = fd.split(w)
+
+    # Test functions
+    dels, delu, dele, dellam, delmu = fd.TestFunctions(W)
+
+    # Functional to be minimized
+    J = ObjFunc(e, graddata, s, fluxdata)
+
+    zeda  = params['zeda']
+    kappa = params['kappa']
+
+    cu  = params['cu']
+    ce  = params['ce']
+    cs  = params['cs']
+    cl  = params['cl']
+    cm  = params['cm']
+    L0   = params['L0']
+    L1   = params['L1']
+    Pprime = params['Pprime']
+
+    # Sources
+    q = volumetric_source
+    f = dual_volumetric_source
+
+    # Linear form (standard terms)
+    etilde, stilde = graddata, fluxdata
+    L = ( fd.inner(etilde,dele) + kappa*fd.inner(stilde,dels) ) * fd.dx
+
+    tauu = cu*L0**2
+    taue = ce
+    taus = cs/kappa
+    taul = cl/(zeda*L1)**2
+    taum = cm
+
+    if(Pprime == 'Identity'):
+        sub_u = tauu*(f(x) - zeda*lam - fd.div(mu))
+        sub_e = taue*(etilde - e - mu)
+        sub_s = taus*(kappa*(stilde - s) - fd.grad(lam)) 
+        sub_l = taul*(q(x) - zeda*u - fd.div(s))
+        sub_m = taum*(fd.grad(u) - e)
+
+    # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
+    L += ( q(x)*dellam + f(x)*delu ) * fd.dx
+
+    if(formulation == 'VMS-PRIMAL'):
+
+        # Bilinear form (Standar Galerkin terms - Primal)
+        B  = ( zeda*fd.inner(lam,delu) - fd.inner(mu,fd.grad(delu)) ) * fd.dx
+        B += ( fd.inner(e,dele) + fd.inner(mu,dele)                 ) * fd.dx
+        B += ( kappa*fd.inner(s,dels) - fd.inner(fd.grad(lam),dels) ) * fd.dx
+        B += ( zeda*fd.inner(u, dellam) - fd.inner(s,grad(dellam))  ) * fd.dx
+        B += ( -fd.inner(fd.grad(u), delmu) + fd.inner(e,delmu)     ) * fd.dx
+
+        bc_lst = []
+        if(flag_setting == 'Pure-Dirichlet'):
+
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+            
+        elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
+            
+            # Left and right (1,2)
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x),    (1,2)))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2)))
+
+            # Bottom and top (3,4)
+            L -= fd.inner(s_boundary_vals(x),n)*dellam * (fd.ds(3)+fd.ds(4))
+            L -= fd.inner(mu_boundary_vals(x),n)*delu  * (fd.ds(3)+fd.ds(4))
+            
+        else:
+            raise ValueError('Unrecognized problem setting option')
+        
+    elif(formulation == 'VMS-DUAL'):
+        # Bilinear form (Standard Galerkin terms - Dual)
+        B  = ( zeda*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
+        B += ( fd.inner(e,dele) + fd.inner(mu,dele)                  ) * fd.dx
+        B += ( kappa*fd.inner(s,dels) + fd.inner(lam,fd.div(dels))   ) * fd.dx
+        B += ( zeda*fd.inner(u, dellam) + fd.inner(fd.div(s),dellam) ) * fd.dx
+        B += ( fd.inner(u, fd.div(delmu)) + fd.inner(e,delmu)        ) * fd.dx
+
+        bc_lst = []
+        if(flag_setting == 'Pure-Dirichlet'):
+
+            L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
+            L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
+
+        elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
+
+            L += u_boundary_vals(x)*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
+            L += lmbd_boundary_vals(x)*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
+
+            bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  (3,4)))
+            bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), (3,4)))
+
+        else:
+            raise ValueError('Unrecognized problem setting option')
+            
+
+    else:
+        raise ValueError('Unrecognized formulation')
+
+    # Stabilization terms
+    B += ( zeda*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
+    B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
+    B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
+    B += ( zeda*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
+    B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
+
+    # Total residual (RHS - LHS)
+    Res = B - L
+
+    # Jacobian
+    Jac = fd.derivative(Res, w)
+
+    fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+    
+    if(dir_outs != None):
+
+        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+            mode = 'w'
+        else:
+            mode = 'a'
+
+        filename = dir_outs+'/s.pvd'
+        w.sub(0).rename('DDCM.Flux')
+        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('DDCM.Potential')
+        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+        
+        filename = dir_outs+'/g.pvd'
+        w.sub(2).rename('DDCM.gradient(u)')
+        VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
+
+        filename = dir_outs+'/l.pvd'
+        w.sub(3).rename('DDCM.lambda')
+        VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
+
+        filename = dir_outs+'/m.pvd'
+        w.sub(4).rename('DDCM.mu')
+        VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+        
+        # filename = dir_outs+'/udif.pvd'
+        # udif.rename('DDCM.udif')
+        # VTKFile(filename, mode=mode).write(udif, time=tt)
+        
+        # filename = dir_outs+'/lmbddif.pvd'
+        # lmbddif.rename('DDCM.lmbddif')
+        # VTKFile(filename, mode=mode).write(lmbddif, time=tt)
+    
+    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,

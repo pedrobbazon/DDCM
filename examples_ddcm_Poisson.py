@@ -2915,7 +2915,177 @@ def main_EX94_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
 
     return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
     
+# On the effect of stabilization parameters and polynomial degree in the natural/equal-order formulation
+def main_EX9400_(formulation='VMS-PRIMAL', N=20, order_poly = 'Linear', **kwargs):
 
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+    
+    print('----------------------------------------------------------')
+    print('|::| Reference Domain and solution begins ...')
+    print('---------------------------------------------')
+
+    # 1. Create (or import) the computational domain/mesh and Compute a reference solution
+
+    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
+    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
+    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+
+    #________________________________
+    # These would be the ones corresponding to the analytical solution we propose
+
+    h = fd.CellDiameter(domain.msh)
+    
+    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 
+              'cu': fd.Constant(kwargs.get('cu', 0.0)), 
+              'ce': fd.Constant(kwargs.get('ce', 0.0)), 
+              'cs': fd.Constant(kwargs.get('cs', 0.0)), 
+              'cl': fd.Constant(kwargs.get('cl', 0.0)), 
+              'cm': fd.Constant(kwargs.get('cm', 0.0)), 
+              'Pprime': kwargs.get('Pprime', 'Identity'),
+              'L0': h, 
+              'L1': fd.Constant(1.0)/h, 
+              'formulation': formulation} 
+    
+    # Propose an manufactured potential field and its associated gradient and also the exact flux
+    def uexact(x):
+        return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1]) 
+    def eexact(x):
+        return fd.grad(uexact(x))
+
+    def lmbdexact(x): 
+        A = fd.Constant(0.05)   # Increase A slightly for more variation
+        ome = fd.Constant(2.0)  # Frequency
+        phi = fd.Constant(0.0)   # Phase angle 
+        return  - (A / (ome * fd.pi)) * (
+            fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi)
+        )
+    # Propose a flux-gradient relationship based on the dataset  
+    def etilde(x):
+        A = fd.Constant(0.05)        # Amplitude
+        ome = fd.Constant(4.0)       # Frequency
+        phi = fd.Constant(0.0)       # Phase angle 
+        return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
+                             eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
+    def sexact(x):
+        A = fd.Constant(0.025)  # Amplitude
+        eps = fd.Constant(1.0e-10)
+        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+        mst = met - A*met**3
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    # by eq.(22)
+    def muexact(x):
+        return etilde(x) - eexact(x)
+    # by eq.(21)
+    def fdual(x):
+        zeda = params['zeda']
+        return zeda*lmbdexact(x) + fd.div(muexact(x))
+    # by eq.(23)
+    def stilde(x):
+        kappa = params['kappa']
+        return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
+    # by eq.(24)
+    def qexact(x):
+        zeda = params['zeda']
+        return zeda*uexact(x) + fd.div(sexact(x))
+    
+    def mysource(x):
+        return qexact(x)
+    def mysurfaceflux(x):
+        return sexact(x)
+    def mybcvals(x):
+        return uexact(x)
+    def mylmbd_boundary_vals(x):
+        return lmbdexact(x)
+    def mymu_boundary_vals(x):
+        return muexact(x)
+    def mydual_source(x):
+        return fdual(x)
+            
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
+    #________________________________
+
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
+                   'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
+
+    ref_prob.solve(0.0, "myrefsol")
+
+    print('----------------------------------------------------------')
+    print('|::| Reference domain and solution: OK')
+    print('----------------------------------------------------------')
+
+    # 2. Read or sample some synthetic data from a standard solution: 
+    #    The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
+
+    # 3. Solve the Data Driven problem: This problem should share the same 
+    #    forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ...')
+    print('----------------------------------')
+
+    def myObjFunc(g,gdata,s,sdata):
+        kappa = params['kappa']
+        return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
+
+    if(formulation == 'Natural' and order_poly == 'Linear'):
+        ords = [0,1]
+    elif(formulation == 'Natural' and order_poly == 'Quadratic'):
+        ords = [1,2]
+    elif(formulation == 'Natural' and order_poly == 'Cubic'):
+        ords = [2,3]
+    elif(formulation == 'VMS-PRIMAL' and order_poly == 'Linear'):
+        ords = [1,1]
+    elif(formulation == 'VMS-PRIMAL' and order_poly == 'Quadratic'):
+        ords = [2,2]
+    elif(formulation == 'VMS-PRIMAL' and order_poly == 'Cubic'):
+        ords = [3,3]
+    elif(formulation == 'VMS-DUAL' and order_poly == 'Linear'):
+        ords = [0,1]
+    else:
+        raise ValueError('Invalid formulation and polynomial order')
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
+
+    ddcm_prob.solve(0.0,"myddcmsol")
+
+    # 4. Compute some error norms
+    
+    print('... Computing some error norms ...')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
+    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
+    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
+    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
+    L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
+    if formulation == 'Equal-Order':
+        Hdiverror_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        Hdiverror_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
+        Hdiverror_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
+    else:
+        Hdiverror_s = np.nan
+        Hdiverror_e = np.nan
+        Hdiverror_mu = np.nan
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+    print('----------------------------------------------------------')
+    
+    elapsed_time = time.time() - ti
+    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
+    print('----------------------------------------------------------')
+
+    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    
 
 # ===== AUXILIARY CLASSES ===== #
 class PlotGraphs:
@@ -3472,6 +3642,141 @@ elif(main_selector == 94):
         hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
         for N in [25, 50, 100, 200]:
             output = main_EX94_(formulation, N, order_poly, **kwargs)
+            hhs.append(output[0])
+            for i, key in enumerate(errors.keys()):
+                errors[key].append(output[i + 1])
+
+        # Compute convergence rates
+        results = SaveResults(hhs, errors, formulation)
+        results.save_results(order_poly, param)
+    
+        # Plot data
+        if formulation == 'Natural':
+            plot_data = [
+                (1, [errors['L2u'], errors['H1u']], ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$'], ['r--o', 'b-.s']),
+                (2, [errors['L2l'], errors['H1l']], ['$\\|\\lambda - \\lambda_h\\|_{L^2}$', '$\\|\\lambda - \\lambda_h\\|_{H^1}$'], ['r--o', 'b-.s']),
+                (3, [errors['EsL2'], errors['EeL2'], errors['EmL2']], 
+                ['$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$'], 
+                ['r--o', 'b-.s', 'g:^'])
+            ]
+        else:
+            plot_data = [
+                (i + 1, [errors[key]], 
+                    [f'{label} $\, \\{param}={val}$' if param not in ['Unstabilized', 'Fully stabilized', 'Minimally stabilized']
+                    else f'{label} $\,$ {param}'], 
+                    [line_styles[param]]
+                )
+                for i, (key, label) in enumerate(zip(
+                    ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EsHdiv', 'EeL2', 'EeHdiv', 'EmL2', 'EmHdiv'],
+                    ['$\\|u - u_h\\|_{L^2}$', '$\\|u - u_h\\|_{H^1}$', '$\\|\\lambda - \\lambda_h\\|_{L^2}$',
+                    '$\\|\\lambda - \\lambda_h\\|_{H^1}$', '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{s} - \\mathbf{s}_h\\|_{Hdiv}$', '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{L^2}$',
+                    '$\\|\\mathbf{e} - \\mathbf{e}_h\\|_{Hdiv}$', '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{L^2}$',
+                    '$\\|\\boldsymbol{\\mu} - \\boldsymbol{\\mu}_h\\|_{Hdiv}$']
+                ))
+            ]
+
+        for fig_num, data_list, labels, line_types in plot_data:
+            for data, label, line_type in zip(data_list, labels, line_types):
+                plotLines(fig_num, hhs, data, label, line_type)
+
+    # Add legends and save figures
+    for fig_num in range(1, num_plots + 1):
+        plt.figure(fig_num)
+        plt.legend(loc='upper left', fontsize=11, ncol=2, fancybox=True, shadow=True)
+        plt.savefig(f'{formulation}_error_{fig_val_list[fig_num - 1]}_{order_poly}.svg')  
+    plt.show()
+
+elif(main_selector == 9400):
+    
+    # formulation = 'Natural'  
+    formulation = 'VMS-PRIMAL'
+    #formulation = 'VMS-DUAL'
+    order_poly = 'Linear'
+    
+    # Define stabilization parameters and figure labels based on formulation
+    if formulation == 'Natural':
+        stab_params = {None: None}
+        fig_val_list = ['u', 'l', 's_e_mu']
+        num_plots = 3
+    elif formulation == 'Equal-Order':
+        # stab_params = {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5, 
+        #                'Unstabilized': None,
+        #                'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}
+        #                }
+        stab_params = {'Unstabilized': None,
+                       'Fully stabilized':{'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
+                       'Minimally stabilized':{'alpha': 0.125, 'eta':0.5}
+                    }
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
+    elif formulation == 'VMS-PRIMAL':
+        stab_params = {'Minimally stabilized':{'cu': fd.Constant(0.0), 
+                                               'ce': fd.Constant(1.0), 
+                                               'cs': fd.Constant(1.0), 
+                                               'cl': fd.Constant(0.0), 
+                                               'cm': fd.Constant(1.0), 
+                                               'Pprime': 'Identity'}
+                    }
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
+    elif formulation == 'VMS-DUAL':
+        stab_params = {'Minimally stabilized':{'cu': fd.Constant(1.0), 
+                                               'ce': fd.Constant(1.0), 
+                                               'cs': fd.Constant(0.0), 
+                                               'cl': fd.Constant(1.0), 
+                                               'cm': fd.Constant(0.0), 
+                                               'Pprime': 'Identity'}
+                    }
+        fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
+        num_plots = 10
+    else:
+        raise ValueError('Invalid formulation')
+
+    # Line styles for plotting
+    # line_styles = {'theta': '-o', 'alpha': '--s', 'beta': '-.^', 'gamma': ':p', 'eta': '--d', 
+    #                'Unstabilized': '-.h', 
+    #                'Fully stabilized': ':v',
+    #                'Minimally stabilized': '-<'
+    #                }
+    line_styles = {'Unstabilized': 'r--o', 'Fully stabilized': 'b-.s','Minimally stabilized': 'g:^'}
+    
+    # Initialize all plots
+    def initializePlots(num_plots, formulation):
+        """Initialize all plots with labels, titles, and grids."""
+        for fig_num in range(1, num_plots + 1):
+            plt.figure(fig_num, figsize=(8, 6))
+            plt.xlabel('$h$', fontsize=14)
+            plt.ylabel('Error', fontsize=14)
+            # plt.title(formulation, fontsize=14)
+            plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+            plt.tick_params(axis='both', which='major', labelsize=14)
+            plt.tick_params(axis='both', which='minor', labelsize=14)
+
+    # Plot lines on a specific figure
+    def plotLines(fig_num, hhs, data, label, line_type='-o'):
+        """Plot lines on an existing figure."""
+        plt.figure(fig_num)
+        plt.loglog(hhs, data, line_type, linewidth=2, label=label)
+
+    # Main loop
+    """Main logic for plotting and saving figures."""
+    initializePlots(num_plots, formulation)
+
+    for param, val in stab_params.items():
+        if formulation == 'Natural' or param == 'Unstabilized':
+            kwargs = {}
+        elif param == 'Fully stabilized' or param == 'Minimally stabilized':
+            kwargs = val.copy()
+        else:
+            kwargs = {param:val}
+
+        print(f'==== Solving for {kwargs} ====')
+
+        # Collect data for all mesh refinements
+        hhs, errors = [], {key: [] for key in ['L2u', 'H1u', 'L2l', 'H1l', 'EsL2', 'EeL2', 'EmL2', 'EsHdiv', 'EeHdiv', 'EmHdiv']}
+        for N in [25, 50, 100, 200]:
+            output = main_EX9400_(formulation, N, order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors.keys()):
                 errors[key].append(output[i + 1])
