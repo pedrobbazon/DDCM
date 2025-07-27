@@ -3086,7 +3086,6 @@ def main_EX9400_(formulation='VMS-PRIMAL', N=20, order_poly = 'Linear', **kwargs
 
     return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
     
-
 # ===== AUXILIARY CLASSES ===== #
 class PlotGraphs:
     def __init__(self, hhs, L2u=None, H1u=None, L2l=None, H1l=None,
