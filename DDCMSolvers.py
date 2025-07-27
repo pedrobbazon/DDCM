@@ -71,7 +71,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Functional to be minimized
     J = ObjFunc(e, graddata, s, fluxdata)
 
-    zeda  = params['zeda']
+    zeta  = params['zeta']
     theta = params['theta']
     kappa = params['kappa']
     alpha = params['alpha']
@@ -88,7 +88,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Balance and Compatibility constraint
     L -= fd.inner(s, fd.grad(lam)) * fd.dx
-    L += fd.inner(zeda*u - q(x), lam) * fd.dx
+    L += fd.inner(zeta*u - q(x), lam) * fd.dx
     L += fd.inner(e - fd.grad(u), mu) * fd.dx
     
     # Stabilization terms
@@ -101,10 +101,10 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     resK = kappa*s - fd.grad(lam) - kappa*fluxdata
     L  -= (0.5*eta/kappa)*fd.inner(resK,resK) * fd.dx
 
-    resB = fd.div(s) + zeda*u - q(x)
+    resB = fd.div(s) + zeta*u - q(x)
     L += (0.5*theta*kappa*ls**2)*fd.inner(resB,resB) * fd.dx
 
-    resM = fd.div(mu) + zeda*lam - f(x)
+    resM = fd.div(mu) + zeta*lam - f(x)
     L -= (0.5*beta*lmu**2)*fd.inner(resM,resM) * fd.dx
     
     L -= u*f(x)*fd.dx
@@ -245,10 +245,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Functional to be minimized
     J = ObjFunc(e, graddata, s, fluxdata)
-
-    zeda  = params['zeda']
+    print(params)
+    zeta  = params['zeta']
     kappa = params['kappa']
-
     cu  = params['cu']
     ce  = params['ce']
     cs  = params['cs']
@@ -269,15 +268,58 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     tauu = cu*L0**2
     taue = ce
     taus = cs/kappa
-    taul = cl/(zeda*L1)**2
+    taul = cl/(zeta*L1)**2
     taum = cm
 
     if(Pprime == 'Identity'):
-        sub_u = tauu*(f(x) - zeda*lam - fd.div(mu))
+        sub_u = tauu*(f(x) - zeta*lam - fd.div(mu))
         sub_e = taue*(etilde - e - mu)
         sub_s = taus*(kappa*(stilde - s) - fd.grad(lam)) 
-        sub_l = taul*(q(x) - zeda*u - fd.div(s))
+        sub_l = taul*(q(x) - zeta*u - fd.div(s))
         sub_m = taum*(fd.grad(u) - e)
+    elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projection operator
+        # u' 
+        utrial, utest = fd.TrialFunction(SF), fd.TestFunction(SF)
+        a_u = fd.inner(utrial, utest) * fd.dx 
+        ell_u = fd.inner(tauu * (f(x) - zeta*lam - fd.div(mu)), utest) * fd.dx 
+        
+        sub_u = fd.Function(SF)
+        fd.solve(a_u == ell_u, sub_u)           
+        
+        # e'
+        etrial, etest = fd.TrialFunction(VF), fd.TestFunction(VF)
+        a_e = fd.inner(etrial, etest) * fd.dx 
+        ell_e = fd.inner(taue * (etilde - e - mu), etest) * fd.dx 
+        
+        sub_e = fd.Function(VF)
+        fd.solve(a_e == ell_e, sub_e)
+        
+        # s'
+        strial, stest = fd.TrialFunction(VF), fd.TestFunction(VF)
+        a_s = fd.inner(strial, stest) * fd.dx 
+        ell_s = fd.inner(taus * (kappa*(stilde - s) - fd.grad(lam)), stest) * fd.dx 
+        
+        sub_s = fd.Function(VF)
+        fd.solve(a_s == ell_s, sub_s)
+        
+        # l'
+        ltrial, ltest = fd.TrialFunction(SF), fd.TestFunction(SF)
+        a_l = fd.inner(ltrial, ltest) * fd.dx 
+        ell_l = fd.inner(taul * (q(x) - zeta*u - fd.div(s)), ltest) * fd.dx 
+        
+        sub_l = fd.Function(SF)
+        fd.solve(a_l == ell_l, sub_l)
+        
+        # m'
+        mtrial, mtest = fd.TrialFunction(VF), fd.TestFunction(VF)
+        a_m = fd.inner(mtrial, mtest) * fd.dx 
+        ell_m = fd.inner(taum * (fd.grad(u) - e), mtest) * fd.dx 
+        
+        sub_m = fd.Function(VF)
+        fd.solve(a_m == ell_m, sub_m)
+        
+    else: 
+        raise ValueError('Invalid operator')
 
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x)*dellam + f(x)*delu ) * fd.dx
@@ -285,10 +327,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if(formulation == 'VMS-PRIMAL'):
 
         # Bilinear form (Standar Galerkin terms - Primal)
-        B  = ( zeda*fd.inner(lam,delu) - fd.inner(mu,fd.grad(delu)) ) * fd.dx
+        B  = ( zeta*fd.inner(lam,delu) - fd.inner(mu,fd.grad(delu)) ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                 ) * fd.dx
         B += ( kappa*fd.inner(s,dels) - fd.inner(fd.grad(lam),dels) ) * fd.dx
-        B += ( zeda*fd.inner(u, dellam) - fd.inner(s,grad(dellam))  ) * fd.dx
+        B += ( zeta*fd.inner(u, dellam) - fd.inner(s,grad(dellam))  ) * fd.dx
         B += ( -fd.inner(fd.grad(u), delmu) + fd.inner(e,delmu)     ) * fd.dx
 
         bc_lst = []
@@ -312,10 +354,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
     elif(formulation == 'VMS-DUAL'):
         # Bilinear form (Standard Galerkin terms - Dual)
-        B  = ( zeda*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
+        B  = ( zeta*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                  ) * fd.dx
         B += ( kappa*fd.inner(s,dels) + fd.inner(lam,fd.div(dels))   ) * fd.dx
-        B += ( zeda*fd.inner(u, dellam) + fd.inner(fd.div(s),dellam) ) * fd.dx
+        B += ( zeta*fd.inner(u, dellam) + fd.inner(fd.div(s),dellam) ) * fd.dx
         B += ( fd.inner(u, fd.div(delmu)) + fd.inner(e,delmu)        ) * fd.dx
 
         bc_lst = []
@@ -340,10 +382,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         raise ValueError('Unrecognized formulation')
 
     # Stabilization terms
-    B += ( zeda*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
+    B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
     B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
     B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
-    B += ( zeda*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
+    B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
     # Total residual (RHS - LHS)

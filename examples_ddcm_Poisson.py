@@ -1857,7 +1857,7 @@ def main_EX90_(formulation='Natural', N=20):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(-10.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(-10.0), 
               'theta': fd.Constant(0.0), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.0), 'beta': fd.Constant(0.0), 
               'gamma': fd.Constant(0.0), 'eta': fd.Constant(0.0),
@@ -1910,16 +1910,16 @@ def main_EX90_(formulation='Natural', N=20):
         return etilde(x) - eexact(x)
     # by eq.(21)
     def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
+        zeta = params['zeta']
+        return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def sexact(x):
         kappa = params['kappa']
         return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2025,7 +2025,7 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2054,8 +2054,8 @@ def main_EX941_(formulation='Natural', N=20, Nsamples=3, **kwargs):
     def fdual(x):
         return fd.Constant(0.0)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2200,7 +2200,7 @@ def main_EX942_(formulation='Natural', N=20, Nsamples=3, **kwargs):
 
     h = fd.CellDiameter(domain.msh)
 
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2317,10 +2317,10 @@ def main_EX91_(formulation='Natural', N=20):
     # These would be the ones corresponding to the analytical solution we propose
     h = fd.CellDiameter(domain.msh)
 
-    # perm : permeability tensor; visc: dynamic viscosity; zeda:
-    # forch_coef: Forcheimer coefficient; zeda: reaction coefficient
+    # perm : permeability tensor; visc: dynamic viscosity; zeta:
+    # forch_coef: Forcheimer coefficient; zeta: reaction coefficient
     params = {'perm': fd.Constant(1.0), 'visc' : fd.Constant(1.0),
-              'forch_coef': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+              'forch_coef': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 
               'theta': fd.Constant(0.5), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(0.125), 'beta': fd.Constant(0.5), 
               'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
@@ -2375,16 +2375,16 @@ def main_EX91_(formulation='Natural', N=20):
         return etilde(x) - eexact(x)
     # by eq.(21)
     def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
+        zeta = params['zeta']
+        return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def sexact(x):
         kappa = params['kappa']
         return stilde(x) + (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2402,8 +2402,8 @@ def main_EX91_(formulation='Natural', N=20):
     forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
       
     # def mysource(x):
-    #     zeda = params['zeda']
-    #     return fd.div(sexact(x)) + zeda*uexact(x)
+    #     zeta = params['zeta']
+    #     return fd.div(sexact(x)) + zeta*uexact(x)
     # def mysurfaceflux(x):
     #     return sexact(x)
     # def mybcvals(x):
@@ -2508,7 +2508,7 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     # These would be the ones corresponding to the analytical solution we propose
 
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2550,16 +2550,16 @@ def main_EX92_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
         return etilde(x) - eexact(x)
     # by eq.(21)
     def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
+        zeta = params['zeta']
+        return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def stilde(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2668,10 +2668,10 @@ def main_EX93_(formulation='Natural', N=20):
     def perm(x):
         return fd.Constant(1.0) #+ fd.Constant(0.2)*fd.cos(fd.pi*x[0])*fd.cos(303*fd.pi*x[1])
     
-    def zeda(x):
+    def zeta(x):
         return fd.Constant(1.0)
 
-    params = {'perm': perm, 'zeda': zeda} 
+    params = {'perm': perm, 'zeta': zeta} 
     
     # Propose an manufactured potential field and its associated gradient
     def uexact(x):
@@ -2685,8 +2685,8 @@ def main_EX93_(formulation='Natural', N=20):
         return fd.grad(uexact(x))
 
     def qexact(x):
-        zeda = params['zeda']
-        return zeda(x)*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta(x)*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2758,7 +2758,7 @@ def main_EX94_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
     h = fd.CellDiameter(domain.msh)
 
 	
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 
               'theta': fd.Constant(kwargs.get('theta', 0.0)), 	'kappa': fd.Constant(1.0), 
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 	'beta': fd.Constant(kwargs.get('beta', 0.0)), 
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 	'eta': fd.Constant(kwargs.get('eta', 0.0)),
@@ -2811,16 +2811,16 @@ def main_EX94_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
         return etilde(x) - eexact(x)
     # by eq.(21)
     def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
+        zeta = params['zeta']
+        return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def stilde(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -2936,13 +2936,13 @@ def main_EX9400_(formulation='VMS-PRIMAL', N=20, order_poly = 'Linear', **kwargs
 
     h = fd.CellDiameter(domain.msh)
     
-    params = {'perm': fd.Constant(1.0), 'zeda': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 
               'cu': fd.Constant(kwargs.get('cu', 0.0)), 
               'ce': fd.Constant(kwargs.get('ce', 0.0)), 
               'cs': fd.Constant(kwargs.get('cs', 0.0)), 
               'cl': fd.Constant(kwargs.get('cl', 0.0)), 
               'cm': fd.Constant(kwargs.get('cm', 0.0)), 
-              'Pprime': kwargs.get('Pprime', 'Identity'),
+              'Pprime': kwargs.get('Pprime', 'L2'),
               'L0': h, 
               'L1': fd.Constant(1.0)/h, 
               'formulation': formulation} 
@@ -2980,16 +2980,16 @@ def main_EX9400_(formulation='VMS-PRIMAL', N=20, order_poly = 'Linear', **kwargs
         return etilde(x) - eexact(x)
     # by eq.(21)
     def fdual(x):
-        zeda = params['zeda']
-        return zeda*lmbdexact(x) + fd.div(muexact(x))
+        zeta = params['zeta']
+        return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def stilde(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
-        zeda = params['zeda']
-        return zeda*uexact(x) + fd.div(sexact(x))
+        zeta = params['zeta']
+        return zeta*uexact(x) + fd.div(sexact(x))
     
     def mysource(x):
         return qexact(x)
@@ -3710,17 +3710,19 @@ elif(main_selector == 9400):
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     elif formulation == 'VMS-PRIMAL':
-        stab_params = {'Minimally stabilized':{'cu': fd.Constant(0.0), 
+        stab_params = {'Minimally stabilized':{'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+                                               'cu': fd.Constant(0.0), 
                                                'ce': fd.Constant(1.0), 
                                                'cs': fd.Constant(1.0), 
                                                'cl': fd.Constant(0.0), 
                                                'cm': fd.Constant(1.0), 
-                                               'Pprime': 'Identity'}
+                                               'Pprime': 'L2'}
                     }
         fig_val_list = ['uL2', 'uH1', 'lL2', 'lH1', 'sL2', 'sHdiv', 'eL2', 'eHdiv', 'muL2', 'muHdiv']
         num_plots = 10
     elif formulation == 'VMS-DUAL':
-        stab_params = {'Minimally stabilized':{'cu': fd.Constant(1.0), 
+        stab_params = {'Minimally stabilized':{'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+                                               'cu': fd.Constant(1.0), 
                                                'ce': fd.Constant(1.0), 
                                                'cs': fd.Constant(0.0), 
                                                'cl': fd.Constant(1.0), 
