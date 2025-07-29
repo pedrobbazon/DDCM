@@ -21,11 +21,12 @@ from ddcm_classes import *
 from ddcm_utils import *
 from PoissonSolvers import *
 from DDCMSolvers import *
+from save_results_ddcm import *
 
 # ===============================================
 # Codina's fomulation
 # ===============================================
-def main_EX01_(formulation: str = 'VMS-PRIMAL', N: int = 20, order_poly: str = 'Linear'):
+def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = 'Linear'):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -138,14 +139,13 @@ def main_EX01_(formulation: str = 'VMS-PRIMAL', N: int = 20, order_poly: str = '
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    
-    if(formulation == 'VMS-PRIMAL' and order_poly == 'Linear'):
+    if(formulation == 'VMS-Primal' and order_poly == 'Linear'):
         ords = [1,1]
-    elif(formulation == 'VMS-PRIMAL' and order_poly == 'Quadratic'):
+    elif(formulation == 'VMS-Primal' and order_poly == 'Quadratic'):
         ords = [2,2]
-    elif(formulation == 'VMS-PRIMAL' and order_poly == 'Cubic'):
+    elif(formulation == 'VMS-Primal' and order_poly == 'Cubic'):
         ords = [3,3]
-    elif(formulation == 'VMS-DUAL' and order_poly == 'Linear'):
+    elif(formulation == 'VMS-Dual' and order_poly == 'Linear'):
         ords = [0,1]
     else:
         raise ValueError('Invalid formulation and polynomial order')
@@ -159,14 +159,26 @@ def main_EX01_(formulation: str = 'VMS-PRIMAL', N: int = 20, order_poly: str = '
     print('|> Computing some error norms ')
     print('----------------------------------------------------------')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
-    H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
-    L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
-    H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
-    L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
-    L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
-    L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
 
+    norms_output = {key: None for key in ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']}
+    
+    norms_output['h'] = hsize
+    norms_output['L2u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
+    norms_output['L2l'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2') 
+    norms_output['L2s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
+    norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
+    norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
+        
+    if (formulation == 'VMS-Primal'):
+        norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type = 'H1')
+        norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    elif (formulation == 'VMS-Dual'):
+        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')        
+    else:
+        ValueError('Invalid formulation')
+        
+    
     print('----------------------------------------------------------')
     print('|> Data Driven solution: Ok')
     print('----------------------------------------------------------')
@@ -176,14 +188,56 @@ def main_EX01_(formulation: str = 'VMS-PRIMAL', N: int = 20, order_poly: str = '
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu
-
-    
+    return norms_output
 
 # ===============================================
-# Codina's fomulation
+# Helper functions
+# ===============================================
+def get_norm_list(formulation: str):
+    if (formulation == 'VMS-Primal'):
+        return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
+    elif (formulation == 'VMS-Dual'):
+        return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
+    else:
+        return ValueError("Invalid formulation")
+    
+def get_filename_base(formulation):
+    if (formulation == 'VMS-Primal'):
+        return f'table_{formulation}'
+    elif (formulation == 'VMS-Dual'):
+        return f'table_{formulation}'
+    else:
+        return ValueError('Invalid formulation')
+    
+# ===============================================
+# Test case 01: Convex domain 
 # ===============================================
 main_selector = np.int32(sys.argv[1])
 
+def run_test_case_1(formulation: str = 'VMS-Primal', order_poly: str = 'Linear', foldername: str = 'output'):
+    
+    # Get the norms according to the formulation employed
+    norms = get_norm_list(formulation)
+    errors = {key: [] for key in norms}
+    
+    for N in [25, 50, 100]:
+        
+        # Run main function
+        norms_output = main_EX01_(formulation, N, order_poly)
+        
+        # Store the errors
+        for key, value in norms_output.items():
+            errors[key].append(value)
+    
+    # Save the results
+    filename_base = get_filename_base(formulation)
+    os.makedirs(foldername, exist_ok=True)
+    results = DDCM_save_results(norms, errors, formulation)
+    results.save_results(order_poly, filename_base, foldername)
+        
+
+# ===============================================
+# Run
+# ===============================================
 if (main_selector == 1):
-    output = main_EX01_(formulation = 'VMS-PRIMAL', N = 50, order_poly = 'Linear')
+    run_test_case_1(formulation='VMS-Primal', order_poly='Linear', foldername='01_VMS-Primal')

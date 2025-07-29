@@ -194,10 +194,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Get the formulation we want to employ
     formulation = params['formulation']
 
-    if (formulation == 'VMS-PRIMAL'):
+    if (formulation == 'VMS-Primal'):
         SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
         VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
-    elif (formulation == 'VMS-DUAL'):
+    elif (formulation == 'VMS-Dual'):
         SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
         VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
     else:
@@ -305,7 +305,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x) * dellam + f(x) * delu ) * fd.dx
 
-    if (formulation == 'VMS-PRIMAL'):
+    if (formulation == 'VMS-Primal'):
 
         # Bilinear form (Standar Galerkin terms - Primal)
         B  = ( zeta*fd.inner(lam,delu) - fd.inner(mu,fd.grad(delu)) ) * fd.dx
@@ -334,7 +334,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         else:
             raise ValueError('Unrecognized problem setting option')
         
-    elif (formulation == 'VMS-DUAL'):
+    elif (formulation == 'VMS-Dual'):
         
         # Bilinear form (Standard Galerkin terms - Dual)
         B  = ( zeta*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
