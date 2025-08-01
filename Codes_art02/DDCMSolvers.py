@@ -259,46 +259,27 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         sub_m = taum * (fd.grad(u) - e)
         
     elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projection operator
+        
+        def L2projector(f, V):
+            u, v = fd.TrialFunction(V), fd.TestFunction(V)
+            a = fd.inner(u,v) * fd.dx
+            l = fd.inner(f,v) * fd.dx
+            
+            w = fd.Function(V)
+            fd.solve(a == l,w)
+            return w
+        
         # u' 
-        utrial, utest = fd.TrialFunction(SF), fd.TestFunction(SF)
-        a_u = fd.inner(utrial, utest) * fd.dx 
-        ell_u = fd.inner(tauu * (f(x) - zeta*lam - fd.div(mu)), utest) * fd.dx 
-        
-        sub_u = fd.Function(SF)
-        fd.solve(a_u == ell_u, sub_u)           
-        
+        sub_u = L2projector(tauu * (f(x) - zeta*lam - fd.div(mu)), SF)
         # e'
-        etrial, etest = fd.TrialFunction(VF), fd.TestFunction(VF)
-        a_e = fd.inner(etrial, etest) * fd.dx 
-        ell_e = fd.inner(taue * (etilde - e - mu), etest) * fd.dx 
-        
-        sub_e = fd.Function(VF)
-        fd.solve(a_e == ell_e, sub_e)
-        
+        sub_e = L2projector(taue * (etilde - e - mu), VF)
         # s'
-        strial, stest = fd.TrialFunction(VF), fd.TestFunction(VF)
-        a_s = fd.inner(strial, stest) * fd.dx 
-        ell_s = fd.inner(taus * (kappa*(stilde - s) - fd.grad(lam)), stest) * fd.dx 
-        
-        sub_s = fd.Function(VF)
-        fd.solve(a_s == ell_s, sub_s)
-        
+        sub_s = L2projector(taus * (kappa*(stilde - s) - fd.grad(lam)), VF)
         # l'
-        ltrial, ltest = fd.TrialFunction(SF), fd.TestFunction(SF)
-        a_l = fd.inner(ltrial, ltest) * fd.dx 
-        ell_l = fd.inner(taul * (q(x) - zeta*u - fd.div(s)), ltest) * fd.dx 
-        
-        sub_l = fd.Function(SF)
-        fd.solve(a_l == ell_l, sub_l)
-        
+        sub_l = L2projector(taul * (q(x) - zeta*u - fd.div(s)), SF)
         # m'
-        mtrial, mtest = fd.TrialFunction(VF), fd.TestFunction(VF)
-        a_m = fd.inner(mtrial, mtest) * fd.dx 
-        ell_m = fd.inner(taum * (fd.grad(u) - e), mtest) * fd.dx 
+        sub_m = L2projector(taum * (fd.grad(u) - e), VF)
         
-        sub_m = fd.Function(VF)
-        fd.solve(a_m == ell_m, sub_m)
-          
     else:
         raise ValueError('Invalid operator.')    
 
@@ -365,7 +346,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     else:
         raise ValueError('Unrecognized formulation')
 
-    # Stabilization terms
+    # Stabilization terms                   
     B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
     B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
     B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
@@ -409,9 +390,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
-
-
-
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,

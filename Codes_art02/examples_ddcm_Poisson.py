@@ -46,10 +46,10 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     # Set physical constants and formulation parameters
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 
               'cu': fd.Constant(0.0), 
-              'ce': fd.Constant(1.0), 
-              'cs': fd.Constant(1.0), 
+              'ce': fd.Constant(1e-5), 
+              'cs': fd.Constant(1e-5), 
               'cl': fd.Constant(0.0), 
-              'cm': fd.Constant(1.0), 
+              'cm': fd.Constant(1e-5), 
               'Pprime': 'L2',
               'L0': h, 
               'L1': fd.Constant(1.0)/h, 
@@ -125,7 +125,7 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     ref_prob.solve(0.0, "myrefsol")
 
     print('----------------------------------------------------------')
-    print('|::| Reference domain and solution: Ok')
+    print('|> Reference domain and solution: Ok')
     print('----------------------------------------------------------')
 
     # The data will be sampled from the analytical expresion on-the-fly
@@ -164,7 +164,7 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     
     norms_output['h'] = hsize
     norms_output['L2u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
-    norms_output['L2l'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2') 
+    norms_output['L2l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd , norm_type = 'L2') 
     norms_output['L2s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
     norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
     norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
@@ -220,8 +220,10 @@ def run_test_case_1(formulation: str = 'VMS-Primal', order_poly: str = 'Linear',
     norms = get_norm_list(formulation)
     errors = {key: [] for key in norms}
     
-    for N in [25, 50, 100]:
-        
+    for N in [25, 50, 100, 200]:
+        print('===================================================')
+        print(f' \t Solving {formulation} with N = {N}')
+        print('===================================================')
         # Run main function
         norms_output = main_EX01_(formulation, N, order_poly)
         
@@ -235,7 +237,6 @@ def run_test_case_1(formulation: str = 'VMS-Primal', order_poly: str = 'Linear',
     results = DDCM_save_results(norms, errors, formulation)
     results.save_results(order_poly, filename_base, foldername)
         
-
 # ===============================================
 # Run
 # ===============================================

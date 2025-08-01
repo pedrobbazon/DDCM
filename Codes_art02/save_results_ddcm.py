@@ -42,9 +42,9 @@ class DDCM_save_results:
         with open(txt_path, 'w') as f:
             f.write(table_str)
 
-    # def _save_npy(self, data_dict, npy_path):
-    #     """Save the results dictionary as a .npy file."""
-    #     np.save(npy_path, data_dict, allow_pickle=True)
+    def _save_npy(self, data_dict, npy_path):
+        """Save the results dictionary as a .npy file."""
+        np.save(npy_path, data_dict, allow_pickle=True)
 
     def save_results(self, order_poly, filename_base, foldername):
         # 1: Compute convergence rates
@@ -66,13 +66,13 @@ class DDCM_save_results:
         self._save_txt(table_str, txt_path)
 
         # 6: Save to .npy
-        # npy_path = os.path.join(subfolder, f'{filename_base}.npy')
-        # data_dict = {
-        #     'h': self.hhs,
-        #     'errors': self.errors,
-        #     'conv_rates': conv_rates
-        # }
-        # self._save_npy(data_dict, npy_path)
+        npy_path = os.path.join(subfolder, f'{filename_base}.npy')
+        data_dict = {
+            'norms': self.norms,
+            'errors': self.errors,
+            'conv_rates': conv_rates
+        }
+        self._save_npy(data_dict, npy_path)
 
         return table_str
 
