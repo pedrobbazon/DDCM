@@ -46,10 +46,10 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     # Set physical constants and formulation parameters
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 
               'cu': fd.Constant(0.0), 
-              'ce': fd.Constant(1e-5), 
-              'cs': fd.Constant(1e-5), 
+              'ce': fd.Constant(1e-3), 
+              'cs': fd.Constant(1e-3), 
               'cl': fd.Constant(0.0), 
-              'cm': fd.Constant(1e-5), 
+              'cm': fd.Constant(1e-3), 
               'Pprime': 'L2',
               'L0': h, 
               'L1': fd.Constant(1.0)/h, 
@@ -150,7 +150,7 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod_new, orders=ords, params=params)
 
     ddcm_prob.solve(0.0,"myddcmsol")
 

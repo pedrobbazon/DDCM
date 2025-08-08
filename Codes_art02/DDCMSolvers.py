@@ -178,6 +178,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
+
 def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
                 flag_setting, volumetric_source, s_boundary_vals, u_boundary_vals,
                 lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
@@ -191,12 +192,25 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Extract the orders
     orderS, orderU = orders
 
-    # Get the formulation we want to employ
+    # Get the formulation we want to employ and the projection we want to consider
     formulation = params['formulation']
+    Pprime = params['Pprime']
 
     if (formulation == 'VMS-Primal'):
-        SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
-        VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+        if (Pprime == 'Identity'):
+            # In this case, proceed with a five-field formulation, since we can directly substitute the sub-grid
+            # scales into the stabilized weak formulation. This method is called algebraic VMS.
+            SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+            VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+        elif (Pprime == 'L2'):
+            # If, instead, we consider the L2 orthogonal projection of the residuals onto an elementwise function space,
+            # then we end up with a ten-field formulation, which is solved monolithically.
+            SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+            VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+            DG0SF = fd.FunctionSpace(mesh, family="DG", degree=0)
+            DG0VF = fd.VectorFunctionSpace(mesh, family="DG", degree=0)
+        else:
+            raise ValueError('Projection operator not recognized')
     elif (formulation == 'VMS-Dual'):
         SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
         VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
@@ -204,21 +218,31 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         raise ValueError('Formulation not recognized in DDCMStab')
 
     # Mixed space: 
-    # In this formulation we assume all scalar fields are approximated 
-    # in the same space SF and all vector fields in the same space VF
-    #   s    u    e    lam  mu
-    W = VF * SF * VF * SF * VF
-
+    # In this formulation, all scalar fields use the same space SF, and all vector fields use the same space VF.
+    # With L2 orthogonal projection, the five extra fields are placed in elementwise spaces:
+    # scalar fields in scalar elementwise spaces, and vector fields in vector elementwise spaces.
+    #        s    u    e   lam  mu    s'      u'      e'     lam'    mu'
+    if (Pprime == 'Identity'):
+        W = VF * SF * VF * SF * VF 
+    elif (Pprime == 'L2'):
+        W = VF * SF * VF * SF * VF * DG0VF * DG0SF * DG0VF * DG0SF * DG0VF
+    else:
+        raise ValueError('Projection operator not recognized')
+    
     # Coordinates and unit outward normal vector 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
 
-    # Unknown field
+    # Unknown field and Test functions
     w = fd.Function(W)
-    s, u, e, lam, mu = fd.split(w)
-
-    # Test functions
-    dels, delu, dele, dellam, delmu = fd.TestFunctions(W)
+    if (Pprime == 'Identity'):
+        s, u, e, lam, mu = fd.split(w)
+        dels, delu, dele, dellam, delmu = fd.TestFunctions(W)
+    elif (Pprime == 'L2'):
+        s, u, e, lam, mu, sub_s, sub_u, sub_e, sub_l, sub_m = fd.split(w)
+        dels, delu, dele, dellam, delmu, delsub_s, delsub_u, delsub_e, delsub_l, delsub_m = fd.TestFunctions(W)
+    else:
+        raise ValueError('Projection operator not recognized')
 
     # Functional to be minimized
     J = ObjFunc(e, graddata, s, fluxdata)
@@ -233,8 +257,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     cm  = params['cm']
     L0   = params['L0']
     L1   = params['L1']
-    Pprime = params['Pprime']
-
+    
     # Sources
     q = volumetric_source
     f = dual_volumetric_source
@@ -250,39 +273,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     taul = cl/(zeta*L1)**2
     taum = cm
  
-    if (Pprime == 'Identity'): # We assume P as being the identity operator 
-        
-        sub_u = tauu * (f(x) - zeta*lam - fd.div(mu))
-        sub_e = taue * (etilde - e - mu)
-        sub_s = taus * (kappa*(stilde - s) - fd.grad(lam)) 
-        sub_l = taul * (q(x) - zeta*u - fd.div(s))
-        sub_m = taum * (fd.grad(u) - e)
-        
-    elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projection operator
-        
-        def L2projector(f, V):
-            u, v = fd.TrialFunction(V), fd.TestFunction(V)
-            a = fd.inner(u,v) * fd.dx
-            l = fd.inner(f,v) * fd.dx
-            
-            w = fd.Function(V)
-            fd.solve(a == l,w)
-            return w
-        
-        # u' 
-        sub_u = L2projector(tauu * (f(x) - zeta*lam - fd.div(mu)), SF)
-        # e'
-        sub_e = L2projector(taue * (etilde - e - mu), VF)
-        # s'
-        sub_s = L2projector(taus * (kappa*(stilde - s) - fd.grad(lam)), VF)
-        # l'
-        sub_l = L2projector(taul * (q(x) - zeta*u - fd.div(s)), SF)
-        # m'
-        sub_m = L2projector(taum * (fd.grad(u) - e), VF)
-        
-    else:
-        raise ValueError('Invalid operator.')    
-
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x) * dellam + f(x) * delu ) * fd.dx
 
@@ -346,6 +336,25 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     else:
         raise ValueError('Unrecognized formulation')
 
+    if (Pprime == 'Identity'): # We assume P as being the identity operator 
+        
+        sub_u = tauu * (f(x) - zeta*lam - fd.div(mu))
+        sub_e = taue * (etilde - e - mu)
+        sub_s = taus * (kappa*(stilde - s) - fd.grad(lam)) 
+        sub_l = taul * (q(x) - zeta*u - fd.div(s))
+        sub_m = taum * (fd.grad(u) - e)    
+     
+    elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projector
+        
+        B += ( fd.inner(sub_u, delsub_u) - fd.inner((tauu * (f(x) - zeta*lam - fd.div(mu))), delsub_u)      ) * fd.dx
+        B += ( fd.inner(sub_e, delsub_e) - fd.inner((taue * (etilde - e - mu)), delsub_e)                   ) * fd.dx
+        B += ( fd.inner(sub_s, delsub_s) - fd.inner((taus * (kappa*(stilde - s) - fd.grad(lam))), delsub_s) ) * fd.dx
+        B += ( fd.inner(sub_l, delsub_l) - fd.inner((taul * (q(x) - zeta*u - fd.div(s))), delsub_l)         ) * fd.dx
+        B += ( fd.inner(sub_m, delsub_m) - fd.inner((taum * (fd.grad(u) - e)), delsub_m)                    ) * fd.dx
+
+    else:
+        raise ValueError('Invalid operator.')  
+    
     # Stabilization terms                   
     B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
     B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
@@ -390,6 +399,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
