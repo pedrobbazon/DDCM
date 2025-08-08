@@ -150,7 +150,7 @@ def main_EX01_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod_new, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
 
     ddcm_prob.solve(0.0,"myddcmsol")
 
