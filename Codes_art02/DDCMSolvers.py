@@ -340,7 +340,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         sub_u = tauu * (f(x) - zeta*lam - fd.div(mu))
         sub_e = taue * (etilde - e - mu)
-        sub_s = taus * (kappa*(stilde - s) - fd.grad(lam)) 
+        sub_s = taus * (kappa*(stilde - s) + fd.grad(lam)) 
         sub_l = taul * (q(x) - zeta*u - fd.div(s))
         sub_m = taum * (fd.grad(u) - e)    
      
@@ -348,7 +348,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         B += ( fd.inner(sub_u, delsub_u) - fd.inner((tauu * (f(x) - zeta*lam - fd.div(mu))), delsub_u)      ) * fd.dx
         B += ( fd.inner(sub_e, delsub_e) - fd.inner((taue * (etilde - e - mu)), delsub_e)                   ) * fd.dx
-        B += ( fd.inner(sub_s, delsub_s) - fd.inner((taus * (kappa*(stilde - s) - fd.grad(lam))), delsub_s) ) * fd.dx
+        B += ( fd.inner(sub_s, delsub_s) - fd.inner((taus * (kappa*(stilde - s) + fd.grad(lam))), delsub_s) ) * fd.dx
         B += ( fd.inner(sub_l, delsub_l) - fd.inner((taul * (q(x) - zeta*u - fd.div(s))), delsub_l)         ) * fd.dx
         B += ( fd.inner(sub_m, delsub_m) - fd.inner((taum * (fd.grad(u) - e)), delsub_m)                    ) * fd.dx
 
