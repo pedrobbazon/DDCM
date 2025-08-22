@@ -219,11 +219,11 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     
     # Set physical constants and formulation parameters
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-              'cu': fd.Constant(0.0),
-              'ce': fd.Constant(0.125), # 1e-3
-              'cs': fd.Constant(0.5), # 1e-3
-              'cl': fd.Constant(0.0),
-              'cm': fd.Constant(0.125), # 1e-3
+              'cu': fd.Constant(0.125),
+              'ce': fd.Constant(0.125), 
+              'cs': fd.Constant(0.125), 
+              'cl': fd.Constant(0.125),
+              'cm': fd.Constant(1.e-10), 
               'Pprime': 'Identity',
               'L0': h, 
               'L1': fd.Constant(1.0)/h,
@@ -428,7 +428,7 @@ def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear'
     norms = get_norm_list(formulation)
     errors = {key: [] for key in norms}
     
-    for N in [25, 50, 100, 200]:
+    for N in [15, 30, 60, 120]:
         print('===================================================')
         print(f' \t Solving {formulation} with N = {N}')
         print('===================================================')

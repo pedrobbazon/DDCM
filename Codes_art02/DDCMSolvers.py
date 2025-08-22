@@ -369,22 +369,25 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
 
-    Wf = VF * SF * VF * SF * VF
-    wf = fd.Function(Wf)
-    s_f, u_f, e_f, lam_f, mu_f = fd.split(wf)
+    wf = fd.Function(W)
+    wf.assign(w)
+    s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
 
+    DG1  = fd.FunctionSpace(mesh, 'DG', degree=1)
+    VDG1 = fd.VectorFunctionSpace(mesh, 'DG', degree=1)
+    
     # Recompute
-    sub_u = tauu * (f(x) - zeta * lam - fd.div(mu))
-    sub_e = taue * (etilde - e - mu)
-    sub_s = taus * (kappa * (stilde - s) + fd.grad(lam))
-    sub_l = taul * (q(x) - zeta * u - fd.div(s))
-    sub_m = taum * (fd.grad(u) - e)
+    ut = u   + tauu * (f(x) - zeta * lam - fd.div(mu))
+    et = e   + taue * (etilde - e - mu)
+    st = s   + taus * (kappa * (stilde - s) + fd.grad(lam))
+    lt = lam +  taul * (q(x) - zeta * u - fd.div(s))
+    mt = mu  + taum * (fd.grad(u) - e)
 
-    s_f = fd.assemble(interpolate(s + sub_s,VF))
-    u_f = fd.assemble(interpolate(u + sub_u,SF))
-    e_f = fd.assemble(interpolate(e + sub_e,VF))
-    lam_f = fd.assemble(interpolate(lam + sub_l,SF))
-    mu_f = fd.assemble(interpolate(mu + sub_m,VF))
+    u_f = fd.assemble(interpolate(ut,DG1))
+    e_f = fd.assemble(interpolate(et,VDG1))
+    s_f = fd.assemble(interpolate(st,VDG1))
+    lam_f = fd.assemble(interpolate(lt,DG1))
+    mu_f = fd.assemble(interpolate(mt,VDG1))
     
     if(dir_outs != None):
 
@@ -393,23 +396,23 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         else:
             mode = 'a'
         filename = dir_outs+'/s.pvd'
-        # s_f.rename('DDCM.Flux')
+        s_f.rename('DDCM.Flux')
         VTKFile(filename, mode=mode).write(s_f, time=tt)
 
         filename = dir_outs + '/u.pvd'
-        # u_f.rename('DDCM.Potential')
+        u_f.rename('DDCM.Potential')
         VTKFile(filename, mode=mode).write(u_f, time=tt)
 
         filename = dir_outs + '/g.pvd'
-        # e_f.rename('DDCM.gradient(u)')
+        e_f.rename('DDCM.gradient(u)')
         VTKFile(filename, mode=mode).write(e_f, time=tt)
 
         filename = dir_outs + '/l.pvd'
-        # lam_f.rename('DDCM.lambda')
+        lam_f.rename('DDCM.lambda')
         VTKFile(filename, mode=mode).write(lam_f, time=tt)
 
         filename = dir_outs + '/m.pvd'
-        # mu_f.rename('DDCM.mu')
+        mu_f.rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(mu_f, time=tt)
 
         # filename = dir_outs+'/s.pvd'
