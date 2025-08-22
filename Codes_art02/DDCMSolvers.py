@@ -1,8 +1,7 @@
 import firedrake as fd
 from firedrake.output import VTKFile
-import matplotlib.pyplot as plt
-import scipy.linalg as spla
 from ddcm_classes import *
+from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
@@ -29,8 +28,6 @@ petsc_opt1 = {
     'pc_type': 'lu',
     'pc_factor_mat_solver_type': 'mumps'
 }
-
-
 
 def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
              flag_setting, volumetric_source, s_boundary_vals, u_boundary_vals,
@@ -207,6 +204,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             # then we end up with a ten-field formulation, which is solved monolithically.
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+            # Choose the function space according to?
             DG0SF = fd.FunctionSpace(mesh, family="DG", degree=0)
             DG0VF = fd.VectorFunctionSpace(mesh, family="DG", degree=0)
         else:
@@ -353,8 +351,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         B += ( fd.inner(sub_m, delsub_m) - fd.inner((taum * (fd.grad(u) - e)), delsub_m)                    ) * fd.dx
 
     else:
-        raise ValueError('Invalid operator.')  
-    
+        raise ValueError('Invalid operator.')
+
+
     # Stabilization terms                   
     B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
     B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
@@ -369,6 +368,23 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     Jac = fd.derivative(Res, w)
 
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+
+    Wf = VF * SF * VF * SF * VF
+    wf = fd.Function(Wf)
+    s_f, u_f, e_f, lam_f, mu_f = fd.split(wf)
+
+    # Recompute
+    sub_u = tauu * (f(x) - zeta * lam - fd.div(mu))
+    sub_e = taue * (etilde - e - mu)
+    sub_s = taus * (kappa * (stilde - s) + fd.grad(lam))
+    sub_l = taul * (q(x) - zeta * u - fd.div(s))
+    sub_m = taum * (fd.grad(u) - e)
+
+    s_f = fd.assemble(interpolate(s + sub_s,VF))
+    u_f = fd.assemble(interpolate(u + sub_u,SF))
+    e_f = fd.assemble(interpolate(e + sub_e,VF))
+    lam_f = fd.assemble(interpolate(lam + sub_l,SF))
+    mu_f = fd.assemble(interpolate(mu + sub_m,VF))
     
     if(dir_outs != None):
 
@@ -376,29 +392,48 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             mode = 'w'
         else:
             mode = 'a'
-
         filename = dir_outs+'/s.pvd'
-        w.sub(0).rename('DDCM.Flux')
-        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+        # s_f.rename('DDCM.Flux')
+        VTKFile(filename, mode=mode).write(s_f, time=tt)
 
-        filename = dir_outs+'/u.pvd'
-        w.sub(1).rename('DDCM.Potential')
-        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
-        
-        filename = dir_outs+'/g.pvd'
-        w.sub(2).rename('DDCM.gradient(u)')
-        VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
+        filename = dir_outs + '/u.pvd'
+        # u_f.rename('DDCM.Potential')
+        VTKFile(filename, mode=mode).write(u_f, time=tt)
 
-        filename = dir_outs+'/l.pvd'
-        w.sub(3).rename('DDCM.lambda')
-        VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
+        filename = dir_outs + '/g.pvd'
+        # e_f.rename('DDCM.gradient(u)')
+        VTKFile(filename, mode=mode).write(e_f, time=tt)
 
-        filename = dir_outs+'/m.pvd'
-        w.sub(4).rename('DDCM.mu')
-        VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+        filename = dir_outs + '/l.pvd'
+        # lam_f.rename('DDCM.lambda')
+        VTKFile(filename, mode=mode).write(lam_f, time=tt)
 
-    
-    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+        filename = dir_outs + '/m.pvd'
+        # mu_f.rename('DDCM.mu')
+        VTKFile(filename, mode=mode).write(mu_f, time=tt)
+
+        # filename = dir_outs+'/s.pvd'
+        # w.sub(0).rename('DDCM.Flux')
+        # VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+        #
+        # filename = dir_outs+'/u.pvd'
+        # w.sub(1).rename('DDCM.Potential')
+        # VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+        #
+        # filename = dir_outs+'/g.pvd'
+        # w.sub(2).rename('DDCM.gradient(u)')
+        # VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
+        #
+        # filename = dir_outs+'/l.pvd'
+        # w.sub(3).rename('DDCM.lambda')
+        # VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
+        #
+        # filename = dir_outs+'/m.pvd'
+        # w.sub(4).rename('DDCM.mu')
+        # VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+
+    #     w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+    return s_f, u_f, e_f, lam_f, mu_f
 
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
