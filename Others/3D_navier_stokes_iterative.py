@@ -25,7 +25,7 @@ w = Function(W, name="Solution")
 
 
 # Augmented Lagrangian term
-gamma = Constant(0.0)
+gamma = Constant(100000.0)
 
 # Define Lagrangian
 L = (
@@ -36,6 +36,24 @@ L = (
 
 # Optimality conditions
 F = derivative(L, w)
+
+sp0 = {
+    'mat_type': 'nest',
+    'snes_monitor': None,
+    'snes_converged_reason': None,
+    'snes_max_it': 20,
+    'snes_atol': 1e-8,
+    'snes_rtol': 1e-12,
+    'snes_stol': 1e-06,
+    'ksp_type': 'preonly',
+    'ksp_converged_reason': None,
+    'ksp_monitor_true_residual': None,
+    'ksp_max_it': 500,
+    'ksp_atol': 1e-08,
+    'ksp_rtol': 1e-10,
+    'pc_type': 'lu',
+    'pc_factor_mat_solver_type': 'mumps'
+    }
 
 sp = {
     'mat_type': 'nest',
@@ -171,11 +189,94 @@ stokes_solver_parameters = {
     "fieldsplit_pressure_pc_type": "jacobi",  # "none" or "sor" can work too
 }
 
+petsc_options={
+        'snes_monitor': None,
+        'snes_converged_reason': None,
+        'snes_max_it': 20,
+        'snes_atol': 1e-8,
+        'snes_rtol': 1e-12,
+        'snes_stol': 1e-06,
+        'ksp_converged_reason': None,
+        'ksp_monitor_true_residual': None,
+        'ksp_max_it': 1000,
+        'ksp_atol': 1e-07,
+        'ksp_rtol': 1e-07,
+        "mat_type": "aij",  # CSR format (AIJ = default sparse matrix format in PETSc)
+        "ksp_type": "gmres",
+        "ksp_rtol": 1e-9,
+        "pc_type": "fieldsplit",
+        "pc_fieldsplit_type": "additive",
+        "fieldsplit_0_ksp_type": "preonly",
+        "fieldsplit_0_pc_type": "hypre",
+        "fieldsplit_1_ksp_type": "preonly",
+        "fieldsplit_1_pc_type": "jacobi",
+        }
+
+sp = {
+    'mat_type': 'nest',
+    'snes_monitor': None,
+    'snes_converged_reason': None,
+    'snes_max_it': 20,
+    'snes_atol': 1e-8,
+    'snes_rtol': 1e-12,
+    'snes_stol': 1e-06,
+    'ksp_type': 'fgmres',
+    'ksp_converged_reason': None,
+    'ksp_monitor_true_residual': None,
+    'ksp_max_it': 500,
+    'ksp_atol': 1e-08,
+    'ksp_rtol': 1e-10,
+    'pc_type': 'fieldsplit',
+    'pc_fieldsplit_type': 'schur',
+    'pc_fieldsplit_schur_factorization_type': 'full',
+    'fieldsplit_0': {'ksp_convergence_test': 'skip',
+                     'ksp_max_it': 1,
+                     'ksp_norm_type': 'unpreconditioned',
+                     'ksp_richardson_self_scale': False,
+                     'ksp_type': 'richardson',
+                     'pc_type': 'mg',
+                     'pc_mg_type': 'full',
+                     'mg_coarse_assembled_pc_type': 'lu',
+                     'mg_coarse_assembled_pc_factor_mat_solver_type': 'mumps',
+                     'mg_coarse_pc_python_type': 'firedrake.AssembledPC',
+                     'mg_coarse_pc_type': 'python',
+                     'mg_levels': {'ksp_convergence_test': 'skip',
+                                   'ksp_max_it': 5,
+                                   'ksp_type': 'fgmres',
+                                   'pc_python_type': 'firedrake.ASMStarPC',
+                                   'pc_type': 'python'},
+                    },
+    'fieldsplit_1': {'ksp_type': 'richardson',
+                     'ksp_max_it': 1,
+                     'ksp_convergence_test': 'skip',
+                     'ksp_richardson_scale': 1,
+                     'pc_type': 'python',
+                     'pc_python_type': 'firedrake.MassInvPC',
+                     'Mp_pc_type': 'jacobi'},
+}
+
 
 # Solve problem
 sp['fieldsplit_1']['ksp_richardson_scale'] = -(2/float(Re) + float(gamma))
-solve(F == 0, w, bcs, solver_parameters=sp)
-solve(F == 0, w, bcs, solver_parameters=sp)
+
+import time
+
+ti = time.time()
+
+lin_var = NonlinearVariationalProblem(F, w, bcs)
+solver = NonlinearVariationalSolver(lin_var,solver_parameters=sp0)
+
+solver.solve()
+#solve(F == 0, w, bcs, solver_parameters=sp0)
+print(time.time() - ti)
+
+w.sub(0).dat.data[:] = 0.0
+w.sub(1).dat.data[:] = 0.0
+ti = time.time()
+solver.solve()
+#solve(F == 0, w, bcs, solver_parameters=sp0)
+print(time.time() - ti)
+
 
 # Monitor incompressibility
 print(f"||div u||: {norm(div(u), 'L2'):.2e}")
