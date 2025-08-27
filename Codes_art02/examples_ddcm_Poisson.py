@@ -219,11 +219,11 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     
     # Set physical constants and formulation parameters
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-              'cu': fd.Constant(1.0e-10),
-              'ce': fd.Constant(1.0e-10), 
-              'cs': fd.Constant(1.0e-10), 
-              'cl': fd.Constant(1.0e-10),
-              'cm': fd.Constant(1.0e-10), 
+              'cu': fd.Constant(0.0125),
+              'ce': fd.Constant(0.0125), 
+              'cs': fd.Constant(0.0125), 
+              'cl': fd.Constant(0.0125),
+              'cm': fd.Constant(0.0125), 
               'Pprime': 'Identity',
               'L0': h, 
               'L1': fd.Constant(1.0)/h,
