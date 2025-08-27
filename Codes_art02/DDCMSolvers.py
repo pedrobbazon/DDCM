@@ -360,7 +360,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
-    B += -fd.inner(n, sub_l*dels)*fd.ds -fd.inner(n, sub_u*delmu)*fd.ds 
+    #B += -fd.inner(n, sub_l*dels)*fd.ds -fd.inner(n, sub_u*delmu)*fd.ds 
 
     # Total residual (LHS - RHS)
     Res = B - L
