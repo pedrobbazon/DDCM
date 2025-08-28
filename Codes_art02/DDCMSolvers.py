@@ -205,8 +205,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
             # Choose the function space according to?
-            DG0SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
-            DG0VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+            VscS = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+            VscV = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
         else:
             raise ValueError('Projection operator not recognized')
     elif (formulation == 'VMS-Dual'):
@@ -223,7 +223,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if (Pprime == 'Identity'):
         W = VF * SF * VF * SF * VF 
     elif (Pprime == 'L2'):
-        W = VF * SF * VF * SF * VF * DG0VF * DG0SF * DG0VF * DG0SF * DG0VF
+        W = VF * SF * VF * SF * VF * VscV * VscS * VscV * VscS * VscV
     else:
         raise ValueError('Projection operator not recognized')
     
@@ -289,6 +289,13 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
             bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
             bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+
+            if(Pprime == 'L2'):
+                bc_lst.append(fd.DirichletBC(W.sub(5), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
+                bc_lst.append(fd.DirichletBC(W.sub(6), fd.Constant(0.0), "on_boundary"))
+                bc_lst.append(fd.DirichletBC(W.sub(7), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
+                bc_lst.append(fd.DirichletBC(W.sub(8), fd.Constant(0.0), "on_boundary"))
+                bc_lst.append(fd.DirichletBC(W.sub(9), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
             
         elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
             
@@ -334,38 +341,43 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     else:
         raise ValueError('Unrecognized formulation')
 
+    res_u = f(x) - zeta*lam - fd.div(mu)
+    res_e = etilde - e - mu 
+    res_s = kappa*(stilde - s) + fd.grad(lam)
+    res_l = q(x) - zeta*u - fd.div(s)
+    res_m = fd.grad(u) - e
+
     if (Pprime == 'Identity'): # We assume P as being the identity operator 
         
-        sub_u = tauu * (f(x) - zeta*lam - fd.div(mu))
-        sub_e = taue * (etilde - e - mu)
-        sub_s = taus * (kappa*(stilde - s) + fd.grad(lam)) 
-        sub_l = taul * (q(x) - zeta*u - fd.div(s))
-        sub_m = taum * (fd.grad(u) - e)    
+        sub_u = res_u
+        sub_e = res_e
+        sub_s = res_s 
+        sub_l = res_l
+        sub_m = res_m
      
     elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projector
 
-        res_u = tauu * (f(x) - zeta*lam - fd.div(mu))
-        res_e = taue * (etilde - e - mu)
-        res_s = taus * (kappa*(stilde - s) + fd.grad(lam)) 
-        res_l = taul * (q(x) - zeta*u - fd.div(s))
-        res_m = taum * (fd.grad(u) - e)   
+        res_u = f(x) - zeta*lam - fd.div(mu)
+        res_e = etilde - e - mu
+        res_s = kappa*(stilde - s) + fd.grad(lam) 
+        res_l = q(x) - zeta*u - fd.div(s)
+        res_m = fd.grad(u) - e   
         
         B += ( fd.inner(sub_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
         B += ( fd.inner(sub_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
         B += ( fd.inner(sub_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
         B += ( fd.inner(sub_l, delsub_l) - fd.inner(res_l, delsub_l) ) * fd.dx
         B += ( fd.inner(sub_m, delsub_m) - fd.inner(res_m, delsub_m) ) * fd.dx
-
+    
     else:
         raise ValueError('Invalid operator.')
-
-
+    
     # Stabilization terms                   
-    B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
-    B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
-    B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
-    B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
-    B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
+    B += ( zeta*fd.inner(taul*sub_l,delu) - fd.inner(taum*sub_m,fd.grad(delu))     ) * fd.dx
+    B += ( fd.inner(taue*sub_e, dele) + fd.inner(taum*sub_m, dele)                 ) * fd.dx
+    B += ( kappa*fd.inner(taus*sub_s,dels) +  fd.inner(taul*sub_l,fd.div(dels))    ) * fd.dx
+    B += ( zeta*fd.inner(tauu*sub_u,dellam) - fd.inner(taus*sub_s,fd.grad(dellam)) ) * fd.dx
+    B += ( fd.inner(tauu*sub_u, fd.div(delmu)) + fd.inner(taue*sub_e, delmu)       ) * fd.dx
 
     # Total residual (LHS - RHS)
     Res = B - L
@@ -393,15 +405,15 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         lt = lam + sub_l 
         mt = mu  + sub_m 
 
-    DG1  = fd.FunctionSpace(mesh, 'DG', degree=2)
-    VDG1 = fd.VectorFunctionSpace(mesh, 'DG', degree=2)
-    u_f = fd.assemble(interpolate(ut,DG1))
-    e_f = fd.assemble(interpolate(et,VDG1))
-    s_f = fd.assemble(interpolate(st,VDG1))
-    lam_f = fd.assemble(interpolate(lt,DG1))
-    mu_f = fd.assemble(interpolate(mt,VDG1))
+    DGk  = fd.FunctionSpace(mesh, 'DG', degree=orderU)
+    VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
+    u_f = fd.assemble(interpolate(ut,DGk))
+    e_f = fd.assemble(interpolate(et,VDGk))
+    s_f = fd.assemble(interpolate(st,VDGk))
+    lam_f = fd.assemble(interpolate(lt,DGk))
+    mu_f = fd.assemble(interpolate(mt,VDGk))
          
-    #s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+    s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
     if(dir_outs != None):
 

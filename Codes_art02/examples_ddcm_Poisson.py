@@ -73,8 +73,8 @@ def main_EX01_(formulation='Natural', N=20, order_poly='Linear'):
         A = fd.Constant(0.025)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0] ** 2 + eexact(x)[1] ** 2) + eps
-        etn = fd.as_vector([eexact(x)[0] / met, eexact(x)[1] / met])
-        mst = met - A * met ** 3
+        etn = fd.as_vector([eexact(x)[0], eexact(x)[1]])
+        mst = met # - A * met ** 3
         return fd.as_vector([-mst * etn[0], -mst * etn[1]])
 
     # by eq.(22)
@@ -255,8 +255,8 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
         A = fd.Constant(0.025)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
-        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
+        etn = fd.as_vector([eexact(x)[0], eexact(x)[1]])
+        mst = met # - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
@@ -345,8 +345,8 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     if (formulation == 'VMS-Primal'):
         norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type = 'H1')
         norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
-    elif (formulation == 'VMS-Dual'):
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
         norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
     else:
         raise ValueError('Formulation not recognized')
@@ -371,7 +371,7 @@ def get_norm_list(formulation: str):
     elif (formulation == 'Equal-Order'):
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e' ,'Hdiv_m']
     elif (formulation == 'VMS-Primal'):
-        return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
+        return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
     elif (formulation == 'VMS-Dual'):
         return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
     else:
@@ -428,7 +428,7 @@ def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear'
     norms = get_norm_list(formulation)
     errors = {key: [] for key in norms}
     
-    for N in [15, 30, 60, 120]:
+    for N in [25, 50, 100, 200]:
         print('===================================================')
         print(f' \t Solving {formulation} with N = {N}')
         print('===================================================')
