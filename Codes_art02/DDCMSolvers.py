@@ -370,12 +370,13 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
 
+    
     wf = fd.Function(W)
     wf.assign(w)
     s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
 
-    DG1  = fd.FunctionSpace(mesh, 'DG', degree=1)
-    VDG1 = fd.VectorFunctionSpace(mesh, 'DG', degree=1)
+    DG1  = fd.FunctionSpace(mesh, 'DG', degree=2)
+    VDG1 = fd.VectorFunctionSpace(mesh, 'DG', degree=2)
     
     # Recompute
     ut = u   + tauu * (f(x) - zeta * lam - fd.div(mu))
@@ -389,7 +390,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     s_f = fd.assemble(interpolate(st,VDG1))
     lam_f = fd.assemble(interpolate(lt,DG1))
     mu_f = fd.assemble(interpolate(mt,VDG1))
-    
+     
+    #s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
     if(dir_outs != None):
 
         if(tt == 0.0): # This time acts as a parameter over which we do continuation
