@@ -205,8 +205,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
             # Choose the function space according to?
-            DG0SF = fd.FunctionSpace(mesh, family="DG", degree=0)
-            DG0VF = fd.VectorFunctionSpace(mesh, family="DG", degree=0)
+            DG0SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
+            DG0VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
         else:
             raise ValueError('Projection operator not recognized')
     elif (formulation == 'VMS-Dual'):
@@ -343,12 +343,18 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         sub_m = taum * (fd.grad(u) - e)    
      
     elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projector
+
+        res_u = tauu * (f(x) - zeta*lam - fd.div(mu))
+        res_e = taue * (etilde - e - mu)
+        res_s = taus * (kappa*(stilde - s) + fd.grad(lam)) 
+        res_l = taul * (q(x) - zeta*u - fd.div(s))
+        res_m = taum * (fd.grad(u) - e)   
         
-        B += ( fd.inner(sub_u, delsub_u) - fd.inner((tauu * (f(x) - zeta*lam - fd.div(mu))), delsub_u)      ) * fd.dx
-        B += ( fd.inner(sub_e, delsub_e) - fd.inner((taue * (etilde - e - mu)), delsub_e)                   ) * fd.dx
-        B += ( fd.inner(sub_s, delsub_s) - fd.inner((taus * (kappa*(stilde - s) + fd.grad(lam))), delsub_s) ) * fd.dx
-        B += ( fd.inner(sub_l, delsub_l) - fd.inner((taul * (q(x) - zeta*u - fd.div(s))), delsub_l)         ) * fd.dx
-        B += ( fd.inner(sub_m, delsub_m) - fd.inner((taum * (fd.grad(u) - e)), delsub_m)                    ) * fd.dx
+        B += ( fd.inner(sub_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
+        B += ( fd.inner(sub_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
+        B += ( fd.inner(sub_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
+        B += ( fd.inner(sub_l, delsub_l) - fd.inner(res_l, delsub_l) ) * fd.dx
+        B += ( fd.inner(sub_m, delsub_m) - fd.inner(res_m, delsub_m) ) * fd.dx
 
     else:
         raise ValueError('Invalid operator.')

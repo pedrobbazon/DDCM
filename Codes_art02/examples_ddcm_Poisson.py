@@ -428,7 +428,7 @@ def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear'
     norms = get_norm_list(formulation)
     errors = {key: [] for key in norms}
     
-    for N in [25, 50, 100, 200]:
+    for N in [15, 30, 60, 120]:
         print('===================================================')
         print(f' \t Solving {formulation} with N = {N}')
         print('===================================================')
