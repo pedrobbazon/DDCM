@@ -219,10 +219,10 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     
     # Set physical constants and formulation parameters
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-              'cu': fd.Constant(0.0125),
+              'cu': fd.Constant(1.0e-10),
               'ce': fd.Constant(0.0125), 
               'cs': fd.Constant(0.0125), 
-              'cl': fd.Constant(0.0125),
+              'cl': fd.Constant(1.0e-10),
               'cm': fd.Constant(0.0125), 
               'Pprime': 'Identity',
               'L0': h, 
@@ -256,7 +256,7 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
+        mst = met #- A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
