@@ -224,7 +224,7 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
               'cs': fd.Constant(0.0125), 
               'cl': fd.Constant(0.0),
               'cm': fd.Constant(0.0125), 
-              'Pprime': 'Identity',
+              'Pprime': 'L2',
               'L0': h, 
               'L1': fd.Constant(1.0)/h,
               'formulation': formulation} 
