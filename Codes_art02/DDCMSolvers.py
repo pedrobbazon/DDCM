@@ -366,7 +366,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
-    #B += -fd.inner(n, sub_l*dels)*fd.ds -fd.inner(n, sub_u*delmu)*fd.ds 
 
     # Total residual (LHS - RHS)
     Res = B - L
@@ -375,22 +374,27 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     Jac = fd.derivative(Res, w)
 
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
-
-        
+ 
     wf = fd.Function(W)
     wf.assign(w)
     s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    
+    # Recompute
+    if(Pprime == 'Identity'):
+        ut = u   + tauu * (f(x) - zeta * lam - fd.div(mu))
+        et = e   + taue * (etilde - e - mu)
+        st = s   + taus * (kappa * (stilde - s) + fd.grad(lam))
+        lt = lam +  taul * (q(x) - zeta * u - fd.div(s))
+        mt = mu  + taum * (fd.grad(u) - e)
+    else:
+        ut = u   + sub_u
+        et = e   + sub_e
+        st = s   + sub_s
+        lt = lam + sub_l 
+        mt = mu  + sub_m 
 
     DG1  = fd.FunctionSpace(mesh, 'DG', degree=2)
     VDG1 = fd.VectorFunctionSpace(mesh, 'DG', degree=2)
-    
-    # Recompute
-    ut = u   + tauu * (f(x) - zeta * lam - fd.div(mu))
-    et = e   + taue * (etilde - e - mu)
-    st = s   + taus * (kappa * (stilde - s) + fd.grad(lam))
-    lt = lam +  taul * (q(x) - zeta * u - fd.div(s))
-    mt = mu  + taum * (fd.grad(u) - e)
-
     u_f = fd.assemble(interpolate(ut,DG1))
     e_f = fd.assemble(interpolate(et,VDG1))
     s_f = fd.assemble(interpolate(st,VDG1))
