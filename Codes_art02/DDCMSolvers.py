@@ -199,7 +199,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             # scales into the stabilized weak formulation. This method is called algebraic VMS.
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
-        elif (Pprime == 'L2'):
+        elif (Pprime == 'L2' or Pprime == 'OSS'):
             # If, instead, we consider the L2 orthogonal projection of the residuals onto an elementwise function space,
             # then we end up with a ten-field formulation, which is solved monolithically.
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
@@ -222,7 +222,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     #        s    u    e   lam  mu    s'      u'      e'     lam'    mu'
     if (Pprime == 'Identity'):
         W = VF * SF * VF * SF * VF 
-    elif (Pprime == 'L2'):
+    elif (Pprime == 'L2' or Pprime == 'OSS'):
         W = VF * SF * VF * SF * VF * VscV * VscS * VscV * VscS * VscV
     else:
         raise ValueError('Projection operator not recognized')
@@ -236,8 +236,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     if (Pprime == 'Identity'):
         s, u, e, lam, mu = fd.split(w)
         dels, delu, dele, dellam, delmu = fd.TestFunctions(W)
-    elif (Pprime == 'L2'):
-        s, u, e, lam, mu, sub_s, sub_u, sub_e, sub_l, sub_m = fd.split(w)
+    elif (Pprime == 'L2' or Pprime == 'OSS'):
+        s, u, e, lam, mu, PL2res_s, PL2res_u, PL2res_e, PL2res_l, PL2res_m = fd.split(w)
         dels, delu, dele, dellam, delmu, delsub_s, delsub_u, delsub_e, delsub_l, delsub_m = fd.TestFunctions(W)
     else:
         raise ValueError('Projection operator not recognized')
@@ -347,37 +347,46 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     res_l = q(x) - zeta*u - fd.div(s)
     res_m = fd.grad(u) - e
 
+    if(Pprime == 'L2' or Pprime == 'OSS'): # Assemble L2 projections onto W
+        B += ( fd.inner(PL2res_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
+        B += ( fd.inner(PL2res_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
+        B += ( fd.inner(PL2res_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
+        B += ( fd.inner(PL2res_l, delsub_l) - fd.inner(res_l, delsub_l) ) * fd.dx
+        B += ( fd.inner(PL2res_m, delsub_m) - fd.inner(res_m, delsub_m) ) * fd.dx
+
     if (Pprime == 'Identity'): # We assume P as being the identity operator 
         
-        sub_u = res_u
-        sub_e = res_e
-        sub_s = res_s 
-        sub_l = res_l
-        sub_m = res_m
+        sub_u = tauu*res_u
+        sub_e = taue*res_e
+        sub_s = taus*res_s 
+        sub_l = taul*res_l
+        sub_m = taum*res_m
      
     elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projector
 
-        res_u = f(x) - zeta*lam - fd.div(mu)
-        res_e = etilde - e - mu
-        res_s = kappa*(stilde - s) + fd.grad(lam) 
-        res_l = q(x) - zeta*u - fd.div(s)
-        res_m = fd.grad(u) - e   
-        
-        B += ( fd.inner(sub_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
-        B += ( fd.inner(sub_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
-        B += ( fd.inner(sub_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
-        B += ( fd.inner(sub_l, delsub_l) - fd.inner(res_l, delsub_l) ) * fd.dx
-        B += ( fd.inner(sub_m, delsub_m) - fd.inner(res_m, delsub_m) ) * fd.dx
-    
+        sub_u = tauu*PL2res_u
+        sub_e = taue*PL2res_e
+        sub_s = taus*PL2res_s
+        sub_l = taul*PL2res_l
+        sub_m = taum*PL2res_m
+
+    elif (Pprime == 'OSS'): # We assume P as being projector onto the orthogonal space
+
+        sub_u = tauu*(res_u - PL2res_u)
+        sub_e = taue*(res_e - PL2res_e)
+        sub_s = taus*(res_s - PL2res_s)
+        sub_l = taul*(res_l - PL2res_l)
+        sub_m = taum*(res_m - PL2res_m)
+
     else:
         raise ValueError('Invalid operator.')
     
-    # Stabilization terms                   
-    B += ( zeta*fd.inner(taul*sub_l,delu) - fd.inner(taum*sub_m,fd.grad(delu))     ) * fd.dx
-    B += ( fd.inner(taue*sub_e, dele) + fd.inner(taum*sub_m, dele)                 ) * fd.dx
-    B += ( kappa*fd.inner(taus*sub_s,dels) +  fd.inner(taul*sub_l,fd.div(dels))    ) * fd.dx
-    B += ( zeta*fd.inner(tauu*sub_u,dellam) - fd.inner(taus*sub_s,fd.grad(dellam)) ) * fd.dx
-    B += ( fd.inner(tauu*sub_u, fd.div(delmu)) + fd.inner(taue*sub_e, delmu)       ) * fd.dx
+    # Stabilization terms
+    B += ( zeta*fd.inner(sub_l,delu) - fd.inner(sub_m,fd.grad(delu))     ) * fd.dx
+    B += ( fd.inner(sub_e, dele) + fd.inner(sub_m, dele)                 ) * fd.dx
+    B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
+    B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
+    B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
     # Total residual (LHS - RHS)
     Res = B - L
@@ -387,33 +396,33 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
  
-    wf = fd.Function(W)
-    wf.assign(w)
-    s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    #wf = fd.Function(W)
+    #wf.assign(w)
+    #s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
     
-    # Recompute
-    if(Pprime == 'Identity'):
-        ut = u   + tauu * (f(x) - zeta * lam - fd.div(mu))
-        et = e   + taue * (etilde - e - mu)
-        st = s   + taus * (kappa * (stilde - s) + fd.grad(lam))
-        lt = lam +  taul * (q(x) - zeta * u - fd.div(s))
-        mt = mu  + taum * (fd.grad(u) - e)
-    else:
+    if(True):
         ut = u   + sub_u
         et = e   + sub_e
         st = s   + sub_s
         lt = lam + sub_l 
         mt = mu  + sub_m 
 
-    DGk  = fd.FunctionSpace(mesh, 'DG', degree=orderU)
-    VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
-    u_f = fd.assemble(interpolate(ut,DGk))
-    e_f = fd.assemble(interpolate(et,VDGk))
-    s_f = fd.assemble(interpolate(st,VDGk))
-    lam_f = fd.assemble(interpolate(lt,DGk))
-    mu_f = fd.assemble(interpolate(mt,VDGk))
-         
-    s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+        if(True):
+            DGk  = fd.FunctionSpace(mesh, 'DG', degree=orderU)
+            VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
+            s_f = fd.assemble(interpolate(st,VDGk))
+            u_f = fd.assemble(interpolate(ut,DGk))
+            e_f = fd.assemble(interpolate(et,VDGk))
+            lam_f = fd.assemble(interpolate(lt,DGk))
+            mu_f = fd.assemble(interpolate(mt,VDGk))
+        else:
+            s_f = fd.project(st,W.sub(0))
+            u_f = fd.project(ut,W.sub(1))
+            e_f = fd.project(et,W.sub(2))
+            lam_f = fd.project(lt,W.sub(3))
+            mu_f = fd.project(mt,W.sub(4))
+    else:
+        s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
     if(dir_outs != None):
 
