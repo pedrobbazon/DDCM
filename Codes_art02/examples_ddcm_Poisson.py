@@ -218,16 +218,28 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     h = fd.CellDiameter(domain.msh)
     
     # Set physical constants and formulation parameters
-    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-              'cu': fd.Constant(0.0),
-              'ce': fd.Constant(0.025), 
-              'cs': fd.Constant(0.025), 
-              'cl': fd.Constant(0.0),
-              'cm': fd.Constant(-0.025), 
-              'Pprime': 'OSS',
-              'L0': h, 
-              'L1': fd.Constant(1.0)/h,
-              'formulation': formulation} 
+    if(formulation == 'VMS-Primal'):
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+                  'cu': fd.Constant(0.0),
+                  'ce': fd.Constant(0.025), 
+                  'cs': fd.Constant(0.025), 
+                  'cl': fd.Constant(0.0),
+                  'cm': fd.Constant(-0.025), 
+                  'Pprime': 'OSS',
+                  'L0': h, 
+                  'L1': fd.Constant(1.0)/h,
+                  'formulation': formulation}
+    elif(formulation == 'VMS-Dual'):
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+                  'cu': fd.Constant(0.0125),
+                  'ce': fd.Constant(0.0125), 
+                  'cs': fd.Constant(0.0), 
+                  'cl': fd.Constant(0.125),
+                  'cm': fd.Constant(0.0), 
+                  'Pprime': 'OSS',
+                  'L0': fd.Constant(1.0), 
+                  'L1': fd.Constant(1.0),
+                  'formulation': formulation}
 
     # Propose an manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
@@ -390,9 +402,11 @@ def run_test_case_01(order_poly: str = 'Linear'):
     # Get the norms according to the formulation employed
     norms_gus = get_norm_list('Equal-Order')
     norms_cod = get_norm_list('VMS-Primal')
+    norms_cod_dual = get_norm_list('VMS-Dual')
 
     errors_gus = {key: [] for key in norms_gus}
     errors_cod = {key: [] for key in norms_cod}
+    errors_cod_dual = {key: [] for key in norms_cod_dual}
 
     for N in [25, 50, 100, 200]:
         print('===================================================')
@@ -400,7 +414,8 @@ def run_test_case_01(order_poly: str = 'Linear'):
         print('===================================================')
         # Run main function
         norms_output_gus = main_EX01_(formulation = 'Equal-Order', N = N, order_poly = order_poly)
-        norms_output_cod= main_EX02_(formulation = 'VMS-Primal', N = N, order_poly = order_poly)
+        norms_output_cod = main_EX02_(formulation = 'VMS-Primal', N = N, order_poly = order_poly)
+        norms_output_cod_dual = main_EX02_(formulation = 'VMS-Dual', N = N, order_poly = order_poly)
 
         # Store the errors
         for key, value in norms_output_gus.items():
@@ -409,18 +424,25 @@ def run_test_case_01(order_poly: str = 'Linear'):
         for key, value in norms_output_cod.items():
             errors_cod[key].append(value)
 
+        for key, value in norms_output_cod_dual.items():
+            errors_cod_dual[key].append(value)
+
     # Save the results
     filename_base_gus = get_filename_base('Equal-Order')
     filename_base_cod = get_filename_base('VMS-Primal')
+    filename_base_cod_dual = get_filename_base('VMS-Dual')
 
     os.makedirs(filename_base_gus, exist_ok=True)
     os.makedirs(filename_base_cod, exist_ok=True)
+    os.makedirs(filename_base_cod_dual, exist_ok=True)
 
     results_gus = DDCM_save_results(norms_gus, errors_gus, 'Equal-Order')
     results_cod = DDCM_save_results(norms_cod, errors_cod, 'VMS-Primal')
+    results_cod_dual = DDCM_save_results(norms_cod_dual, errors_cod_dual, 'VMS-Dual')
 
     results_gus.save_results(order_poly, filename_base_gus, '00_Equal-Order')
     results_cod.save_results(order_poly, filename_base_cod, '00_VMS-Primal')
+    results_cod_dual.save_results(order_poly, filename_base_cod_dual, '00_VMS-Dual')
 
 def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear', foldername: str = 'output'):
     
@@ -452,3 +474,5 @@ if (main_selector == 1):
     run_test_case_01(order_poly='Quadratic')
 elif (main_selector == 2):
     run_test_case_02(formulation='VMS-Primal', order_poly='Quadratic', foldername='01_VMS-Primal')
+elif (main_selector == 3):
+    run_test_case_02(formulation='VMS-Dual', order_poly='Quadratic', foldername='01_VMS-Dual')
