@@ -231,11 +231,11 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
                   'formulation': formulation}
     elif(formulation == 'VMS-Dual'):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-                  'cu': fd.Constant(0.0125),
-                  'ce': fd.Constant(0.0125), 
-                  'cs': fd.Constant(0.0), 
-                  'cl': fd.Constant(0.125),
-                  'cm': fd.Constant(0.0), 
+                  'cu': fd.Constant(0.01),
+                  'ce': fd.Constant(0.01), 
+                  'cs': fd.Constant(0.01), 
+                  'cl': fd.Constant(0.01),
+                  'cm': fd.Constant(-0.01), 
                   'Pprime': 'OSS',
                   'L0': fd.Constant(1.0), 
                   'L1': fd.Constant(1.0),
@@ -328,6 +328,8 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
         ords = [1,1]
     elif(formulation == 'VMS-Primal' and order_poly == 'Quadratic'):
         ords = [2,2]
+    elif(formulation == 'VMS-Dual' and order_poly == 'Quadratic'):
+        ords = [2,2]
     elif(formulation == 'VMS-Primal' and order_poly == 'Cubic'):
         ords = [3,3]
     elif(formulation == 'VMS-Dual' and order_poly == 'Linear'):
@@ -354,7 +356,7 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
     norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
         
-    if (formulation == 'VMS-Primal'):
+    if (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
         norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type = 'H1')
         norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
@@ -382,10 +384,10 @@ def get_norm_list(formulation: str):
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m']
     elif (formulation == 'Equal-Order'):
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e' ,'Hdiv_m']
-    elif (formulation == 'VMS-Primal'):
+    elif (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
         return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
-    elif (formulation == 'VMS-Dual'):
-        return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
+    #elif (formulation == 'VMS-Dual'):
+    #    return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
     else:
         return ValueError("Invalid formulation")
     
@@ -408,7 +410,7 @@ def run_test_case_01(order_poly: str = 'Linear'):
     errors_cod = {key: [] for key in norms_cod}
     errors_cod_dual = {key: [] for key in norms_cod_dual}
 
-    for N in [25, 50, 100, 200]:
+    for N in [20, 40, 80, 160]:
         print('===================================================')
         print(f' \t Solving Equal-Order with N = {N}')
         print('===================================================')
@@ -450,7 +452,7 @@ def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear'
     norms = get_norm_list(formulation)
     errors = {key: [] for key in norms}
     
-    for N in [25, 50, 100, 200]:
+    for N in [20, 40, 80, 160]:
         print('===================================================')
         print(f' \t Solving {formulation} with N = {N}')
         print('===================================================')

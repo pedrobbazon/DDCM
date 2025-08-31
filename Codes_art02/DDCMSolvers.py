@@ -193,7 +193,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     formulation = params['formulation']
     Pprime = params['Pprime']
 
-    if (formulation == 'VMS-Primal'):
+    if (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
         if (Pprime == 'Identity'):
             # In this case, proceed with a five-field formulation, since we can directly substitute the sub-grid
             # scales into the stabilized weak formulation. This method is called algebraic VMS.
@@ -209,9 +209,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             VscV = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
         else:
             raise ValueError('Projection operator not recognized')
-    elif (formulation == 'VMS-Dual'):
-        SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
-        VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
+    #elif (formulation == 'VMS-Dual'):
+    #    SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
+    #    VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
     else:
         raise ValueError('Formulation not recognized in DDCMStab')
 
@@ -265,11 +265,19 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     L = ( fd.inner(etilde,dele) + kappa*fd.inner(stilde,dels) ) * fd.dx
 
     # Set the stabilization parameters
-    tauu = cu*L0**2
-    taue = ce
-    taus = cs/kappa
-    taul = cl/(zeta*L1)**2
-    taum = cm
+    if(formulation == 'VMS-Primal'):
+        tauu = cu*L0**2
+        taue = ce
+        taus = cs/kappa
+        taul = cl/(zeta*L1)**2
+        taum = cm
+    elif(formulation == 'VMS-Dual'):
+        tauu = cu*L0**2
+        taue = ce
+        h = fd.CellDiameter(mesh)
+        taus = cs/kappa*(h/L0)**2
+        taul = cl/(zeta*L1)**2
+        taum = cm*(h/L0)**2
  
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x) * dellam + f(x) * delu ) * fd.dx
