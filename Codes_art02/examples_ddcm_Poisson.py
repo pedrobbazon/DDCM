@@ -220,23 +220,23 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     # Set physical constants and formulation parameters
     if(formulation == 'VMS-Primal'):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-                  'cu': fd.Constant(0.0),
+                  'cu': fd.Constant(0.025),
                   'ce': fd.Constant(0.025), 
                   'cs': fd.Constant(0.025), 
-                  'cl': fd.Constant(0.0),
+                  'cl': fd.Constant(-0.025),
                   'cm': fd.Constant(-0.025), 
-                  'Pprime': 'OSS',
+                  'Pprime': 'Identity',
                   'L0': h, 
                   'L1': fd.Constant(1.0)/h,
                   'formulation': formulation}
     elif(formulation == 'VMS-Dual'):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-                  'cu': fd.Constant(0.01),
-                  'ce': fd.Constant(0.01), 
-                  'cs': fd.Constant(0.01), 
-                  'cl': fd.Constant(0.01),
-                  'cm': fd.Constant(-0.01), 
-                  'Pprime': 'OSS',
+                  'cu': fd.Constant(0.025),
+                  'ce': fd.Constant(0.025), 
+                  'cs': fd.Constant(0.1), 
+                  'cl': fd.Constant(-0.025),
+                  'cm': fd.Constant(0.1), 
+                  'Pprime': 'Identity',
                   'L0': fd.Constant(1.0), 
                   'L1': fd.Constant(1.0),
                   'formulation': formulation}
