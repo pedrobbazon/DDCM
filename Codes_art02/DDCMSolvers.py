@@ -278,6 +278,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         taus = cs/kappa*(h/L0)**2
         taul = cl/(zeta*L1)**2
         taum = cm*(h/L0)**2
+    else:
+        raise Exception('Invalid VMS option')
  
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x) * dellam + f(x) * delu ) * fd.dx
@@ -319,7 +321,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             raise ValueError('Unrecognized problem setting option')
         
     elif (formulation == 'VMS-Dual'):
-        
+        print('Hello') 
         # Bilinear form (Standard Galerkin terms - Dual)
         B  = ( zeta*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                  ) * fd.dx
@@ -356,6 +358,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     res_m = fd.grad(u) - e
 
     if(Pprime == 'L2' or Pprime == 'OSS'): # Assemble L2 projections onto W
+        print('Hello 3')
         B += ( fd.inner(PL2res_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
         B += ( fd.inner(PL2res_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
         B += ( fd.inner(PL2res_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
@@ -379,7 +382,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         sub_m = taum*PL2res_m
 
     elif (Pprime == 'OSS'): # We assume P as being projector onto the orthogonal space
-
+        print('hello 2')
         sub_u = tauu*(res_u - PL2res_u)
         sub_e = taue*(res_e - PL2res_e)
         sub_s = taus*(res_s - PL2res_s)
