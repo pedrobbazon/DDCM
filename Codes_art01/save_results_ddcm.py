@@ -44,13 +44,15 @@ class DDCM_save_results:
 
         table_str = tabulate(table_data, headers=headers, tablefmt="github")
         return table_str, table_data, headers
-    
-    def _save_txt(self, table_str, txt_path):
+
+    @staticmethod
+    def save_txt(table_str, txt_path):
         """Save the formatted table as a .txt file."""
         with open(txt_path, 'w') as f:
             f.write(table_str)
 
-    def _save_npy(self, data_dict, npy_path):
+    @staticmethod
+    def save_npy(data_dict, npy_path):
         """Save the results dictionary as a .npy file."""
         np.save(npy_path, data_dict, allow_pickle=True)
 
@@ -71,7 +73,7 @@ class DDCM_save_results:
 
         # 5: Save to .txt
         txt_path = os.path.join(subfolder, f'{filename_base}.txt')
-        self._save_txt(table_str, txt_path)
+        self.save_txt(table_str, txt_path)
 
         # 6: Save to .npy
         npy_path = os.path.join(subfolder, f'{filename_base}.npy')
@@ -80,7 +82,7 @@ class DDCM_save_results:
             'errors': self.errors,
             'conv_rates': conv_rates
         }
-        self._save_npy(data_dict, npy_path)
+        self.save_npy(data_dict, npy_path)
 
         return table_str
 

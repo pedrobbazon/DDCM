@@ -1,9 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
 from firedrake.__future__ import interpolate
+
+
 #
 #----------------------------------------------------------------
 #
@@ -305,7 +305,7 @@ def PoissonMixedEO(domain, flag_quads, params, flag_setting,
         #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
 
         # Some non-zero initial guess to avoid singularities
-        #w.sub(1).interpolate(boundary_vals(x))
+        #w.sub(1).fd.interpolate(boundary_vals(x))
 
     elif(flag_setting == 'Pure-Neumann'):
         
@@ -330,7 +330,7 @@ def PoissonMixedEO(domain, flag_quads, params, flag_setting,
         bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+        w.sub(1).fd.interppolate(x[1]*(utop-ubottom) + ubottom)
 
     else:
         
@@ -430,7 +430,7 @@ def PoissonMixedEOdiv(domain, flag_quads, params, flag_setting,
         #bcall = [fd.DirichletBC(W.sub(1), boundary_vals(x), "on_boundary")]
 
         # Some non-zero initial guess to avoid singularities
-        #w.sub(1).interpolate(boundary_vals(x))
+        #w.sub(1).fd.interppolate(boundary_vals(x))
 
     elif(flag_setting == 'Pure-Neumann'):
         
@@ -455,7 +455,7 @@ def PoissonMixedEOdiv(domain, flag_quads, params, flag_setting,
         bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+        w.sub(1).fd.interppolate(x[1]*(utop-ubottom) + ubottom)
 
     else:
         
@@ -548,7 +548,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         bcall = []
 
         # Some non-zero initial guess to avoid singularities
-        #w.sub(1).interpolate(boundary_vals(x))
+        #w.sub(1).fd.interppolate(boundary_vals(x))
 
     elif(flag_setting == 'Pure-Neumann'):
         
@@ -573,7 +573,7 @@ def PoissonMixedHdiv(domain, flag_quads, params, flag_setting,
         bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+        w.sub(1).fd.interppolate(x[1]*(utop-ubottom) + ubottom)
 
     else:
         
@@ -670,7 +670,7 @@ def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
         bcall = []
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(boundary_vals(x))
+        w.sub(1).fd.interppolate(boundary_vals(x))
         
     elif(flag_setting == 'Uniaxial'):
         
@@ -688,7 +688,7 @@ def PoissonMixedHdivAni(domain, flag_quads, params, flag_setting,
         bcall = [fd.DirichletBC(W.sub(0), no_flux, tag_left), fd.DirichletBC(W.sub(0), no_flux, tag_right)]
 
         # Some non-zero initial guess to avoid singularities
-        w.sub(1).interpolate(x[1]*(utop-ubottom) + ubottom)
+        w.sub(1).fd.interppolate(x[1]*(utop-ubottom) + ubottom)
 
     else:
         
@@ -809,31 +809,6 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
             st = fd.assemble(interpolate(stexact(x), Vflux))
             st.rename('Reference.st')
             VTKFile(filename).write(st)
-
-        # marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
-        # nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    
-        # nvs = np.linalg.norm(flux.dat.data[:,:], axis=1)
-        # nvet = np.linalg.norm(et.dat.data[:,:], axis=1)
-        # nvst = np.linalg.norm(st.dat.data[:,:], axis=1)
-        # # nve = gradu.dat.data[:,0]
-        # # nvs = flux.dat.data[:,0]
-        # # nvet = et.dat.data[:,0]
-        # # nvst = st.dat.data[:,0]
-        # plt.figure(figsize=(8,6))
-        # plt.plot(nvet, nvst, **marker_style,label=r'$\tilde{\mathbf{s}}\left(\tilde{\mathbf{e}}\right)$')
-        # plt.plot(nve, nvs, '.k',label=r'$\mathbf{s}\left(\mathbf{e}\right)$')
-        # plt.xlabel(r'$\|\mathbf{e}\|$', fontsize=16)
-        # plt.ylabel(r'$\|\mathbf{s}\|$', fontsize=16)
-        # # plt.xlabel(r'$e_{x}$', fontsize=12)
-        # # plt.ylabel(r'$s_{x}$', fontsize=12)
-        # plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-        # plt.legend(loc='best', fancybox=True, shadow=True, fontsize=12)
-        # plt.tick_params(axis='both', which='major', labelsize=14)
-        # plt.tick_params(axis='both', which='minor', labelsize=14)
-        # plt.tight_layout()
-        # plt.savefig('stilde_vs_etilde.svg', format='svg')
-        # plt.show()
-
 
     return sexact, uexact, gradexact
 

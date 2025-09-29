@@ -10,34 +10,32 @@ Last Modified on:   10th January, 2025
 # ===============================================
 # General libraries
 # ===============================================
-import numpy as np
 import sys
-import time
-
 # ===============================================
 # Our libraries
 # ===============================================
 from ddcm_classes import *
-from ddcm_utils import *
 from PoissonSolvers import *
 from DDCMSolvers import *
 from save_results_ddcm import *
+import constants as ct
 
 # ===============================================
 # Gustavos's fomulation
 # ===============================================
-def main_EX01_(formulation='Natural', N=20, order_poly='Linear'):
+def main_ex01_(formulation='Equal-Order', n=20, order_poly='Linear'):
     ti = time.time()
+
+    print('==========================================================')
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
 
     print('----------------------------------------------------------')
-    print('|> Reference Domain and solution begins ...')
-    print('---------------------------------------------')
+    print('|> Reference Domain and solution begins')
 
     # Create (or import) the computational domain/mesh and Compute a reference solution
-    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
-    hsize = max(Ls[0] / Ns[0], Ls[1] / Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    nsd, ls, ns = 2, [1.0, 1.0], [n, n]
+    hsize = max(ls[0] / ns[0], ls[1] / ns[1])
+    domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
 
     # These would be the ones corresponding to the analytical solution we propose
     h = fd.CellDiameter(domain.msh)
@@ -122,11 +120,10 @@ def main_EX01_(formulation='Natural', N=20, order_poly='Linear'):
                    'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3, 3])
 
-    ref_prob.solve(0.0, "my_gus_refsol")
+    ref_prob.solve(0.0, ct.MY_REF_SOL)
 
     print('----------------------------------------------------------')
     print('|> Reference domain and solution: OK')
-    print('----------------------------------------------------------')
 
     # Read or sample some synthetic data from a standard solution:
     # The idea is to produce some plausible data similar to what an experiment would deliver
@@ -138,35 +135,33 @@ def main_EX01_(formulation='Natural', N=20, order_poly='Linear'):
     # forcings (bcs, sources, etc.) as the standard problem above
 
     print('----------------------------------------------------------')
-    print('|> Data Driven solution begins ...')
-    print('----------------------------------')
+    print('|> Data Driven solution begins ')
 
     def myObjFunc(g, gdata, s, sdata):
         kappa = params['kappa']
         return 0.5 * fd.inner(g - gdata, g - gdata) * fd.dx + 0.5 * kappa * fd.inner(s - sdata, s - sdata) * fd.dx
 
-    if (formulation == 'Natural' and order_poly == 'Linear'):
+    if formulation == 'Natural' and order_poly == 'Linear':
         ords = [0, 1]
-    elif (formulation == 'Natural' and order_poly == 'Quadratic'):
+    elif formulation == 'Natural' and order_poly == 'Quadratic':
         ords = [1, 2]
-    elif (formulation == 'Natural' and order_poly == 'Cubic'):
+    elif formulation == 'Natural' and order_poly == 'Cubic':
         ords = [2, 3]
-    elif (formulation == 'Equal-Order' and order_poly == 'Linear'):
+    elif formulation == 'Equal-Order' and order_poly == 'Linear':
         ords = [1, 1]
-    elif (formulation == 'Equal-Order' and order_poly == 'Quadratic'):
+    elif formulation == 'Equal-Order' and order_poly == 'Quadratic':
         ords = [2, 2]
-    elif (formulation == 'Equal-Order' and order_poly == 'Cubic'):
+    elif formulation == 'Equal-Order' and order_poly == 'Cubic':
         ords = [3, 3]
     else:
         raise ValueError('Invalid formulation and polynomial order')
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords,
                             params=params)
-    ddcm_prob.solve(0.0, "my_gus_ddcmsol")
+    ddcm_prob.solve(0.0, ct.MY_DDCM_SOL)
 
     # Compute some error norms
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
-    print('----------------------------------------------------------')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
 
     norms_output = {key: None for key in ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']}
@@ -180,63 +175,58 @@ def main_EX01_(formulation='Natural', N=20, order_poly='Linear'):
     norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='L2')
     norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='L2')
 
-    if (formulation == 'Equal-Order'):
+    if formulation == 'Equal-Order':
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
         norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
         norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
 
-
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
-    print('----------------------------------------------------------')
 
     elapsed_time = time.time() - ti
-    print('----------------------------------------------------------')
     print('|> End DDCM Computation | Total time= %1.1f s' % (elapsed_time))
-    print('----------------------------------------------------------')
-
+    print('==========================================================')
     return norms_output
 
 # ===============================================
 # Codina's fomulation
 # ===============================================
-def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = 'Linear'):
+def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = 'Linear'):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
     
     print('----------------------------------------------------------')
     print('|> Reference Domain and solution begins')
-    print('----------------------------------------------------------')
 
     # Define the computational domain
-    nsd, Ls, Ns = 2, [1.0, 1.0], [N, N]
-    hsize = max(Ls[0]/Ns[0], Ls[1]/Ns[1])
-    domain = ComputationalDomain(nsd, Ls, Ns, meshfile=None, flag_quads=False)
+    nsd, ls, ns = 2, [1.0, 1.0], [n, n]
+    hsize = max(ls[0]/ns[0], ls[1]/ns[1])
+    domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
 
     # Get the characteristic mesh size
     h = fd.CellDiameter(domain.msh)
     
     # Set physical constants and formulation parameters
-    if(formulation == 'VMS-Primal'):
+    if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'cu': fd.Constant(0.0),
                   'ce': fd.Constant(0.125), 
                   'cs': fd.Constant(0.125), 
                   'cl': fd.Constant(-0.0),
                   'cm': fd.Constant(-0.125), 
-                  'Pprime': 'OSS',
+                  'Pprime': 'Identity',
                   'L0': h, 
                   'L1': fd.Constant(1.0)/h,
                   'formulation': formulation}
-    elif(formulation == 'VMS-Dual'):
+    elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'cu': fd.Constant(0.125),
                   'ce': fd.Constant(1.25), 
                   'cs': fd.Constant(0.0), 
                   'cl': fd.Constant(-0.125),
                   'cm': fd.Constant(-0.0), 
-                  'Pprime': 'OSS',
+                  'Pprime': 'Identity',
                   'L0': fd.Constant(1.0), 
                   'L1': fd.Constant(1.0),
                   'formulation': formulation}
@@ -307,44 +297,36 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
                    'exact-mu': muexact, 'exact-etilde': etilde, 'exact-stilde': stilde}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
-    ref_prob.solve(0.0, "my_cod_refsol")
+    ref_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     print('----------------------------------------------------------')
     print('|> Reference domain and solution: Ok')
-    print('----------------------------------------------------------')
 
-    # The data will be sampled from the analytical expresion on-the-fly
+    # The data will be sampled from the analytical expression on-the-fly
     ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
   
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
-    print('----------------------------------------------------------')
 
-    def myObjFunc(g,gdata,s,sdata):
+    def my_obj_func(g,gdata,s,sdata):
         kappa = params['kappa']
         return 0.5*fd.inner(g-gdata, g-gdata)*fd.dx + 0.5*kappa*fd.inner(s-sdata, s-sdata)*fd.dx
 
-    if(formulation == 'VMS-Primal' and order_poly == 'Linear'):
+    if order_poly == 'Linear':
         ords = [1,1]
-    elif(formulation == 'VMS-Primal' and order_poly == 'Quadratic'):
+    elif order_poly == 'Quadratic':
         ords = [2,2]
-    elif(formulation == 'VMS-Dual' and order_poly == 'Quadratic'):
-        ords = [2,2]
-    elif(formulation == 'VMS-Primal' and order_poly == 'Cubic'):
+    elif order_poly == 'Cubic':
         ords = [3,3]
-    elif(formulation == 'VMS-Dual' and order_poly == 'Linear'):
-        ords = [0,1]
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
-    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
-
+    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
     ddcm_prob.solve(0.0,"my_cod_ddcmsol")
 
     # Compute some error norms
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
-    print('----------------------------------------------------------')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
 
     norms_output = {key: None for key in ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']}
@@ -356,7 +338,7 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
     norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
     norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
         
-    if (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
+    if formulation == 'VMS-Primal' or formulation == 'VMS-Dual':
         norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type = 'H1')
         norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
@@ -367,12 +349,10 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution: Ok')
-    print('----------------------------------------------------------')
     
     elapsed_time = time.time() - ti
-    print('----------------------------------------------------------')
-    print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
-    print('----------------------------------------------------------')
+    print('|> End DDCM Computation | Total time= %1.1f s' %elapsed_time)
+    print('==========================================================')
 
     return norms_output
 
@@ -380,101 +360,57 @@ def main_EX02_(formulation: str = 'VMS-Primal', N: int = 20, order_poly: str = '
 # Helper functions
 # ===============================================
 def get_norm_list(formulation: str):
-    if (formulation == 'Natural'):
+    if formulation == 'Natural':
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m']
-    elif (formulation == 'Equal-Order'):
+    elif formulation == 'Equal-Order':
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e' ,'Hdiv_m']
-    elif (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
+    elif formulation == 'VMS-Primal' or formulation == 'VMS-Dual':
         return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
-    #elif (formulation == 'VMS-Dual'):
-    #    return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']
     else:
         return ValueError("Invalid formulation")
-    
-def get_filename_base(formulation):
-    return f'table_{formulation}'
-    
+
 # ===============================================
-# Test case 01: Convex domain 
+# Run
 # ===============================================
 main_selector = np.int32(sys.argv[1])
 
-# Comparison between formulations
-def run_test_case_01(order_poly: str = 'Linear'):
-    # Get the norms according to the formulation employed
-    norms_gus = get_norm_list('Equal-Order')
-    norms_cod = get_norm_list('VMS-Primal')
-    norms_cod_dual = get_norm_list('VMS-Dual')
+# Compare Gustavo's formulation with Primal and Dual Codina's formulation
+def case_01(order_poly: str = 'Linear'):
 
-    errors_gus = {key: [] for key in norms_gus}
-    errors_cod = {key: [] for key in norms_cod}
-    errors_cod_dual = {key: [] for key in norms_cod_dual}
+    list_of_formulations = ['Equal-Order', 'VMS-Primal', 'VMS-Dual']
+    norms = {key: [] for key in list_of_formulations}
+    for form in norms.keys():
+        norms[form] = get_norm_list(form)
 
-    for N in [20, 40, 80, 160]:
+    error = {}
+    for form, norm_list in norms.items():
+        error[form] = {}
+        for norm in norm_list:
+            error[form][norm] = []
+
+    function_output = {}
+    for N in [25, 50, 100, 200]:
         print('===================================================')
         print(f' \t Solving Equal-Order with N = {N}')
         print('===================================================')
         # Run main function
-        norms_output_gus = main_EX01_(formulation = 'Equal-Order', N = N, order_poly = order_poly)
-        norms_output_cod = main_EX02_(formulation = 'VMS-Primal', N = N, order_poly = order_poly)
-        norms_output_cod_dual = main_EX02_(formulation = 'VMS-Dual', N = N, order_poly = order_poly)
+        function_output['Equal-Order'] = main_ex01_(formulation = 'Equal-Order', n = N, order_poly = order_poly)
+        function_output['VMS-Primal']= main_ex02_(formulation = 'VMS-Primal', n = N, order_poly = order_poly)
+        function_output['VMS-Dual'] = main_ex02_(formulation='VMS-Dual', n = N, order_poly = order_poly)
 
         # Store the errors
-        for key, value in norms_output_gus.items():
-            errors_gus[key].append(value)
-
-        for key, value in norms_output_cod.items():
-            errors_cod[key].append(value)
-
-        for key, value in norms_output_cod_dual.items():
-            errors_cod_dual[key].append(value)
+        for form, inner_dict in error.items():
+            for norm in inner_dict.keys():
+                error[form][norm].append(function_output[form][norm])
 
     # Save the results
-    filename_base_gus = get_filename_base('Equal-Order')
-    filename_base_cod = get_filename_base('VMS-Primal')
-    filename_base_cod_dual = get_filename_base('VMS-Dual')
+    for form, inner_dict in error.items():
+        results = DDCMSaveResults(errors=inner_dict, formulation=form)
+        results.save_results(folder_name = ct.RESULTS_CONVERGENCE_COMPARISON, order_poly=order_poly)
 
-    os.makedirs(filename_base_gus, exist_ok=True)
-    os.makedirs(filename_base_cod, exist_ok=True)
-    os.makedirs(filename_base_cod_dual, exist_ok=True)
-
-    results_gus = DDCM_save_results(norms_gus, errors_gus, 'Equal-Order')
-    results_cod = DDCM_save_results(norms_cod, errors_cod, 'VMS-Primal')
-    results_cod_dual = DDCM_save_results(norms_cod_dual, errors_cod_dual, 'VMS-Dual')
-
-    results_gus.save_results(order_poly, filename_base_gus, '00_Equal-Order')
-    results_cod.save_results(order_poly, filename_base_cod, '00_VMS-Primal')
-    results_cod_dual.save_results(order_poly, filename_base_cod_dual, '00_VMS-Dual')
-
-def run_test_case_02(formulation: str = 'VMS-Primal', order_poly: str = 'Linear', foldername: str = 'output'):
-    
-    # Get the norms according to the formulation employed
-    norms = get_norm_list(formulation)
-    errors = {key: [] for key in norms}
-    
-    for N in [20, 40, 80, 160]:
-        print('===================================================')
-        print(f' \t Solving {formulation} with N = {N}')
-        print('===================================================')
-        # Run main function
-        norms_output = main_EX02_(formulation, N, order_poly)
-        
-        # Store the errors
-        for key, value in norms_output.items():
-            errors[key].append(value)
-    
-    # Save the results
-    filename_base = get_filename_base(formulation)
-    os.makedirs(foldername, exist_ok=True)
-    results = DDCM_save_results(norms, errors, formulation)
-    results.save_results(order_poly, filename_base, foldername)
-        
 # ===============================================
-# Run
+# Main
 # ===============================================
-if (main_selector == 1):
-    run_test_case_01(order_poly='Quadratic')
-elif (main_selector == 2):
-    run_test_case_02(formulation='VMS-Primal', order_poly='Quadratic', foldername='01_VMS-Primal')
-elif (main_selector == 3):
-    run_test_case_02(formulation='VMS-Dual', order_poly='Quadratic', foldername='01_VMS-Dual')
+if main_selector == 1:
+    case_01(order_poly='Linear')
+
