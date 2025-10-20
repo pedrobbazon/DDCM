@@ -20,8 +20,9 @@ class ComputationalDomain:
             self.dim = nsd
 
         self.meshfile = meshfile
+
         self.simple_domain = False
-        if(self.meshfile == None): # Then, it is obviously a simple rectangle mesh
+        if self.meshfile == None: # Then, it is obviously a simple rectangle mesh
             self.simple_domain = True
 
         # Domain size
@@ -57,7 +58,7 @@ class ComputationalDomain:
         self.area_els  = fd.assemble(one*tstdg*fd.dx)
 
     def Create(self):
-        if(self.simple_domain):
+        if self.simple_domain:
             return fd.RectangleMesh(self.Nx, self.Ny, 
                                     self.Lx, self.Ly,
                                     originX=0.0, originY=0.0,

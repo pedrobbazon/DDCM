@@ -1,4 +1,5 @@
-import numpy as np
+import firedrake as fd
+import gmsh as gm
 import matplotlib.pyplot as plt
 
 def PlotPoissonData(lst_data_files, flag_type_plot = 'magnitude'):
@@ -545,5 +546,80 @@ def CreateMeshTaylorSheet(meshname, lc=0.1):
     gmsh.write(meshname+".vtk") # For visualization in Paraview
     gmsh.finalize()
 
-    mymesh = Mesh(filename)
+    mymesh = fd.Mesh(filename)
     return mymesh, tags
+
+
+
+
+def create_mesh_internal_boundary_layer(Lx, Ly, h, flag_refine_interface):
+    gmsh.initialize()
+    gm = gmsh.model
+
+    tags = {
+        'leftdom_marker': 88, 'rightdom_marker': 99,
+        'leftwall_marker': 1, 'rightwall_marker': 2,
+        'bottomwall_marker': 3, 'topwall_marker': 4,
+        'interface_marker': 5,
+    }
+
+    gm.occ.addRectangle(0, 0, 0, Lx/2, Ly, tag=1)
+    gm.occ.addRectangle(Lx/2, 0, 0, Lx/2, Ly, tag=2)
+    whole_domain = gm.occ.fragment([(2, 1)], [(2, 2)])
+    gm.occ.synchronize()
+
+    # Mark subdomains
+    # --- Identify the fragmented surfaces ---
+    surfaces = gm.getEntities(dim=2)
+    leftdom, rightdom = [], []
+    for dim, tag in surfaces:
+        com = gm.occ.getCenterOfMass(dim, tag)
+        if com[0] < Lx / 2:
+            leftdom.append(tag)
+        else:
+            rightdom.append(tag)
+
+    # --- Assign physical groups ---
+    gm.addPhysicalGroup(2, leftdom, tags['leftdom_marker'])
+    gm.addPhysicalGroup(2, rightdom, tags['rightdom_marker'])
+
+    # Boundaries
+    leftwall, rightwall, interface, bottomwall, topwall = [], [], [], [], []
+    for dim, tag in gm.getEntities(dim=1):
+        com = gm.occ.getCenterOfMass(dim, tag)
+        if np.isclose(com[0], 0):    leftwall.append(tag)
+        if np.isclose(com[0], Lx):   rightwall.append(tag)
+        if np.isclose(com[0], Lx/2): interface.append(tag)
+        if np.isclose(com[1], 0):    bottomwall.append(tag)
+        if np.isclose(com[1], Ly):   topwall.append(tag)
+
+    gm.addPhysicalGroup(1, leftwall, tags['leftwall_marker'])
+    gm.addPhysicalGroup(1, rightwall, tags['rightwall_marker'])
+    gm.addPhysicalGroup(1, bottomwall, tags['bottomwall_marker'])
+    gm.addPhysicalGroup(1, topwall, tags['topwall_marker'])
+    gm.addPhysicalGroup(1, interface, tags['interface_marker'])
+
+    # Refinement
+    if flag_refine_interface:
+        gm.mesh.field.add("Distance", 1)
+        gm.mesh.field.setNumbers(1, "EdgesList", interface)
+        gm.mesh.field.add("Threshold", 2)
+        gm.mesh.field.setNumber(2, "IField", 1)
+        r = 0.01
+        gm.mesh.field.setNumber(2, "LcMin", r / 2)
+        gm.mesh.field.setNumber(2, "LcMax", 4 * r)
+        gm.mesh.field.setNumber(2, "DistMin", 2 * r)
+        gm.mesh.field.setNumber(2, "DistMax", 4 * r)
+        gm.mesh.field.setAsBackgroundMesh(2)
+    else:
+        gm.mesh.setSize(gm.getEntities(0), h)
+
+    gmsh.option.setNumber("Mesh.Algorithm", 6)
+    gm.mesh.generate(2)
+
+    meshname = "diffusion_reaction_mesh"
+    gmsh.write(meshname + ".msh")
+    gmsh.write(meshname + ".vtk")
+
+    gmsh.finalize()
+    return meshname + ".msh", tags

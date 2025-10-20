@@ -754,13 +754,14 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     sexact = params['exact-flux']
     uexact = params['exact-potential']
+    gradexact = fd.grad(uexact(x))
     lmbdexact = params['exact-lmbd']
     muexact = params['exact-mu']
     # etilde = params['etilde']
     # stilde = params['stilde']
-    etexact = params['exact-etilde']
-    stexact = params['exact-stilde']
-    gradexact = fd.grad(uexact(x))
+    # etexact = params['exact-etilde']
+    # stexact = params['exact-stilde']
+
 
     if(dir_outs != None):
 
@@ -798,17 +799,17 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         mu.rename('Reference.mu')
         VTKFile(filename, mode=mode).write(mu, time=tt)
         
-        if(etexact != None):
-            filename = dir_outs+'/et.pvd'
-            et = fd.assemble(interpolate(etexact(x), Vflux))
-            et.rename('Reference.et')
-            VTKFile(filename).write(et)
-
-        if(stexact != None):
-            filename = dir_outs+'/st.pvd'
-            st = fd.assemble(interpolate(stexact(x), Vflux))
-            st.rename('Reference.st')
-            VTKFile(filename).write(st)
+        # if(etexact != None):
+        #     filename = dir_outs+'/et.pvd'
+        #     et = fd.assemble(interpolate(etexact(x), Vflux))
+        #     et.rename('Reference.et')
+        #     VTKFile(filename).write(et)
+        #
+        # if(stexact != None):
+        #     filename = dir_outs+'/st.pvd'
+        #     st = fd.assemble(interpolate(stexact(x), Vflux))
+        #     st.rename('Reference.st')
+        #     VTKFile(filename).write(st)
 
         # marker_style = dict(linestyle = '', marker='o', markersize=7, markerfacecolor='w', markeredgecolor='b')
         # nve = np.linalg.norm(gradu.dat.data[:,:], axis=1)    

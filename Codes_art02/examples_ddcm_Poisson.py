@@ -11,6 +11,9 @@ Last Modified on:   10th January, 2025
 # General libraries
 # ===============================================
 import sys
+import firedrake as fd
+from firedrake.output import VTKFile
+
 # ===============================================
 # Our libraries
 # ===============================================
@@ -18,7 +21,9 @@ from ddcm_classes import *
 from PoissonSolvers import *
 from DDCMSolvers import *
 from save_results_ddcm import *
+from ddcm_utils import *
 import constants as ct
+
 
 # ===============================================
 # Gustavos's fomulation
@@ -356,18 +361,340 @@ def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = '
 
     return norms_output
 
+
+# =====================================================================================================================
+# =====================================================================================================================
+# =====================================================================================================================
+
+def main_ex03_(formulation, hvalue, order_poly, kwargs):
+    ti = time.time()
+
+    print('==========================================================')
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+
+    print('----------------------------------------------------------')
+    print('|> Reference Domain and solution begins')
+
+    # Create (or import) the computational domain/mesh and Compute a reference solution
+    Lx, Ly, hsize = 2.0, 1.0, hvalue
+    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface=False)
+    domain = ComputationalDomain(nsd=2, Lsides=[1.0, 1.0], Ndivs=[1, 1], meshfile=meshfile, flag_quads=False)
+    h = fd.CellDiameter(domain.msh)
+    x = fd.SpatialCoordinate(domain.msh)
+
+    # These would be the ones corresponding to the analytical solution we propose
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0),
+              'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
+              'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
+              'ls': h, 'lmu': h, 'formulation': formulation}
+
+    # ORTHOGONAL PROJECTION: DISCONTINUOUS SOURCE TERM
+    Q = fd.FunctionSpace(domain.msh, "DG", degree=0)
+    source = fd.TrialFunction(Q)
+    vp = fd.TestFunction(Q)
+    ap = source * vp * fd.dx
+    sourceL, sourceR = 0.0, params['zeta']
+    Lp = fd.Constant(sourceL) * vp * fd.dx(tags['leftdom_marker'])
+    Lp += fd.Constant(sourceR) * vp * fd.dx(tags['rightdom_marker'])
+    sourceh = fd.Function(Q, name='sigma')
+    fd.solve(ap == Lp, sourceh, bcs=[], solver_parameters=petsc_opt1)
+    VTKFile("discontinuous_source.pvd").write(sourceh)
+
+    # Propose an manufactured potential field and its associated gradient and also the exact flux
+    def uexact(x):
+        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
+        u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
+        return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
+
+    def eexact(x):
+        return fd.grad(uexact(x))
+
+    def sexact(x):
+        return - params['kappa'] * eexact(x)
+
+    def mysource(x):
+        return sourceh
+
+    def mysurfaceflux(x):
+        return fd.as_vector([0.0, 0.0])
+
+    def mybcvals(x):
+        return uexact(x)
+
+    def mylmbd_boundary_vals(x):
+        return fd.Constant(0.0)
+
+    def mymu_boundary_vals(x):
+        return fd.as_vector([0.0, 0.0])
+
+    def mydual_source(x):
+        return fd.Constant(0.0)
+
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals,
+                                  mydual_source)
+
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-lmbd': mylmbd_boundary_vals, 'exact-mu':
+        mymu_boundary_vals}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Mixed-Dirichlet-Neumann', forcings, None, PoissonAnalytical,
+                                 orders=[3, 3])
+    ref_prob.solve(0.0, ct.MY_REF_SOL)
+
+    print('----------------------------------------------------------')
+    print('|> Reference domain and solution: OK')
+
+    # Read or sample some synthetic data from a standard solution:
+    # The idea is to produce some plausible data similar to what an experiment would deliver
+
+    # The data will be sampled from the analytical expresion on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+
+    # Solve the Data Driven problem: This problem should share the same
+    # forcings (bcs, sources, etc.) as the standard problem above
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins ')
+
+    def myObjFunc(g, gdata, s, sdata):
+        kappa = params['kappa']
+        return 0.5 * fd.inner(g - gdata, g - gdata) * fd.dx + 0.5 * kappa * fd.inner(s - sdata, s - sdata) * fd.dx
+
+    if formulation == 'Natural' and order_poly == 'Linear':
+        ords = [0, 1]
+    elif formulation == 'Natural' and order_poly == 'Quadratic':
+        ords = [1, 2]
+    elif formulation == 'Natural' and order_poly == 'Cubic':
+        ords = [2, 3]
+    elif formulation == 'Equal-Order' and order_poly == 'Linear':
+        ords = [1, 1]
+    elif formulation == 'Equal-Order' and order_poly == 'Quadratic':
+        ords = [2, 2]
+    elif formulation == 'Equal-Order' and order_poly == 'Cubic':
+        ords = [3, 3]
+    else:
+        raise ValueError('Invalid formulation and polynomial order')
+    ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStab, orders=ords,
+                            params=params)
+    ddcm_prob.solve(0.0, ct.MY_DDCM_SOL)
+
+    # Compute some error norms
+    print('----------------------------------------------------------')
+    print('|> Computing some error norms ')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+
+    norms_output = {key: None for key in ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e','L2m','Hdiv_s', 'Hdiv_e','Hdiv_m']}
+
+    norms_output['h'] = hsize
+    norms_output['L2u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='L2')
+    norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
+    norms_output['L2l'] = fd.errornorm(fd.Constant(0.0), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
+    norms_output['H1l'] = fd.errornorm(fd.Constant(0.0), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+    norms_output['L2s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='L2')
+    norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='L2')
+    norms_output['L2m'] = fd.errornorm(fd.as_vector([0.0,0.0]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
+
+    if formulation == 'Equal-Order':
+        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+        norms_output['Hdiv_m'] = fd.errornorm(fd.as_vector([0.0, 0.0]), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution OK')
+
+    elapsed_time = time.time() - ti
+    print('|> End DDCM Computation | Total time= %1.1f s' % (elapsed_time))
+    print('==========================================================')
+    return norms_output
+
+
+
+def main_ex04_(formulation, hvalue, order_poly, kwargs):
+
+    ti = time.time()
+    print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
+
+    print('----------------------------------------------------------')
+    print('|> Reference Domain and solution begins')
+
+    # Define the computational domain
+    Lx, Ly, hsize = 2.0, 1.0, hvalue
+    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface = False)
+    domain = ComputationalDomain(nsd=2, Lsides=[1.0,1.0], Ndivs=[1,1], meshfile = meshfile, flag_quads=False)
+    h = fd.CellDiameter(domain.msh)
+    x = fd.SpatialCoordinate(domain.msh)
+
+    # Set physical constants and formulation parameters
+    if formulation == 'VMS-Primal':
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.5)),
+                  'cs': fd.Constant(kwargs.get('cs', 0.5)),
+                  'cl': fd.Constant(kwargs.get('cl', 1.0)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.1)),
+                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'L0': kwargs.get('L0', h),
+                  'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
+                  'formulation': kwargs.get('formulation','VMS-Primal')}
+    elif formulation == 'VMS-Dual':
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.5)),
+                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.25)),
+                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'L0': kwargs.get('L0', fd.Constant(1.0)),
+                  'L1': kwargs.get('L1',fd.Constant(1.0)),
+                  'formulation': kwargs.get('formulation', 'VMS-Dual')}
+
+    # ORTHOGONAL PROJECTION: DISCONTINUOUS SOURCE TERM
+    Q = fd.FunctionSpace(domain.msh, "DG", degree=0)
+    source = fd.TrialFunction(Q)
+    vp = fd.TestFunction(Q)
+    ap = source * vp * fd.dx
+    sourceL, sourceR = 0.0, params['zeta']
+    Lp = fd.Constant(sourceL) * vp * fd.dx(tags['leftdom_marker'])
+    Lp += fd.Constant(sourceR) * vp * fd.dx(tags['rightdom_marker'])
+    sourceh = fd.Function(Q, name='sigma')
+    fd.solve(ap == Lp, sourceh, bcs=[], solver_parameters = petsc_opt1)
+    VTKFile("discontinuous_source.pvd").write(sourceh)
+
+    # Propose a manufactured potential field and its associated gradient and also the exact flux
+    def uexact(x):
+        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
+        u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
+        return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
+
+    def eexact(x):
+        return fd.grad(uexact(x))
+
+    def sexact(x):
+        return - params['kappa'] * eexact(x)
+
+    def mysource(x):
+        return sourceh
+
+    def mysurfaceflux(x):
+        return fd.as_vector([0.0,0.0])
+
+    def mybcvals(x):
+        return uexact(x)
+
+    def mylmbd_boundary_vals(x):
+        return fd.Constant(0.0)
+
+    def mymu_boundary_vals(x):
+        return fd.as_vector([0.0,0.0])
+
+    def mydual_source(x):
+        return fd.Constant(0.0)
+
+
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals, mylmbd_boundary_vals, mymu_boundary_vals,
+                                  mydual_source)
+
+    # This will only be called for visualization purposes
+    params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-lmbd': mylmbd_boundary_vals, 'exact-mu':
+                   mymu_boundary_vals}
+    ref_prob = PoissonStdProblem(domain, params_anal, 'Mixed-Dirichlet-Neumann', forcings, None, PoissonAnalytical, orders=[3, 3])
+    ref_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
+
+    print('----------------------------------------------------------')
+    print('|> Reference domain and solution: Ok')
+
+    # The data will be sampled from the analytical expression on-the-fly
+    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=sexact, gradex=eexact)
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution begins')
+
+    def my_obj_func(g, gdata, s, sdata):
+        kappa = params['kappa']
+        return 0.5 * fd.inner(g - gdata, g - gdata) * fd.dx + 0.5 * kappa * fd.inner(s - sdata, s - sdata) * fd.dx
+
+    if order_poly == 'Linear':
+        ords = [1, 1]
+    elif order_poly == 'Quadratic':
+        ords = [2, 2]
+    elif order_poly == 'Cubic':
+        ords = [3, 3]
+    else:
+        raise ValueError('Invalid formulation and polynomial order')
+
+    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Mixed-Dirichlet-Neumann', forcings, DDCMStabCod, orders=ords,
+                            params=params)
+    ddcm_prob.solve(0.0, "my_cod_ddcmsol")
+
+    # Compute some error norms
+    print('----------------------------------------------------------')
+    print('|> Computing some error norms ')
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+
+    norms_output = {key: None for key in ['h', 'L2u', 'H1u','L2l', 'H1l' 'L2s', 'L2e','L2m', 'Hdiv_s', 'Hdiv_e','Hdiv_m']}
+
+    norms_output['h'] = hsize
+    norms_output['L2u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='L2')
+    norms_output['L2l'] = fd.errornorm(fd.Constant(0.0), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
+    norms_output['L2s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='L2')
+    norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='L2')
+    norms_output['L2m'] = fd.errornorm(fd.as_vector([0.0,0.0]), ddcm_prob.ddcm_solution.mu, norm_type='L2')
+
+    if formulation == 'VMS-Primal':
+        norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
+        norms_output['H1l'] = fd.errornorm(fd.Constant(0.0),ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+        norms_output['Hdiv_m'] = fd.errornorm(fd.as_vector([0.0,0.0]), ddcm_prob.ddcm_solution.mu,norm_type='Hdiv')
+
+    elif formulation == 'VMS-Dual':
+        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+        norms_output['Hdiv_m'] = fd.errornorm(fd.as_vector([0.0, 0.0]), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
+    else:
+        raise ValueError('Formulation not recognized')
+
+    print('----------------------------------------------------------')
+    print('|> Data Driven solution: Ok')
+
+    elapsed_time = time.time() - ti
+    print('|> End DDCM Computation | Total time= %1.1f s' % elapsed_time)
+    print('==========================================================')
+
+    return norms_output
+
+
 # ===============================================
 # Helper functions
 # ===============================================
 def get_norm_list(formulation: str):
     if formulation == 'Natural':
-        return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m']
-    elif formulation == 'Equal-Order':
-        return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e' ,'Hdiv_m']
-    elif formulation == 'VMS-Primal' or formulation == 'VMS-Dual':
-        return ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
+        return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e','L2m']
+    elif formulation == 'Equal-Order-uns' or formulation == 'Equal-Order-fully':
+        return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
+    elif formulation == 'Primal-ASGS' or formulation == 'Primal-OSGS':
+        return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
+    elif formulation == 'Dual-ASGS' or formulation == 'Dual-OSGS':
+        return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
     else:
         return ValueError("Invalid formulation")
+
+def get_stab_params(formulation):
+    if formulation == 'Natural':
+        return {}
+    elif formulation == 'Equal-Order-uns':
+        return {}
+    elif formulation == 'Equal-Order-fully':
+        return {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5}
+    elif formulation == 'Primal-ASGS' or formulation == 'Dual-ASGS':
+        return {'Pprime': 'Identity'}
+    elif formulation == 'Primal-OSGS' or formulation == 'Dual-OSGS':
+        return {'Pprime': 'OSS'}
+    else:
+        raise ValueError("Invalid formulation")
+
 
 # ===============================================
 # Run
@@ -408,9 +735,67 @@ def case_01(order_poly: str = 'Linear'):
         results = DDCMSaveResults(errors=inner_dict, formulation=form)
         results.save_results(folder_name = ct.RESULTS_CONVERGENCE_COMPARISON, order_poly=order_poly)
 
+
+# Compare Gustavo's formulation with Primal and Dual Codina's formulation
+def case_02(order_poly: str = 'Linear'):
+
+    list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully',
+                            'Primal-ASGS', 'Primal-OSGS','Dual-ASGS','Dual-OSGS']
+    norms = {key: [] for key in list_of_formulations}
+
+    for form in norms.keys():
+        norms[form] = get_norm_list(form)
+
+    error = {}
+    for form, norm_list in norms.items():
+        error[form] = {}
+        for norm in norm_list:
+            error[form][norm] = []
+
+    function_output = {}
+    for h in [0.1, 0.05, 0.025, 0.0125]:
+        print('===================================================')
+        print(f' \t Solving h = {h}')
+        print('===================================================')
+        # Run main function
+        function_output['Natural'] = main_ex03_(formulation = 'Natural', hvalue = h, order_poly = order_poly,
+                                                kwargs ={})
+
+        function_output['Equal-Order-uns']= main_ex03_(formulation = 'Equal-Order', hvalue = h, order_poly = order_poly,
+                                                       kwargs = {})
+
+        function_output['Equal-Order-fully'] = main_ex03_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
+                                                        kwargs=get_stab_params('Equal-Order-fully'))
+
+        function_output['Primal-ASGS'] = main_ex04_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
+                                                    kwargs = get_stab_params('Primal-ASGS'))
+
+        function_output['Primal-OSGS'] = main_ex04_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
+                                                    kwargs=get_stab_params('Primal-OSGS'))
+
+        function_output['Dual-ASGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
+                                                    kwargs=get_stab_params('Dual-ASGS'))
+
+        function_output['Dual-OSGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
+                                                    kwargs=get_stab_params('Dual-OSGS'))
+
+        # Store the errors
+        for form, inner_dict in error.items():
+            for norm in inner_dict.keys():
+                error[form][norm].append(function_output[form][norm])
+
+    # Save the results
+    for form, inner_dict in error.items():
+        results = DDCMSaveResults(errors=inner_dict, formulation=form)
+        results.save_results(folder_name = 'Convergence_new', order_poly=order_poly)
+
 # ===============================================
 # Main
 # ===============================================
 if main_selector == 1:
     case_01(order_poly='Linear')
+
+elif main_selector == 2:
+    case_02(order_poly='Linear')
+
 

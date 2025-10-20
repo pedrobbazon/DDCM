@@ -129,9 +129,10 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
+
         # bottom and top
-        L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3)+fd.ds(4))
-        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
+        # L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3)+fd.ds(4))
+        # L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
         
     else:
         
@@ -145,6 +146,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+
+
 
     if(dir_outs != None):
 
@@ -267,15 +270,15 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         tauu = cu*L0**2
         taue = ce
         taus = cs/kappa
-        taul = cl/(zeta*L1)**2
-        taum = cm
+        taul = -cl/(zeta*L1)**2
+        taum = -cm
     elif formulation == 'VMS-Dual':
         h = fd.CellDiameter(mesh)
         tauu = cu*L0**2
         taue = ce
         taus = cs/kappa*(h/L0)**2
-        taul = cl/(zeta*L1)**2
-        taum = cm*(h/L0)**2
+        taul = -cl/(zeta*L1)**2
+        taum = -cm*(h/L0)**2
     else:
         raise Exception('Invalid VMS option')
  
@@ -308,12 +311,17 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             
             # Left and right (1,2)
-            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x),    (1,2)))
-            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2)))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), 1))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), 2))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
 
             # Bottom and top (3,4)
-            L -= fd.inner(s_boundary_vals(x),n)*dellam * (fd.ds(3)+fd.ds(4))
-            L -= fd.inner(mu_boundary_vals(x),n)*delu  * (fd.ds(3)+fd.ds(4))
+            # L -= ( fd.inner(s_boundary_vals(x), n) * dellam ) * fd.ds(3)
+            # L -= ( fd.inner(s_boundary_vals(x), n) * dellam ) * fd.ds(4)
+            #
+            # L -= ( fd.inner(mu_boundary_vals(x),n) * delu  ) * fd.ds(3)
+            # L -= ( fd.inner(mu_boundary_vals(x),n) * delu  ) * fd.ds(4)
             
         else:
             raise ValueError('Unrecognized problem setting option')
@@ -334,6 +342,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
 
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
+
 
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
@@ -400,6 +409,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Solve
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
 
+    udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
+
     # Save
     if dir_outs is not None:
 
@@ -426,6 +437,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         filename = dir_outs+'/m.pvd'
         w.sub(4).rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+
+        filename = dir_outs + '/udif.pvd'
+        udif.rename('DDCM.udif')
+        VTKFile(filename, mode=mode).write(udif, time=tt)
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
