@@ -682,7 +682,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(0.1),
                   'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
@@ -693,7 +693,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
                   'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(0.1),
                   'cu': fd.Constant(kwargs.get('cu', 0.125)),
                   'ce': fd.Constant(kwargs.get('ce', 0.0125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
@@ -982,6 +982,6 @@ if main_selector == 1:
     case_01(order_poly='Linear')
 
 elif main_selector == 2:
-    case_02(order_poly='Quadratic')
+    case_02(order_poly='Linear')
 
 
