@@ -694,11 +694,11 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(0.1),
-                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.0125)),
+                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.25)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
@@ -939,7 +939,7 @@ def case_02(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.1, 0.05, 0.025, 0.0125]:
+    for h in [0.1, 0.05, 0.025, 0.0125, 0.00625]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -982,6 +982,6 @@ if main_selector == 1:
     case_01(order_poly='Linear')
 
 elif main_selector == 2:
-    case_02(order_poly='Linear')
+    case_02(order_poly='Quadratic')
 
 
