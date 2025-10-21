@@ -91,8 +91,8 @@ def main_ex01_(formulation='Equal-Order', n=20, order_poly='Linear'):
 
     # by eq.(23)
     def stilde(x):
-        difus = params['difus']
-        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
+        kappa = params['kappa']
+        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
 
     # by eq.(24)
     def qexact(x):
@@ -275,8 +275,8 @@ def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = '
         return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def stilde(x):
-        difus = params['difus']
-        return sexact(x) - (1/difus)*fd.grad(lmbdexact(x))
+        kappa = params['kappa']
+        return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
         zeta = params['zeta']
@@ -587,8 +587,8 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
         return zeta * lmbdexact(x) + fd.div(muexact(x))
     
     def stilde(x):
-        difus = params['difus']
-        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
+        kappa = params['kappa']
+        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
 
     def mybcvals(x):
         return uexact(x)
@@ -851,7 +851,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(0.1),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
@@ -862,7 +862,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
                   'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(0.1),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
@@ -928,8 +928,8 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
         return zeta * lmbdexact(x) + fd.div(muexact(x))
     
     def stilde(x):
-        difus = params['difus']
-        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
+        kappa = params['kappa']
+        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
 
     def mybcvals(x):
         return uexact(x)
