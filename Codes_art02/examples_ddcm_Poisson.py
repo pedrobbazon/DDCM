@@ -527,7 +527,7 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
 
     # These would be the ones corresponding to the analytical solution we propose
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0),
-              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(0.1),
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation}
