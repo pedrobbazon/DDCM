@@ -91,8 +91,8 @@ def main_ex01_(formulation='Equal-Order', n=20, order_poly='Linear'):
 
     # by eq.(23)
     def stilde(x):
-        kappa = params['kappa']
-        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
+        difus = params['difus']
+        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
 
     # by eq.(24)
     def qexact(x):
@@ -214,7 +214,7 @@ def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = '
     
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(0.0),
                   'ce': fd.Constant(0.125), 
                   'cs': fd.Constant(0.125), 
@@ -225,7 +225,7 @@ def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = '
                   'L1': fd.Constant(1.0)/h,
                   'formulation': formulation}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(0.125),
                   'ce': fd.Constant(1.25), 
                   'cs': fd.Constant(0.0), 
@@ -275,8 +275,8 @@ def main_ex02_(formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = '
         return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
     def stilde(x):
-        kappa = params['kappa']
-        return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
+        difus = params['difus']
+        return sexact(x) - (1/difus)*fd.grad(lmbdexact(x))
     # by eq.(24)
     def qexact(x):
         zeta = params['zeta']
@@ -384,7 +384,7 @@ def main_ex03_(formulation, hvalue, order_poly, kwargs):
 
     # These would be the ones corresponding to the analytical solution we propose
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0),
-              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation}
@@ -403,7 +403,7 @@ def main_ex03_(formulation, hvalue, order_poly, kwargs):
 
     # Propose an manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
-        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        deltar = fd.sqrt(params["difus"] / params["zeta"])
         u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
         u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
         return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
@@ -412,7 +412,7 @@ def main_ex03_(formulation, hvalue, order_poly, kwargs):
         return fd.grad(uexact(x))
 
     def sexact(x):
-        return - params['kappa'] * eexact(x)
+        return - params['difus'] * eexact(x)
 
     def mysource(x):
         return sourceh
@@ -527,7 +527,7 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
 
     # These would be the ones corresponding to the analytical solution we propose
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0),
-              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation}
@@ -546,7 +546,7 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
 
     # Propose a manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
-        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        deltar = fd.sqrt(params["difus"] / params["zeta"])
         u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
         u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
         return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
@@ -555,7 +555,7 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
         return fd.grad(uexact(x))
 
     def sexact(x):
-        return - params['kappa'] * eexact(x)
+        return - params['difus'] * eexact(x)
 
     def mysource(x):
         return sourceh
@@ -587,8 +587,8 @@ def main_ex06_(formulation, hvalue, order_poly, kwargs):
         return zeta * lmbdexact(x) + fd.div(muexact(x))
     
     def stilde(x):
-        kappa = params['kappa']
-        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
+        difus = params['difus']
+        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
 
     def mybcvals(x):
         return uexact(x)
@@ -696,7 +696,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),  'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
@@ -707,7 +707,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
                   'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.125)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
@@ -732,7 +732,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
 
     # Propose a manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
-        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        deltar = fd.sqrt(params["difus"] / params["zeta"])
         u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
         u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
         return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
@@ -741,7 +741,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
         return fd.grad(uexact(x))
 
     def sexact(x):
-        return - params['kappa'] * eexact(x)
+        return - params['difus'] * eexact(x)
 
     def mysource(x):
         return sourceh
@@ -887,7 +887,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
 
     # Propose a manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
-        deltar = fd.sqrt(params["kappa"] / params["zeta"])
+        deltar = fd.sqrt(params["difus"] / params["zeta"])
         u_exp_left = 0.5 * fd.exp((x[0] - 1) / deltar)
         u_exp_right = 1 - 0.5 * fd.exp(-(x[0] - 1) / deltar)
         return fd.conditional(x[0] < Lx / 2, u_exp_left, u_exp_right)
@@ -896,7 +896,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
         return fd.grad(uexact(x))
 
     def sexact(x):
-        return - params['kappa'] * eexact(x)
+        return - params['difus'] * eexact(x)
 
     def mysource(x):
         return sourceh
@@ -928,8 +928,8 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
         return zeta * lmbdexact(x) + fd.div(muexact(x))
     
     def stilde(x):
-        kappa = params['kappa']
-        return sexact(x) - (1 / kappa) * fd.grad(lmbdexact(x))
+        difus = params['difus']
+        return sexact(x) - (1 / difus) * fd.grad(lmbdexact(x))
 
     def mybcvals(x):
         return uexact(x)
