@@ -444,55 +444,65 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
+    # wf = fd.Function(W)
+    # wf.assign(w)
+    # s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    #
+    #
+    # if (True):
+    #     ut = u + sub_u
+    #     et = e + sub_e
+    #     st = s + sub_s
+    #     lt = lam + sub_l
+    #     mt = mu + sub_m
+    #
+    #     if (True):
+    #         DGk = fd.FunctionSpace(mesh, 'DG', degree=orderU)
+    #         VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
+    #         s_f = fd.assemble(interpolate(st, VDGk))
+    #         u_f = fd.assemble(interpolate(ut, DGk))
+    #         e_f = fd.assemble(interpolate(et, VDGk))
+    #         lam_f = fd.assemble(interpolate(lt, DGk))
+    #         mu_f = fd.assemble(interpolate(mt, VDGk))
+    #     else:
+    #         s_f = fd.project(st, W.sub(0))
+    #         u_f = fd.project(ut, W.sub(1))
+    #         e_f = fd.project(et, W.sub(2))
+    #         lam_f = fd.project(lt, W.sub(3))
+    #         mu_f = fd.project(mt, W.sub(4))
+    # else:
+    #     s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+    #
+    # if dir_outs is not None:
+    #
+    #     if tt == 0.0: # This time acts as a parameter over which we do continuation
+    #         mode = 'w'
+    #     else:
+    #         mode = 'a'
+    #     filename = dir_outs + '/s.pvd'
+    #     s_f.rename('DDCM.Flux')
+    #     VTKFile(filename, mode=mode).write(s_f, time=tt)
+    #
+    #     filename = dir_outs + '/u.pvd'
+    #     u_f.rename('DDCM.Potential')
+    #     VTKFile(filename, mode=mode).write(u_f, time=tt)
+    #
+    #     filename = dir_outs + '/g.pvd'
+    #     e_f.rename('DDCM.gradient(u)')
+    #     VTKFile(filename, mode=mode).write(e_f, time=tt)
+    #
+    #     filename = dir_outs + '/l.pvd'
+    #     lam_f.rename('DDCM.lambda')
+    #     VTKFile(filename, mode=mode).write(lam_f, time=tt)
+    #
+    #     filename = dir_outs + '/m.pvd'
+    #     mu_f.rename('DDCM.mu')
+    #     VTKFile(filename, mode=mode).write(mu_f, time=tt)
 
-# wf = fd.Function(W)
-# wf.assign(w)
-# s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    # return s_f, u_f, e_f, lam_f, mu_f
 
-# if(True):
-#     ut = u   + sub_u
-#     et = e   + sub_e
-#     st = s   + sub_s
-#     lt = lam + sub_l
-#     mt = mu  + sub_m
-#
-#     if(True):
-#         DGk  = fd.FunctionSpace(mesh, 'DG', degree=orderU)
-#         VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
-#         s_f = fd.assemble(interpolate(st,VDGk))
-#         u_f = fd.assemble(interpolate(ut,DGk))
-#         e_f = fd.assemble(interpolate(et,VDGk))
-#         lam_f = fd.assemble(interpolate(lt,DGk))
-#         mu_f = fd.assemble(interpolate(mt,VDGk))
-#     else:
-#         s_f = fd.project(st,W.sub(0))
-#         u_f = fd.project(ut,W.sub(1))
-#         e_f = fd.project(et,W.sub(2))
-#         lam_f = fd.project(lt,W.sub(3))
-#         mu_f = fd.project(mt,W.sub(4))
-# else:
-#     s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
-# filename = dir_outs+'/s.pvd'
-# s_f.rename('DDCM.Flux')
-# VTKFile(filename, mode=mode).write(s_f, time=tt)
-#
-# filename = dir_outs + '/u.pvd'
-# u_f.rename('DDCM.Potential')
-# VTKFile(filename, mode=mode).write(u_f, time=tt)
-#
-# filename = dir_outs + '/g.pvd'
-# e_f.rename('DDCM.gradient(u)')
-# VTKFile(filename, mode=mode).write(e_f, time=tt)
-#
-# filename = dir_outs + '/l.pvd'
-# lam_f.rename('DDCM.lambda')
-# VTKFile(filename, mode=mode).write(lam_f, time=tt)
-#
-# filename = dir_outs + '/m.pvd'
-# mu_f.rename('DDCM.mu')
-# VTKFile(filename, mode=mode).write(mu_f, time=tt)
 
-# return s_f, u_f, e_f, lam_f, mu_f
+
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             flag_setting, volumetric_source, boundary_flux, boundary_vals,
