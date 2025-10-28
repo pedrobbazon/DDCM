@@ -371,6 +371,7 @@ class PoissonDDCMData():
                 self.sampled_flux = np.append(self.sampled_flux, [[0.0, 0.0, 0.0]], axis=0)
         if(data_file != None):
             np.savetxt(data_file, np.hstack((gradu_vals, flux_vals)))
+
         return 0
     
     def AddNoisetoData(self, noise_parameters: dict, data_file=None) -> int:

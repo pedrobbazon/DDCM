@@ -210,7 +210,7 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
 
     # These would be the ones corresponding to the analytical solution we propose
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
               'theta': fd.Constant(0.5), 'alpha': fd.Constant(0.125),  'beta': fd.Constant(0.5),
               'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
               'ls': h, 'lmu': h, 'formulation': formulation}
@@ -359,7 +359,7 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
     print('==========================================================')
     return norms_output, domain, ddcm_prob.ddcm_solution.s, ddcm_prob.ddcm_solution.g
 
-def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal', n: int = 20, order_poly: str = 'Linear'):
+def main_ex0202_(formulation, hvalue, order_poly, kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -368,11 +368,14 @@ def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal'
     print('|> Reference Domain and solution begins')
 
     # Get the characteristic mesh size
+    Lx, Ly, hsize = 1.0, 1.0, hvalue
+    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface = False)
+    domain = ComputationalDomain(nsd=2, Lsides=[1.0,1.0], Ndivs=[1,1], meshfile = meshfile, flag_quads=False)
     h = fd.CellDiameter(domain.msh)
     
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
@@ -383,7 +386,7 @@ def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal'
                   'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
@@ -432,7 +435,7 @@ def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal'
         zeta = params['zeta']
         return zeta*lmbdexact(x) + fd.div(muexact(x))
     # by eq.(23)
-    def stilde(x):
+    def stildeexact(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
     # by eq.(24)
@@ -457,20 +460,27 @@ def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal'
     
     # This will only be called for visualization purposes
     params_anal = {'exact-potential': uexact, 'exact-flux': sexact, 'exact-grad': eexact, 'exact-lmbd' : lmbdexact, 
-                   'exact-mu': muexact, 'exact-etilde': etilde_nat, 'exact-stilde': stilde_nat}
+                   'exact-mu': muexact, 'exact-etilde': etildeexact, 'exact-stilde': stildeexact}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
     ref_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     print('----------------------------------------------------------')
     print('|> Reference domain and solution: Ok')
-
-    # The data will be sampled from the analytical expression on-the-fly
+    
     ddcm_data = PoissonDDCMData(domain, Analytical=False)
-    nat_solution = DDCMSolution()
-    nat_solution.s = stilde_nat
-    nat_solution.g = etilde_nat
-    ddcm_data.distribute(nat_solution, flag_project='Project-VDG0', flag_plot=False)
+    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
+    flux_vals = fd.project(stildeexact(x), domain.VDG0).dat.data
+    ddcm_data.SetSampledData(gradu_vals, flux_vals, add_origin=False, data_file=None)
+    refsol = DDCMSolution()
+    refsol.s = stildeexact(x)
+    refsol.g = etildeexact(x)
+    ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
+
+    #coords = fd.assemble(interpolate(fd.as_vector([x[0], x[1]]), self.domain.VDG0)).dat.data
+    #coords_ddcm = np.dstack([coords[:,0], coords[:,1]])[0]
+    #
   
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
@@ -494,7 +504,7 @@ def main_ex0202_(domain, stilde_nat, etilde_nat, formulation: str = 'VMS-Primal'
     # Compute some error norms
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
-    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+    #x = fd.SpatialCoordinate(ddcm_data.domain.msh)
 
     norms_output = {key: None for key in ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_m']}
     
@@ -1449,7 +1459,7 @@ def case_02(order_poly: str = 'Linear'):
                                                        kwargs = {})
 
         function_output['Equal-Order-fully'] = main_ex06_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
-                                                        kwargs=get_stab_params('Equal-Order-fully'))
+                                                          kwargs=get_stab_params('Equal-Order-fully'))
 
         function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
                                                     kwargs = get_stab_params('Primal-ASGS'))
@@ -1458,7 +1468,7 @@ def case_02(order_poly: str = 'Linear'):
         #                                            kwargs=get_stab_params('Primal-OSGS'))
 
         function_output['Dual-ASGS'] = main_ex05_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
-                                                    kwargs=get_stab_params('Dual-ASGS'))
+                                                  kwargs=get_stab_params('Dual-ASGS'))
 
         #function_output['Dual-OSGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Dual-OSGS'))
@@ -1490,19 +1500,18 @@ def case_03(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.1, 0.05, 0.025]:
+    for h in [0.05]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        function_output['Natural'], domain, stilde, etilde = main_ex0101_(formulation = 'Natural', order_poly = order_poly)
+        #function_output['Natural'], domain, stilde, etilde = main_ex0101_(formulation = 'Natural', order_poly = order_poly)
+        #
+        function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
+                                                      order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Primal-ASGS'] = main_ex0202_(domain, stilde, etilde, formulation='VMS-Primal', 
-                                                      hvalue = h, order_poly = order_poly,
-                                                      kwargs = get_stab_params('Primal-ASGS'))
-
-        #function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
-        #                                            stilde, etilde, kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
+                                                    order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
