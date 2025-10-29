@@ -402,6 +402,9 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
     def eexact(x):
         return fd.grad(uexact(x))
+    
+    def eexactnp(x):
+        return [np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1]), np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1])]
 
     def lmbdexact(x): 
         A = fd.Constant(0.05)   # Increase A slightly for more variation
@@ -409,6 +412,14 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         phi = fd.Constant(0.0)   # Phase angle
         return  - (A / (ome * fd.pi)) * (
             fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi)
+        )
+    
+    def gradlmbdexactnp(x): 
+        A = 0.05   # Increase A slightly for more variation
+        ome = 2.0  # Frequency
+        phi = 0.0   # Phase angle
+        return  - (A / (ome * np.pi)) * (
+            np.cos(ome * np.pi * x[0,:] + phi) + np.cos(ome * np.pi * x[:,1] + phi)
         )
 
     # Propose a flux-gradient relationship based on the dataset  
@@ -418,6 +429,13 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         phi = fd.Constant(0.0)       # Phase angle
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
+    
+    def etildeexactnp(x):
+        A = 0.05        # Amplitude
+        ome = 4.0       # Frequency
+        phi = 0.0       # Phase angle
+        return [eexactnp(x)[0] + A*fd.sin(ome*np.pi*x[0] + phi), eexactnp(x)[1] + A*fd.sin(ome*np.pi*x[1] + phi)]
+
 
     def sexact(x):
         A = fd.Constant(0.025)  # Amplitude
@@ -426,6 +444,14 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
         mst = met - A*met**3
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+    
+    def sexactnp(x):
+        A = 0.025  # Amplitude
+        eps = 1.0e-10
+        met = np.sqrt(eexactnp(x)[0]**2 + eexactnp(x)[1]**2) + eps
+        etn = [eexactnp(x)[0]/met, eexactnp(x)[1]/met]
+        mst = met - A*met**3
+        return [-mst*etn[0], -mst*etn[1]]
     
     # by eq.(22)
     def muexact(x):
@@ -438,6 +464,10 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     def stildeexact(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
+    
+    def stildeexactnp(x):
+        kappa = 1.0
+        return [sexactnp(x)[0] - (1/kappa)*fd.grad(lmbdexact(x)), sexactnp(x)[1] - (1/kappa)*fd.grad(lmbdexact(x)) ]
     # by eq.(24)
     def qexact(x):
         zeta = params['zeta']
@@ -463,24 +493,43 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
                    'exact-mu': muexact, 'exact-etilde': etildeexact, 'exact-stilde': stildeexact}
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical, orders=[3,3])
 
-    ref_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
+    ref_prob.solve(0.0, 'standard_solution')
 
     print('----------------------------------------------------------')
     print('|> Reference domain and solution: Ok')
     
-    ddcm_data = PoissonDDCMData(domain, Analytical=False)
-    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-    gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
-    flux_vals = fd.project(stildeexact(x), domain.VDG0).dat.data
-    ddcm_data.SetSampledData(gradu_vals, flux_vals, add_origin=False, data_file=None)
-    refsol = DDCMSolution()
-    refsol.s = stildeexact(x)
-    refsol.g = etildeexact(x)
-    ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
+    x = fd.SpatialCoordinate(domain.msh)
+    if(False):
+        ddcm_data = PoissonDDCMData(domain, Analytical=False)
+        x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+        gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
+        flux_vals = fd.project(stildeexact(x), domain.VDG0).dat.data
+        ddcm_data.SetSampledData(gradu_vals, flux_vals, add_origin=False, data_file=None)
+        refsol = DDCMSolution()
+        refsol.s = stildeexact(x)
+        refsol.g = etildeexact(x)
+        ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
+    else:
+        one_sample_per_element = False
+        if(one_sample_per_element == True): # One point per element centroid
+            X = interpolate(domain.msh.coordinates, domain.VDG0)
+            xs = fd.assemble(X).dat.data
+        else: # Sample points one a regular grid
+            Ls = np.array([Lx, Ly])
+            Nsamples = 1000
+            Nsampx, Nsampy  = Nsamples, Nsamples
+            Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+            xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+            yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+            xlsg, ylsg = np.meshgrid(xls, yls)
+            xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
 
-    #coords = fd.assemble(interpolate(fd.as_vector([x[0], x[1]]), self.domain.VDG0)).dat.data
-    #coords_ddcm = np.dstack([coords[:,0], coords[:,1]])[0]
-    #
+        # Use the numpy version of the functions eexact and sexact for this:
+        gradu_samples = np.array(eexactnp(xs)).T
+        flux_samples  = np.array(sexactnp(xs)).T
+        ddcm_data = PoissonDDCMData(domain)
+        ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+        ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
   
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
@@ -499,7 +548,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         raise ValueError('Invalid formulation and polynomial order')
     
     ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
-    ddcm_prob.solve(0.0,"my_cod_ddcmsol")
+    ddcm_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     # Compute some error norms
     print('----------------------------------------------------------')
