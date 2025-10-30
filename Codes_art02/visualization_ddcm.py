@@ -146,7 +146,11 @@ def plot_02(order_poly: str):
         'H1l': r'$\|\lambda - \lambda_h\|_{H^1}$',
         'L2s': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2}$',
         'L2e': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2}$',
-        'L2m': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2}$'
+        'L2m': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2}$',
+        'Hdiv_s': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv}$',
+        'Hdiv_e': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv}$',
+        'Hdiv_m': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv}$'
+
     }
 
     # ===============================================
@@ -157,9 +161,9 @@ def plot_02(order_poly: str):
         'Equal-Order-uns': dict(linestyle='--', marker='s', color='r', label='Unstabilized'),
         'Equal-Order-fully': dict(linestyle='-.', marker='o', color='b', label='Fully stabilized'),
         'Primal-ASGS': dict(linestyle=':', marker='d', color='m', label='Primal-ASGS'),
-        'Primal-OSGS': dict(linestyle='--', marker='v', color='c', label='Primal-OSGS'),
+        # 'Primal-OSGS': dict(linestyle='--', marker='v', color='c', label='Primal-OSGS'),
         'Dual-ASGS': dict(linestyle='-.', marker='p', color='orange', label='Dual-ASGS'),
-        'Dual-OSGS': dict(linestyle=':', marker='h', color='gray', label='Dual-OSGS'),
+        # 'Dual-OSGS': dict(linestyle=':', marker='h', color='gray', label='Dual-OSGS'),
     }
 
     # ===============================================
@@ -186,6 +190,9 @@ def plot_02(order_poly: str):
 
             # Skip H1u and H1l for Dual-ASGS and Dual-OSGS
             if form in ['Dual-ASGS', 'Dual-OSGS'] and key in ['H1u', 'H1l']:
+                continue
+
+            if form in ['Natural'] and key in ['Hdiv_s', 'Hdiv_e', 'Hdiv_m']:
                 continue
 
             plot_line(

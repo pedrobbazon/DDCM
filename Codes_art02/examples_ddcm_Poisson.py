@@ -1545,10 +1545,12 @@ def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Li
         ords = [0, 1]
     elif (formulation == 'Equal-Order'):
         ords = [1, 1]
+    else:
+        raise ValueError(f"Unknown {formulation}")
     ddcm_prob = DDCMProblem(ddcm_data, myObjFunc, None, 'Pure-Dirichlet', forcings, DDCMStab, orders=ords,
                             params=params)
 
-    ddcm_prob.solve(0.0, "myddcmsol")
+    ddcm_prob.solve(0.0, f"myddcmsol_{formulation}")
 
     # Compute some error norms
     norms_output = {key: None for key in
@@ -1622,7 +1624,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
@@ -1634,7 +1636,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
@@ -1751,7 +1753,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     ords = [1, 1]
     ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                             params=params)
-    ddcm_prob.solve(0.0, "my_cod_ddcmsol")
+    ddcm_prob.solve(0.0, f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -1991,24 +1993,24 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.5]:
+    for h in [0.2, 0.1, 0.05, 0.025]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        function_output['Natural'] = main_ex07_(formulation='Natural', hvalue=h,case_corner=0,  order_poly = 'Linear',
+        function_output['Natural'] = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
                                                 kwargs={})
 
-        function_output['Equal-Order-uns'] = main_ex07_(formulation='Equal-Order', hvalue=h,case_corner=0, order_poly = 'Linear',
+        function_output['Equal-Order-uns'] = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
                                                         kwargs={})
 
-        function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hvalue=h, case_corner=0,  order_poly = 'Linear',
+        function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
                                                           kwargs=get_stab_params('Equal-Order-fully'))
 
-        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hvalue=h,case_corner=0,  order_poly = 'Linear',
+        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
                                                     kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hvalue=h,case_corner=0,  order_poly = 'Linear',
+        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear',
                                                   kwargs=get_stab_params('Dual-ASGS'))
 
 
@@ -2021,6 +2023,27 @@ def case_04(order_poly = 'Linear'):
     for form, inner_dict in error.items():
         results = DDCMSaveResults(errors=inner_dict, formulation=form)
         results.save_results(folder_name='Convergence_reentrant', order_poly=order_poly)
+
+# Compare Gustavo's formulation with Primal and Dual Codina's formulation
+def case_05(order_poly = 'Linear'):
+
+    h = 0.025
+    # Run main function
+    _ = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
+                                            kwargs={})
+
+    _ = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
+                                                    kwargs={})
+
+    _ = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
+                                                      kwargs=get_stab_params('Equal-Order-fully'))
+
+    _ = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
+                                                kwargs=get_stab_params('Primal-ASGS'))
+
+    _ = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear',
+                                              kwargs=get_stab_params('Dual-ASGS'))
+
 
 
 # ===============================================
@@ -2037,4 +2060,7 @@ elif main_selector == 3:
 
 elif main_selector == 4:
     case_04(order_poly='Linear')
+
+elif main_selector == 5:
+    case_05(order_poly='Linear')
 
