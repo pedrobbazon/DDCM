@@ -1366,7 +1366,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
     else:
         raise ValueError('Invalid formulation and polynomial order')
 
-    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
+    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                             params=params)
     ddcm_prob.solve(0.0, "my_cod_ddcmsol")
 
