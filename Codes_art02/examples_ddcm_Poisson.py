@@ -369,8 +369,9 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
 
     # Get the characteristic mesh size
     Lx, Ly, hsize = 1.0, 1.0, hvalue
-    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface = False)
-    domain = ComputationalDomain(nsd=2, Lsides=[1.0,1.0], Ndivs=[1,1], meshfile = meshfile, flag_quads=False)
+    nsd, ls, ns = 2, [1.0, 1.0], [int(Lx/hvalue), int(Ly/hvalue)]
+    hsize = max(ls[0] / ns[0], ls[1] / ns[1])
+    domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
     h = fd.CellDiameter(domain.msh)
     
     # Set physical constants and formulation parameters
@@ -404,7 +405,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         return fd.grad(uexact(x))
     
     def eexactnp(x):
-        return [np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1]), np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1])]
+        return [-np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), -np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
 
     def lmbdexact(x): 
         A = fd.Constant(0.05)   # Increase A slightly for more variation
@@ -418,9 +419,8 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         A = 0.05   # Increase A slightly for more variation
         ome = 2.0  # Frequency
         phi = 0.0   # Phase angle
-        return  - (A / (ome * np.pi)) * (
-            np.cos(ome * np.pi * x[0,:] + phi) + np.cos(ome * np.pi * x[:,1] + phi)
-        )
+        aux = (A / (ome * np.pi))
+        return [ aux*ome*np.pi* np.sin(ome * np.pi * x[0] + phi), aux*ome*np.pi * np.sin(ome * np.pi * x[1] + phi)]
 
     # Propose a flux-gradient relationship based on the dataset  
     def etildeexact(x):
@@ -434,8 +434,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         A = 0.05        # Amplitude
         ome = 4.0       # Frequency
         phi = 0.0       # Phase angle
-        return [eexactnp(x)[0] + A*fd.sin(ome*np.pi*x[0] + phi), eexactnp(x)[1] + A*fd.sin(ome*np.pi*x[1] + phi)]
-
+        return [eexactnp(x)[0] + A*np.sin(ome*np.pi*x[:,0] + phi), eexactnp(x)[1] + A*np.sin(ome*np.pi*x[:,1] + phi)]
 
     def sexact(x):
         A = fd.Constant(0.025)  # Amplitude
@@ -456,6 +455,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     # by eq.(22)
     def muexact(x):
         return etildeexact(x) - eexact(x)
+    
     # by eq.(21)
     def fdual(x):
         zeta = params['zeta']
@@ -467,8 +467,9 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     
     def stildeexactnp(x):
         kappa = 1.0
-        return [sexactnp(x)[0] - (1/kappa)*fd.grad(lmbdexact(x)), sexactnp(x)[1] - (1/kappa)*fd.grad(lmbdexact(x)) ]
+        return [sexactnp(x)[0] - (1/kappa)* gradlmbdexactnp(x[:,0])[0], sexactnp(x)[1] - (1/kappa)* gradlmbdexactnp(x[:,1])[1] ]
     # by eq.(24)
+
     def qexact(x):
         zeta = params['zeta']
         return zeta*uexact(x) + fd.div(sexact(x))
@@ -516,7 +517,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
             xs = fd.assemble(X).dat.data
         else: # Sample points one a regular grid
             Ls = np.array([Lx, Ly])
-            Nsamples = 1000
+            Nsamples = 500
             Nsampx, Nsampy  = Nsamples, Nsamples
             Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
             xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
@@ -525,8 +526,8 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
             xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
 
         # Use the numpy version of the functions eexact and sexact for this:
-        gradu_samples = np.array(eexactnp(xs)).T
-        flux_samples  = np.array(sexactnp(xs)).T
+        gradu_samples = np.array(etildeexactnp(xs)).T
+        flux_samples  = np.array(stildeexactnp(xs)).T
         ddcm_data = PoissonDDCMData(domain)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
         ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
@@ -1954,7 +1955,7 @@ def case_03(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05]:
+    for h in [0.025]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')

@@ -342,10 +342,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
 
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
-
-
-            L += u_boundary_vals(x)*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
-            L += lmbd_boundary_vals(x)*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
+            L += (u_boundary_vals(x))*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
+            L += (lmbd_boundary_vals(x))*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
 
             bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  (3,4)))
             bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), (3,4)))
@@ -399,6 +397,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( kappa*fd.inner(sub_s,dels) +  fd.inner(sub_l,fd.div(dels))    ) * fd.dx
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
+
+    if formulation == 'VMS-Dual' and flag_setting == 'Pure-Dirichlet':
+        L += sub_u*fd.inner(delmu,n)* fd.ds
+        L += sub_l*fd.inner(dels,n) * fd.ds
 
     # Total residual (LHS - RHS)
     Res = B - L
