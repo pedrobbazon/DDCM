@@ -422,27 +422,27 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             mode = 'a'
         filename = dir_outs+'/s.pvd'
         w.sub(0).rename('DDCM.Flux')
-        VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
+        VTKFile(filename, mode=mode).write(w.sub(0), project_output = False, time=tt)
 
         filename = dir_outs+'/u.pvd'
         w.sub(1).rename('DDCM.Potential')
-        VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
+        VTKFile(filename, mode=mode).write(w.sub(1), project_output = False, time=tt)
 
         filename = dir_outs+'/g.pvd'
         w.sub(2).rename('DDCM.gradient(u)')
-        VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
+        VTKFile(filename, mode=mode).write(w.sub(2), project_output = False, time=tt)
 
         filename = dir_outs+'/l.pvd'
         w.sub(3).rename('DDCM.lambda')
-        VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
+        VTKFile(filename, mode=mode).write(w.sub(3), project_output = False, time=tt)
 
         filename = dir_outs+'/m.pvd'
         w.sub(4).rename('DDCM.mu')
-        VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+        VTKFile(filename, mode=mode).write(w.sub(4), project_output = False, time=tt)
 
         filename = dir_outs + '/udif.pvd'
         udif.rename('DDCM.udif')
-        VTKFile(filename, mode=mode).write(udif, time=tt)
+        VTKFile(filename, mode=mode).write(udif, project_output = False, time=tt)
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
