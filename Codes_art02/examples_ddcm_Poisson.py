@@ -359,7 +359,7 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
     print('==========================================================')
     return norms_output, domain, ddcm_prob.ddcm_solution.s, ddcm_prob.ddcm_solution.g
 
-def main_ex0202_(formulation, hvalue, order_poly, kwargs, flag_bc):
+def main_ex0202_(formulation, hvalue, order_poly, kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -550,7 +550,15 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs, flag_bc):
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
-    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords, params=params)
+    if(formulation == 'VMS-Primal'):
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+                                params=params)
+    elif(formulation == 'VMS-Dual'):
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
+                                params=params)
+    else:
+        raise ValueError('Invalid formulation')
+    
     ddcm_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     # Compute some error norms
