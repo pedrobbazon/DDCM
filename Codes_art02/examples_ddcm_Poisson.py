@@ -1891,7 +1891,8 @@ def case_02(order_poly: str = 'Linear'):
     #                        'Primal-ASGS', 'Primal-OSGS','Dual-ASGS','Dual-OSGS']
     #list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS','Dual-ASGS']
     #list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Dual-ASGS']
+    #list_of_formulations = ['Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS']
     
     norms = {key: [] for key in list_of_formulations}
 
@@ -1919,14 +1920,14 @@ def case_02(order_poly: str = 'Linear'):
         #function_output['Equal-Order-fully'] = main_ex06_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
         #                                                  kwargs=get_stab_params('Equal-Order-fully'))
 
-        #function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
-        #                                            kwargs = get_stab_params('Primal-ASGS'))
+        function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
+                                                    kwargs = get_stab_params('Primal-ASGS'))
 
         #function_output['Primal-OSGS'] = main_ex04_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex05_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
-                                                  kwargs=get_stab_params('Dual-ASGS'))
+        #function_output['Dual-ASGS'] = main_ex05_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
+        #                                          kwargs=get_stab_params('Dual-ASGS'))
 
         #function_output['Dual-OSGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Dual-OSGS'))
