@@ -340,6 +340,11 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
+        
+        elif flag_setting == 'Pure-Neumann':
+
+            bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
+            bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
 
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             L += (u_boundary_vals(x))*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
@@ -403,7 +408,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     #    L += sub_l*fd.inner(dels,n) * fd.ds
         L -= dellam*fd.inner(sub_s,n)* fd.ds
         L -= delu*fd.inner(sub_m,n)* fd.ds
-
 
     # Total residual (LHS - RHS)
     Res = B - L

@@ -550,7 +550,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     else:
         raise ValueError('Invalid formulation and polynomial order')
     
-    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords, params=params)
+    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords, params=params)
     ddcm_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     # Compute some error norms
