@@ -359,7 +359,7 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
     print('==========================================================')
     return norms_output, domain, ddcm_prob.ddcm_solution.s, ddcm_prob.ddcm_solution.g
 
-def main_ex0202_(formulation, hvalue, order_poly, kwargs):
+def main_ex0202_(formulation, hvalue, order_poly, kwargs, flag_bc):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1225,7 +1225,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
 
     return norms_output
 
-def main_ex05_(formulation, hvalue, order_poly, kwargs, flag_bc_type):
+def main_ex05_(formulation, hvalue, order_poly, kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1928,13 +1928,13 @@ def case_02(order_poly: str = 'Linear'):
         #                                                  kwargs=get_stab_params('Equal-Order-fully'))
 
         function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
-                                                    kwargs = get_stab_params('Primal-ASGS'), 'Pure-Dirichlet')
+                                                    kwargs = get_stab_params('Primal-ASGS'))
 
         #function_output['Primal-OSGS'] = main_ex04_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Primal-OSGS'))
 
         function_output['Dual-ASGS'] = main_ex05_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
-                                                  kwargs=get_stab_params('Dual-ASGS'), 'Pure-Neumann')
+                                                  kwargs=get_stab_params('Dual-ASGS'))
 
         #function_output['Dual-OSGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Dual-OSGS'))
@@ -1966,15 +1966,15 @@ def case_03(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.025]:
+    for h in [0.05, 0.025, 0.0125]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
         #function_output['Natural'], domain, stilde, etilde = main_ex0101_(formulation = 'Natural', order_poly = order_poly)
         #
-        #function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
-        #                                              order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
+                                                      order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
         function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
                                                     order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
