@@ -1366,7 +1366,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
     else:
         raise ValueError('Invalid formulation and polynomial order')
 
-    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
                             params=params)
     ddcm_prob.solve(0.0, "my_cod_ddcmsol")
 
@@ -1909,17 +1909,17 @@ def case_02(order_poly: str = 'Linear'):
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        function_output['Natural'] = main_ex06_(formulation = 'Natural', hvalue = h, order_poly = order_poly,
-                                                kwargs ={})
+        #function_output['Natural'] = main_ex06_(formulation = 'Natural', hvalue = h, order_poly = order_poly,
+        #                                        kwargs ={})
 
-        function_output['Equal-Order-uns']= main_ex06_(formulation = 'Equal-Order', hvalue = h, order_poly = order_poly,
-                                                       kwargs = {})
+        #function_output['Equal-Order-uns']= main_ex06_(formulation = 'Equal-Order', hvalue = h, order_poly = order_poly,
+        #                                               kwargs = {})
 
-        function_output['Equal-Order-fully'] = main_ex06_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
-                                                          kwargs=get_stab_params('Equal-Order-fully'))
+        #function_output['Equal-Order-fully'] = main_ex06_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
+        #                                                  kwargs=get_stab_params('Equal-Order-fully'))
 
-        function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
-                                                    kwargs = get_stab_params('Primal-ASGS'))
+        #function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
+        #                                            kwargs = get_stab_params('Primal-ASGS'))
 
         #function_output['Primal-OSGS'] = main_ex04_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Primal-OSGS'))
