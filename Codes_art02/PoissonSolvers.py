@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
-from firedrake.__future__ import interpolate
+#from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
