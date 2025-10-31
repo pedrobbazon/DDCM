@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import firedrake as fd
 
 def PlotPoissonData(lst_data_files, flag_type_plot = 'magnitude'):
     
@@ -345,11 +345,11 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
     # Cases 1, 2 and 3 consider non-convex geometries. 
     # Case 4, on the other hand, consider the only convex geometry
     gmsh.initialize()
-    if(case == 1 or case == 2):    
+    if(case == 0 or case == 1):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        if(case == 1):
+        if(case == 0):
             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
-        elif(case == 2):
+        elif(case == 1):
             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
         gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
@@ -365,7 +365,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.geo.addPlaneSurface([1], 1)
         gmsh.model.geo.synchronize()
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
-    elif(case == 3):
+    elif(case == 2):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
         gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
@@ -381,7 +381,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.geo.addPlaneSurface([1], 1)
         gmsh.model.geo.synchronize()
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
-    elif(case == 4):
+    elif(case == 3):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
         gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
@@ -547,3 +547,47 @@ def CreateMeshTaylorSheet(meshname, lc=0.1):
 
     mymesh = Mesh(filename)
     return mymesh, tags
+
+def error_seminorm(uex: fd.Function, uh: fd.Function, norm_type: str):
+    error = uex - uh
+    if norm_type == 'H1':
+        return fd.sqrt(fd.assemble(fd.inner(fd.grad(error), fd.grad(error)) * fd.dx))
+    elif norm_type == 'Hdiv':
+        return fd.sqrt(fd.assemble(fd.inner(fd.div(error), fd.div(error)) * fd.dx))
+    elif norm_type == 'Hcurl':
+        return fd.sqrt(fd.assemble(fd.inner(fd.curl(error), fd.curl(error)) * fd.dx))
+    else:
+        raise ValueError(f"Semi-norm '{norm_type}' not implemented yet")
+
+
+
+from petsc4py import PETSc
+from slepc4py import SLEPc
+def condition_number(Jac):
+    # Assemble Jacobian
+    A_fd = fd.assemble(Jac, mat_type="aij")
+    A = A_fd.M.handle
+
+    # Create eigenproblem solver
+    E = SLEPc.EPS().create()
+    E.setOperators(A)
+    E.setProblemType(SLEPc.EPS.ProblemType.HEP)
+    E.setDimensions(1)
+    E.setFromOptions()
+
+    # --- Smallest eigenvalue ---
+    E.setWhichEigenpairs(SLEPc.EPS.Which.SMALLEST_MAGNITUDE)
+    E.solve()
+    if E.getConverged() < 1:
+        raise RuntimeError("SLEPc did not converge smallest eigenvalue")
+    eigen_min = E.getEigenvalue(0).real
+
+    # --- Largest eigenvalue ---
+    E.setWhichEigenpairs(SLEPc.EPS.Which.LARGEST_MAGNITUDE)
+    E.solve()
+    if E.getConverged() < 1:
+        raise RuntimeError("SLEPc did not converge largest eigenvalue")
+    eigen_max = E.getEigenvalue(0).real
+
+    return eigen_max / eigen_min
+

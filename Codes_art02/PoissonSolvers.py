@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
-from firedrake.__future__ import interpolate
+#from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
@@ -754,13 +754,14 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     x = fd.SpatialCoordinate(mesh)
     sexact = params['exact-flux']
     uexact = params['exact-potential']
+    gradexact = fd.grad(uexact(x))
     lmbdexact = params['exact-lmbd']
     muexact = params['exact-mu']
     # etilde = params['etilde']
     # stilde = params['stilde']
     etexact = params['exact-etilde']
     stexact = params['exact-stilde']
-    gradexact = fd.grad(uexact(x))
+
 
     if(dir_outs != None):
 

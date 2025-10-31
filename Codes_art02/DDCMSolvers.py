@@ -1,7 +1,7 @@
 import firedrake as fd
 from firedrake.output import VTKFile
 from ddcm_classes import *
-from firedrake.__future__ import interpolate
+#from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
@@ -129,9 +129,10 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
+
         # bottom and top
-        L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3)+fd.ds(4))
-        L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
+        # L += fd.inner(s_boundary_vals(x),n)*lam*(fd.ds(3)+fd.ds(4))
+        # L -= fd.inner(mu_boundary_vals(x),n)*u*(fd.ds(3)+fd.ds(4))
         
     else:
         
@@ -145,6 +146,8 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
+
+
 
     if(dir_outs != None):
 
@@ -181,8 +184,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
                 lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
                 params, orders, tt=0.0, dir_outs='myddcmsol'):
 
-    " Some comments: VMS is an acronym for variational multiscale method "
-
     # Define the mesh
     mesh = domain.msh
 
@@ -193,36 +194,36 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     formulation = params['formulation']
     Pprime = params['Pprime']
 
-    if (formulation == 'VMS-Primal' or formulation == 'VMS-Dual'):
-        if (Pprime == 'Identity'):
-            # In this case, proceed with a five-field formulation, since we can directly substitute the sub-grid
-            # scales into the stabilized weak formulation. This method is called algebraic VMS.
+    # Set the function spaces we have to consider according to the formulation
+    """
+    P' = I: proceed with a five-field formulation, since we can directly substitute the sub-grid scales into the 
+    stabilized weak formulation. This method is called algebraic VMS;
+    P' = L2 or OSS: consider the L2 orthogonal projection of the residuals onto the same function spaces selected 
+    for the primal fields. We end up with a ten-field formulation, which is solved monolithically.            
+    """
+    if formulation == 'VMS-Primal' or formulation == 'VMS-Dual':
+        if Pprime == 'Identity':
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
-        elif (Pprime == 'L2' or Pprime == 'OSS'):
-            # If, instead, we consider the L2 orthogonal projection of the residuals onto an elementwise function space,
-            # then we end up with a ten-field formulation, which is solved monolithically.
+        elif Pprime == 'L2' or Pprime == 'OSS':
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
-            # Choose the function space according to?
             VscS = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VscV = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
         else:
             raise ValueError('Projection operator not recognized')
-    #elif (formulation == 'VMS-Dual'):
-    #    SF = fd.FunctionSpace(mesh, family="DG", degree=orderU)
-    #    VF = fd.VectorFunctionSpace(mesh, family="BDM", degree=orderS)
     else:
-        raise ValueError('Formulation not recognized in DDCMStab')
+        raise ValueError('Formulation not recognized')
 
-    # Mixed space: 
-    # In this formulation, all scalar fields use the same space SF, and all vector fields use the same space VF.
-    # With L2 orthogonal projection, the five extra fields are placed in elementwise spaces:
-    # scalar fields in scalar elementwise spaces, and vector fields in vector elementwise spaces.
-    #        s    u    e   lam  mu    s'      u'      e'     lam'    mu'
-    if (Pprime == 'Identity'):
+    # Define the mixed space:
+    """
+    All scalar fields use the same space SF, and all vector fields use the same space VF. The extra fields used when the 
+    L2 or OSS operator is selected are defined according to the function spaces introduced so far. 
+    s - u - e - lam - mu - s' - u' - e' - lam' - mu'
+    """
+    if Pprime == 'Identity':
         W = VF * SF * VF * SF * VF 
-    elif (Pprime == 'L2' or Pprime == 'OSS'):
+    elif Pprime == 'L2' or Pprime == 'OSS':
         W = VF * SF * VF * SF * VF * VscV * VscS * VscV * VscS * VscV
     else:
         raise ValueError('Projection operator not recognized')
@@ -233,10 +234,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Unknown field and Test functions
     w = fd.Function(W)
-    if (Pprime == 'Identity'):
+    if Pprime == 'Identity':
         s, u, e, lam, mu = fd.split(w)
         dels, delu, dele, dellam, delmu = fd.TestFunctions(W)
-    elif (Pprime == 'L2' or Pprime == 'OSS'):
+    elif Pprime == 'L2' or Pprime == 'OSS':
         s, u, e, lam, mu, PL2res_s, PL2res_u, PL2res_e, PL2res_l, PL2res_m = fd.split(w)
         dels, delu, dele, dellam, delmu, delsub_s, delsub_u, delsub_e, delsub_l, delsub_m = fd.TestFunctions(W)
     else:
@@ -265,28 +266,28 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     L = ( fd.inner(etilde,dele) + kappa*fd.inner(stilde,dels) ) * fd.dx
 
     # Set the stabilization parameters
-    if(formulation == 'VMS-Primal'):
+    if formulation == 'VMS-Primal':
         tauu = cu*L0**2
         taue = ce
         taus = cs/kappa
-        taul = cl/(zeta*L1)**2
-        taum = cm
-    elif(formulation == 'VMS-Dual'):
+        taul = -cl/(zeta*L1)**2
+        taum = -cm
+    elif formulation == 'VMS-Dual':
+        h = fd.CellDiameter(mesh)
         tauu = cu*L0**2
         taue = ce
-        h = fd.CellDiameter(mesh)
         taus = cs/kappa*(h/L0)**2
-        taul = cl/(zeta*L1)**2
-        taum = cm*(h/L0)**2
+        taul = -cl/(zeta*L1)**2
+        taum = -cm*(h/L0)**2
     else:
         raise Exception('Invalid VMS option')
  
     # Physical and dual source term (just for the manufactured solutions that have a rationale in DDCM)
     L += ( q(x) * dellam + f(x) * delu ) * fd.dx
 
-    if (formulation == 'VMS-Primal'):
+    if formulation == 'VMS-Primal':
 
-        # Bilinear form (Standar Galerkin terms - Primal)
+        # Bilinear form (Standard Galerkin terms - Primal)
         B  = ( zeta*fd.inner(lam,delu) - fd.inner(mu,fd.grad(delu)) ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                 ) * fd.dx
         B += ( kappa*fd.inner(s,dels) - fd.inner(fd.grad(lam),dels) ) * fd.dx
@@ -295,33 +296,37 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
         # Set the boundary conditions accordingly
         bc_lst = []
-        if(flag_setting == 'Pure-Dirichlet'):
+        if flag_setting == 'Pure-Dirichlet':
 
             bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
             bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
 
-            if(Pprime == 'L2'):
+            if Pprime == 'L2':
                 bc_lst.append(fd.DirichletBC(W.sub(5), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
                 bc_lst.append(fd.DirichletBC(W.sub(6), fd.Constant(0.0), "on_boundary"))
                 bc_lst.append(fd.DirichletBC(W.sub(7), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
                 bc_lst.append(fd.DirichletBC(W.sub(8), fd.Constant(0.0), "on_boundary"))
                 bc_lst.append(fd.DirichletBC(W.sub(9), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
             
-        elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
+        elif flag_setting == 'Mixed-Dirichlet-Neumann':
             
             # Left and right (1,2)
-            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x),    (1,2)))
-            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2)))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), 1))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), 2))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 1))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), 2))
 
             # Bottom and top (3,4)
-            L -= fd.inner(s_boundary_vals(x),n)*dellam * (fd.ds(3)+fd.ds(4))
-            L -= fd.inner(mu_boundary_vals(x),n)*delu  * (fd.ds(3)+fd.ds(4))
+            # L -= ( fd.inner(s_boundary_vals(x), n) * dellam ) * fd.ds(3)
+            # L -= ( fd.inner(s_boundary_vals(x), n) * dellam ) * fd.ds(4)
+            #
+            # L -= ( fd.inner(mu_boundary_vals(x),n) * delu  ) * fd.ds(3)
+            # L -= ( fd.inner(mu_boundary_vals(x),n) * delu  ) * fd.ds(4)
             
         else:
             raise ValueError('Unrecognized problem setting option')
         
-    elif (formulation == 'VMS-Dual'):
-        print('Hello') 
+    elif formulation == 'VMS-Dual':
         # Bilinear form (Standard Galerkin terms - Dual)
         B  = ( zeta*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                  ) * fd.dx
@@ -331,22 +336,20 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
         # Set the boundary conditions accordingly 
         bc_lst = []
-        if(flag_setting == 'Pure-Dirichlet'):
+        if flag_setting == 'Pure-Dirichlet':
 
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
 
-        elif(flag_setting == 'Mixed-Dirichlet-Neumann'):
-
-            L += u_boundary_vals(x)*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
-            L += lmbd_boundary_vals(x)*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
+        elif flag_setting == 'Mixed-Dirichlet-Neumann':
+            L += (u_boundary_vals(x))*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
+            L += (lmbd_boundary_vals(x))*fd.inner(dels,n) * (fd.ds(1)+fd.ds(2))
 
             bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  (3,4)))
             bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), (3,4)))
 
         else:
             raise ValueError('Unrecognized problem setting option')
-            
 
     else:
         raise ValueError('Unrecognized formulation')
@@ -357,32 +360,28 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     res_l = q(x) - zeta*u - fd.div(s)
     res_m = fd.grad(u) - e
 
-    if(Pprime == 'L2' or Pprime == 'OSS'): # Assemble L2 projections onto W
-        print('Hello 3')
+    if Pprime == 'L2' or Pprime == 'OSS': # Assemble L2 projections onto W
         B += ( fd.inner(PL2res_u, delsub_u) - fd.inner(res_u, delsub_u) ) * fd.dx
         B += ( fd.inner(PL2res_e, delsub_e) - fd.inner(res_e, delsub_e) ) * fd.dx
         B += ( fd.inner(PL2res_s, delsub_s) - fd.inner(res_s, delsub_s) ) * fd.dx
         B += ( fd.inner(PL2res_l, delsub_l) - fd.inner(res_l, delsub_l) ) * fd.dx
         B += ( fd.inner(PL2res_m, delsub_m) - fd.inner(res_m, delsub_m) ) * fd.dx
 
-    if (Pprime == 'Identity'): # We assume P as being the identity operator 
-        
+    if Pprime == 'Identity':
         sub_u = tauu*res_u
         sub_e = taue*res_e
         sub_s = taus*res_s 
         sub_l = taul*res_l
         sub_m = taum*res_m
      
-    elif (Pprime == 'L2'): # We assume P as being the L2 orthogonal projector
-
+    elif Pprime == 'L2':
         sub_u = tauu*PL2res_u
         sub_e = taue*PL2res_e
         sub_s = taus*PL2res_s
         sub_l = taul*PL2res_l
         sub_m = taum*PL2res_m
 
-    elif (Pprime == 'OSS'): # We assume P as being projector onto the orthogonal space
-        print('hello 2')
+    elif Pprime == 'OSS':
         sub_u = tauu*(res_u - PL2res_u)
         sub_e = taue*(res_e - PL2res_e)
         sub_s = taus*(res_s - PL2res_s)
@@ -399,90 +398,112 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
+    #if formulation == 'VMS-Dual' and flag_setting == 'Pure-Dirichlet':
+    #    L += sub_u*fd.inner(delmu,n)* fd.ds
+    #    L += sub_l*fd.inner(dels,n) * fd.ds
+
     # Total residual (LHS - RHS)
     Res = B - L
 
     # Jacobian
     Jac = fd.derivative(Res, w)
 
+    # Solve
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
- 
-    #wf = fd.Function(W)
-    #wf.assign(w)
-    #s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
-    
-    if(True):
-        ut = u   + sub_u
-        et = e   + sub_e
-        st = s   + sub_s
-        lt = lam + sub_l 
-        mt = mu  + sub_m 
 
-        if(True):
-            DGk  = fd.FunctionSpace(mesh, 'DG', degree=orderU)
-            VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
-            s_f = fd.assemble(interpolate(st,VDGk))
-            u_f = fd.assemble(interpolate(ut,DGk))
-            e_f = fd.assemble(interpolate(et,VDGk))
-            lam_f = fd.assemble(interpolate(lt,DGk))
-            mu_f = fd.assemble(interpolate(mt,VDGk))
-        else:
-            s_f = fd.project(st,W.sub(0))
-            u_f = fd.project(ut,W.sub(1))
-            e_f = fd.project(et,W.sub(2))
-            lam_f = fd.project(lt,W.sub(3))
-            mu_f = fd.project(mt,W.sub(4))
-    else:
-        s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+    udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
 
-    if(dir_outs != None):
+    # Save
+    if dir_outs is not None:
 
-        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+        if tt == 0.0: # This time acts as a parameter over which we do continuation
             mode = 'w'
         else:
             mode = 'a'
         filename = dir_outs+'/s.pvd'
-        s_f.rename('DDCM.Flux')
-        VTKFile(filename, mode=mode).write(s_f, time=tt)
+        w.sub(0).rename('DDCM.Flux')
+        VTKFile(filename, mode=mode).write(w.sub(0), project_output = False, time=tt)
 
-        filename = dir_outs + '/u.pvd'
-        u_f.rename('DDCM.Potential')
-        VTKFile(filename, mode=mode).write(u_f, time=tt)
+        filename = dir_outs+'/u.pvd'
+        w.sub(1).rename('DDCM.Potential')
+        VTKFile(filename, mode=mode).write(w.sub(1), project_output = False, time=tt)
 
-        filename = dir_outs + '/g.pvd'
-        e_f.rename('DDCM.gradient(u)')
-        VTKFile(filename, mode=mode).write(e_f, time=tt)
+        filename = dir_outs+'/g.pvd'
+        w.sub(2).rename('DDCM.gradient(u)')
+        VTKFile(filename, mode=mode).write(w.sub(2), project_output = False, time=tt)
 
-        filename = dir_outs + '/l.pvd'
-        lam_f.rename('DDCM.lambda')
-        VTKFile(filename, mode=mode).write(lam_f, time=tt)
+        filename = dir_outs+'/l.pvd'
+        w.sub(3).rename('DDCM.lambda')
+        VTKFile(filename, mode=mode).write(w.sub(3), project_output = False, time=tt)
 
-        filename = dir_outs + '/m.pvd'
-        mu_f.rename('DDCM.mu')
-        VTKFile(filename, mode=mode).write(mu_f, time=tt)
+        filename = dir_outs+'/m.pvd'
+        w.sub(4).rename('DDCM.mu')
+        VTKFile(filename, mode=mode).write(w.sub(4), project_output = False, time=tt)
 
-        # filename = dir_outs+'/s.pvd'
-        # w.sub(0).rename('DDCM.Flux')
-        # VTKFile(filename, mode=mode).write(w.sub(0), time=tt)
-        #
-        # filename = dir_outs+'/u.pvd'
-        # w.sub(1).rename('DDCM.Potential')
-        # VTKFile(filename, mode=mode).write(w.sub(1), time=tt)
-        #
-        # filename = dir_outs+'/g.pvd'
-        # w.sub(2).rename('DDCM.gradient(u)')
-        # VTKFile(filename, mode=mode).write(w.sub(2), time=tt)
-        #
-        # filename = dir_outs+'/l.pvd'
-        # w.sub(3).rename('DDCM.lambda')
-        # VTKFile(filename, mode=mode).write(w.sub(3), time=tt)
-        #
-        # filename = dir_outs+'/m.pvd'
-        # w.sub(4).rename('DDCM.mu')
-        # VTKFile(filename, mode=mode).write(w.sub(4), time=tt)
+        filename = dir_outs + '/udif.pvd'
+        udif.rename('DDCM.udif')
+        VTKFile(filename, mode=mode).write(udif, project_output = False, time=tt)
 
-    #     w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
-    return s_f, u_f, e_f, lam_f, mu_f
+    return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+
+    # wf = fd.Function(W)
+    # wf.assign(w)
+    # s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    #
+    #
+    # if (True):
+    #     ut = u + sub_u
+    #     et = e + sub_e
+    #     st = s + sub_s
+    #     lt = lam + sub_l
+    #     mt = mu + sub_m
+    #
+    #     if (True):
+    #         DGk = fd.FunctionSpace(mesh, 'DG', degree=orderU)
+    #         VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
+    #         s_f = fd.assemble(interpolate(st, VDGk))
+    #         u_f = fd.assemble(interpolate(ut, DGk))
+    #         e_f = fd.assemble(interpolate(et, VDGk))
+    #         lam_f = fd.assemble(interpolate(lt, DGk))
+    #         mu_f = fd.assemble(interpolate(mt, VDGk))
+    #     else:
+    #         s_f = fd.project(st, W.sub(0))
+    #         u_f = fd.project(ut, W.sub(1))
+    #         e_f = fd.project(et, W.sub(2))
+    #         lam_f = fd.project(lt, W.sub(3))
+    #         mu_f = fd.project(mt, W.sub(4))
+    # else:
+    #     s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
+    #
+    # if dir_outs is not None:
+    #
+    #     if tt == 0.0: # This time acts as a parameter over which we do continuation
+    #         mode = 'w'
+    #     else:
+    #         mode = 'a'
+    #     filename = dir_outs + '/s.pvd'
+    #     s_f.rename('DDCM.Flux')
+    #     VTKFile(filename, mode=mode).write(s_f, time=tt)
+    #
+    #     filename = dir_outs + '/u.pvd'
+    #     u_f.rename('DDCM.Potential')
+    #     VTKFile(filename, mode=mode).write(u_f, time=tt)
+    #
+    #     filename = dir_outs + '/g.pvd'
+    #     e_f.rename('DDCM.gradient(u)')
+    #     VTKFile(filename, mode=mode).write(e_f, time=tt)
+    #
+    #     filename = dir_outs + '/l.pvd'
+    #     lam_f.rename('DDCM.lambda')
+    #     VTKFile(filename, mode=mode).write(lam_f, time=tt)
+    #
+    #     filename = dir_outs + '/m.pvd'
+    #     mu_f.rename('DDCM.mu')
+    #     VTKFile(filename, mode=mode).write(mu_f, time=tt)
+
+    # return s_f, u_f, e_f, lam_f, mu_f
+
+
 
 
 def NLSP5FA(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,

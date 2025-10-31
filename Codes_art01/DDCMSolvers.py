@@ -1,8 +1,8 @@
 import firedrake as fd
 from firedrake.output import VTKFile
-import matplotlib.pyplot as plt
-import scipy.linalg as spla
 from ddcm_classes import *
+from ddcm_utils import condition_number
+from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
@@ -145,6 +145,18 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Jacobian
     Jac = fd.derivative(dL, w)
 
+    cond = condition_number(Jac)
+    print(f"Condition number = {cond:.3e}")
+
+    # plt.figure(figsize=(8, 6))
+    # plt.spy(scipy_mat, marker='.', markersize=2, color='g')
+    # plt.xlabel("Column Index", fontsize=12)
+    # plt.ylabel("Row Index", fontsize=12)
+    # plt.grid(True, linestyle='--', alpha=0.3)
+    # plt.tight_layout()
+    # plt.savefig(f'sparsity_pattern_{formulation}_{orderU}.svg')
+    # plt.show()
+
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
     
@@ -161,19 +173,10 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     print('-----------------------------------------')
     print(f"Area based on the opposite sign: {area}")
     print('-----------------------------------------')
-    
-    # fig, axes = plt.subplots()
-    # contours = fd.pyplot.tricontourf(s_inner_g, axes=axes, cmap="inferno")
-    # axes.set_aspect("equal")
-    # fig.colorbar(contours)
-    # plt.savefig('figure_salkd.svg')
-    # fig.show()
-    
-    
 
-    if(dir_outs != None):
+    if dir_outs != None:
 
-        if(tt == 0.0): # This time acts as a parameter over which we do continuation
+        if tt == 0.0: # This time acts as a parameter over which we do continuation
             mode = 'w'
         else:
             mode = 'a'

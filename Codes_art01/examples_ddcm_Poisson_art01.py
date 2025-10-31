@@ -1,9 +1,6 @@
 #-----------------------------------
 # General libraries
 #-----------------------------------
-import numpy as np
-import scipy as sp
-import matplotlib.pyplot as plt
 import sys
 import time
 #-----------------------------------
@@ -150,6 +147,7 @@ def main_EX1_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
     # Compute some error norms
     print('... Computing some error norms ...')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
     L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
@@ -175,7 +173,12 @@ def main_EX1_(formulation='Natural', N=20, order_poly = 'Linear', **kwargs):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    output = (hsize, L2error_u, H1error_u,
+              L2error_lmd, H1error_lmd,
+              L2error_s, L2error_e, L2error_mu,
+              Hdiverror_s, Hdiverror_e, Hdiverror_mu)
+
+    return output
     
 #-----------------------------------------------------------------------------------------
 # Numerical experiments: test case 02 - Non-convex domain
@@ -194,13 +197,13 @@ def main_EX2_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     flag_singularity_refinement = True
     
     mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
-    if(case_corner == 1):
+    if(case_corner == 0):
         omega = 1.75*fd.pi
-    elif(case_corner == 2):
+    elif(case_corner == 1):
         omega = 1.5*fd.pi
-    elif(case_corner == 3):
+    elif(case_corner == 2):
         omega = 1.25*fd.pi
-    elif(case_corner == 4):
+    elif(case_corner == 3):
         omega = 0.5*fd.pi
         
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
@@ -319,19 +322,28 @@ def main_EX2_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
     L2error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'L2')
     H1error_u = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+    H1semierror_u = error_seminorm(uexact(x), ddcm_prob.ddcm_solution.u , norm_type = 'H1')
+
     L2error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'L2')
     H1error_lmd = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type = 'H1')
+    H1semierror_lmd = error_seminorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+
     L2error_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'L2')
     L2error_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'L2')
     L2error_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'L2')
     if formulation == 'Equal-Order':
         Hdiverror_s = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s , norm_type = 'Hdiv')
+        Hdivsemierror_s = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+
         Hdiverror_e = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g , norm_type = 'Hdiv')
+        Hdivsemierror_e = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+
         Hdiverror_mu = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type = 'Hdiv')
+        Hdivsemierror_mu = error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
     else:
-        Hdiverror_s = np.nan
-        Hdiverror_e = np.nan
-        Hdiverror_mu = np.nan
+        Hdiverror_s, Hdivsemierror_s = np.nan, np.nan
+        Hdiverror_e, Hdivsemierror_e = np.nan, np.nan
+        Hdiverror_mu, Hdivsemierror_mu = np.nan, np.nan
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution OK')
@@ -342,7 +354,14 @@ def main_EX2_(formulation='Natural', hsize = 0.1, case_corner = 4, **kwargs):
     print('|> End DDCM Computation | Total time= %1.1f s' %(elapsed_time))
     print('----------------------------------------------------------')
 
-    return hsize, L2error_u, H1error_u, L2error_lmd, H1error_lmd, L2error_s, L2error_e, L2error_mu, Hdiverror_s, Hdiverror_e, Hdiverror_mu
+    output = (hsize, L2error_u, H1error_u, H1semierror_u,
+              L2error_lmd, H1error_lmd, H1semierror_lmd,
+              L2error_s, L2error_e, L2error_mu,
+              Hdiverror_s, Hdivsemierror_s,
+              Hdiverror_e, Hdivsemierror_e,
+              Hdiverror_mu, Hdivsemierror_mu)
+
+    return output
 
 #-----------------------------------------------------------------------------------------
 # Numerical experiments: test case 03 - Data assignation
@@ -513,9 +532,9 @@ def get_stab_params(formulation):
         return {None: None}
     elif formulation == 'Equal-Order':
         return {
-            'Unstabilized': None,
+            # 'Unstabilized': None,
             'Fully stabilized': {'theta': 0.5, 'alpha': 0.125, 'beta': 0.5, 'gamma': 0.125, 'eta': 0.5},
-            'Minimally stabilized': {'alpha': 0.25, 'eta': 0.25}
+            # 'Minimally stabilized': {'alpha': 0.25, 'eta': 0.25}
         }
     else:
         raise ValueError("Invalid formulation")
@@ -547,32 +566,40 @@ def run_test_case_1(formulation, order_poly, foldername):
 
         hhs = []
         errors = {key: [] for key in norm_list}
-        for N in [25, 50, 100, 200]:
+        for N in [5]:
             output = main_EX1_(formulation, N, order_poly, **kwargs)
             hhs.append(output[0])
             for i, key in enumerate(errors):
                 errors[key].append(output[i + 1])
 
-        filename_base = get_filename_base(formulation, 'convex', param)
-        os.makedirs(foldername, exist_ok=True)
-        results = DDCM_save_results(hhs, errors, formulation)
-        results.save_results(order_poly, filename_base, foldername)
+        # filename_base = get_filename_base(formulation, 'convex', param)
+        # os.makedirs(foldername, exist_ok=True)
+        # results = DDCM_save_results(hhs, errors, formulation)
+        # results.save_results(order_poly, filename_base, foldername)
 
 # ------------------------------
 # Test Case 2: Non-Convex Domain
 # ------------------------------
 def run_test_case_2(formulation, order_poly, foldername, case_corner):
-    corners_labels = ['7pi/4', '3pi/2', '5pi/4', 'pi/2']
+    corners_labels = ['7pi_4', '3pi_2', '5pi_4', 'pi_2']
     label = corners_labels[case_corner]
     stab_params = get_stab_params(formulation)
-    norm_list = get_norm_list(formulation)
+    # norm_list = get_norm_list(formulation)
+    if formulation == 'Natural':
+        norm_list =  ['L2u', 'H1u', 'H1semi_u',  'L2l', 'H1l', 'H1semi_l','EsL2', 'EeL2', 'EmL2']
+    elif formulation == 'Equal-Order':
+        norm_list =  ['L2u', 'H1u', 'H1semi_u', 'L2l', 'H1l', 'H1semi_l' , 'EsL2', 'EeL2', 'EmL2',
+                      'Es_Hdiv', 'Es_Hdivsemi', 'EeHdiv', 'Ee_Hdivsemi', 'Em_Hdiv', 'Em_Hdivsemi']
+    else:
+        raise ValueError("Invalid formulation")
+
 
     for param, val in stab_params.items():
         kwargs = {} if val is None else val.copy()
         print(f'==== Solving for {formulation}: {param} ===')
 
-        # hhs = [0.1, 0.05, 0.025, 0.0125]
-        hhs = [0.025]
+        hhs = [0.1, 0.05, 0.025, 0.0125]
+        # hhs = [0.5, 0.25]
         errors = {key: [] for key in norm_list}
         for h in hhs:
             output = main_EX2_(formulation, h, case_corner, **kwargs)
@@ -617,13 +644,14 @@ def run_test_case_3(formulation, order_poly, foldername, Nsamples_list):
 if __name__ == "__main__":
     main_selector = int(sys.argv[1])
 
-    formulation = 'Natural'  # or 'Natural'
+    formulation = 'Equal-Order'  # or 'Equal-Order'
     order_poly = 'Linear'
 
     if main_selector == 1:
         run_test_case_1(formulation, order_poly, '01_test_case_convex_domain')
     elif main_selector == 2:
-        run_test_case_2(formulation, order_poly, '02_test_case_non_convex_domain', case_corner=1)
+        for val in [0, 1, 2]:
+            run_test_case_2(formulation, order_poly, '02_test_case_non_convex_domain', case_corner=val)
     elif main_selector == 3:
         run_test_case_3(formulation, order_poly, '03_test_case_data_assignation', Nsamples_list=[16])
         # 128, 256, 512, 1024, 2048

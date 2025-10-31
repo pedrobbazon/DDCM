@@ -1,218 +1,221 @@
-#-----------------------------------
+# ===============================================
 # General libraries
-#-----------------------------------
+# ===============================================
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os
 
+# ===============================================
+# Our libraries
+# ===============================================
+import constants as ct
 
-'''
-This class has the following attributes: it reads the .npy file 
-and extracts the characteristic mesh size, the errors, and the 
-convergence rates. Also, it has three functions to produce all 
-the convergence rate graphs. The first initialize all the plots, 
-given the number of figures you want. The second plots the curves, 
-given the figure, the data, the line type, and the label. The last 
-one just saves the figures given the filename.
-'''
+# ===============================================
+# Functions
+# ===============================================
+# def read_and_get_values(npy_file):
+#     data = np.load(npy_file, allow_pickle=True).item()
+#     return data['errors'], data['conv_rates']
+#
+# def initialize_figures(num_plots: int):
+#     figures, axes = {}, {}
+#     for fig_num in range(1, num_plots + 1):
+#         fig = plt.figure(fig_num, figsize=(8,6))
+#         ax = fig.gca()
+#         ax.set_xlabel('h', fontsize=14)
+#         ax.set_ylabel('Error', fontsize=14)
+#         ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+#         ax.tick_params(axis='both', which='major', labelsize=12)
+#         ax.tick_params(axis='both', which='minor', labelsize=12)
+#         figures[fig_num], axes[fig_num] = fig, ax
+#     return figures, axes
+#
+# def plot_line(ax, h: list, y: list, color: str, linestyle: str='-', marker: str='o', label: str=None):
+#     ax.loglog(h, y, linestyle=linestyle, marker=marker, color=color, label=label)
+#
+# def finalize_figure(ax, title=None, legend_loc='lower right', ncol=2):
+#     ax.legend(loc=legend_loc, fontsize=11, ncol=ncol, title=title,
+#               fancybox=True, shadow=True)
+#
+# def save_figure(fig, filename):
+#     os.makedirs(os.path.dirname(filename), exist_ok=True)
+#     fig.savefig(filename, bbox_inches='tight', dpi=200)
 
-# ------------- Visualization helper -------------
-class DDCM_visualization:
+# ===============================================
+# Run
+# ===============================================]
 
-    def __init__(self, npy_file):
-        self.npy_file = npy_file
-        self.figures, self.axes = {}, {}
-
-    def read_and_get_values(self):
-        data = np.load(self.npy_file, allow_pickle=True).item()
-        return data['norms'], data['errors'], data['conv_rates']
-
-    def initialize_figures(self, num_plots):
-        for fig_num in range(1, num_plots + 1):
-            fig = plt.figure(fig_num, figsize=(8, 6))
-            ax = fig.gca()
-            ax.set_xlabel(r'$h$', fontsize=14)
-            ax.set_ylabel('Error', fontsize=14)
-            ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-            ax.tick_params(axis='both', which='major', labelsize=12)
-            ax.tick_params(axis='both', which='minor', labelsize=12)
-            self.figures[fig_num] = fig
-            self.axes[fig_num] = ax
-
-    def plot_line(self, fig_num, h, y, style, label):
-        ax = self.axes[fig_num]
-        ax.loglog(h, y, style, label=label)
-
-    def finalize(self, fig_num, title=None, legend_loc='lower right', ncol=2):
-        ax = self.axes[fig_num]
-        if title:
-            ax.set_title(title)
-        ax.legend(loc=legend_loc, fontsize=11, ncol=ncol, title="Equal-Order (solid) |  VMS-Primal (dashed)", fancybox=True, shadow=True)
-
-    def save_figure(self, fig_num, fig_name, folder='.', order_poly='Linear'):
-        fig = self.figures[fig_num]
-        folder_path = os.path.join(folder, order_poly)
-        os.makedirs(folder_path, exist_ok=True)
-
-        # full file path for saving
-        fig_path = os.path.join(folder_path, fig_name)
-        fig.savefig(fig_path, bbox_inches='tight', dpi=200)
-        return fig_path
-
-# ------------------------------
-# Equal-Order (gus) vs VMS-Primal (cod)
-# ------------------------------
-def run_plots_test_case0(order_poly: str):
-
-    folder_gus = os.path.join('00_Equal-Order', order_poly)
-    folder_cod = os.path.join('00_VMS-Primal', order_poly)
-
-    # Find the .npy file in each folder
-    file_gus = next(f for f in os.listdir(folder_gus) if f.endswith('.npy'))
-    file_cod = next(f for f in os.listdir(folder_cod) if f.endswith('.npy'))
-
-    npy_file_gus = os.path.join(folder_gus, file_gus)
-    npy_file_cod = os.path.join(folder_cod, file_cod)
-
-    viz_gus = DDCM_visualization(npy_file_gus)
-    viz_cod = DDCM_visualization(npy_file_cod)
-
-    _, err_gus, _ = viz_gus.read_and_get_values()
-    _, err_cod, _ = viz_cod.read_and_get_values()
-
-    # assume both use the same h vector; if not, we’ll plot on their own h
-    h_gus = np.asarray(err_gus['h'])
-    h_cod = np.asarray(err_cod['h'])
-
-    # 2 figures: 1) scalar norms; 2) vector norms
-    viz_gus.initialize_figures(num_plots=2)
-
-    # Fixed colors per norm (easier to compare gus vs cod); styles/markers differ by formulation (chat GPT proposed colors)
-    scalar_norms = {
-        'L2u': ( 'blue', r'$\|u-u_h\|_{L^2}$' ),
-        'H1u': ( 'olive', r'$\|u-u_h\|_{H^1}$' ),
-        'L2l': ( 'green', r'$\|\lambda-\lambda_h\|_{L^2}$' ),
-        'H1l': ( 'red', r'$\|\lambda-\lambda_h\|_{H^1}$' ),
-    }
-    vector_norms = {
-        'L2s': ( 'purple', r'$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$' ),
-        'L2e': ( 'magenta', r'$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$' ),
-        'L2m': ( 'cyan', r'$\|\boldsymbol{\mu}-\boldsymbol{\mu}_h\|_{L^2}$' ),
-    }
-
-    # styles per formulation (same color per norm)
-    style_gus = dict(linestyle='-',  marker='o',  markersize=4,  linewidth=1.2)
-    style_cod = dict(linestyle='--', marker='s',  markersize=4,  linewidth=1.2)
-
-    # ---- Scalars: plot each norm twice (gus & cod) ----
-    for key, (color, label_base) in scalar_norms.items():
-        # gus
-        viz_gus.plot_line(
-            1, h_gus, np.asarray(err_gus[key]),
-            style=f"{style_gus['linestyle']}{style_gus['marker']}",
-            label=f"{label_base}"
-        )
-        viz_gus.axes[1].lines[-1].set_color(color)
-        viz_gus.axes[1].lines[-1].set_markersize(style_gus['markersize'])
-        viz_gus.axes[1].lines[-1].set_linewidth(style_gus['linewidth'])
-
-    for key, (color, label_base) in scalar_norms.items():
-        # cod
-        viz_gus.plot_line(
-            1, h_cod, np.asarray(err_cod[key]),
-            style=f"{style_cod['linestyle']}{style_cod['marker']}",
-            label=f"{label_base}"
-        )
-        viz_gus.axes[1].lines[-1].set_color(color)
-        viz_gus.axes[1].lines[-1].set_markersize(style_cod['markersize'])
-        viz_gus.axes[1].lines[-1].set_linewidth(style_cod['linewidth'])
-
-    viz_gus.finalize(1, None, legend_loc='lower right', ncol=2)
-
-    # ---- Vectors: plot each norm twice (gus & cod) ----
-    for key, (color, label_base) in vector_norms.items():
-        # gus
-        viz_gus.plot_line(
-            2, h_gus, np.asarray(err_gus[key]),
-            style=f"{style_gus['linestyle']}{style_gus['marker']}",
-            label=f"{label_base}"
-        )
-        viz_gus.axes[2].lines[-1].set_color(color)
-        viz_gus.axes[2].lines[-1].set_markersize(style_gus['markersize'])
-        viz_gus.axes[2].lines[-1].set_linewidth(style_gus['linewidth'])
-
-    for key, (color, label_base) in vector_norms.items():
-        # cod
-        viz_gus.plot_line(
-            2, h_cod, np.asarray(err_cod[key]),
-            style=f"{style_cod['linestyle']}{style_cod['marker']}",
-            label=f"{label_base}"
-        )
-        viz_gus.axes[2].lines[-1].set_color(color)
-        viz_gus.axes[2].lines[-1].set_markersize(style_cod['markersize'])
-        viz_gus.axes[2].lines[-1].set_linewidth(style_cod['linewidth'])
-
-    viz_gus.finalize(2, title=None, legend_loc='lower right', ncol=2)
-
-    # Optionally save
-    p1 = viz_gus.save_figure(1, f"scalars_{order_poly}.svg", 'new_results', order_poly = order_poly)
-    print("Saved:", p1)
-    p2 = viz_gus.save_figure(2, f"vectors_{order_poly}.svg", 'new_results', order_poly = order_poly)
-    print("Saved:", p2)
+# def plots_01(order_poly: str):
+#     # Colors and labels for scalar and vector norms
+#     scalar_norms = {
+#         'L2u': ('g', r'$\|u-u_h\|_{L^2}$'),
+#         'H1u': ('r', r'$\|u-u_h\|_{H^1}$'),
+#         'L2l': ('b', r'$\|\lambda-\lambda_h\|_{L^2}$'),
+#         'H1l': ('m', r'$\|\lambda-\lambda_h\|_{H^1}$'),
+#     }
+#     vector_norms = {
+#         'L2s': ('y', r'$\|\mathbf{s}-\mathbf{s}_h\|_{L^2}$'),
+#         'L2e': ('c', r'$\|\mathbf{e}-\mathbf{e}_h\|_{L^2}$'),
+#         'L2m': ('k', r'$\|\boldsymbol{\mu}-\boldsymbol{\mu}_h\|_{L^2}$'),
+#     }
+#     # Styles per formulation
+#     line_style = {
+#         'Equal-Order': dict(linestyle=':', marker='o'),
+#         'VMS-Primal': dict(linestyle='--', marker='s'),
+#         'VMS-Dual': dict(linestyle='-.', marker='^'),
+#     }
+#
+#     pairs_of_forms = [['Equal-Order', 'VMS-Primal'], ['Equal-Order','VMS-Dual']]
+#     for forms in pairs_of_forms:
+#         # Initialize two figures: 1 for scalars, 2 for vectors
+#         figures, axes = initialize_figures(num_plots=2)
+#
+#         for form in forms:
+#             folder = os.path.join(ct.RESULTS_CONVERGENCE_COMPARISON, form, order_poly)
+#             file_list = [f for f in os.listdir(folder) if f.endswith('.npy')]
+#             file_name = file_list[0]
+#             npy_file_path = os.path.join(folder, file_name)
+#             errors, _ = read_and_get_values(npy_file_path)
+#
+#             # Select style for this formulation
+#             style = line_style[form]
+#
+#             # Scalars
+#             for key, (color, label_base) in scalar_norms.items():
+#                 plot_line(
+#                     axes[1], h=errors['h'], y=errors[key],
+#                     color=color, linestyle=style['linestyle'], marker=style['marker'], label=label_base
+#                 )
+#
+#             # Vectors
+#             for key, (color, label_base) in vector_norms.items():
+#                 plot_line(
+#                     axes[2], h=errors['h'], y=errors[key],
+#                     color=color, linestyle=style['linestyle'], marker=style['marker'],label=label_base
+#                 )
+#
+#         # Finalize and save figures
+#         finalize_figure(axes[1], title=f"{forms[0]} -- | -- {forms[1]} ", legend_loc='lower right', ncol=2)
+#         finalize_figure(axes[2], title=f"{forms[0]} -- | -- {forms[1]} ", legend_loc='lower right', ncol=2)
+#
+#         save_figure(figures[1], os.path.join(ct.RESULTS_CONVERGENCE_COMPARISON,
+#                                              ct.FIGURES, order_poly, f"scalars_{order_poly}_{forms[1]}.svg"))
+#         save_figure(figures[2], os.path.join(ct.RESULTS_CONVERGENCE_COMPARISON,
+#                                              ct.FIGURES, order_poly, f"vectors_{order_poly}_{forms[1]}.svg"))
+#
+#         plt.show()
 
 
-    plt.show()
+# ===============================================
+# Utility functions
+# ===============================================
+def read_and_get_values(npy_file):
+    data = np.load(npy_file, allow_pickle=True).item()
+    return data['errors'], data['conv_rates']
 
-# ------------------------------
-# VMS-Primal
-# ------------------------------
-def run_plots_test_case1(foldername: str, order_poly: str):
+def initialize_figure(norm_label):
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.set_xlabel('h', fontsize=14)
+    ax.set_ylabel(norm_label, fontsize=14)
+    ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    ax.tick_params(axis='both', which='minor', labelsize=14)
+    return fig, ax
 
-    folder = os.path.join(foldername, order_poly)
+def plot_line(ax, h, y, color, linestyle, marker, label):
+    ax.loglog(h, y, linestyle=linestyle, marker=marker, color=color, label=label)
 
+def finalize_figure(ax, title, save_path):
+    ax.legend(fontsize=11, ncol=2, loc='lower right', fancybox=True, shadow=True)
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    ax.figure.savefig(save_path, bbox_inches='tight', dpi=200)
+    plt.close(ax.figure)
 
-    # Get .npy files from the folder
-    for f in os.listdir(folder):
-        if f.endswith('.npy'):
-            file = f
+# ===============================================
+# Main plotting function
+# ===============================================
+def plot_02(order_poly: str):
+    # ===============================================
+    # Error norms to plot (4 total)
+    # ===============================================
+    norms = {
+        'L2u': r'$\|u - u_h\|_{L^2}$',
+        'H1u': r'$\|u - u_h\|_{H^1}$',
+        'L2l': r'$\|\lambda - \lambda_h\|_{L^2}$',
+        'H1l': r'$\|\lambda - \lambda_h\|_{H^1}$',
+        'L2s': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2}$',
+        'L2e': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2}$',
+        'L2m': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2}$',
+        'Hdiv_s': r'$\|\mathbf{s} - \mathbf{s}_h\|_{Hdiv}$',
+        'Hdiv_e': r'$\|\mathbf{e} - \mathbf{e}_h\|_{Hdiv}$',
+        'Hdiv_m': r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{Hdiv}$'
 
-    npy_file = os.path.join(folder, file)
-    viz = DDCM_visualization(npy_file)
-    norms, error, conv_rates = viz.read_and_get_values()
-
-    # Set the number of figures
-    viz.initialize_figures(num_plots=2)
-
-    # Set the plot config according to the norm
-    scalar_fields = {
-        'L2u':   {'marker': 'g:^',   'label': r'$\|u - u_h\|_{L^2}$'},
-        'H1u':   {'marker': 'r--o',  'label': r'$\|u - u_h\|_{H^1}$'},
-        'L2l':   {'marker': 'b-.s',  'label': r'$\|\lambda - \lambda_h\|_{L^2}$'},
-        'H1l':   {'marker': 'm--x',  'label': r'$\|\lambda - \lambda_h\|_{H^1}$'},
-    }
-    vector_fields = {
-        'L2s':   {'marker': 'c-.*',  'label': r'$\|\mathbf{s} - \mathbf{s}_h\|_{L^2}$'},
-        'L2e':   {'marker': 'y:d',   'label': r'$\|\mathbf{e} - \mathbf{e}_h\|_{L^2}$'},
-        'L2m':   {'marker': 'k--v',  'label':  r'$\|\boldsymbol{\mu} - \boldsymbol{\mu}_h\|_{L^2}$'},
     }
 
-    # Loop over figures
-    for key, value in scalar_fields.items():
-        viz.plot_lines(1, error['h'], error[key], **value)
+    # ===============================================
+    # Formulations and their styles (color by formulation)
+    # ===============================================
+    formulations = {
+        'Natural': dict(linestyle=':',  marker='^', color='g', label='Natural'),
+        'Equal-Order-uns': dict(linestyle='--', marker='s', color='r', label='Unstabilized'),
+        'Equal-Order-fully': dict(linestyle='-.', marker='o', color='b', label='Fully stabilized'),
+        'Primal-ASGS': dict(linestyle=':', marker='d', color='m', label='Primal-ASGS'),
+        # 'Primal-OSGS': dict(linestyle='--', marker='v', color='c', label='Primal-OSGS'),
+        'Dual-ASGS': dict(linestyle='-.', marker='p', color='orange', label='Dual-ASGS'),
+        # 'Dual-OSGS': dict(linestyle=':', marker='h', color='gray', label='Dual-OSGS'),
+    }
 
-    for key, value in vector_fields.items():
-        viz.plot_lines(2, error['h'], error[key], **value)
+    # ===============================================
+    # Create one figure per norm
+    # ===============================================
+    figures = {}
+    axes = {}
+    for key, ylabel in norms.items():
+        figures[key], axes[key] = initialize_figure(ylabel)
 
-    plt.show()
+    # ===============================================
+    # Loop through all formulations
+    # ===============================================
+    for form, style in formulations.items():
+        folder = os.path.join('Convergence_new', form, order_poly)
+        npy_files = [f for f in os.listdir(folder) if f.endswith('.npy')]
+        npy_file = os.path.join(folder, npy_files[0])
+        errors, _ = read_and_get_values(npy_file)
 
-# ---------------------------
+        # ===============================================
+        # Plot each norm for this formulation
+        # ===============================================
+        for key in norms.keys():
+
+            # Skip H1u and H1l for Dual-ASGS and Dual-OSGS
+            if form in ['Dual-ASGS', 'Dual-OSGS'] and key in ['H1u', 'H1l']:
+                continue
+
+            if form in ['Natural'] and key in ['Hdiv_s', 'Hdiv_e', 'Hdiv_m']:
+                continue
+
+            plot_line(
+                axes[key],
+                h=errors['h'],
+                y=errors[key],
+                color=style['color'],           # color per formulation
+                linestyle=style['linestyle'],
+                marker=style['marker'],
+                label=style['label']
+            )
+
+    # ===============================================
+    # Finalize and save all figures
+    # ===============================================
+    for key, ylabel in norms.items():
+        save_path = os.path.join('Convergence_new', 'Figures', order_poly, f"{key}_{order_poly}.svg")
+        finalize_figure(axes[key], title=ylabel, save_path=save_path)
+
+# ===============================================
 # Main
-# ---------------------------
+# ===============================================
 if __name__ == "__main__":
     main_selector = int(sys.argv[1])
-
     if main_selector == 1:
-        run_plots_test_case0(order_poly='Quadratic')
-    elif main_selector == 2:
-        run_plots_test_case1('01_VMS-Primal', order_poly = 'Linear')
+        plot_02(order_poly='Quadratic')

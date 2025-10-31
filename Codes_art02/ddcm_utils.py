@@ -1,4 +1,5 @@
-import numpy as np
+import firedrake as fd
+import gmsh as gm
 import matplotlib.pyplot as plt
 
 def PlotPoissonData(lst_data_files, flag_type_plot = 'magnitude'):
@@ -345,11 +346,11 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
     # Cases 1, 2 and 3 consider non-convex geometries. 
     # Case 4, on the other hand, consider the only convex geometry
     gmsh.initialize()
-    if(case == 1 or case == 2):    
+    if (case == 0 or case == 1):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        if(case == 1):
+        if (case == 0):
             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
-        elif(case == 2):
+        elif (case == 1):
             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
         gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
@@ -365,7 +366,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.geo.addPlaneSurface([1], 1)
         gmsh.model.geo.synchronize()
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
-    elif(case == 3):
+    elif (case == 2):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
         gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
@@ -381,7 +382,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.geo.addPlaneSurface([1], 1)
         gmsh.model.geo.synchronize()
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
-    elif(case == 4):
+    elif (case == 3):
         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
         gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
         gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
@@ -396,9 +397,9 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
     else:
         raise ValueError('case not recognized in CreateMeshReentrantCorner\n\n')
-    
+
     ps = gmsh.model.addPhysicalGroup(2, [1])
-    gmsh.model.setPhysicalName(2, ps, "My surface") 
+    gmsh.model.setPhysicalName(2, ps, "My surface")
 
     # Determine the tag of the boundaries of the domain
     onboundary = []
@@ -406,7 +407,7 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         onboundary.append(line[1])
     gmsh.model.addPhysicalGroup(1, onboundary, 1)
     tags = {'on_boundary': 1}
-    
+
     # Determine the tag of the singular point
     singular_marker = []
     for point in gmsh.model.getEntities(dim=0):
@@ -421,19 +422,19 @@ def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinem
         gmsh.model.mesh.field.add("Threshold", 2)
         gmsh.model.mesh.field.setNumber(2, "IField", 1)
         rmin, rmax = 0.1, 0.25
-        gmsh.model.mesh.field.setNumber(2, "LcMin", lc/2)
-        gmsh.model.mesh.field.setNumber(2, "LcMax", 2*lc)
+        gmsh.model.mesh.field.setNumber(2, "LcMin", lc / 2)
+        gmsh.model.mesh.field.setNumber(2, "LcMax", 2 * lc)
         gmsh.model.mesh.field.setNumber(2, "DistMin", rmin)
         gmsh.model.mesh.field.setNumber(2, "DistMax", rmax)
         gmsh.model.mesh.field.setAsBackgroundMesh(2)
-    
+
     gmsh.option.setNumber("Mesh.Algorithm", 6)
     gmsh.model.geo.synchronize()
     gmsh.model.mesh.generate(2)
-    
-    filename = meshname+".msh"
+
+    filename = meshname + ".msh"
     gmsh.write(filename)
-    gmsh.write(meshname+".vtk") # For visualization in Paraview
+    gmsh.write(meshname + ".vtk")  # For visualization in Paraview
     gmsh.finalize()
 
     return filename, tags
@@ -545,5 +546,92 @@ def CreateMeshTaylorSheet(meshname, lc=0.1):
     gmsh.write(meshname+".vtk") # For visualization in Paraview
     gmsh.finalize()
 
-    mymesh = Mesh(filename)
+    mymesh = fd.Mesh(filename)
     return mymesh, tags
+
+
+
+
+def create_mesh_internal_boundary_layer(Lx, Ly, h, flag_refine_interface):
+    gmsh.initialize()
+    gm = gmsh.model
+
+    tags = {
+        'leftdom_marker': 88, 'rightdom_marker': 99,
+        'leftwall_marker': 1, 'rightwall_marker': 2,
+        'bottomwall_marker': 3, 'topwall_marker': 4,
+        'interface_marker': 5,
+    }
+
+    gm.occ.addRectangle(0, 0, 0, Lx/2, Ly, tag=1)
+    gm.occ.addRectangle(Lx/2, 0, 0, Lx/2, Ly, tag=2)
+    whole_domain = gm.occ.fragment([(2, 1)], [(2, 2)])
+    gm.occ.synchronize()
+
+    # Mark subdomains
+    # --- Identify the fragmented surfaces ---
+    surfaces = gm.getEntities(dim=2)
+    leftdom, rightdom = [], []
+    for dim, tag in surfaces:
+        com = gm.occ.getCenterOfMass(dim, tag)
+        if com[0] < Lx / 2:
+            leftdom.append(tag)
+        else:
+            rightdom.append(tag)
+
+    # --- Assign physical groups ---
+    gm.addPhysicalGroup(2, leftdom, tags['leftdom_marker'])
+    gm.addPhysicalGroup(2, rightdom, tags['rightdom_marker'])
+
+    # Boundaries
+    leftwall, rightwall, interface, bottomwall, topwall = [], [], [], [], []
+    for dim, tag in gm.getEntities(dim=1):
+        com = gm.occ.getCenterOfMass(dim, tag)
+        if np.isclose(com[0], 0):    leftwall.append(tag)
+        if np.isclose(com[0], Lx):   rightwall.append(tag)
+        if np.isclose(com[0], Lx/2): interface.append(tag)
+        if np.isclose(com[1], 0):    bottomwall.append(tag)
+        if np.isclose(com[1], Ly):   topwall.append(tag)
+
+    gm.addPhysicalGroup(1, leftwall, tags['leftwall_marker'])
+    gm.addPhysicalGroup(1, rightwall, tags['rightwall_marker'])
+    gm.addPhysicalGroup(1, bottomwall, tags['bottomwall_marker'])
+    gm.addPhysicalGroup(1, topwall, tags['topwall_marker'])
+    gm.addPhysicalGroup(1, interface, tags['interface_marker'])
+
+    # Refinement
+    if flag_refine_interface:
+        gm.mesh.field.add("Distance", 1)
+        gm.mesh.field.setNumbers(1, "EdgesList", interface)
+        gm.mesh.field.add("Threshold", 2)
+        gm.mesh.field.setNumber(2, "IField", 1)
+        r = 0.01
+        gm.mesh.field.setNumber(2, "LcMin", r / 2)
+        gm.mesh.field.setNumber(2, "LcMax", 4 * r)
+        gm.mesh.field.setNumber(2, "DistMin", 2 * r)
+        gm.mesh.field.setNumber(2, "DistMax", 4 * r)
+        gm.mesh.field.setAsBackgroundMesh(2)
+    else:
+        gm.mesh.setSize(gm.getEntities(0), h)
+
+    gmsh.option.setNumber("Mesh.Algorithm", 6)
+    gm.mesh.generate(2)
+
+    meshname = "diffusion_reaction_mesh"
+    gmsh.write(meshname + ".msh")
+    gmsh.write(meshname + ".vtk")
+
+    gmsh.finalize()
+    return meshname + ".msh", tags
+
+
+def error_seminorm(uex: fd.Function, uh: fd.Function, norm_type: str):
+    error = uex - uh
+    if norm_type == 'H1':
+        return fd.sqrt(fd.assemble(fd.inner(fd.grad(error), fd.grad(error)) * fd.dx))
+    elif norm_type == 'Hdiv':
+        return fd.sqrt(fd.assemble(fd.inner(fd.div(error), fd.div(error)) * fd.dx))
+    elif norm_type == 'Hcurl':
+        return fd.sqrt(fd.assemble(fd.inner(fd.curl(error), fd.curl(error)) * fd.dx))
+    else:
+        raise ValueError(f"Semi-norm '{norm_type}' not implemented yet")
