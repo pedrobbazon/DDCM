@@ -1891,8 +1891,8 @@ def case_02(order_poly: str = 'Linear'):
     #                        'Primal-ASGS', 'Primal-OSGS','Dual-ASGS','Dual-OSGS']
     #list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS','Dual-ASGS']
     #list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
-    #list_of_formulations = ['Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS']
+    list_of_formulations = ['Dual-ASGS']
+    #list_of_formulations = ['Primal-ASGS']
     
     norms = {key: [] for key in list_of_formulations}
 
