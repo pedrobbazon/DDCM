@@ -398,9 +398,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
-    if formulation == 'VMS-Dual' and flag_setting == 'Pure-Dirichlet':
-        L += sub_u*fd.inner(delmu,n)* fd.ds
-        L += sub_l*fd.inner(dels,n) * fd.ds
+    #if formulation == 'VMS-Dual' and flag_setting == 'Pure-Dirichlet':
+    #    L += sub_u*fd.inner(delmu,n)* fd.ds
+    #    L += sub_l*fd.inner(dels,n) * fd.ds
 
     # Total residual (LHS - RHS)
     Res = B - L
