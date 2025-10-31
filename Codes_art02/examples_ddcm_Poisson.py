@@ -510,7 +510,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         refsol.s = stildeexact(x)
         refsol.g = etildeexact(x)
         ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
-    else:
+    elif(False):
         one_sample_per_element = False
         if(one_sample_per_element == True): # One point per element centroid
             X = interpolate(domain.msh.coordinates, domain.VDG0)
@@ -531,6 +531,8 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         ddcm_data = PoissonDDCMData(domain)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
         ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
+    else:
+        ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stildeexact, gradex=etildeexact)
   
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
