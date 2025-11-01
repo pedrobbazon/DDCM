@@ -392,7 +392,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.25)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
@@ -1266,7 +1266,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.25)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
@@ -1378,7 +1378,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif(formulation == 'VMS-Dual'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     else:
         raise ValueError('Invalid formulation')
@@ -1660,7 +1660,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.25)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
@@ -1905,8 +1905,8 @@ def case_02(order_poly: str = 'Linear'):
     #list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully',
     #                        'Primal-ASGS', 'Primal-OSGS','Dual-ASGS','Dual-OSGS']
     #list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS','Dual-ASGS']
-    #list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
+    #list_of_formulations = ['Dual-ASGS']
     #list_of_formulations = ['Primal-ASGS']
     
     norms = {key: [] for key in list_of_formulations}
@@ -1921,7 +1921,7 @@ def case_02(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125]:
+    for h in [0.05, 0.025, 0.0125, 0.00625]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
