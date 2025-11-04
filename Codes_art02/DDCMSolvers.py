@@ -193,6 +193,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Get the formulation we want to employ and the projection we want to consider
     formulation = params['formulation']
     Pprime = params['Pprime']
+    print('------')
+    print(formulation, Pprime)
+    print('------')
 
     # Set the function spaces we have to consider according to the formulation
     """
@@ -337,7 +340,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         # Set the boundary conditions accordingly 
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
-
+            print('000000000')
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
         
@@ -411,11 +414,11 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
-    if formulation == 'VMS-Dual' and flag_setting == 'Pure-Neumann':
+    #if formulation == 'VMS-Dual' and flag_setting == 'Pure-Neumann':
     #    L += sub_u*fd.inner(delmu,n)* fd.ds
     #    L += sub_l*fd.inner(dels,n) * fd.ds
-        L -= dellam*fd.inner(sub_s,n)* fd.ds
-        L -= delu*fd.inner(sub_m,n)* fd.ds
+    #    L -= dellam*fd.inner(sub_s,n)* fd.ds
+    #    L -= delu*fd.inner(sub_m,n)* fd.ds
 
     # Total residual (LHS - RHS)
     Res = B - L
@@ -431,10 +434,14 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Save
     if dir_outs is not None:
 
+        print(tt)
         if tt == 0.0: # This time acts as a parameter over which we do continuation
             mode = 'w'
+            print('hola')
         else:
             mode = 'a'
+            print('chau')
+
         filename = dir_outs+'/s.pvd'
         w.sub(0).rename('DDCM.Flux')
         VTKFile(filename, mode=mode).write(w.sub(0), project_output = False, time=tt)
@@ -455,24 +462,24 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         w.sub(4).rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(w.sub(4), project_output = False, time=tt)
 
-        filename = dir_outs + '/udif.pvd'
+        filename = dir_outs+'/udif.pvd'
         udif.rename('DDCM.udif')
         VTKFile(filename, mode=mode).write(udif, project_output = False, time=tt)
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 
-    # wf = fd.Function(W)
-    # wf.assign(w)
-    # s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
+    #wf = fd.Function(W)
+    #wf.assign(w)
+    #s_f, u_f, e_f, lam_f, mu_f = wf.sub(0), wf.sub(1), wf.sub(2), wf.sub(3), wf.sub(4)
     #
     #
-    # if (True):
+    #if (True):
     #     ut = u + sub_u
     #     et = e + sub_e
     #     st = s + sub_s
     #     lt = lam + sub_l
     #     mt = mu + sub_m
-    #
+    
     #     if (True):
     #         DGk = fd.FunctionSpace(mesh, 'DG', degree=orderU)
     #         VDGk = fd.VectorFunctionSpace(mesh, 'DG', degree=orderS)
@@ -487,7 +494,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     #         e_f = fd.project(et, W.sub(2))
     #         lam_f = fd.project(lt, W.sub(3))
     #         mu_f = fd.project(mt, W.sub(4))
-    # else:
+    #else:
     #     s_f, u_f, e_f, lam_f, mu_f = w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
     #
     # if dir_outs is not None:
@@ -516,7 +523,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     #     mu_f.rename('DDCM.mu')
     #     VTKFile(filename, mode=mode).write(mu_f, time=tt)
 
-    # return s_f, u_f, e_f, lam_f, mu_f
+    #return s_f, u_f, e_f, lam_f, mu_f
 
 
 

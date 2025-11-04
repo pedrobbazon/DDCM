@@ -371,7 +371,9 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     Lx, Ly, hsize = 1.0, 1.0, hvalue
     nsd, ls, ns = 2, [1.0, 1.0], [int(Lx/hvalue), int(Ly/hvalue)]
     hsize = max(ls[0] / ns[0], ls[1] / ns[1])
-    domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
+    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface = False)
+    domain = ComputationalDomain(nsd, ls, ns, meshfile=meshfile, flag_quads=False)
+
     h = fd.CellDiameter(domain.msh)
     
     # Set physical constants and formulation parameters
@@ -390,20 +392,21 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'cm': fd.Constant(kwargs.get('cm', 0.125)),
+                  'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
 
+
     # Propose an manufactured potential field and its associated gradient and also the exact flux
     def uexact(x):
         return fd.cos(fd.pi*x[0])*fd.cos(fd.pi*x[1])
+    
     def eexact(x):
         return fd.grad(uexact(x))
-    
     def eexactnp(x):
         return [-np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), -np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
 
@@ -414,7 +417,6 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         return  - (A / (ome * fd.pi)) * (
             fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi)
         )
-    
     def gradlmbdexactnp(x): 
         A = 0.05   # Increase A slightly for more variation
         ome = 2.0  # Frequency
@@ -429,7 +431,6 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         phi = fd.Constant(0.0)       # Phase angle
         return fd.as_vector([eexact(x)[0] + A*fd.sin(ome*fd.pi*x[0] + phi),
                              eexact(x)[1] + A*fd.sin(ome*fd.pi*x[1] + phi)])
-    
     def etildeexactnp(x):
         A = 0.05        # Amplitude
         ome = 4.0       # Frequency
@@ -437,7 +438,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         return [eexactnp(x)[0] + A*np.sin(ome*np.pi*x[:,0] + phi), eexactnp(x)[1] + A*np.sin(ome*np.pi*x[:,1] + phi)]
 
     def sexact(x):
-        A = fd.Constant(0.025)  # Amplitude
+        A = fd.Constant(0.0)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
@@ -452,23 +453,19 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         mst = met - A*met**3
         return [-mst*etn[0], -mst*etn[1]]
     
-    # by eq.(22)
     def muexact(x):
         return etildeexact(x) - eexact(x)
     
-    # by eq.(21)
     def fdual(x):
         zeta = params['zeta']
         return zeta*lmbdexact(x) + fd.div(muexact(x))
-    # by eq.(23)
+
     def stildeexact(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
-    
     def stildeexactnp(x):
         kappa = 1.0
-        return [sexactnp(x)[0] - (1/kappa)* gradlmbdexactnp(x[:,0])[0], sexactnp(x)[1] - (1/kappa)* gradlmbdexactnp(x[:,1])[1] ]
-    # by eq.(24)
+        return [sexactnp(x)[0] - (1/kappa)* gradlmbdexactnp(x)[0], sexactnp(x)[1] - (1/kappa)* gradlmbdexactnp(x)[1] ]
 
     def qexact(x):
         zeta = params['zeta']
@@ -559,7 +556,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     else:
         raise ValueError('Invalid formulation')
     
-    ddcm_prob.solve(0.0, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
+    ddcm_prob.solve(ns[0], ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -1233,7 +1230,7 @@ def main_ex04_(formulation, hvalue, order_poly, kwargs):
 
     return norms_output
 
-def main_ex05_(formulation, hvalue, order_poly, kwargs):
+def main_ex05_(tt, formulation, hvalue, order_poly, kwargs):
 
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1264,9 +1261,9 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
@@ -1383,7 +1380,7 @@ def main_ex05_(formulation, hvalue, order_poly, kwargs):
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(0.0, "my_cod_ddcmsol")
+    ddcm_prob.solve(tt, ct.MY_PRIMAL_DDCM_SOL if formulation == 'VMS-Primal' else ct.MY_DUAL_DDCM_SOL)
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -1921,7 +1918,7 @@ def case_02(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125, 0.00625]:
+    for nt, h in enumerate([0.05, 0.025, 0.0125]):
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -1935,13 +1932,13 @@ def case_02(order_poly: str = 'Linear'):
         #function_output['Equal-Order-fully'] = main_ex06_(formulation='Equal-Order', hvalue=h, order_poly=order_poly,
         #                                                  kwargs=get_stab_params('Equal-Order-fully'))
 
-        function_output['Primal-ASGS'] = main_ex05_(formulation='VMS-Primal', hvalue = h, order_poly = order_poly,
+        function_output['Primal-ASGS'] = main_ex05_(np.float64(nt), formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
                                                     kwargs = get_stab_params('Primal-ASGS'))
 
         #function_output['Primal-OSGS'] = main_ex04_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly,
         #                                            kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex05_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
+        function_output['Dual-ASGS'] = main_ex05_(np.float64(nt), formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
                                                   kwargs=get_stab_params('Dual-ASGS'))
 
         #function_output['Dual-OSGS'] = main_ex04_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly,
