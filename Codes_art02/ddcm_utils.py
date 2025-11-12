@@ -341,103 +341,212 @@ def CreateMesh1Inclusions(meshname):
 
     return filename, tags
 
-
-def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinement=True):
-    # Cases 1, 2 and 3 consider non-convex geometries. 
+def CreateMeshReentrantCorner(meshname, case=0, lc=0.1, flag_singularity_refinement=True):
+    # Cases 1, 2 and 3 consider non-convex geometries.
     # Case 4, on the other hand, consider the only convex geometry
-    gmsh.initialize()
+    gm.initialize()
+    gm.model.add("my_model")
     if (case == 0 or case == 1):
-        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+        gm.model.geo.addPoint(-1, -1, 0, lc, 1)
         if (case == 0):
-            gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
+            gm.model.geo.addPoint(1, -1, 0, lc, 2)
         elif (case == 1):
-            gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
-        gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
-        gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
-        gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
-        gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
-        gmsh.model.geo.addLine(1, 2, 1)
-        gmsh.model.geo.addLine(2, 3, 2)
-        gmsh.model.geo.addLine(3, 4, 3)
-        gmsh.model.geo.addLine(4, 5, 4)
-        gmsh.model.geo.addLine(5, 6, 5)
-        gmsh.model.geo.addLine(6, 1, 6)
-        gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5, 6], 1)
-        gmsh.model.geo.addPlaneSurface([1], 1)
-        gmsh.model.geo.synchronize()
-        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
+            gm.model.geo.addPoint(0, -1, 0, lc, 2)
+        gm.model.geo.addPoint(0, 0, 0, lc, 3)
+        gm.model.geo.addPoint(1, 0, 0, lc, 4)
+        gm.model.geo.addPoint(1, 1, 0, lc, 5)
+        gm.model.geo.addPoint(-1, 1, 0, lc, 6)
+        gm.model.geo.addLine(1, 2, 1)
+        gm.model.geo.addLine(2, 3, 2)
+        gm.model.geo.addLine(3, 4, 3)
+        gm.model.geo.addLine(4, 5, 4)
+        gm.model.geo.addLine(5, 6, 5)
+        gm.model.geo.addLine(6, 1, 6)
+        gm.model.geo.addCurveLoop([1, 2, 3, 4, 5, 6], 1)
+        gm.model.geo.addPlaneSurface([1], 1)
+        gm.model.geo.synchronize()
     elif (case == 2):
-        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
-        gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
-        gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
-        gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
-
-        gmsh.model.geo.addLine(1, 2, 1)
-        gmsh.model.geo.addLine(2, 3, 2)
-        gmsh.model.geo.addLine(3, 4, 3)
-        gmsh.model.geo.addLine(4, 5, 4)
-        gmsh.model.geo.addLine(5, 1, 5)
-        gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5], 1)
-        gmsh.model.geo.addPlaneSurface([1], 1)
-        gmsh.model.geo.synchronize()
-        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
-    elif (case == 3):
-        gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
-        gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
-        gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
-        gmsh.model.geo.addPoint(-1, 1, 0, lc, 4)
-        gmsh.model.geo.addLine(1, 2, 1)
-        gmsh.model.geo.addLine(2, 3, 2)
-        gmsh.model.geo.addLine(3, 4, 3)
-        gmsh.model.geo.addLine(4, 1, 4)
-        gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
-        gmsh.model.geo.addPlaneSurface([1], 1)
-        gmsh.model.geo.synchronize()
-        gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
+        gm.model.geo.addPoint(-1, -1, 0, lc, 1)
+        gm.model.geo.addPoint(0, 0, 0, lc, 2)
+        gm.model.geo.addPoint(1, 0, 0, lc, 3)
+        gm.model.geo.addPoint(1, 1, 0, lc, 4)
+        gm.model.geo.addPoint(-1, 1, 0, lc, 5)
+        gm.model.geo.addLine(1, 2, 1)
+        gm.model.geo.addLine(2, 3, 2)
+        gm.model.geo.addLine(3, 4, 3)
+        gm.model.geo.addLine(4, 5, 4)
+        gm.model.geo.addLine(5, 1, 5)
+        gm.model.geo.addCurveLoop([1, 2, 3, 4, 5], 1)
+        gm.model.geo.addPlaneSurface([1], 1)
+        gm.model.geo.synchronize()
     else:
-        raise ValueError('case not recognized in CreateMeshReentrantCorner\n\n')
+        raise ValueError('case not recognized in CreateMeshReentrantCorner\n')
 
-    ps = gmsh.model.addPhysicalGroup(2, [1])
-    gmsh.model.setPhysicalName(2, ps, "My surface")
+    ps = gm.model.addPhysicalGroup(2, [1])
+    gm.model.setPhysicalName(2, ps, "My surface")
 
     # Determine the tag of the boundaries of the domain
-    onboundary = []
-    for line in gmsh.model.getEntities(dim=1):
-        onboundary.append(line[1])
-    gmsh.model.addPhysicalGroup(1, onboundary, 1)
-    tags = {'on_boundary': 1}
+    tags = {}
+
+    for dim, tag in gm.model.getEntities(dim=1):
+        # pega os pontos extremos da linha
+        boundary_points = gm.model.getBoundary([(dim, tag)], oriented=False)
+        if len(boundary_points) == 2:
+            p_start, p_end = boundary_points
+        else:
+            continue
+        # obtém coordenadas de cada ponto
+        x1, y1, z1 = gm.model.getValue(0, p_start[1], [])
+        x2, y2, z2 = gm.model.getValue(0, p_end[1], [])
+        # classifica cada fronteira
+        if np.isclose(x1,-1.0) and np.isclose(x2,-1.0):
+            tags.update({"left":tag})
+        elif np.isclose(y1,-1.0) and np.isclose(y2,-1.0):
+            tags.update({"bottom":tag})
+        elif np.isclose(y1,1.0) and np.isclose(y2,1.0):
+            tags.update({"top": tag})
+        elif np.isclose(y1,0.0) and np.isclose(y2,0.0):
+            tags.update({"corner_horizontal":tag})
+        elif np.isclose(x1,1.0) and np.isclose(x2,1.0):
+            tags.update({"right":tag})
+        else:
+            tags.update({"corner_slope":tag})
+
+    for name, tag in tags.items():
+        gm.model.addPhysicalGroup(1, [tag], tag)
+        gm.model.setPhysicalName(1, tag, name)
 
     # Determine the tag of the singular point
     singular_marker = []
-    for point in gmsh.model.getEntities(dim=0):
+    for point in gm.model.getEntities(dim=0):
         dim, tag = point[0], point[1]
-        coords = gmsh.model.getValue(dim, tag, [])
+        coords = gm.model.getValue(dim, tag, [])
         if np.all(np.isclose(coords, [0, 0, 0])):
             singular_marker.append(tag)
 
-    if flag_singularity_refinement:
-        gmsh.model.mesh.field.add("Distance", 1)
-        gmsh.model.mesh.field.setNumbers(1, "NodesList", singular_marker)
-        gmsh.model.mesh.field.add("Threshold", 2)
-        gmsh.model.mesh.field.setNumber(2, "IField", 1)
-        rmin, rmax = 0.1, 0.25
-        gmsh.model.mesh.field.setNumber(2, "LcMin", lc / 2)
-        gmsh.model.mesh.field.setNumber(2, "LcMax", 2 * lc)
-        gmsh.model.mesh.field.setNumber(2, "DistMin", rmin)
-        gmsh.model.mesh.field.setNumber(2, "DistMax", rmax)
-        gmsh.model.mesh.field.setAsBackgroundMesh(2)
+    gmsh.model.addPhysicalGroup(0, singular_marker, tag=99)
+    gmsh.model.setPhysicalName(0, 99, "SingularPoint")
 
-    gmsh.option.setNumber("Mesh.Algorithm", 6)
-    gmsh.model.geo.synchronize()
-    gmsh.model.mesh.generate(2)
+    if flag_singularity_refinement:
+        gm.model.mesh.field.add("Distance", 1)
+        gm.model.mesh.field.setNumbers(1, "NodesList", singular_marker)
+        gm.model.mesh.field.add("Threshold", 2)
+        gm.model.mesh.field.setNumber(2, "IField", 1)
+        rmin, rmax = 0.1, 0.1
+        gm.model.mesh.field.setNumber(2, "LcMin", lc / 4)
+        gm.model.mesh.field.setNumber(2, "LcMax", 2 * lc)
+        gm.model.mesh.field.setNumber(2, "DistMin", rmin)
+        gm.model.mesh.field.setNumber(2, "DistMax", rmax)
+        gm.model.mesh.field.setAsBackgroundMesh(2)
+
+    gm.option.setNumber("Mesh.Algorithm", 6)
+    gm.model.geo.synchronize()
+    gm.model.mesh.generate(2)
 
     filename = meshname + ".msh"
-    gmsh.write(filename)
-    gmsh.write(meshname + ".vtk")  # For visualization in Paraview
-    gmsh.finalize()
+    gm.write(filename)
+    gm.write(meshname + ".vtk")  # For visualization in Paraview
+    gm.finalize()
 
     return filename, tags
+
+# def CreateMeshReentrantCorner(meshname, case=1, lc=0.1, flag_singularity_refinement=True):
+#     # Cases 1, 2 and 3 consider non-convex geometries.
+#     # Case 4, on the other hand, consider the only convex geometry
+#     gmsh.initialize()
+#     if (case == 0 or case == 1):
+#         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+#         if (case == 0):
+#             gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
+#         elif (case == 1):
+#             gmsh.model.geo.addPoint(0, -1, 0, lc, 2)
+#         gmsh.model.geo.addPoint(0, 0, 0, lc, 3)
+#         gmsh.model.geo.addPoint(1, 0, 0, lc, 4)
+#         gmsh.model.geo.addPoint(1, 1, 0, lc, 5)
+#         gmsh.model.geo.addPoint(-1, 1, 0, lc, 6)
+#         gmsh.model.geo.addLine(1, 2, 1)
+#         gmsh.model.geo.addLine(2, 3, 2)
+#         gmsh.model.geo.addLine(3, 4, 3)
+#         gmsh.model.geo.addLine(4, 5, 4)
+#         gmsh.model.geo.addLine(5, 6, 5)
+#         gmsh.model.geo.addLine(6, 1, 6)
+#         gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5, 6], 1)
+#         gmsh.model.geo.addPlaneSurface([1], 1)
+#         gmsh.model.geo.synchronize()
+#         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5, 6], 101)
+#     elif (case == 2):
+#         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+#         gmsh.model.geo.addPoint(0, 0, 0, lc, 2)
+#         gmsh.model.geo.addPoint(1, 0, 0, lc, 3)
+#         gmsh.model.geo.addPoint(1, 1, 0, lc, 4)
+#         gmsh.model.geo.addPoint(-1, 1, 0, lc, 5)
+#
+#         gmsh.model.geo.addLine(1, 2, 1)
+#         gmsh.model.geo.addLine(2, 3, 2)
+#         gmsh.model.geo.addLine(3, 4, 3)
+#         gmsh.model.geo.addLine(4, 5, 4)
+#         gmsh.model.geo.addLine(5, 1, 5)
+#         gmsh.model.geo.addCurveLoop([1, 2, 3, 4, 5], 1)
+#         gmsh.model.geo.addPlaneSurface([1], 1)
+#         gmsh.model.geo.synchronize()
+#         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4, 5], 101)
+#     elif (case == 3):
+#         gmsh.model.geo.addPoint(-1, -1, 0, lc, 1)
+#         gmsh.model.geo.addPoint(1, -1, 0, lc, 2)
+#         gmsh.model.geo.addPoint(1, 1, 0, lc, 3)
+#         gmsh.model.geo.addPoint(-1, 1, 0, lc, 4)
+#         gmsh.model.geo.addLine(1, 2, 1)
+#         gmsh.model.geo.addLine(2, 3, 2)
+#         gmsh.model.geo.addLine(3, 4, 3)
+#         gmsh.model.geo.addLine(4, 1, 4)
+#         gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
+#         gmsh.model.geo.addPlaneSurface([1], 1)
+#         gmsh.model.geo.synchronize()
+#         gmsh.model.addPhysicalGroup(1, [1, 2, 3, 4], 101)
+#     else:
+#         raise ValueError('case not recognized in CreateMeshReentrantCorner\n\n')
+#
+#     ps = gmsh.model.addPhysicalGroup(2, [1])
+#     gmsh.model.setPhysicalName(2, ps, "My surface")
+#
+#     # Determine the tag of the boundaries of the domain
+#     onboundary = []
+#     for line in gmsh.model.getEntities(dim=1):
+#         onboundary.append(line[1])
+#     gmsh.model.addPhysicalGroup(1, onboundary, 1)
+#     tags = {'on_boundary': 1}
+#
+#     # Determine the tag of the singular point
+#     singular_marker = []
+#     for point in gmsh.model.getEntities(dim=0):
+#         dim, tag = point[0], point[1]
+#         coords = gmsh.model.getValue(dim, tag, [])
+#         if np.all(np.isclose(coords, [0, 0, 0])):
+#             singular_marker.append(tag)
+#
+#     if flag_singularity_refinement:
+#         gmsh.model.mesh.field.add("Distance", 1)
+#         gmsh.model.mesh.field.setNumbers(1, "NodesList", singular_marker)
+#         gmsh.model.mesh.field.add("Threshold", 2)
+#         gmsh.model.mesh.field.setNumber(2, "IField", 1)
+#         rmin, rmax = 0.1, 0.25
+#         gmsh.model.mesh.field.setNumber(2, "LcMin", lc / 2)
+#         gmsh.model.mesh.field.setNumber(2, "LcMax", 2 * lc)
+#         gmsh.model.mesh.field.setNumber(2, "DistMin", rmin)
+#         gmsh.model.mesh.field.setNumber(2, "DistMax", rmax)
+#         gmsh.model.mesh.field.setAsBackgroundMesh(2)
+#
+#     gmsh.option.setNumber("Mesh.Algorithm", 6)
+#     gmsh.model.geo.synchronize()
+#     gmsh.model.mesh.generate(2)
+#
+#     filename = meshname + ".msh"
+#     gmsh.write(filename)
+#     gmsh.write(meshname + ".vtk")  # For visualization in Paraview
+#     gmsh.finalize()
+#
+#     return filename, tags
+
 
 def CreateMeshSquare(meshname, lc=0.1):
     gmsh.initialize()

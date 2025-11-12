@@ -1,8 +1,8 @@
 import firedrake as fd
+import numpy as np
 from firedrake.output import VTKFile
 from ddcm_classes import *
-#from firedrake.__future__ import interpolate
-#
+
 #----------------------------------------------------------------
 #
 # This file contains user defined utility functions to set your
@@ -33,7 +33,6 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
              flag_setting, volumetric_source, s_boundary_vals, u_boundary_vals,
              lmbd_boundary_vals, mu_boundary_vals, dual_volumetric_source,
              params, orders, tt=0.0, dir_outs='myddcmsol'):
-
     mesh = domain.msh
     
     orderS, orderU = orders
@@ -115,7 +114,7 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
         # Homogeneous boundary condition for scalar Lagrange multiplier
         bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
-        
+
     elif(flag_setting == 'Pure-Neumann'):
         
         L += fd.inner(s_boundary_vals(x),n)*lam*fd.ds
@@ -146,8 +145,6 @@ def DDCMStab(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
     # Non-linear solve (see solver parameters above)
     fd.solve(dL == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
-
-
 
     if(dir_outs != None):
 
@@ -301,8 +298,11 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
 
-            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
-            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+            # bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
+            # bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4,5,6)))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4,5,6)))
 
             if Pprime == 'L2':
                 bc_lst.append(fd.DirichletBC(W.sub(5), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
@@ -330,6 +330,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             raise ValueError('Unrecognized problem setting option')
         
     elif formulation == 'VMS-Dual':
+
         # Bilinear form (Standard Galerkin terms - Dual)
         B  = ( zeta*fd.inner(lam,delu) + fd.inner(fd.div(mu),delu)   ) * fd.dx
         B += ( fd.inner(e,dele) + fd.inner(mu,dele)                  ) * fd.dx
@@ -340,22 +341,48 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         # Set the boundary conditions accordingly 
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
-            print('000000000')
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
         
         elif flag_setting == 'Pure-Neumann':
 
-            #bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
-            #bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
-            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), -s_boundary_vals(x)[0],  1))
-            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0],  2))
-            bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), -s_boundary_vals(x)[1],  3))
-            bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), s_boundary_vals(x)[1],  4))
-            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), -mu_boundary_vals(x)[0],  1))
-            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0],  2))
-            bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), -mu_boundary_vals(x)[1],  3))
-            bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1],  4))
+            # --- Remove DirichletBCs for s and mu (use weak imposition instead) ---
+            # bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
+            # bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
+
+            # bottom
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), -s_boundary_vals(x)[1], 1))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), -mu_boundary_vals(x)[1], 1))
+
+            # top
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), s_boundary_vals(x)[1], 5))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1], 5))
+
+            # left
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), -s_boundary_vals(x)[0], 6))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), -mu_boundary_vals(x)[0], 6))
+
+            # right
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0], 4))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0], 4))
+
+            # corner horizontal
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), -s_boundary_vals(x)[1], 3))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), -mu_boundary_vals(x)[1], 3))
+
+            # corner vertical
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0], 2))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0], 2))
+
+            # Ractangle domain
+            # bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), -s_boundary_vals(x)[0],  1))
+            # bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0],  2))
+            # bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), -s_boundary_vals(x)[1],  3))
+            # bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), s_boundary_vals(x)[1],  4))
+            # bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), -mu_boundary_vals(x)[0],  1))
+            # bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0],  2))
+            # bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), -mu_boundary_vals(x)[1],  3))
+            # bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1],  4))
 
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             L += (u_boundary_vals(x))*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
@@ -414,7 +441,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     B += ( zeta*fd.inner(sub_u,dellam) - fd.inner(sub_s,fd.grad(dellam)) ) * fd.dx
     B += ( fd.inner(sub_u, fd.div(delmu)) + fd.inner(sub_e, delmu)       ) * fd.dx
 
-    #if formulation == 'VMS-Dual' and flag_setting == 'Pure-Neumann':
+    # if formulation == 'VMS-Dual' and flag_setting == 'Pure-Neumann':
     #    L += sub_u*fd.inner(delmu,n)* fd.ds
     #    L += sub_l*fd.inner(dels,n) * fd.ds
     #    L -= dellam*fd.inner(sub_s,n)* fd.ds
@@ -429,7 +456,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     # Solve
     fd.solve(Res == 0, w, bcs=bc_lst, J=Jac, solver_parameters=petsc_opt1)
 
-    udif = fd.assemble(interpolate(w.sub(1) - u_boundary_vals(x), SF))
+    # udif = fd.Function(SF)
+    # udif.interpolate(w.sub(1) - u_boundary_vals(x))
 
     # Save
     if dir_outs is not None:
@@ -437,10 +465,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         print(tt)
         if tt == 0.0: # This time acts as a parameter over which we do continuation
             mode = 'w'
-            print('hola')
         else:
             mode = 'a'
-            print('chau')
 
         filename = dir_outs+'/s.pvd'
         w.sub(0).rename('DDCM.Flux')
@@ -462,9 +488,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         w.sub(4).rename('DDCM.mu')
         VTKFile(filename, mode=mode).write(w.sub(4), project_output = False, time=tt)
 
-        filename = dir_outs+'/udif.pvd'
-        udif.rename('DDCM.udif')
-        VTKFile(filename, mode=mode).write(udif, project_output = False, time=tt)
+        # filename = dir_outs+'/udif.pvd'
+        # udif.rename('DDCM.udif')
+        # VTKFile(filename, mode=mode).write(udif, project_output = False, time=tt)
 
     return w.sub(0), w.sub(1), w.sub(2), w.sub(3), w.sub(4)
 

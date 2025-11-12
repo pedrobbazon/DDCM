@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import firedrake as fd
 from firedrake import *
 from firedrake.output import VTKFile
-#from firedrake.__future__ import interpolate
+from firedrake.__future__ import interpolate
 #
 #----------------------------------------------------------------
 #
@@ -759,8 +759,8 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
     muexact = params['exact-mu']
     # etilde = params['etilde']
     # stilde = params['stilde']
-    etexact = params['exact-etilde']
-    stexact = params['exact-stilde']
+    etilde = params['exact-etilde']
+    stilde = params['exact-stilde']
 
 
     if(dir_outs != None):
@@ -799,15 +799,15 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         mu.rename('Reference.mu')
         VTKFile(filename, mode=mode).write(mu, time=tt)
         
-        if(etexact != None):
+        if(etilde != None):
             filename = dir_outs+'/et.pvd'
-            et = fd.assemble(interpolate(etexact(x), Vflux))
+            et = fd.assemble(interpolate(etilde(x), Vflux))
             et.rename('Reference.et')
             VTKFile(filename).write(et)
 
-        if(stexact != None):
+        if(stilde != None):
             filename = dir_outs+'/st.pvd'
-            st = fd.assemble(interpolate(stexact(x), Vflux))
+            st = fd.assemble(interpolate(stilde(x), Vflux))
             st.rename('Reference.st')
             VTKFile(filename).write(st)
 

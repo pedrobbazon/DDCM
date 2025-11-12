@@ -12,6 +12,7 @@ Last Modified on:   20th October, 2025
 # ===============================================
 import sys
 import firedrake as fd
+import matplotlib.pyplot as plt
 from firedrake.output import VTKFile
 
 # ===============================================
@@ -194,7 +195,7 @@ def main_ex01_(formulation='Equal-Order', n=20, order_poly='Linear'):
     return norms_output
 
 
-def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
+def main_ex0101_(formulation, hvalue, order_poly, kwargs):
     ti = time.time()
 
     print('==========================================================')
@@ -204,15 +205,17 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
     print('|> Reference Domain and solution begins')
 
     # Create (or import) the computational domain/mesh and Compute a reference solution
-    nsd, ls, ns = 2, [1.0, 1.0], [n, n]
+    Lx, Ly, hsize = 1.0, 1.0, hvalue
+    nsd, ls, ns = 2, [1.0, 1.0], [int(Lx / hvalue), int(Ly / hvalue)]
     hsize = max(ls[0] / ns[0], ls[1] / ns[1])
     domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
-
-    # These would be the ones corresponding to the analytical solution we propose
     h = fd.CellDiameter(domain.msh)
-    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
-              'theta': fd.Constant(0.5), 'alpha': fd.Constant(0.125),  'beta': fd.Constant(0.5),
-              'gamma': fd.Constant(0.125), 'eta': fd.Constant(0.5),
+    x = fd.SpatialCoordinate(domain.msh)
+
+    params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+              'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
+              'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation}
 
     # Propose an manufactured potential field and its associated gradient and also the exact flux
@@ -357,7 +360,7 @@ def main_ex0101_(formulation='Natural', n=20, order_poly='Linear'):
     elapsed_time = time.time() - ti
     print('|> End DDCM Computation | Total time= %1.1f s' % (elapsed_time))
     print('==========================================================')
-    return norms_output, domain, ddcm_prob.ddcm_solution.s, ddcm_prob.ddcm_solution.g
+    return norms_output
 
 def main_ex0202_(formulation, hvalue, order_poly, kwargs):
 
@@ -369,13 +372,13 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
 
     # Get the characteristic mesh size
     Lx, Ly, hsize = 1.0, 1.0, hvalue
-    nsd, ls, ns = 2, [1.0, 1.0], [int(Lx/hvalue), int(Ly/hvalue)]
+    nsd, ls, ns = 2, [1.0, 1.0], [int(Lx / hvalue), int(Ly / hvalue)]
     hsize = max(ls[0] / ns[0], ls[1] / ns[1])
-    meshfile, tags = create_mesh_internal_boundary_layer(Lx, Ly, hsize, flag_refine_interface = False)
-    domain = ComputationalDomain(nsd, ls, ns, meshfile=meshfile, flag_quads=False)
-
+    domain = ComputationalDomain(nsd, ls, ns, meshfile=None, flag_quads=False)
     h = fd.CellDiameter(domain.msh)
-    
+    x = fd.SpatialCoordinate(domain.msh)
+
+
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
@@ -392,7 +395,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
@@ -407,6 +410,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     
     def eexact(x):
         return fd.grad(uexact(x))
+
     def eexactnp(x):
         return [-np.pi*np.sin(np.pi*x[:,0])*np.cos(np.pi*x[:,1]), -np.pi*np.cos(np.pi*x[:,0])*np.sin(np.pi*x[:,1])]
 
@@ -438,7 +442,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         return [eexactnp(x)[0] + A*np.sin(ome*np.pi*x[:,0] + phi), eexactnp(x)[1] + A*np.sin(ome*np.pi*x[:,1] + phi)]
 
     def sexact(x):
-        A = fd.Constant(0.0)  # Amplitude
+        A = fd.Constant(0.025)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
@@ -463,6 +467,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     def stildeexact(x):
         kappa = params['kappa']
         return sexact(x) - (1/kappa)*fd.grad(lmbdexact(x))
+
     def stildeexactnp(x):
         kappa = 1.0
         return [sexactnp(x)[0] - (1/kappa)* gradlmbdexactnp(x)[0], sexactnp(x)[1] - (1/kappa)* gradlmbdexactnp(x)[1] ]
@@ -1420,6 +1425,10 @@ def main_ex05_(tt, formulation, hvalue, order_poly, kwargs):
     return norms_output
 
 
+
+# ========================================
+# Re-entrant coner: Gustavo's formulation
+# ========================================
 def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Linear', **kwargs):
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
@@ -1456,14 +1465,21 @@ def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Li
 
     # We define the analytical expression for the potential field and its gradient
     def uexact(x):
-        angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
+        angle = fd.atan2(x[1] + 1e-10, x[0] + 1e-10)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0] ** 2 + x[1] ** 2) + 1e-12
+        r = fd.sqrt(x[0] ** 2 + x[1] ** 2) + 1e-10
         alpha = fd.pi / omega
         return (r ** alpha) * fd.sin(alpha * theta)
 
+    # def eexact(x):
+    #     return fd.grad(uexact(x))
     def eexact(x):
-        return fd.grad(uexact(x))
+        angle = fd.atan2(x[1] + 1e-10, x[0] + 1e-10)
+        theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
+        r = fd.sqrt(x[0] ** 2 + x[1] ** 2) + 1e-10
+        alpha = fd.pi / omega
+        return alpha * r ** (alpha - 2) * fd.as_vector([x[0]*fd.sin(alpha * theta) - x[1]*fd.cos(alpha * theta),
+                                                        x[1]*fd.sin(alpha * theta) + x[0]*fd.cos(alpha * theta)])
 
     # Propose an analytical expression for lambda
     def lmbdexact(x):
@@ -1482,7 +1498,7 @@ def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Li
 
     def sexact(x):
         A = fd.Constant(0.0)  # 0.025 Amplitude
-        eps = fd.Constant(1.0e-10)
+        eps = fd.Constant(1e-10)
         met = fd.sqrt(eexact(x)[0] ** 2 + eexact(x)[1] ** 2) + eps
         etn = fd.as_vector([eexact(x)[0] / met, eexact(x)[1] / met])
         mst = met - A * met ** 3
@@ -1608,7 +1624,10 @@ def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Li
     return norms_output
 
 
-def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **kwargs):
+# ========================================
+# Re-entrant coner: Codina's formulation
+# ========================================
+def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id = i, **kwargs):
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
 
@@ -1619,8 +1638,8 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     #  Create (or import) the computational domain/mesh and Compute a reference solution
     lc = hsize  # characteristic length of the mesh
     flag_singularity_refinement = True
-
     mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
+
     if (case_corner == 0):
         omega = 1.75 * fd.pi
     elif (case_corner == 1):
@@ -1655,9 +1674,9 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
@@ -1667,7 +1686,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0] ** 2 + x[1] ** 2) + 1e-12
+        r = fd.sqrt(x[0] ** 2 + x[1] ** 2 + fd.Constant(1e-8))
         alpha = fd.pi / omega
         return (r ** alpha) * fd.sin(alpha * theta)
 
@@ -1766,9 +1785,16 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
         return 0.5 * fd.inner(g - gdata, g - gdata) * fd.dx + 0.5 * kappa * fd.inner(s - sdata, s - sdata) * fd.dx
 
     ords = [1, 1]
-    ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
-                            params=params)
-    ddcm_prob.solve(0.0, f"mycodddcmsol_{formulation}")
+    if (formulation == 'VMS-Primal'):
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+                                params=params)
+    elif (formulation == 'VMS-Dual'):
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+                                params=params)
+    else:
+        raise ValueError('Invalid formulation')
+
+    ddcm_prob.solve(id, f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -1789,29 +1815,29 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
 
     if formulation == 'VMS-Primal':
         norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
-        norms_output['H1semi_u'] = error_seminorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
+        # norms_output['H1semi_u'] = error_seminorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
 
         norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-        norms_output['H1semil'] = error_seminorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
+        # norms_output['H1semil'] = error_seminorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
 
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-        norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+        # norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
 
         norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-        norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+        # norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
 
         norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-        norms_output['Hdivsemi_m'] =error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
+        # norms_output['Hdivsemi_m'] =error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
 
     elif formulation == 'VMS-Dual':
         norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-        norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
+        # norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
 
         norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-        norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
+        # norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
 
         norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-        norms_output['Hdivsemi_m'] = error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
+        # norms_output['Hdivsemi_m'] = error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
     else:
         raise ValueError('Formulation not recognized')
 
@@ -1837,7 +1863,7 @@ def get_norm_list(formulation: str):
     elif formulation == 'Primal-ASGS' or formulation == 'Primal-OSGS':
         return ['h', 'L2u', 'H1u','L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
     elif formulation == 'Dual-ASGS' or formulation == 'Dual-OSGS':
-        return ['h', 'L2u', 'L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
+        return ['h', 'L2u','L2l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']
     else:
         return ValueError("Invalid formulation")
 
@@ -1957,8 +1983,7 @@ def case_02(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_03(order_poly: str = 'Linear'):
  
-    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
-    
+    list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS', 'Dual-ASGS']
     norms = {key: [] for key in list_of_formulations}
 
     for form in norms.keys():
@@ -1971,13 +1996,20 @@ def case_03(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125]:
+    for h in [0.05, 0.025, 0.0125, 0.00625]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        #function_output['Natural'], domain, stilde, etilde = main_ex0101_(formulation = 'Natural', order_poly = order_poly)
-        #
+        function_output['Natural'] = main_ex0101_(formulation = 'Natural',  hvalue=h,
+                                                      order_poly = order_poly, kwargs=get_stab_params('Natural'))
+
+        function_output['Equal-Order-uns'] = main_ex0101_(formulation='Equal-Order', hvalue=h,
+                                                      order_poly = order_poly, kwargs=get_stab_params('Equal-Order-uns'))
+
+        function_output['Equal-Order-fully'] = main_ex0101_(formulation='Equal-Order',  hvalue=h,
+                                                      order_poly = order_poly, kwargs=get_stab_params('Equal-Order-fully'))
+
         function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
                                                       order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
@@ -1997,7 +2029,9 @@ def case_03(order_poly: str = 'Linear'):
 
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_04(order_poly = 'Linear'):
-    list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
+    # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
+    list_of_formulations = ['Dual-ASGS']
+
     norms = {key: [] for key in list_of_formulations}
 
     for form in norms.keys():
@@ -2010,25 +2044,25 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.2, 0.1, 0.05, 0.025]:
+    for i, h in enumerate([0.1]):
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        function_output['Natural'] = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
-                                                kwargs={})
+        # function_output['Natural'] = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
+        #                                         kwargs={})
+        #
+        # function_output['Equal-Order-uns'] = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
+        #                                                 kwargs={})
+        #
+        # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
+        #                                                   kwargs=get_stab_params('Equal-Order-fully'))
+        #
+        # function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
+        #                                             kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Equal-Order-uns'] = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
-                                                        kwargs={})
-
-        function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
-                                                          kwargs=get_stab_params('Equal-Order-fully'))
-
-        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
-                                                    kwargs=get_stab_params('Primal-ASGS'))
-
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear',
-                                                  kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=1,  order_poly = 'Linear',
+                                                  id = i, kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
@@ -2044,24 +2078,22 @@ def case_04(order_poly = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_05(order_poly = 'Linear'):
 
-    h = 0.025
+    h = 0.05
     # Run main function
-    _ = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
-                                            kwargs={})
+    # _ = main_ex07_(formulation='Natural', hsize=h,case_corner=0,  order_poly = 'Linear',
+    #                                         kwargs={})
 
-    _ = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
-                                                    kwargs={})
+    # _ = main_ex07_(formulation='Equal-Order', hsize=h,case_corner=0, order_poly = 'Linear',
+    #                                                 kwargs={})
 
-    _ = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
-                                                      kwargs=get_stab_params('Equal-Order-fully'))
+    # _ = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
+    #                                                   kwargs=get_stab_params('Equal-Order-fully'))
 
-    _ = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
-                                                kwargs=get_stab_params('Primal-ASGS'))
+    # _ = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear',
+    #                                             kwargs=get_stab_params('Primal-ASGS'))
 
-    _ = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear',
+    _ = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=1,  order_poly = 'Linear',
                                               kwargs=get_stab_params('Dual-ASGS'))
-
-
 
 # ===============================================
 # Main
