@@ -1,0 +1,390 @@
+
+\section{Finite element approximation}
+
+For the spatial discretization of both the primal and dual problems, we employ in the following the finite element method. Moreover, to achieve stable formulations that are independent of the particular finite element spaces chosen, we are required to include stabilization terms. Therefore, we rely on the VMS framework to systematically accomplish this task. In few words, the considered approach consists of introducing a splitting of the form $\xF = \xFh+\xF'$ and letting $\xF' = (\uF',\eF',\sF',\lF',\mF')$, where $\xFh$ belongs to $X_h$, the finite element space chosen,  and the subscales are
+proposed to be as follows:
+\begin{equation}
+\left\lbrace
+\begin{array}{rl}
+    \uF' &= \tu\Pt(-\zeta\lFh-\nabla\cdot\mFh),\\
+    \eF' &= \te\Pt(\eFt-\eFh-\mFh),\\
+    \sF' &= \ts\Pt(\kappa\sFt-\kappa\sFh+\nabla\lFh),\\
+    \lF' &= \tl\Pt(q-\zeta\uFh-\nabla\cdot\sFh),\\
+    \mF' &= \tm\Pt(\nabla\uFh-\eFh).
+    \end{array}
+\right.
+\label{eq:subscales}
+\end{equation}
+Moreover, the operator $P'$ must be selected such that the needed additional control in the complement of the finite element space is provided. Two canonical choices are: \textit{i}) $P'$ being the identity in $\Ltwo$, also known as the \textit{Algebraic SubGrid Scale} (ASGS); and, \textit{ii}) $P'$ being 
+the projection on the orthogonal complement (with respect to the $\Ltwo$-norm) of the finite element space, also known as the \textit{Orthogonal SubGrid Scale} (OSGS). 
+In this way, we can systematically derive a stabilized bilinear forms
+$$
+B_\mathrm{stab}(\xFh, \delta \xFh) := 
+%B(\xFh+\xF'(\xFh),\delta \xFh) = 
+B(\xFh, \delta \xFh) + S(\xFh, \delta \xFh), 
+$$
+where $B(\xFh, \delta \xFh)$ is the original bilinear form associated to the continuous problem and $S(\xFh, \delta \xFh)$  is the stabilization that depends, in principle, on the problem, i.e., either primal or dual form, and the particular operator $P'$ selected. 
+\subsection{Primal form}
+
+The stabilized bilinear form for the discrete primal formulation is
+$$
+\Bsp(\xFh,\delta\xFh) := 
+%\Bp(\xFh+\xF'(\xFh),\delta\xFh) = 
+\Bp(\xFh, \delta\xFh)+\Sph(\xFh, \delta\xFh), 
+$$
+where $\Sph(\xFh, \delta\xFh)$ is, in principle, a mesh-dependent term providing the desired stability. In addition, let us consider:
+$$
+    \tu = \ku h^2,
+    \te = \ke,
+    \ts = \frac{\ks}{\kappa},
+    \tl = -\frac{\kl h^2}{\zeta^2\length^4},
+    \tm = -\km.
+$$
+Then, the stabilization term is as follows:
+\begin{align*}
+\Sph(\xFh,\delta\xFh)
+&:=-\ku h^2\left(\zeta^2\iprod[]{\lFh}{\delta\lFh}+\zeta\left(\iprod[h]{\nabla\cdot\mFh}{\delta\lFh}+\iprod[h]{\lFh}{\nabla\cdot\delta\mFh}\right)+\iprod[h]{\nabla\cdot\mFh}{\nabla\cdot\delta \mFh}\right)\\
+&\quad\:\:-\ke\left(\iprod[]{\eFh}{\delta\eFh}+\iprod[]{\mFh}{\delta\eFh}+\iprod[]{\eFh}{\delta \mFh}+\iprod[]{\mFh}{\delta\mFh}\right)\\
+&\quad\:\:-\frac{\ks}{\kappa}\left(\iprod[]{\nabla\lFh}{\nabla\delta\lFh}-\kappa\iprod[]{\sFh}{\nabla\delta\lFh}-\kappa\iprod[]{\nabla\lFh}{\sFh}+\kappa^2\iprod[]{\sFh}{\delta\sFh}\right)\\
+&\quad\:\:+\frac{\kl h^2}{\zeta^2\length^4}\left(\zeta^2\iprod[]{\uFh}{\delta\uFh}+\zeta\left(\iprod[h]{\nabla\cdot\sFh}{\delta\uFh}+\iprod[h]{\uFh}{\nabla\cdot\delta\sFh}\right)+\iprod[h]{\nabla\cdot\sFh}{\nabla\cdot\delta \sFh}\right)\\
+&\quad\:\:+\km\left(\iprod[]{\nabla\uFh}{\nabla\delta\uFh}-
+\iprod[]{\eFh}{\nabla\delta\uFh}-\iprod[]{\nabla\uFh}{\delta\eFh}+\iprod[]{\eFh}{\delta\eFh}\right). 
+\end{align*}
+
+\begin{problem}[$P_{\mathrm{p},h}$] Find $\xFh \in X_h$ such that
+\begin{equation}
+\Bsp(\xFh,\delta \xFh) = L(\delta\xFh),\quad\forall\delta\xFh\in\XSph. 
+\end{equation} 
+\end{problem}
+
+\begin{definition} Let $\XSph$ be defined as
+$$\XSph =  U_h\times E_h\times S_h\times L_h\times M_h$$
+and equipped with the norm
+\begin{align*}
+\norm[\XSph]{\xFh}^2 =
+\frac{1}{\length^2}\norm[]{\uFh}^2+
+\norm[]{\nabla\uFh}^2+
+\norm[]{\eFh}^2+
+\kappa\norm[]{\sFh}^2+
+\kappa h^2\norm[h]{\nabla\cdot\sFh}^2+\\
+\frac{1}{\kappa\length^2}\norm[]{\lFh}^2+
+\frac{1}{\kappa}\norm[]{\nabla\lFh}^2+
+\norm[]{\mFh}^2+
+h^2\norm[h]{\nabla\cdot\mFh}^2.
+\end{align*}
+\end{definition}
+
+\begin{theorem}
+The discretized primal problem $\Pph$ is well posed for $\Pt$ being either the identity (ASGS) or the $L^2$-projection on the orthogonal complement of the finite element space chosen (OSGS). In addition, it consistently approximates the continuous primal problem $\Pp$.   
+\end{theorem}
+%
+
+\begin{proof}
+The continuity of $\Bsp(\xFh,\delta\xFh)$ and $L(\delta\xFh)$ in the norm of $\XSph$ is straightforward. For the coercitivity of $\Bsp(\xFh,\delta\xFh)$, 
+let $\Pt$ be $I$ and set 
+$\delta\xFh = (\uFh,\eFh,\sFh,-\lFh,-\mFh)$.
+In addition, let us consider the following inequalities:
+$$-2\km\iprod[]{\eFh}{\nabla\uFh} \geq -\frac12\norm[]{\eFh}^2-4\km^2\norm[]{\nabla\uFh}^2, \quad\text{(Young)}, $$
+%
+$$\frac{2}{\zeta}\iprod[h]{\nabla\cdot\sFh}{\uFh} \geq -\frac{\kYus}{\zeta^2}\norm[h]{\nabla\cdot \sFh}^2-\frac{1}{\kYus}\norm[]{\uFh}^2,\quad\forall\kYus > 0, \quad\text{(Young)},$$
+%
+$$2\zeta\iprod[h]{\nabla\cdot\mFh}{\lFh} \geq -\kYlm\norm[h]{\nabla\cdot\mFh}^2-\frac{\zeta^2}{\kYlm}\norm[]{\lFh}^2,\quad \forall\kYlm > 0,\quad\text{(Young)},$$
+%
+$$ \norm[]{\nabla\uFh}^2 \geq \kPu\norm[]{\nabla\uFh}^2+\frac{(1-\kPu)}{\CPF^2\length^2}\norm[]{\uFh}^2,\quad \forall\kPu\in(0, 1),\quad\text{(Poincaré)},$$
+%
+$$ \norm[]{\nabla\lFh}^2 \geq \kPl\norm[]{\nabla\lFh}^2+\frac{(1-\kPl)}{\CPF^2\length^2}\norm[]{\lFh}^2,\quad \forall\kPl\in(0, 1),\quad\text{(Poincaré)}.$$
+After some algebraic manipulations, we arrive at
+\begin{align*}
+\Bsp(\xFh,\delta\xFh) \geq 
+&\: \ttu\norm[]{\uFh}^2+
+    \tte\norm[]{\eFh}^2+
+    \tts\norm[]{\sFh}^2+
+    \ttl\norm[]{\lFh}^2+
+    \ttm\norm[]{\mFh}^2+
+    \\    
+&\: \ttdu\norm[]{\nabla\uFh}^2+
+    \ttds\norm[h]{\nabla\cdot\sFh}^2+ 
+    \ttdl\norm[]{\nabla\lFh}^2+
+    \ttdm\norm[h]{\nabla\cdot\mFh}^2,
+\end{align*}
+where
+\begin{align*}
+    \ttu &= \left(1-\frac{1}{\kYus}\right)\frac{\kl h^2}{\length^4}+\frac{1-\kPu}{\CPF^2\length^2}\km(1-4\km),\\
+    \tte &= \km
+    -\ke+\frac34,\\
+    \tts &= \kappa(1-\ks),\\
+    \ttl &= \left(1-\frac{1}{\kYlm}\right)\ku h^2\zeta^2+\frac{1-\kPl}{\CPF^2\length^2}\frac{\ks}{\kappa},\\
+    \ttm &= \ke,\\
+    \ttdu &= \kPu\km(1-4\km),\\
+    \ttds &= (1-\kYus)\frac{\kl h^2}{\length^4\zeta^2},\\
+    \ttdl &= \kPl\frac{\ks}{\kappa},\\
+    \ttdm &= (1-\kYlm)\ku h^2.\\
+\end{align*}
+The stabilized bilinear form for the discrete primal formulation is positive provided that
+$$
+\ku \geq 0, \ke\in(0,\ke^*),\ks\in(0, 1),\kl\geq 0,\km\in\left(0,\frac14\right),
+$$
+$$
+\kYus\in(\kYus^*,1],\kYlm\in(\kYlm^*,1],\kPu\in(0,1),\kPl\in(0,1),
+$$
+where
+$$
+\ke^* = \km+\frac34,
+\:
+\kYus^* = \frac{1}{1+\frac{\km(1-4\km)}{\kl}\frac{(1-\kPu)}{\CPF^2}\frac{\length^2}{h^2}},
+\:\:
+\kYlm^* = \frac{1}{1+\frac{\ks}{\ku}\frac{(1-\kPl)}{\CPF^2}\frac{1}{\kappa h^2\zeta^2\length^2}}.
+$$
+\noindent$\rightarrow$RAMON
+
+For $\Pt$ being the projector onto the $L^2$ orthogonal complement of the chosen particular finite element space, we have
+\begin{align*}
+\Bsp'(\xFh,\delta\xFh) \geq 
+&\: \ttu'\norm[]{\Pt\uFh}^2+
+    \tte'\norm[]{\eFh}^2+
+    \tts'\norm[]{\sFh}^2+
+    \ttl'\norm[]{\Pt\lFh}^2+
+    \ttm'\norm[]{\Pt\mFh}^2+
+    \\    
+&\: \ttdu'\norm[]{\Pt\nabla\uFh)}^2+
+    \ttds'\norm[h]{\Pt\nabla\cdot\sFh}^2+ 
+    \ttdl'\norm[]{\Pt\nabla\lFh}^2+
+    \ttdm'\norm[h]{\Pt\nabla\cdot\mFh}^2,
+\end{align*}
+which is positive when all parameters belong to the same range as in $\Pt = I$. The coercitivity on the whole finite element space chosen is achieved by Galerkin's standard argument.
+
+
+
+\end{proof}
+
+\begin{proposition}
+Let $\ku = \kl = 0$ and $\Pt = I$. Then, the following residuum orthogonalities hold:
+$$\iprod[]{\kappa\sF-\nabla\lFh-\kappa\sFt}{\delta\sFh} = 0\quad(\text{orthogonality w.r.t. } S_h),$$
+$$\iprod[]{\eFh+\mFh-\eFt                 }{\delta\eFh} = 0\quad(\text{orthogonality w.r.t. } E_h),$$
+$$\iprod[]{-\nabla\uFh+\eFh               }{\delta\mFh} = 0\quad(\text{orthogonality w.r.t. } M_h).$$
+\end{proposition}
+
+\begin{proof}
+First, by setting $\ku = \kl = 0$, it follows
+$$\iprod[]{\kappa\sF+\kappa\ts\Pt(\kappa\sFt-\kappa\sFh-\nabla\lFh)+ \nabla\lFh-\kappa\sFt}{\delta\sFh} = 0,$$
+%
+$$\iprod[]{\eFh+\te\Pt(\eFt-\eFh-\mFh)+\mFh+\tm\Pt(\nabla\uFh-\eFh)-\eFt}{\delta\eFh} = 0$$
+and
+$$\iprod[]{-\nabla\uFh+\eFh+\te\Pt(\eFt-\eFh-\mFh)}{\delta\mFh} = 0.$$
+%
+Second, by setting $\Pt = I$, we have
+$$(1-\ts)\iprod[]{\kappa\sF-\nabla\lFh-\kappa\sFt}{\delta\sFh} = 0,$$
+which is proposition's first orthogonality result,%
+$$\iprod[]{(\te-1)(\eFt-\eFh-\mFh)+\tm(\nabla\uFh-\eFh)}{\delta\eFh} = 0$$
+%
+and
+%
+$$\iprod[]{-(\nabla\uFh-\eFh)+\te(\eFt-\eFh-\mFh)}{\delta\mFh} = 0.$$
+By choosing
+$$\delta\mFh = \tm\delta\eFh$$
+and after some algebraic manipulations on the two last equations, we arrive to
+%
+$$\iprod[]{\eFh+\mFh-\eFt}{\delta\eFh} = 0,$$
+which is proposition's second orthogonality result.
+Similarly, by choosing
+$$\delta\eFh = \frac{1}{\tm}\delta\mFh$$
+and after some algebraic manipulations, we arrive at
+$$\iprod[]{-\nabla\uFh+\eFh}{\delta\mFh} = 0,$$
+which is proposition's third orthogonality result.%
+\end{proof}
+
+\begin{proposition}[minimally stabilized discrete primal formulation]
+Let $h$ be substantially smaller than $\length$. For $\ku=\kl=0$, the following assertions hold true: \textit{i}) the stabilization term is mesh-independent, i.e., $\Sph(\xFh,\delta\xFh)\leadsto\Sp(\xFh,\delta\xFh)$ with
+\begin{align*}
+\Sp(\xFh,\delta\xFh)
+&:=-\ke\left(\iprod[]{\eFh}{\delta\eFh}+\iprod[]{\mFh}{\delta\eFh}+\iprod[]{\eFh}{\delta \mFh}+\iprod[]{\mFh}{\delta\mFh}\right)\\
+&\quad\:\:-\frac{\ks}{\kappa}\left(\iprod[]{\nabla\lFh}{\delta\nabla\lFh}-\kappa\iprod[]{\sFh}{\nabla\delta\lFh}-\kappa\iprod[]{\nabla\lFh}{\sFh}+\kappa^2\iprod[]{\sFh}{\delta\sFh}\right)\\
+&\quad\:\:+\km\left(\iprod[]{\nabla\uFh}{\nabla\delta\uFh}-
+\iprod[]{\eFh}{\nabla\delta\uFh}-\iprod[]{\nabla\uFh}{\delta\eFh}+\iprod[]{\eFh}{\delta\eFh}\right); 
+\end{align*}
+and, \textit{ii}) the ASGS and the OSGS are equivalent.
+\end{proposition}
+\begin{proof}
+    The first assertion follows intermediately. The second one is a direct consequence of the fact that all subscales
+    are either zero (by design) or orthogonal to the corresponding finite element space (due to the previous proposition).
+\end{proof}
+
+\subsection{Discretized dual problem}
+
+The stabilized bilinear form for the discrete dual formulation is
+$$
+\Bsd(\xFh,\delta\xFh) := 
+%\Bd(\xFh+\xF'(\xFh),\delta\xFh) = 
+\Bd(\xFh,\delta\xFh)+\Sd(\xFh,\delta\xFh), 
+$$
+where $\Sdh(\xFh, \delta\xFh)$ is, in principle, a mesh-dependent term providing the desired stability. In addition, let us consider:
+$$
+    \tu = \ku\length^2,
+    \te = \ke,
+    \ts = \frac{\ks h^2}{\kappa\length^2},
+    \tl = -\frac{\kl}{\zeta^2\length^2},
+    \tm = -\frac{\km h^2}{\length^2}.
+$$
+Then, the stabilization term is as follows:
+\begin{align*}
+\Sdh(\xFh,\delta\xFh)
+&:=-\ku \length^2\left(\zeta^2\iprod[]{\lFh}{\delta\lFh}+\zeta\left(\iprod[]{\nabla\cdot\mFh}{\delta\lFh}+\iprod[]{\lFh}{\nabla\cdot\delta\mFh}\right)+\iprod[]{\nabla\cdot\mFh}{\nabla\cdot\delta \mFh}\right)\\
+&\quad\:\:-\ke\left(\iprod[]{\eFh}{\delta\eFh}+\iprod[]{\mFh}{\delta\eFh}+\iprod[]{\eFh}{\delta \mFh}+\iprod[]{\mFh}{\delta\mFh}\right)\\
+&\quad\:\:-\frac{\ks h^2}{\kappa\length^2}\left(\iprod[h]{\nabla\lFh}{\delta\nabla\lFh}-\kappa\iprod[h]{\sFh}{\nabla\delta\lFh}-\kappa\iprod[h]{\nabla\lFh}{\sFh}+\kappa^2\iprod[]{\sFh}{\delta\sFh}\right)\\
+&\quad\:\:+\frac{\kl}{\zeta^2\length^2}\left(\zeta^2\iprod[]{\uFh}{\delta\uFh}+\zeta\left(\iprod[]{\nabla\cdot\sFh}{\delta\uFh}+\iprod[]{\uFh}{\nabla\cdot\delta\sFh}\right)+\iprod[]{\nabla\cdot\sFh}{\nabla\cdot\delta \sFh}\right)\\
+&\quad\:\:+\frac{\km h^2}{\length^2}\left(\iprod[h]{\nabla\uFh}{\nabla\delta\uFh}-
+\iprod[h]{\eFh}{\nabla\delta\uFh}-\iprod[h]{\nabla\uFh}{\delta\eFh}+\iprod[]{\eFh}{\delta\eFh}\right). 
+\end{align*}
+\begin{problem}[$\Pdh$] Find $\xFh\in\XSdh$ such that
+\begin{equation}
+\Bsd(\xFh,\delta\xFh) = L(\delta\xFh),\quad\forall\delta\xFh\in\XSdh. 
+\end{equation} 
+\end{problem}
+
+\begin{definition} Let $\XSdh$ be defined as
+$$\XSdh =  U_h \times E_h \times S_h \times L_h \times M_h $$
+and equipped with the norm
+\begin{align*}
+\norm[\XSdh]{\xFh}^2 =
+\frac{1}{\length^2}\norm[]{\uFh}^2+
+\frac{h^2}{\length^2}\norm[h]{\nabla\uFh}^2+
+\norm[]{\eFh}^2+
+\kappa\norm[]{\sFh}^2+
+\kappa\length^2\norm[]{\nabla\cdot\sFh}^2+\\
+\frac{1}{\kappa\length^2}\norm[]{\lFh}^2+
+\frac{h^2}{\kappa\length^2}\norm[h]{\nabla\lFh}^2+
+\norm[]{\mFh}^2+
+\length^2\norm[]{\nabla\cdot\mFh}^2.
+\end{align*}
+\end{definition}
+
+\begin{theorem}
+The discretized dual problem ($P_{\mathrm{d},h}$) is well posed for $\Pt$ being either the identity (ASGS) or the $L^2$-projection on the orthogonal complement of the finite element space chosen (OSGS). In addition, it consistently approximates the continuous problem $P_{\mathrm{d}}$.      
+\end{theorem}
+
+\begin{proof}
+The continuity of $B_\mathrm{stab,d}(\xFh,\delta \xFh)$ and $L(\delta\xFh)$ in the norm of $\XSdh$ is straightforward. For the coercitivity of $\Bsd(\xFh,\delta\xFh)$,
+let $\Pt$ be equal to $I$ and set 
+$\delta \xFh = (\uFh,\eFh,\sFh,-\lFh,-\mFh)$.
+In addition, let us consider the following inequalities:
+$$-2 \km \iprod[h]{\eFh}{\nabla\uFh} \geq -\frac12\norm[]{\eFh}^2-4 \km^2\norm[h]{\nabla\uFh}^2, \quad\text{(Young)}, $$
+%
+$$\frac{2}{\zeta}\iprod[]{\nabla\cdot\sFh}{\uFh} \geq -\frac{\kYus}{\zeta^2}\norm[]{\nabla\cdot\sFh}^2-\frac{1}{\kYus}\norm[]{\uFh}^2,\quad\forall\kYus > 0,\quad\text{(Young)},$$
+%
+$$2\zeta\iprod[]{\nabla\cdot\mFh}{\lFh} \geq -\kYlm\norm[]{\nabla\cdot\mFh}^2-\frac{\zeta^2}{\kYlm}\norm[]{\lFh}^2,\quad\forall\kYlm > 0,\quad\text{(Young)},$$
+%
+$$\norm[h]{\nabla\uFh}^2 \geq \kPu\norm[h]{\nabla\uFh}^2+\frac{(1-\kPu)}{\CPF^2\length^2}\norm[]{\uFh}^2,\quad\forall\kPu\in(0,1),\quad\text{(Poincaré)},$$
+%
+$$\norm[h]{\nabla\lFh}^2 \geq \kPl\norm[h]{\nabla\lFh}^2+\frac{(1-\kPl)}{\CPF^2\length^2}\norm[]{\lFh}^2,\quad\forall\kPl\in(0,1),\quad\text{(Poincaré)}.$$
+After some algebraic manipulations, we arrive at
+\begin{align*}
+\Bsd(\xFh,\delta \xFh) \geq 
+&\: \ttu\norm[]{\uFh}^2+
+    \tte\norm[]{\eFh}^2+
+    \tts\norm[]{\sFh}^2+
+    \ttl\norm[]{\lFh}^2+
+    \ttm\norm[]{\mFh}^2+
+    \\    
+&\: \ttdu\norm[h]{\nabla\uFh}^2+
+    \ttds\norm[]{\nabla\cdot\sFh}^2+ 
+    \ttdl\norm[h]{\nabla\lFh}^2+
+    \ttdm\norm[]{\nabla\cdot\mFh}^2,
+\end{align*}
+where
+\begin{align*}
+    \ttu&= \left(1-\frac{1}{\kYus}\right)\frac{\kl}{\length^2}+\frac{(1-\kPu)}{\CPF^2\length^2}\km(1-4\km)\frac{h^2}{\length^2},\\
+    \tte &= \left(\km-\frac14\right)\frac{h^2}{\length^2}
+    -\ke+1,\\
+    \tts &= \kappa\left(1-\ks\frac{h^2}{\length^2}\right),\\
+    \ttl &= \left(1-\frac{1}{\kYlm}\right)\ku\length^2\zeta^2+\frac{(1-\kPl)}{\CPF^2\length^2}\frac{\ks h^2}{\kappa\length^2},\\
+    \ttm &= \ke,\\
+    \ttdu &= \kPu\km(1-4\km)\frac{h^2}{\length^2},\\
+    \ttds &= (1-\kYus)\frac{\kl}{\length^2\zeta^2},\\
+    \ttdl &= \kPl\frac{\ks h^2}{\kappa\length^2},\\
+    \ttdm &= (1-\kYlm)\ku \length^2.
+\end{align*}
+The stabilized bilinear form for the dual formulation is positive provided that
+$$    
+\ku> 0,\ke\in(0,\ke^*),\ks\in\left[0,\ks^*\right),\kl > 0,\km\in\left[0,\frac14\right],
+$$
+$$
+\kYus\in(\kYus^*,1),\kYlm\in(\kYlm^*,1),\kPu,\in(0,1),\kPl\in(0, 1),
+$$
+where
+$$
+\ke^* = 1+\left(\km-\frac14\right)\frac{h^2}{\length^2},
+\:\:
+\ks^* = \frac{\length^2}{h^2}, 
+$$
+$$
+\kYus^* = \frac{1}{1+\frac{\km (1-4\km)}{\kl}\frac{(1-\kPu)}{C^2_{PF}}\frac{h^2}{\length^2}}, 
+\:\:
+\kYlm^* = \frac{1}{1+\frac{\ks}{\ku}\frac{(1-\kPl)}{\CPF^2}\frac{h^2}{\kappa\zeta^2\length^6}}.
+$$
+
+\noindent$\rightarrow$RAMON
+
+For $\Pt$ being the projector onto the $L^2$ orthogonal complement of the chosen particular finite element space, we have
+\begin{align*}
+\Bsd'(\xFh,\delta\xFh) \geq 
+&\: \ttu'\norm[]{\Pt\uFh}^2+
+    \tte'\norm[]{\eFh}^2+
+    \tts'\norm[]{\sFh}^2+
+    \ttl'\norm[]{\Pt\lFh}^2+
+    \ttm'\norm[]{\Pt\mFh}^2+
+    \\    
+&\: \ttdu'\norm[h]{\Pt\nabla\uFh}^2+
+    \ttds'\norm[]{\Pt\nabla\cdot\sFh}^2+ 
+    \ttdl'\norm[h]{\Pt\nabla\lFh}^2+
+    \ttdm'\norm[]{\Pt\nabla\cdot\mFh}^2,
+\end{align*}
+which is positive when all parameters belong to the same range as in $\Pt = I$.
+The coercitivity on the whole finite element space chosen is achieved by Galerkin's standard argument.
+
+\end{proof}
+
+\begin{proposition}
+Let $\ks = \km = 0$ and $\Pt = I$. Then, the following residuum orthogonalities hold: 
+$$\iprod[]{\zeta\lFh+\nabla\cdot\mFh}{\delta\uFh} =  0\quad(\text{orthogonality w.r.t. }U_h),$$
+$$\iprod[]{\eFh+\mFh-\eFt                 }{\delta\eFh} = 0\quad(\text{orthogonality w.r.t. } E_h),$$
+$$\iprod[]{\zeta\uFh+\nabla\cdot\sFh-q}{\delta\lFh} = 0\quad(\text{orthogonality w.r.t. }L_h) .$$
+\end{proposition}
+
+\begin{proof}
+First, by setting $\ks = \km = 0$, it follows
+$$\iprod[]{\zeta\lFh+\zeta\tl\Pt(q-\zeta\uFh-\nabla\cdot \sFh)+\nabla\cdot\mFh}{\delta\uFh} = 0$$
+and
+$$\iprod[]{\zeta\uFh+\zeta\tu\Pt(-\zeta\lFh-\nabla\cdot\mFh)+\nabla\cdot\sFh-q}{\delta\lFh} = 0.$$
+%
+Second, by setting $\Pt = I$, we have
+%
+$$\iprod[]{\zeta\lFh+\zeta\tl(q-\zeta\uFh-\nabla\cdot\sFh)+\nabla\cdot\mFh}{\delta\uFh} = 0$$
+and
+$$\iprod[]{\zeta\uFh+\zeta\tu(-\zeta\lFh-\nabla\cdot\mFh)+\nabla\cdot\sFh-q}{\delta\lFh} = 0.$$
+By choosing
+$$\delta\lFh = \zeta\tl\delta\uFh$$
+and after some algebraic manipulations on the two last equations, we arrive to
+$$\iprod[]{\zeta\lFh+\nabla\cdot\mFh}{\delta\uFh} =  0,$$
+which is proposition’s first orthogonality result.
+Similarly, by choosing
+$$\delta\uFh = \zeta\tu\delta\lFh$$
+and after some algebraic manipulations, we arrive to
+$$\iprod[]{\zeta\uFh+\nabla\cdot\sFh-q}{\delta\lFh} = 0,$$
+which is proposition’s third orthogonality result. Finally, considering $P_{\mathrm{d},h}$ and noting that $\mF' = 0$ (by design), we arrive to
+$$
+\iprod[]{\eFh-\mFh-\eFt}{\delta\eFh}=0,$$
+which is proposition's second orthogonality result.
+\end{proof}
+\begin{proposition}[minimally stabilized discrete dual formulation]
+Let $h$ be substantially smaller than $\length$. For $\ks=\km=0$, the following assertions hold true: \textit{i}) the stabilization term is mesh-independent, i.e., $\Sdh(\xFh,\delta\xFh)\leadsto\Sd(\xFh,\delta\xFh)$ with
+\begin{align*}
+\Sd(\xFh,\delta\xFh)
+&:=-\ku \length^2\left(\zeta^2\iprod[]{\lFh}{\delta\lFh}+\zeta\left(\iprod[]{\nabla\cdot\mFh}{\delta\lFh}+\iprod[]{\lFh}{\nabla\cdot\delta\mFh}\right)+\iprod[]{\nabla\cdot\mFh}{\nabla\cdot\delta \mFh}\right)\\
+&\quad\:\:-\ke\left(\iprod[]{\eFh}{\delta\eFh}+\iprod[]{\mFh}{\delta\eFh}+\iprod[]{\eFh}{\delta \mFh}+\iprod[]{\mFh}{\delta\mFh}\right)\\
+&\quad\:\:+\frac{\kl}{\zeta^2\length^2}\left(\zeta^2\iprod[]{\uFh}{\delta\uFh}+\zeta\left(\iprod[]{\nabla\cdot\sFh}{\delta\uFh}+\iprod[]{\uFh}{\nabla\cdot\delta\sFh}\right)+\iprod[]{\nabla\cdot\sFh}{\nabla\cdot\delta \sFh}\right);
+\end{align*}
+and, \textit{ii}) the ASGS and the OSGS are equivalent.
+\end{proposition}
+\begin{proof}
+    The first assertion follows intermediately. The second is a direct consequence of the fact that all subscales are either zero (by design) or orthogonal to the corresponding finite element space (due to the previous proposition).
+\end{proof}

@@ -1,0 +1,86 @@
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'reentrant_lam_mu_art02.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{416.72388272bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,1.3936858)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0.13192513,0.00361734){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c) Primal-ASGS\end{tabular}}}}%
+    \put(0.13106103,0.68680292){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a) Primal-ASGS\end{tabular}}}}%
+    \put(0.02084616,0.94682793){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\lF$\end{tabular}}}}}%
+    \put(0.02084616,0.25393546){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mF$\end{tabular}}}}}%
+    \put(0.80686479,0.00361734){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d) Dual-ASGS\end{tabular}}}}%
+    \put(0.80686479,0.68680292){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b) Dual-ASGS\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{reentrant_lam_mu_art02.pdf}}%
+    \put(0.05520384,0.80286505){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-2.4e-02}\end{tabular}}}}}%
+    \put(0.05520384,1.11747328){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.6e-02}\end{tabular}}}}}%
+    \put(0.05520384,0.86394492){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.015}\end{tabular}}}}}%
+    \put(0.05520384,0.91757262){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.01}\end{tabular}}}}}%
+    \put(0.05520384,0.96040174){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.005}\end{tabular}}}}}%
+    \put(0.05520384,0.99243239){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}}%
+    \put(0.05520384,1.0250285){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.005}\end{tabular}}}}}%
+    \put(0.05520384,1.06785762){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.01}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{reentrant_lam_mu_art02.pdf}}%
+    \put(0.05516991,0.11361517){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{3.9e-05}\end{tabular}}}}}%
+    \put(0.05516991,0.42279007){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{7.1e-02}\end{tabular}}}}}%
+    \put(0.05516991,0.16425035){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.01}\end{tabular}}}}}%
+    \put(0.05516991,0.20408694){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.02}\end{tabular}}}}}%
+    \put(0.05516991,0.24392374){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.03}\end{tabular}}}}}%
+    \put(0.05516991,0.29152835){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.04}\end{tabular}}}}}%
+    \put(0.05516991,0.33136505){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.05}\end{tabular}}}}}%
+    \put(0.05516991,0.37120165){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.06}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{reentrant_lam_mu_art02.pdf}}%
+    \put(0.53555643,1.37283967){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\small{Zoomed view}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{reentrant_lam_mu_art02.pdf}}%
+    \put(0.38400394,0.8990929){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\phi = \frac{\pi}{4}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{reentrant_lam_mu_art02.pdf}}%
+  \end{picture}%
+\endgroup%
