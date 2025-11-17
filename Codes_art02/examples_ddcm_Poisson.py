@@ -743,7 +743,7 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
         refsol.s = stildeexact(x)
         refsol.g = etildeexact(x)
         ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
-    elif(False):
+    elif(True):
         one_sample_per_element = False
         if(one_sample_per_element == True): # One point per element centroid
             X = interpolate(domain.msh.coordinates, domain.VDG0)
