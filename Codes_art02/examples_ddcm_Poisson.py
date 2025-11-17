@@ -1982,7 +1982,8 @@ def case_02(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_03(order_poly: str = 'Linear'):
  
-    list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS', 'Dual-ASGS']
+    #list_of_formulations = ['Natural','Equal-Order-uns','Equal-Order-fully','Primal-ASGS', 'Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
     norms = {key: [] for key in list_of_formulations}
 
     for form in norms.keys():
@@ -2012,8 +2013,8 @@ def case_03(order_poly: str = 'Linear'):
         function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
                                                       order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        #function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
-        #                                            order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
+                                                    order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
         # Store the errors
         for form, inner_dict in error.items():

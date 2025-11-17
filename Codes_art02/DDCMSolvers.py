@@ -298,20 +298,11 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
 
-            # bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
-            # bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
 
             #bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4,5,6)))
             #bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4,5,6)))
-            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4)))
-            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4)))
-
-            if Pprime == 'L2':
-                bc_lst.append(fd.DirichletBC(W.sub(5), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
-                bc_lst.append(fd.DirichletBC(W.sub(6), fd.Constant(0.0), "on_boundary"))
-                bc_lst.append(fd.DirichletBC(W.sub(7), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
-                bc_lst.append(fd.DirichletBC(W.sub(8), fd.Constant(0.0), "on_boundary"))
-                bc_lst.append(fd.DirichletBC(W.sub(9), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
             
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             
@@ -348,6 +339,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         
         elif flag_setting == 'Pure-Neumann':
 
+            '''
             # --- Remove DirichletBCs for s and mu (use weak imposition instead) ---
             # bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
             # bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
@@ -375,6 +367,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             # corner vertical
             bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0], 2))
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0], 2))
+            '''
 
             # Ractangle domain
             # bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), -s_boundary_vals(x)[0],  1))
