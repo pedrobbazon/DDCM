@@ -2012,8 +2012,8 @@ def case_03(order_poly: str = 'Linear'):
         function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
                                                       order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
-                                                    order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        #function_output['Dual-ASGS'] = main_ex0202_(formulation='VMS-Dual', hvalue=h, 
+        #                                            order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
