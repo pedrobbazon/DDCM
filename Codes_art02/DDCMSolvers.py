@@ -334,6 +334,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         # Set the boundary conditions accordingly 
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
+            
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
         
