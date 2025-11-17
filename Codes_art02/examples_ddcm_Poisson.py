@@ -750,7 +750,7 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
             xs = fd.assemble(X).dat.data
         else: # Sample points one a regular grid
             Ls = np.array([Lx, Ly])
-            Nsamples = 10
+            Nsamples = 100
             Nsampx, Nsampy  = Nsamples, Nsamples
             Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
             xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
