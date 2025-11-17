@@ -301,8 +301,10 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             # bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), "on_boundary"))
             # bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), "on_boundary"))
 
-            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4,5,6)))
-            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4,5,6)))
+            #bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4,5,6)))
+            #bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4,5,6)))
+            bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4)))
+            bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4)))
 
             if Pprime == 'L2':
                 bc_lst.append(fd.DirichletBC(W.sub(5), fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)]), "on_boundary"))
