@@ -2000,14 +2000,14 @@ def case_03(order_poly: str = 'Linear'):
         print(f' \t Solving h = {h}')
         print('===================================================')
         # Run main function
-        function_output['Natural'] = main_ex0101_(formulation = 'Natural',  hvalue=h,
-                                                      order_poly = order_poly, kwargs=get_stab_params('Natural'))
+        #function_output['Natural'] = main_ex0101_(formulation = 'Natural',  hvalue=h,
+        #                                              order_poly = order_poly, kwargs=get_stab_params('Natural'))
 
-        function_output['Equal-Order-uns'] = main_ex0101_(formulation='Equal-Order', hvalue=h,
-                                                      order_poly = order_poly, kwargs=get_stab_params('Equal-Order-uns'))
+        #function_output['Equal-Order-uns'] = main_ex0101_(formulation='Equal-Order', hvalue=h,
+        #                                              order_poly = order_poly, kwargs=get_stab_params('Equal-Order-uns'))
 
-        function_output['Equal-Order-fully'] = main_ex0101_(formulation='Equal-Order',  hvalue=h,
-                                                      order_poly = order_poly, kwargs=get_stab_params('Equal-Order-fully'))
+        #function_output['Equal-Order-fully'] = main_ex0101_(formulation='Equal-Order',  hvalue=h,
+        #                                              order_poly = order_poly, kwargs=get_stab_params('Equal-Order-fully'))
 
         function_output['Primal-ASGS'] = main_ex0202_(formulation='VMS-Primal', hvalue=h,
                                                       order_poly = order_poly, kwargs=get_stab_params('Primal-ASGS'))
