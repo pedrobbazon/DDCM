@@ -425,7 +425,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         ome = 2.0  # Frequency
         phi = 0.0   # Phase angle
         aux = (A / (ome * np.pi))
-        return [ aux*ome*np.pi* np.sin(ome * np.pi * x[0] + phi), aux*ome*np.pi * np.sin(ome * np.pi * x[1] + phi)]
+        return [ aux*ome*np.pi* np.sin(ome * np.pi * x[:,0] + phi), aux*ome*np.pi * np.sin(ome * np.pi * x[:,1] + phi)]
 
     # Propose a flux-gradient relationship based on the dataset  
     def etildeexact(x):
