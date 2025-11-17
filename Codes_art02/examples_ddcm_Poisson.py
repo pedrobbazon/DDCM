@@ -378,7 +378,6 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     h = fd.CellDiameter(domain.msh)
     x = fd.SpatialCoordinate(domain.msh)
 
-
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
@@ -502,7 +501,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     print('|> Reference domain and solution: Ok')
     
     x = fd.SpatialCoordinate(domain.msh)
-    if(False):
+    if(True):
         ddcm_data = PoissonDDCMData(domain, Analytical=False)
         x = fd.SpatialCoordinate(ddcm_data.domain.msh)
         gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
