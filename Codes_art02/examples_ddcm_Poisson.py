@@ -501,7 +501,7 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
     print('|> Reference domain and solution: Ok')
     
     x = fd.SpatialCoordinate(domain.msh)
-    if(True):
+    if(False):
         ddcm_data = PoissonDDCMData(domain, Analytical=False)
         x = fd.SpatialCoordinate(ddcm_data.domain.msh)
         gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
@@ -511,14 +511,14 @@ def main_ex0202_(formulation, hvalue, order_poly, kwargs):
         refsol.s = stildeexact(x)
         refsol.g = etildeexact(x)
         ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
-    elif(False):
+    elif(True):
         one_sample_per_element = False
         if(one_sample_per_element == True): # One point per element centroid
             X = interpolate(domain.msh.coordinates, domain.VDG0)
             xs = fd.assemble(X).dat.data
         else: # Sample points one a regular grid
             Ls = np.array([Lx, Ly])
-            Nsamples = 500
+            Nsamples = 100
             Nsampx, Nsampy  = Nsamples, Nsamples
             Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
             xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
@@ -1995,7 +1995,7 @@ def case_03(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125, 0.00625]:
+    for h in [0.02]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -2020,10 +2020,12 @@ def case_03(order_poly: str = 'Linear'):
             for norm in inner_dict.keys():
                 error[form][norm].append(function_output[form][norm])
 
+    '''
     # Save the results
     for form, inner_dict in error.items():
         results = DDCMSaveResults(errors=inner_dict, formulation=form)
         results.save_results(folder_name = 'Convergence_new', order_poly=order_poly)
+    '''
 
 
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
