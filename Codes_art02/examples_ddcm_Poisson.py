@@ -2314,7 +2314,7 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for i, h in enumerate([0.1]):
+    for i, h in enumerate([0.005, 0.01, 0.02, 0.04]):
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
