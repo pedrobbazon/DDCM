@@ -673,7 +673,7 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
         return [eexactnp(x)[0] + A*np.sin(ome*np.pi*x[:,0] + phi), eexactnp(x)[1] + A*np.sin(ome*np.pi*x[:,1] + phi)]
 
     def sexact(x):
-        A = fd.Constant(0.025)  # Amplitude
+        A = fd.Constant(0.0)  # Amplitude
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
@@ -681,7 +681,7 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     def sexactnp(x):
-        A = 0.025  # Amplitude
+        A = 0.0  # Amplitude
         eps = 1.0e-10
         met = np.sqrt(eexactnp(x)[0]**2 + eexactnp(x)[1]**2) + eps
         etn = [eexactnp(x)[0]/met, eexactnp(x)[1]/met]
