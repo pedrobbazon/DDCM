@@ -627,7 +627,7 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 1.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.0025)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
@@ -2275,7 +2275,7 @@ def case_06(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.02]:
+    for h in [0.002]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
