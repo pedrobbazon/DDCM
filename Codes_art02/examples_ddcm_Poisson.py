@@ -1905,9 +1905,9 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.125)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
@@ -2275,7 +2275,7 @@ def case_06(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.005, 0.01, 0.02, 0.04]:
+    for h in [0.04, 0.02, 0.01, 0.005]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -2314,7 +2314,7 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for i, h in enumerate([0.1, 0.05, 0.025, 0.0125]):
+    for i, h in enumerate([0.1, 0.05, 0.025]):
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
