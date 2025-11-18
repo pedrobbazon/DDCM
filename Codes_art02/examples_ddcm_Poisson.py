@@ -2379,7 +2379,7 @@ elif main_selector == 3:
     case_03(order_poly='Linear')
 
 elif main_selector == 4:
-    case_04(order_poly='Linear')
+    case_04(order_poly='Quadratic')
 
 elif main_selector == 5:
     case_05(order_poly='Linear')
