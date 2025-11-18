@@ -1655,8 +1655,6 @@ def main_ex05_(tt, formulation, hvalue, order_poly, kwargs):
 
     return norms_output
 
-
-
 # ========================================
 # Re-entrant coner: Gustavo's formulation
 # ========================================
@@ -1854,11 +1852,10 @@ def main_ex07_(formulation='Natural', hsize=0.1, case_corner=0, order_poly = 'Li
 
     return norms_output
 
-
 # ========================================
 # Re-entrant coner: Codina's formulation
 # ========================================
-def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id = i, **kwargs):
+def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **kwargs):
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
 
@@ -2020,7 +2017,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif (formulation == 'VMS-Dual'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     else:
         raise ValueError('Invalid formulation')
@@ -2314,7 +2311,7 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for i, h in enumerate([0.1, 0.05, 0.025]):
+    for h in [0.1, 0.05, 0.025]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -2331,8 +2328,7 @@ def case_04(order_poly = 'Linear'):
         # function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
         #                                             kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=1,  order_poly = 'Linear',
-                                                  id = i, kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
@@ -2362,7 +2358,7 @@ def case_05(order_poly = 'Linear'):
     # _ = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear',
     #                                             kwargs=get_stab_params('Primal-ASGS'))
 
-    _ = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=1,  order_poly = 'Linear',
+    _ = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=0,  order_poly = 'Linear',
                                               kwargs=get_stab_params('Dual-ASGS'))
 
 # ===============================================
