@@ -335,6 +335,8 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         bc_lst = []
         if flag_setting == 'Pure-Dirichlet':
 
+            print('Hello 1')
+
             L += u_boundary_vals(x)*fd.inner(delmu,n)   * fd.ds
             L += lmbd_boundary_vals(x)*fd.inner(dels,n) * fd.ds
         
@@ -371,6 +373,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             '''
 
             # Ractangle domain
+            print('Hello 2')
             bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0],  1))
             bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0],  2))
             bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), s_boundary_vals(x)[1],  3))
