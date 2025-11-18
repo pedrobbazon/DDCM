@@ -1901,11 +1901,11 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(100.0), 'kappa': fd.Constant(1.0),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
@@ -2020,7 +2020,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif (formulation == 'VMS-Dual'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
     else:
         raise ValueError('Invalid formulation')
