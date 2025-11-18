@@ -2275,7 +2275,7 @@ def case_06(order_poly: str = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.002]:
+    for h in [0.005, 0.01, 0.02, 0.04]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -2292,6 +2292,9 @@ def case_06(order_poly: str = 'Linear'):
             for norm in inner_dict.keys():
                 error[form][norm].append(function_output[form][norm])
 
+    for form, inner_dict in error.items():
+        results = DDCMSaveResults(errors=inner_dict, formulation=form)
+        results.save_results(folder_name = 'Convergence_new', order_poly=order_poly)
 
 
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation

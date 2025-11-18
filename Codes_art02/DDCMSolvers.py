@@ -1,6 +1,6 @@
 import firedrake as fd
 import numpy as np
-from firedrake.output import VTKFile
+#from firedrake.output import VTKFile
 from ddcm_classes import *
 
 #----------------------------------------------------------------
