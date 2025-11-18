@@ -1904,7 +1904,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.00025)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', -10.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', -10.0)),
@@ -1944,9 +1944,9 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0] ** 2 + eexact(x)[1] ** 2) + eps
         etn = fd.as_vector([eexact(x)[0] / met, eexact(x)[1] / met])
-        mst = met - A * met ** 3
+        mst = met
         return fd.as_vector([-mst * etn[0], -mst * etn[1]])
-
+    
     # by eq.(22)
     def muexact(x):
         return etilde(x) - eexact(x)
