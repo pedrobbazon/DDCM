@@ -1905,13 +1905,14 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', id
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
+        
 
     # We define the analytical expression for the potential field and its gradient
     def uexact(x):
