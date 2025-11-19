@@ -344,9 +344,12 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
 
             # --- Remove DirichletBCs for s and mu (use weak imposition instead) ---
-            # bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
-            # bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
+            '''
+            bc_lst.append(fd.DirichletBC(W.sub(0), s_boundary_vals(x),  'on_boundary'))
+            bc_lst.append(fd.DirichletBC(W.sub(4), mu_boundary_vals(x), 'on_boundary'))
+            '''
 
+            '''
             # bottom
             bc_lst.append(fd.DirichletBC(W.sub(0).sub(1), s_boundary_vals(x)[1], 1))
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1], 1))
@@ -382,7 +385,6 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0],  2))
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1],  3))
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1],  4))
-            '''
 
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             L += (u_boundary_vals(x))*fd.inner(delmu,n)   * (fd.ds(1)+fd.ds(2))
