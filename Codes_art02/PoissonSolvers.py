@@ -776,7 +776,7 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         
         # Add an option to interpolate or project the analytical solution
         print('--------')
-        print('This may cause problems for the singular solution at the moment of visualization')
+        print('Poisson Analytical: This may cause problems for the singular solution at the moment of visualization')
         print('--------')
 
         filename = dir_outs+'/s.pvd'        
