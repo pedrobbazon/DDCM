@@ -2032,7 +2032,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(id, f"mycodddcmsol_{formulation}")
+    ddcm_prob.solve(tt=int(1.0/hsize), f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -2338,7 +2338,7 @@ def case_04(order_poly = 'Linear'):
         # function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
         #                                             kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h,case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
