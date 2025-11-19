@@ -1922,11 +1922,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     '''
         
     def uexact(x):
-        angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
+        angle = fd.atan2(x[1], x[0])
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
         alpha = fd.pi/omega
-        print(float(alpha))
         return (r**alpha)*fd.sin(alpha*theta)
     
     '''

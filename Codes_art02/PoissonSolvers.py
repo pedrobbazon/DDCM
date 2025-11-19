@@ -774,8 +774,14 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
         Vflux = fd.VectorFunctionSpace(mesh, "CG", 1)
         Vpot = fd.FunctionSpace(mesh, "CG", 1)     
         
+        # Add an option to interpolate or project the analytical solution
+        print('--------')
+        print('This may cause problems for the singular solution at the moment of visualization')
+        print('--------')
+
         filename = dir_outs+'/s.pvd'        
         flux = fd.assemble(interpolate(sexact(x), Vflux))
+        #flux = fd.project(sexact(x), Vflux)
         flux.rename('Reference.Flux')
         VTKFile(filename, mode=mode).write(flux, time=tt)
 
