@@ -2000,7 +2000,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical,
                                  orders=[3, 3])
 
-    ref_prob.solve(0.0, "myrefsol")
+    ref_prob.solve(int(1.0/hsize), "myrefsol")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
