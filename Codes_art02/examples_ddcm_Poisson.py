@@ -1919,14 +1919,22 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
         r = fd.sqrt(x[0]**2 + x[1]**2)
         alpha = fd.pi / omega
         return (r ** alpha) * fd.sin(alpha * theta)
-    '''
-
+    
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
+    '''
+    
+    def uexact(x):
+        import ufl
+        theta = ufl.conditional(ufl.gt(ufl.atan_2(x[1], x[0]),0), ufl.atan_2(x[1], x[0]), ufl.atan_2(x[1], x[0]) + 2*ufl.pi)
+        r = ufl.sqrt(x[0]**2 + x[1]**2)
+        omega = 1.75*ufl.pi
+        alpha = ufl.pi/omega
+        return (r**alpha)*ufl.sin(alpha*theta)
 
     def eexact(x):
         return fd.grad(uexact(x))
