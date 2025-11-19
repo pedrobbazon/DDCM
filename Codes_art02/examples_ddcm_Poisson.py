@@ -1919,23 +1919,26 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
         r = fd.sqrt(x[0]**2 + x[1]**2)
         alpha = fd.pi / omega
         return (r ** alpha) * fd.sin(alpha * theta)
-    
+    '''
+        
     def uexact(x):
         angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
         alpha = fd.pi/omega
+        print(float(alpha))
         return (r**alpha)*fd.sin(alpha*theta)
-    '''
     
+    '''
     def uexact(x):
         import ufl
         eps = fd.Constant(1.0e-10)
-        theta = ufl.conditional(ufl.gt(ufl.atan2(x[1]+eps, x[0]+eps),0), ufl.atan2(x[1]+eps, x[0]+eps), ufl.atan2(x[1]+eps, x[0]+eps) + 2*ufl.pi)
+        theta = ufl.conditional(ufl.gt(ufl.atan2(x[1]+eps, x[0]+eps), -eps), ufl.atan2(x[1]+eps, x[0]+eps), ufl.atan2(x[1]+eps, x[0]+eps) + 2*ufl.pi)
         r = ufl.sqrt(x[0]**2 + x[1]**2) + fd.Constant(1.0e-10)
         omega = 1.5*ufl.pi
         alpha = ufl.pi/omega
         return (r**alpha)*ufl.sin(alpha*theta)
+    '''
 
     def eexact(x):
         return fd.grad(uexact(x))
@@ -2344,10 +2347,10 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=0,  order_poly = 'Linear',
+        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear',
                                                      kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=0,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
