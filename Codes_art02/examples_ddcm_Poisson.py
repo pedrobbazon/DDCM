@@ -1866,7 +1866,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     #  Create (or import) the computational domain/mesh and Compute a reference solution
     lc = hsize  # characteristic length of the mesh
     flag_singularity_refinement = True
-    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
+    mymeshfile, tags = CreateMeshReentrantCornerOriginal('reentrant', case_corner, lc, flag_singularity_refinement)
 
     if (case_corner == 0):
         omega = 1.75 * fd.pi
@@ -1949,10 +1949,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     def sexact(x):
         A = fd.Constant(0.0)  # 0.025 Amplitude
         eps = fd.Constant(1.0e-10)
-        met = fd.sqrt(eexact(x)[0] ** 2 + eexact(x)[1] ** 2) + eps
-        etn = fd.as_vector([eexact(x)[0] / met, eexact(x)[1] / met])
-        mst = met
-        return fd.as_vector([-mst * etn[0], -mst * etn[1]])
+        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
+        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
+        mst = met - A*met**3
+        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
     def muexact(x):
@@ -2032,7 +2032,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(0.0, f"mycodddcmsol_{formulation}")
+    ddcm_prob.solve(int(1.0/hsize), f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
