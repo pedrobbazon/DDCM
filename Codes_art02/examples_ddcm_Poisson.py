@@ -1930,9 +1930,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     
     def uexact(x):
         import ufl
-        theta = ufl.conditional(ufl.gt(ufl.atan2(x[1], x[0]),0), ufl.atan2(x[1], x[0]), ufl.atan2(x[1], x[0]) + 2*ufl.pi)
-        r = ufl.sqrt(x[0]**2 + x[1]**2)
-        omega = 1.75*ufl.pi
+        eps = fd.Constant(1.0e-10)
+        theta = ufl.conditional(ufl.gt(ufl.atan2(x[1]+eps, x[0]+eps),0), ufl.atan2(x[1]+eps, x[0]+eps), ufl.atan2(x[1]+eps, x[0]+eps) + 2*ufl.pi)
+        r = ufl.sqrt(x[0]**2 + x[1]**2) + fd.Constant(1.0e-10)
+        omega = 1.5*ufl.pi
         alpha = ufl.pi/omega
         return (r**alpha)*ufl.sin(alpha*theta)
 
