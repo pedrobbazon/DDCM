@@ -2307,7 +2307,7 @@ def case_06(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_04(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
 
     norms = {key: [] for key in list_of_formulations}
 
