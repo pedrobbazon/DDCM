@@ -2032,7 +2032,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(tt=int(1.0/hsize), f"mycodddcmsol_{formulation}")
+    ddcm_prob.solve(0.0, f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
