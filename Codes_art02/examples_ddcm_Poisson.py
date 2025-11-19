@@ -2401,5 +2401,5 @@ elif main_selector == 5:
     case_05(order_poly='Linear')
 
 elif main_selector == 6:
-    case_06(order_poly='Linear')
+    case_06(order_poly='Quadratic')
 
