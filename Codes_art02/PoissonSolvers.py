@@ -772,7 +772,7 @@ def PoissonAnalytical(domain, flag_quads, params, flag_setting,
 
         orderF, orderU = orders
         Vflux = fd.VectorFunctionSpace(mesh, "CG", 1)
-        Vpot = fd.FunctionSpace(mesh, "CG", orderU)     
+        Vpot = fd.FunctionSpace(mesh, "CG", 1)     
         
         filename = dir_outs+'/s.pvd'        
         flux = fd.assemble(interpolate(sexact(x), Vflux))
