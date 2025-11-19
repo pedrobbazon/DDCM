@@ -2312,7 +2312,7 @@ def case_06(order_poly: str = 'Linear'):
 
     for form, inner_dict in error.items():
         results = DDCMSaveResults(errors=inner_dict, formulation=form)
-        results.save_results(folder_name = 'Convergence_new', order_poly=order_poly)
+        results.save_results(folder_name = 'Convergence_base', order_poly=order_poly)
 
 
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
