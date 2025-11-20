@@ -2622,7 +2622,7 @@ def case_07(order_poly = 'Linear'):
 
         function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
