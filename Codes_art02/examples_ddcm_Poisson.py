@@ -2150,7 +2150,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     # We define the analytical expression for the potential field and its gradient
         
     def uexact(x):
-        alpha = fd.Constant(20.0)
+        alpha = fd.Constant(25.0)
         r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
@@ -2161,13 +2161,13 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     #    return fd.grad(uexact(x))
 
     def eexact(x):
-        alpha = fd.Constant(20.0)
+        alpha = fd.Constant(25.0)
         r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
         tanh_val = fd.tanh(alpha * (r - r0))
         sech2_val = 1 - tanh_val**2
-        runit = fd.as_vector([(x[0]-0.5)/r, (x[1]-0.5)/r])
+        runit = fd.as_vector([(x[0]-0.5)/runit, (x[1]-0.5)/runit])
         val = alpha * sech2_val * runit
         return val
 
@@ -2626,7 +2626,7 @@ def case_07(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125]:
+    for h in [0.05, 0.025, 0.0125, 0.00625]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
