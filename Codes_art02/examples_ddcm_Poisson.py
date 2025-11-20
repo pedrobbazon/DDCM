@@ -2139,7 +2139,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
