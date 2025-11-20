@@ -2151,14 +2151,25 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         
     def uexact(x):
         alpha = fd.Constant(20.0)
-        r0 = fd.Constant(0.4)
+        r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
         val = 1.0 + fd.tanh(alpha*(r - r0))
         return val
 
+    #def eexact(x):
+    #    return fd.grad(uexact(x))
+
     def eexact(x):
-        return fd.grad(uexact(x))
+        alpha = fd.Constant(20.0)
+        r0 = fd.Constant(0.3)
+        eps = fd.Constant(1.0e-12)
+        r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
+        tanh_val = fd.tanh(alpha * (r - r0))
+        sech2_val = 1 - tanh_val**2
+        runit = fd.as_vector([(x[0]-0.5)/r, (x[1]-0.5)/r])
+        val = alpha * sech2_val * runit
+        return val
 
     # Propose an analytical expression for lambda
     def lmbdexact(x):
@@ -2180,7 +2191,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         eps = fd.Constant(1.0e-10)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
+        mst = met
         return fd.as_vector([-mst*etn[0], -mst*etn[1]])
     
     # by eq.(22)
