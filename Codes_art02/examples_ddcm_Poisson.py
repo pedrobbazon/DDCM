@@ -2151,7 +2151,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         
     def uexact(x):
         alpha = fd.Constant(20.0)
-        r0 = fd.sqrt(0.5**2 + 0.5**2)
+        r0 = fd.Constant(0.4)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
         val = 1.0 + fd.tanh(alpha*(r - r0))
@@ -2615,7 +2615,7 @@ def case_07(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.1, 0.05, 0.025]:
+    for h in [0.05, 0.025, 0.0125]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
