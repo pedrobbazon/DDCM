@@ -1888,10 +1888,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.0)),
+                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', h),
@@ -2318,7 +2318,7 @@ def case_06(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_04(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
+    list_of_formulations = ['Primal-OSGS']#, 'Dual-ASGS']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2346,9 +2346,9 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        #function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
 
         # Store the errors
