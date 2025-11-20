@@ -613,10 +613,10 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.125)), # era 0
+                  'cu': fd.Constant(kwargs.get('cu', 0.125)), # base era 0
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.125)), # era 0
+                  'cl': fd.Constant(kwargs.get('cl', 0.125)), # base era 0
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', h),
@@ -626,9 +626,9 @@ def main_ex0303_(formulation, hvalue, order_poly, kwargs):
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)), 
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.25)), # era 1
+                  'cs': fd.Constant(kwargs.get('cs', 0.25)), # base era 1
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0125)), # era 0.125
+                  'cm': fd.Constant(kwargs.get('cm', 0.0125)), # base era 0.125
                   'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
