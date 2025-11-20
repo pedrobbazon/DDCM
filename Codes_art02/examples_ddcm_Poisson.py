@@ -2612,7 +2612,7 @@ def case_05(order_poly = 'Linear'):
     
 def case_07(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
+    list_of_formulations = ['Primal-OSGS', 'Dual-OSGS']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2626,14 +2626,14 @@ def case_07(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.05, 0.025, 0.0125, 0.00625]:
+    for h in [0.05, 0.025, 0.0125]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-OSGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
