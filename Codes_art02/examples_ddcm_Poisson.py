@@ -2139,7 +2139,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'difus': fd.Constant(1.0),
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
@@ -2147,7 +2147,6 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
         
-
     # We define the analytical expression for the potential field and its gradient
         
     def uexact(x):
@@ -2181,15 +2180,15 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
     # Propose a flux-gradient relationship based on the dataset
     def etilde(x):
-        A = fd.Constant(0.05)  # Amplitude
-        ome = fd.Constant(4.0)  # Frequency
+        A = fd.Constant(0.15)  # Amplitude
+        ome = fd.Constant(5.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
         return fd.as_vector([eexact(x)[0] + A * fd.sin(ome * fd.pi * x[0] + phi),
                              eexact(x)[1] + A * fd.sin(ome * fd.pi * x[1] + phi)])
 
     def sexact(x):
         A = fd.Constant(0.0)  # 0.025 Amplitude
-        eps = fd.Constant(1.0e-10)
+        eps = fd.Constant(1.0e-12)
         met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
         etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
         mst = met
@@ -2613,7 +2612,7 @@ def case_05(order_poly = 'Linear'):
     
 def case_07(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS']#, 'Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2634,7 +2633,7 @@ def case_07(order_poly = 'Linear'):
 
         function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
 
-        #function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
