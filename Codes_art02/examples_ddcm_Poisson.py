@@ -2631,9 +2631,9 @@ def case_07(order_poly = 'Linear'):
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
+        function_output['Primal-OSGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-OSGS'))
+        function_output['Dual-OSGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-OSGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
