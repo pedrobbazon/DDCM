@@ -25,6 +25,7 @@ from save_results_ddcm import *
 from ddcm_utils import *
 import constants as ct
 
+parameters["form_compiler"]["quadrature"]["degree"] = 5
 
 # ===============================================
 # Gustavos's fomulation
