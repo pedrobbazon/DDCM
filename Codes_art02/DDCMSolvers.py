@@ -374,8 +374,12 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
             bc_lst.append(fd.DirichletBC(W.sub(4).sub(1), mu_boundary_vals(x)[1], cornerhor))
 
             # corner vertical
-            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0], 2))
-            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0], 2))
+            def cornerver(x):
+                eps = fd.Constant(1.0e-9)
+                return fd.near(x[0], 0) and 'on_boundary' and fd.conditional(fd.lt(x[1], -eps), True, False)
+
+            bc_lst.append(fd.DirichletBC(W.sub(0).sub(0), s_boundary_vals(x)[0], cornerver))
+            bc_lst.append(fd.DirichletBC(W.sub(4).sub(0), mu_boundary_vals(x)[0], cornerver))
 
             # Ractangle domain
             '''

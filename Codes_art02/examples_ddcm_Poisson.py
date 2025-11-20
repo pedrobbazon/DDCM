@@ -1866,7 +1866,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
     #  Create (or import) the computational domain/mesh and Compute a reference solution
     lc = hsize  # characteristic length of the mesh
     flag_singularity_refinement = True
-    mymeshfile, tags = CreateMeshReentrantCornerOriginal('reentrant', case_corner, lc, flag_singularity_refinement)
+    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
 
     if (case_corner == 0):
         omega = 1.75 * fd.pi
@@ -2346,8 +2346,7 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear',
-                                                     kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
 
         function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
