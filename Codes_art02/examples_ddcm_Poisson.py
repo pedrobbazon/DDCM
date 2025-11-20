@@ -2163,11 +2163,11 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     def eexact(x):
         alpha = fd.Constant(25.0)
         r0 = fd.Constant(0.3)
-        eps = fd.Constant(1.0e-12)
-        r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
+        eps = fd.Constant(1.0e-10)
+        r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2)
         tanh_val = fd.tanh(alpha * (r - r0))
         sech2_val = 1 - tanh_val**2
-        runit = fd.as_vector([(x[0]-0.5)/runit, (x[1]-0.5)/runit])
+        runit = fd.as_vector([(x[0]-0.5)/(r+eps), (x[1]-0.5)/(r+eps)])
         val = alpha * sech2_val * runit
         return val
 
