@@ -2130,7 +2130,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
                   'cl': fd.Constant(kwargs.get('cl', 0.125)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': kwargs.get('Pprime', 'OSS'),
                   'L0': kwargs.get('L0', h),
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
@@ -2142,7 +2142,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': kwargs.get('Pprime', 'OSS'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
