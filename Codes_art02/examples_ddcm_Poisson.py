@@ -1871,7 +1871,7 @@ def main_ex077_(formulation='Natural', hvalue=0.1, order_poly = 'Linear', **kwar
 
     # These would be the ones corresponding to the analytical solution we propose
     params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0),
-              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1.0),
+              'theta': fd.Constant(kwargs.get('theta', 0.0)), 'kappa': fd.Constant(1000.0),
               'alpha': fd.Constant(kwargs.get('alpha', 0.0)), 'beta': fd.Constant(kwargs.get('beta', 0.0)),
               'gamma': fd.Constant(kwargs.get('gamma', 0.0)), 'eta': fd.Constant(kwargs.get('eta', 0.0)),
               'ls': h, 'lmu': h, 'formulation': formulation}
