@@ -2360,10 +2360,17 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
     # Propose an analytical expression for lambda
     def lmbdexact(x):
-        A = fd.Constant(1.05)  # Increase A slightly for more variation
-        ome = fd.Constant(2.0)  # Frequency
-        phi = fd.Constant(0.0)  # Phase angle
-        return fd.cos(ome * fd.pi * x[0] + phi)*fd.cos(ome * fd.pi * x[1] + phi)
+        alpha = fd.Constant(15.0)
+        r0 = fd.Constant(0.3)
+        eps = fd.Constant(1.0e-12)
+        r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
+        val = 1.0 + 0.5*fd.tanh(alpha*(r - r0))
+        return val
+        
+    #A = fd.Constant(1.05)  # Increase A slightly for more variation
+    #ome = fd.Constant(2.0)  # Frequency
+    #phi = fd.Constant(0.0)  # Phase angle
+    #return fd.cos(ome * fd.pi * x[0] + phi)*fd.cos(ome * fd.pi * x[1] + phi)
 
     # Propose a flux-gradient relationship based on the dataset
     def etilde(x):
