@@ -2137,10 +2137,10 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
+                  'cu': fd.Constant(kwargs.get('cu', 0.025)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.025)),
+                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.025)),
                   'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
@@ -2173,10 +2173,10 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
     # Propose an analytical expression for lambda
     def lmbdexact(x):
-        A = fd.Constant(0.05)  # Increase A slightly for more variation
+        A = fd.Constant(1.05)  # Increase A slightly for more variation
         ome = fd.Constant(2.0)  # Frequency
         phi = fd.Constant(0.0)  # Phase angle
-        return - (A / (ome * fd.pi)) * (fd.cos(ome * fd.pi * x[0] + phi) + fd.cos(ome * fd.pi * x[1] + phi))
+        return fd.cos(ome * fd.pi * x[0] + phi)*fd.cos(ome * fd.pi * x[1] + phi)
 
     # Propose a flux-gradient relationship based on the dataset
     def etilde(x):
