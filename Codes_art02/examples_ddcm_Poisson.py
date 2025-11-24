@@ -2312,12 +2312,12 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.0)),
+                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.025)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'OSS'),
+                  'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', h),
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
@@ -2327,9 +2327,9 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.25)),
                   'cs': fd.Constant(kwargs.get('cs', 1.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.1250)),
-                  'Pprime': kwargs.get('Pprime', 'OSS'),
+                  'cl': fd.Constant(kwargs.get('cl', 0.025)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.125)),
+                  'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
@@ -2812,7 +2812,7 @@ def case_05(order_poly = 'Linear'):
     
 def case_07(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-OSGS', 'Dual-OSGS'] # 'Equal-Order-fully']
+    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS'] # 'Equal-Order-fully']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2826,16 +2826,16 @@ def case_07(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [4.0*0.00625, 2.0*0.00625, 0.00625]:
+    for h in [0.025, 0.0125, 0.00625, 0.003125]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
 
         #function_output['Equal-Order-fully'] = main_ex077_(formulation='Equal-Order', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Equal-Order-fully'))
 
-        function_output['Primal-OSGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-OSGS'))
+        function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-OSGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-OSGS'))
+        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
@@ -2845,7 +2845,7 @@ def case_07(order_poly = 'Linear'):
     # Save the results
     for form, inner_dict in error.items():
         results = DDCMSaveResults(errors=inner_dict, formulation=form)
-        results.save_results(folder_name='Convergence_reentrant', order_poly=order_poly)
+        results.save_results(folder_name='Convergence_TANH', order_poly=order_poly)
 
 # ===============================================
 # Main
@@ -2869,5 +2869,5 @@ elif main_selector == 6:
     case_06(order_poly='Quadratic')
 
 elif main_selector == 7:
-    case_07(order_poly='Linear')
+    case_07(order_poly='Quadratic')
 
