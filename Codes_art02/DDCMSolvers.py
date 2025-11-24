@@ -205,6 +205,7 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
         if Pprime == 'Identity':
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)
+            print(orderU, orderS)
         elif Pprime == 'L2' or Pprime == 'OSS':
             SF = fd.FunctionSpace(mesh, family="CG", degree=orderU)
             VF = fd.VectorFunctionSpace(mesh, family="CG", degree=orderS)

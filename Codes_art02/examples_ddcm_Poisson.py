@@ -2317,19 +2317,19 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
                   'cl': fd.Constant(kwargs.get('cl', 0.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': kwargs.get('Pprime', 'OSS'),
                   'L0': kwargs.get('L0', h),
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
     elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.025)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.025)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.025)),
-                  'cm': fd.Constant(kwargs.get('cm', 0.0)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
+                  'cm': fd.Constant(kwargs.get('cm', 0.1250)),
+                  'Pprime': kwargs.get('Pprime', 'OSS'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
@@ -2337,7 +2337,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     # We define the analytical expression for the potential field and its gradient
         
     def uexact(x):
-        alpha = fd.Constant(25.0)
+        alpha = fd.Constant(35.0)
         r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
@@ -2348,7 +2348,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     #    return fd.grad(uexact(x))
 
     def eexact(x):
-        alpha = fd.Constant(25.0)
+        alpha = fd.Constant(35.0)
         r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-10)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2)
@@ -2360,7 +2360,7 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
     # Propose an analytical expression for lambda
     def lmbdexact(x):
-        alpha = fd.Constant(15.0)
+        alpha = fd.Constant(25.0)
         r0 = fd.Constant(0.3)
         eps = fd.Constant(1.0e-12)
         r = fd.sqrt((x[0]-0.5)**2 + (x[1]-0.5)**2) + eps
@@ -2456,7 +2456,13 @@ def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         kappa = params['kappa']
         return 0.5 * fd.inner(g - gdata, g - gdata) * fd.dx + 0.5 * kappa * fd.inner(s - sdata, s - sdata) * fd.dx
 
-    ords = [1, 1]
+    if order_poly == 'Linear':
+        ords = [1,1]                                  
+    elif order_poly == 'Quadratic':
+        ords = [2,2]
+    elif order_poly == 'Cubic':
+        ords = [3,3]
+
     if (formulation == 'VMS-Primal'):
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
                                 params=params)
@@ -2806,7 +2812,7 @@ def case_05(order_poly = 'Linear'):
     
 def case_07(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS', 'Dual-ASGS', 'Equal-Order-fully']
+    list_of_formulations = ['Primal-OSGS', 'Dual-OSGS'] # 'Equal-Order-fully']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2820,16 +2826,16 @@ def case_07(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.0125, 0.00625, 0.003125]:
+    for h in [4.0*0.00625, 2.0*0.00625, 0.00625]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        function_output['Equal-Order-fully'] = main_ex077_(formulation='Equal-Order', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Equal-Order-fully'))
+        #function_output['Equal-Order-fully'] = main_ex077_(formulation='Equal-Order', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Equal-Order-fully'))
 
-        function_output['Primal-ASGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-OSGS'] = main_ex09_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-OSGS'))
 
-        function_output['Dual-ASGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-OSGS'] = main_ex09_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-OSGS'))
 
         # Store the errors
         for form, inner_dict in error.items():
@@ -2863,5 +2869,5 @@ elif main_selector == 6:
     case_06(order_poly='Quadratic')
 
 elif main_selector == 7:
-    case_07(order_poly='Quadratic')
+    case_07(order_poly='Linear')
 
