@@ -167,10 +167,10 @@ import numpy as np
 def CreateMesh3Inclusions(meshname):
 
     # User defined data
-    bottom_wall = 0
-    right_wall  = 1
-    top_wall    = 2
-    left_wall   = 3
+    bottom_wall = 3
+    right_wall  = 2
+    top_wall    = 4
+    left_wall   = 1
 
     inclusion_marker = 3
     background_marker = 2
@@ -206,7 +206,7 @@ def CreateMesh3Inclusions(meshname):
 
     background_surfaces = []
     other_surfaces = []
-    tags = {'bottom_wall': 3, 'right_wall': 2, 'top_wall': 4, 'left_wall': 1, 'inclusion_marker': 3, 'background_marker': 2}
+    tags = {'bottom_wall': bottom_wall, 'right_wall': right_wall, 'top_wall': top_wall, 'left_wall': left_wall, 'inclusion_marker': 3, 'background_marker': 2}
     for domain in whole_domain[0]:
         com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
         mass = gmsh.model.occ.getMass(domain[0], domain[1])
@@ -233,14 +233,22 @@ def CreateMesh3Inclusions(meshname):
     # Tag the left and right boundaries
     left = []
     right = []
+    bottom = []
+    top = []
     for line in gmsh.model.getEntities(dim=1):
         com = gmsh.model.occ.getCenterOfMass(line[0], line[1])
         if np.isclose(com[0], 0.0):
             left.append(line[1])
         if np.isclose(com[0], Lx):
             right.append(line[1])
+        if np.isclose(com[1], 0.0):
+            bottom.append(line[1])
+        if np.isclose(com[1], Ly):
+            top.append(line[1])
     gmsh.model.addPhysicalGroup(1, left, left_wall)
     gmsh.model.addPhysicalGroup(1, right, right_wall)
+    gmsh.model.addPhysicalGroup(1, bottom, bottom_wall)
+    gmsh.model.addPhysicalGroup(1, top, top_wall)
 
     if(False):
         gmsh.model.mesh.field.add("Distance", 1)
