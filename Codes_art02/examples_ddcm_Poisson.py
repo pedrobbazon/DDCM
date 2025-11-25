@@ -2567,7 +2567,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     def mybcvalsu(x):
         return fd.Constant(0.0)
 
-    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvals)
+    forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvalsu)
 
     # These would be the ones corresponding to the analytical solution we propose
     h = fd.CellDiameter(domain.msh)
@@ -3028,7 +3028,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.02, 0.01, 0.005]:
+    for h in [0.01]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -3062,5 +3062,5 @@ elif main_selector == 7:
     case_07(order_poly='Quadratic')
 
 elif main_selector == 8:
-    case_07(order_poly='Quadratic')
+    case_08(order_poly='Quadratic')
 
