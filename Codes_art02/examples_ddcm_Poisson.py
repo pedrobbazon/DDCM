@@ -2681,7 +2681,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     def mydual_source(x):
         return fd.Constant(0.0)
 
-    ddcm_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvalsu,  mydual_source, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
+    ddcm_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvalsu, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
 
     if (formulation == 'VMS-Primal'):
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
