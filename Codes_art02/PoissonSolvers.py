@@ -864,8 +864,8 @@ def PoissonPrimal(domain, flag_quads, params, flag_setting,
     v = fd.TestFunction(CG)
     n = fd.FacetNormal(mesh)
 
-    kappa = params['kappa']
-    Res  = (kappa(u))*fd.dot(fd.grad(u), fd.grad(v))*fd.dx(degree=4)
+    difus = params['difus']
+    Res  = (difus(u))*fd.dot(fd.grad(u), fd.grad(v))*fd.dx(degree=4)
 
     if(flag_setting == 'Pure-Dirichlet'):
         
