@@ -2653,7 +2653,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
         ddcm_data = PoissonDDCMData(domain, Analytical=False, fluxex=None, gradex=None)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
-        ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
+        ddcm_data.DistributeCoordBased(xs, tt=0.0 ,flag_plot=True)
 
     # Solve the Data Driven problem: This problem should share the same
     # forcings (bcs, sources, etc.) as the standard problem above
