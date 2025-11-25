@@ -2604,10 +2604,10 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.025)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
+                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.025)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
                   'cm': fd.Constant(kwargs.get('cm', 0.0)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
