@@ -2596,7 +2596,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
                   'cl': fd.Constant(kwargs.get('cl', 0.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': kwargs.get('Pprime', 'OSS'),
                   'L0': kwargs.get('L0', h),
                   'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation','VMS-Primal')}
@@ -2607,7 +2607,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
                   'cs': fd.Constant(kwargs.get('cs', 1.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
+                  'Pprime': kwargs.get('Pprime', 'OSS'), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1',fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
@@ -3031,9 +3031,9 @@ def case_08(order_poly = 'Linear'):
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        _ = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
+        _ = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-OSGS'))
 
-        _ = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        _ = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-OSGS'))
 
 # ===============================================
 # Main
