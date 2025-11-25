@@ -2692,7 +2692,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(int(1.0/hsize), f"mycodddcmsol_{formulation}")
+    ddcm_prob.solve(int(1.0/hvalue), f"mycodddcmsol_{formulation}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
