@@ -2586,7 +2586,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     #ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
 
-    ref_prob.solve(int(1.0/hsize), "myrefsol")
+    ref_prob.solve(int(1.0/hvalue), "myrefsol")
 
     raise Exception('kkkkk')
 
