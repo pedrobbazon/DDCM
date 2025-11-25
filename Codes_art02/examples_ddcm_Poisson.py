@@ -3062,5 +3062,5 @@ elif main_selector == 7:
     case_07(order_poly='Quadratic')
 
 elif main_selector == 8:
-    case_08(order_poly='Quadratic')
+    case_08(order_poly='Linear')
 
