@@ -2588,8 +2588,6 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
 
     ref_prob.solve(int(1.0/hvalue), "myrefsol")
 
-    raise Exception('kkkkk')
-
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
@@ -2623,11 +2621,44 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     # Read or sample some synthetic data from a standard solution:
     # The idea is to produce some plausible data similar to what an experiment would deliver
 
-    # The data will be sampled from the analytical expresion on-the-fly
-    ddcm_data = PoissonDDCMData(domain, Analytical=True, fluxex=stilde, gradex=etilde)
+    if(False):
+        ddcm_data = PoissonDDCMData(domain, Analytical=False)
+        x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+        gradu_vals = fd.project(etildeexact(x), domain.VDG0).dat.data
+        flux_vals = fd.project(stildeexact(x), domain.VDG0).dat.data
+        ddcm_data.SetSampledData(gradu_vals, flux_vals, add_origin=False, data_file=None)
+        refsol = DDCMSolution()
+        refsol.s = stildeexact(x)
+        refsol.g = etildeexact(x)
+        ddcm_data.Distribute(refsol, flag_project='Project-VDG0', flag_plot=True)
+    elif(True):
+        one_sample_per_element = True
+        if(one_sample_per_element == True): # One point per element centroid
+            X = interpolate(domain.msh.coordinates, domain.VDG0)
+            xs = fd.assemble(X).dat.data
+        else: # Sample points one a regular grid
+            Ls = np.array([Lx, Ly])
+            Nsamples = 1000
+            Nsampx, Nsampy  = Nsamples, Nsamples
+            Dx, Dy = Ls[0] / Nsampx, Ls[1] / Nsampy
+            xls = np.linspace(0.5*Dx, Ls[0]-0.5*Dx, Nsampx)
+            yls = np.linspace(0.5*Dy, Ls[1]-0.5*Dy, Nsampy)
+            xlsg, ylsg = np.meshgrid(xls, yls)
+            xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
+
+        gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
+        sproj = fd.project(ref_prob.std_solution.s, domain.VDG0, name='Reference.Grad(u)')
+        gradu_samples = np.array(gproj.at(xs))
+        flux_samples  = np.array(sproj.at(xs))
+
+        ddcm_data = PoissonDDCMData(domain, Analytical=False, fluxex=None, gradex=None)
+        ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+        ddcm_data.DistributeCoordBased(xs, tt=Nsamples ,flag_plot=True)
 
     # Solve the Data Driven problem: This problem should share the same
     # forcings (bcs, sources, etc.) as the standard problem above
+
+    raise Exception('llllll')
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
@@ -3035,7 +3066,7 @@ def case_08(order_poly = 'Linear'):
 
         function_output['Primal-ASGS'] = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        #function_output['Dual-ASGS'] = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
 # ===============================================
 # Main
