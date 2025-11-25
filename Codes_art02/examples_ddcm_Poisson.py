@@ -2684,10 +2684,10 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     ddcm_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvalsu, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
 
     if (formulation == 'VMS-Primal'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', ddcm_forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif (formulation == 'VMS-Dual'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', ddcm_forcings, DDCMStabCod, orders=ords,
                                 params=params)
     else:
         raise ValueError('Invalid formulation')
