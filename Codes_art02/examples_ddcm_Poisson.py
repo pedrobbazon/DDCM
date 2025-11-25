@@ -2545,7 +2545,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     source = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
-    sigmaA, sigmaB = 1.0, 100.0
+    sigmaA, sigmaB = 0.0, 100.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
@@ -2583,35 +2583,33 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         return fd.Constant(sigmaB)
 
     stdparams = {'difus': difus, 'reaction': reaction}
-    #ref_prob = PoissonStdProblem(domain, params, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
+    #ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
 
     ref_prob.solve(int(1.0/hvalue), "myrefsol")
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-                  'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(sigmaB), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+                  'cu': fd.Constant(kwargs.get('cu', 0.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', 'Identity'),
                   'L0': kwargs.get('L0', h),
-                  'L1': kwargs.get('L1', fd.Constant(1.0) / h),
-                  'formulation': kwargs.get('formulation', 'VMS-Primal')}
+                  'L1': kwargs.get('L1',  fd.Constant(1.0) / h),
+                  'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
-        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
-                  'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.125)),
-                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
+        params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(sigmaB), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
+                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
+                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': kwargs.get('Pprime', 'Identity'), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
-                  'L1': kwargs.get('L1', fd.Constant(1.0)),
+                  'L1': kwargs.get('L1',fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
 
     print('----------------------------------------------------------')
