@@ -304,6 +304,11 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
 
             #bc_lst.append(fd.DirichletBC(W.sub(1), u_boundary_vals(x), (1,2,3,4,5,6)))
             #bc_lst.append(fd.DirichletBC(W.sub(3), lmbd_boundary_vals(x), (1,2,3,4,5,6)))
+
+        if flag_setting == 'Pure-Neumann':
+
+            L -= ( fd.inner(s_boundary_vals(x), n) * dellam ) * fd.ds
+            L -= ( fd.inner(mu_boundary_vals(x),n) * delu  ) * fd.ds
             
         elif flag_setting == 'Mixed-Dirichlet-Neumann':
             

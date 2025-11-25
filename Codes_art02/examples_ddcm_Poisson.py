@@ -2658,8 +2658,6 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     # Solve the Data Driven problem: This problem should share the same
     # forcings (bcs, sources, etc.) as the standard problem above
 
-    raise Exception('llllll')
-
     print('----------------------------------------------------------')
     print('|> Data Driven solution begins')
 
@@ -2674,11 +2672,22 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     elif order_poly == 'Cubic':
         ords = [3,3]
 
+    def mylmbd_boundary_vals(x):
+        return fd.Constant(0.0)
+    def myflux_boundary_vals(x):
+        return fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+    def mymu_boundary_vals(x):
+        return fd.as_vector([fd.Constant(0.0), fd.Constant(0.0)])
+    def mydual_source(x):
+        return fd.Constant(0.0)
+
+    ddcm_forcings = PoissonForcingData(mysource, mysurfaceflux, mybcvalsu,  mydual_source, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
+
     if (formulation == 'VMS-Primal'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif (formulation == 'VMS-Dual'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
                                 params=params)
     else:
         raise ValueError('Invalid formulation')
@@ -2689,46 +2698,6 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
     x = fd.SpatialCoordinate(ddcm_data.domain.msh)
-
-    # Compute some error norms
-    norms_output = {key: None for key in
-                    ['h', 'L2u', 'H1u', 'L2l', 'H1l' 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m',
-                     'H1semi_u', 'H1semi_l', 'Hdivsemi_s', 'Hdivsemi_e', 'Hdivsemi_m']}
-
-    norms_output['h'] = hsize
-    norms_output['L2u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='L2')
-    norms_output['L2l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='L2')
-    norms_output['L2s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='L2')
-    norms_output['L2e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='L2')
-    norms_output['L2m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='L2')
-
-    if formulation == 'VMS-Primal':
-        norms_output['H1u'] = fd.errornorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
-        # norms_output['H1semi_u'] = error_seminorm(uexact(x), ddcm_prob.ddcm_solution.u, norm_type='H1')
-
-        norms_output['H1l'] = fd.errornorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-        # norms_output['H1semil'] = error_seminorm(lmbdexact(x), ddcm_prob.ddcm_solution.lmd, norm_type='H1')
-
-        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-        # norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-
-        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-        # norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-
-        norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-        # norms_output['Hdivsemi_m'] =error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-
-    elif formulation == 'VMS-Dual':
-        norms_output['Hdiv_s'] = fd.errornorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-        # norms_output['Hdivsemi_s'] = error_seminorm(sexact(x), ddcm_prob.ddcm_solution.s, norm_type='Hdiv')
-
-        norms_output['Hdiv_e'] = fd.errornorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-        # norms_output['Hdivsemi_e'] = error_seminorm(eexact(x), ddcm_prob.ddcm_solution.g, norm_type='Hdiv')
-
-        norms_output['Hdiv_m'] = fd.errornorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-        # norms_output['Hdivsemi_m'] = error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
-    else:
-        raise ValueError('Formulation not recognized')
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution: Ok')
@@ -3066,7 +3035,7 @@ def case_08(order_poly = 'Linear'):
 
         function_output['Primal-ASGS'] = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        #function_output['Dual-ASGS'] = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        function_output['Dual-ASGS'] = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
 # ===============================================
 # Main
