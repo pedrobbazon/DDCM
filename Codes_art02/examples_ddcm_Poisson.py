@@ -2545,7 +2545,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     source = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
-    sigmaA, sigmaB = 1.0, 10.0
+    sigmaA, sigmaB = 1.0, 100.0
     ninclusions = 3
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
