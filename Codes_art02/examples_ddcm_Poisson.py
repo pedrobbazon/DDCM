@@ -2706,7 +2706,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     print('|> End DDCM Computation | Total time= %1.1f s' % elapsed_time)
     print('==========================================================')
 
-    return norms_output
+    return 0
 
 # ===============================================
 # Helper functions
@@ -3033,9 +3033,9 @@ def case_08(order_poly = 'Linear'):
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        function_output['Primal-ASGS'] = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
+        _ = main_ex10_(formulation='VMS-Primal', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        function_output['Dual-ASGS'] = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        _ = main_ex10_(formulation='VMS-Dual', hvalue=h, order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
 # ===============================================
 # Main
