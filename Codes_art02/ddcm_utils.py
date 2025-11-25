@@ -206,7 +206,7 @@ def CreateMesh3Inclusions(meshname):
 
     background_surfaces = []
     other_surfaces = []
-    tags = {'bottom_wall': 0, 'right_wall': 1, 'top_wall': 2, 'left_wall': 3, 'inclusion_marker': 3, 'background_marker': 2}
+    tags = {'bottom_wall': 3, 'right_wall': 2, 'top_wall': 4, 'left_wall': 1, 'inclusion_marker': 3, 'background_marker': 2}
     for domain in whole_domain[0]:
         com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
         mass = gmsh.model.occ.getMass(domain[0], domain[1])
