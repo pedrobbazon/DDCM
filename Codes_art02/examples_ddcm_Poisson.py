@@ -2591,10 +2591,10 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(sigmaB), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.025)),
+                  'cu': fd.Constant(kwargs.get('cu', 2.0)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.0125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.5)),
-                  'cl': fd.Constant(kwargs.get('cl', 1.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 2.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', Pprime),
                   'L0': kwargs.get('L0', h),
@@ -2602,10 +2602,10 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
                   'formulation': kwargs.get('formulation','VMS-Primal')}
     elif formulation == 'VMS-Dual':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(sigmaB), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
-                  'ce': fd.Constant(kwargs.get('ce', 0.25)),
-                  'cs': fd.Constant(kwargs.get('cs', 1.0)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
+                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
+                  'ce': fd.Constant(kwargs.get('ce', 0.0125)),
+                  'cs': fd.Constant(kwargs.get('cs', 2.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 1.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', Pprime), # this is redundant, because Iam calling with ASGS option
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
