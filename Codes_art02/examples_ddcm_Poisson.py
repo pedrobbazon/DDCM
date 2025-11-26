@@ -2647,13 +2647,11 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
         gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
         sproj = fd.project(ref_prob.std_solution.s, domain.VDG0, name='Reference.Grad(u)')
         point_evaluator = fd.PointEvaluator(domain.msh, xs)
-        gradu_samples_0 = np.array(point_evaluator.evaluate(gproj))
-        gradu_samples = np.array(gproj.at(xs))
-        print(gradu_samples, '\n', gradu_samples_0)
-        flux_samples_0 = np.array(point_evaluator.evaluate(sproj))
-        flux_samples  = np.array(sproj.at(xs))
-
-        raise Exception ('kkkk')
+        gradu_samples = np.array(point_evaluator.evaluate(gproj))
+        flux_samples = np.array(point_evaluator.evaluate(sproj))
+        # Old fashion
+        #gradu_samples = np.array(gproj.at(xs))
+        #flux_samples  = np.array(sproj.at(xs))
 
         ddcm_data = PoissonDDCMData(domain, Analytical=False, fluxex=None, gradex=None)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
@@ -3032,7 +3030,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.01]:
+    for h in [0.05]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
