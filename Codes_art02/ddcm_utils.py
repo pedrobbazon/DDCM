@@ -164,7 +164,7 @@ import numpy as np
 #--------------------------------------------------------------------
 #--- Preprocess: Mesh generation, boundary and region identification
 
-def CreateMesh3Inclusions(meshname):
+def CreateMesh3Inclusions(meshname, hsize):
 
     # User defined data
     bottom_wall = 3
@@ -266,7 +266,7 @@ def CreateMesh3Inclusions(meshname):
         gmsh.option.setNumber("Mesh.Algorithm", 2)
         gmsh.model.mesh.generate(2) 
     else:
-        gmsh.model.mesh.setSize(gmsh.model.getEntities(0), 0.02)
+        gmsh.model.mesh.setSize(gmsh.model.getEntities(0), hsize)
         gmsh.model.mesh.generate(2)
         
     filename = meshname+".msh"

@@ -2535,7 +2535,7 @@ def main_ex10_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     print('|::| Reference Domain and solution begins ...')
     print('---------------------------------------------')
 
-    mymeshfile, tags = CreateMesh3Inclusions('inclusions')
+    mymeshfile, tags = CreateMesh3Inclusions('inclusions', hvalue)
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
