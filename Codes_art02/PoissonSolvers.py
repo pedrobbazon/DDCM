@@ -902,8 +902,11 @@ def PoissonPrimal(domain, flag_quads, params, flag_setting,
             mode = 'a'
 
         filename = dir_outs+'/flux.pvd'
-        spl = fd.project(s, domain.VDG0, name='Reference.Grad(u)')
+        spl = fd.project(s, domain.VDG0, name='Reference.Flux')
         VTKFile(filename, mode=mode).write(spl, time=tt)
+        filename = dir_outs+'/fluxCG1.pvd'
+        splc = fd.project(s, domain.CCG1, name='Reference.Flux')
+        VTKFile(filename, mode=mode).write(splc, time=tt)
 
         filename = dir_outs+'/u.pvd'
         u.rename('Reference.Potential')
