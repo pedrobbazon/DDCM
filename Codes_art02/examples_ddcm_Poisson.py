@@ -2550,9 +2550,9 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
     Lp = fd.Constant(sigmaA)*vp*fd.dx(background_marker)
-    Lp += fd.Constant(sigmaB/2.0)*vp*fd.dx(inclusion_marker+0)
-    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+1)
-    Lp += fd.Constant(sigmaB*2.0)*vp*fd.dx(inclusion_marker+2)
+    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+0)
+    Lp += fd.Constant(-sigmaB)*vp*fd.dx(inclusion_marker+1)
+    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+2)
 
     sourceh = fd.Function(Qh, name='sigma')
     opts={"ksp_type": "preonly", "pc_type": "lu"}
