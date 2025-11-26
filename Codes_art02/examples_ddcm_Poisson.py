@@ -2591,10 +2591,10 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(sigmaB), 'kappa': fd.Constant(1.0), 'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.0)),
+                  'cu': fd.Constant(kwargs.get('cu', 0.25)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.0)),
+                  'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': kwargs.get('Pprime', Pprime),
                   'L0': kwargs.get('L0', h),
