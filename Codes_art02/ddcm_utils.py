@@ -289,10 +289,10 @@ def CreateMesh4Inclusions(meshname, hsize):
     ninclusions = 3
     Lx = 1.0
     Ly = 1.0
-    R1 = 0.2
-    R2 = 0.2
-    R3 = 0.2
-    R4 = 0.2
+    R1 = 0.175
+    R2 = 0.175
+    R3 = 0.175
+    R4 = 0.175
     c1x, c1y = 0.255, 0.25
     c2x, c2y = 0.75, 0.255
     c3x, c3y = 0.75, 0.75
