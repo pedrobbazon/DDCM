@@ -2619,6 +2619,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
 
     # Read or sample some synthetic data from a standard solution:
     # The idea is to produce some plausible data similar to what an experiment would deliver
+    raise Exception('jjjjjjjj')
 
     if(False):
         ddcm_data = PoissonDDCMData(domain, Analytical=False)
@@ -3031,7 +3032,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.05]:
+    for h in [0.005]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
