@@ -2535,7 +2535,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     print('|::| Reference Domain and solution begins ...')
     print('---------------------------------------------')
 
-    mymeshfile, tags = CreateMesh3Inclusions('inclusions', hvalue)
+    mymeshfile, tags = CreateMesh4Inclusions('inclusions', hvalue)
 
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
@@ -2546,13 +2546,14 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
     sigmaA, sigmaB = 0.0, 1000.0
-    ninclusions = 3
+    ninclusions = 4
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
     Lp = fd.Constant(sigmaA)*vp*fd.dx(background_marker)
-    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+0)
-    Lp += fd.Constant(-sigmaB)*vp*fd.dx(inclusion_marker+1)
-    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+2)
+    Lp += fd.Constant(0.5*sigmaB)*vp*fd.dx(inclusion_marker+0)
+    Lp += fd.Constant(sigmaB)*vp*fd.dx(inclusion_marker+1)
+    Lp += fd.Constant(2.0*sigmaB)*vp*fd.dx(inclusion_marker+2)
+    Lp += fd.Constant(4.0*sigmaB)*vp*fd.dx(inclusion_marker+2)
 
     sourceh = fd.Function(Qh, name='sigma')
     opts={"ksp_type": "preonly", "pc_type": "lu"}

@@ -275,6 +275,121 @@ def CreateMesh3Inclusions(meshname, hsize):
 
     return filename, tags
 
+def CreateMesh4Inclusions(meshname, hsize):
+
+    # User defined data
+    bottom_wall = 3
+    right_wall  = 2
+    top_wall    = 4
+    left_wall   = 1
+
+    inclusion_marker = 3
+    background_marker = 2
+
+    ninclusions = 3
+    Lx = 1.0
+    Ly = 1.0
+    R1 = 0.2
+    R2 = 0.2
+    R3 = 0.2
+    R4 = 0.2
+    c1x, c1y = 0.25, 0.25
+    c2x, c2y = 0.75, 0.25
+    c3x, c3y = 0.75, 0.75
+    c3x, c3y = 0.25, 0.75
+
+    gmsh.initialize()
+
+    mass1 = np.pi*R1**2
+    mass2 = np.pi*R2**2
+    mass3 = np.pi*R3**2
+    mass3 = np.pi*R4**2
+    mass_inc = mass1 + mass2 + mass3 + mass4
+
+    # We create one rectangle and the circular inclusion
+    background = gmsh.model.occ.addRectangle(0, 0, 0, Lx, Ly)
+    inclusion1 = gmsh.model.occ.addDisk(c1x, c1y, 0, R1, R1)
+    inclusion2 = gmsh.model.occ.addDisk(c2x, c2y, 0, R2, R2)
+    inclusion3 = gmsh.model.occ.addDisk(c3x, c3y, 0, R3, R3)
+    inclusion4 = gmsh.model.occ.addDisk(c4x, c4y, 0, R4, R4)
+    #gmsh.model.occ.synchronize()
+    all_inclusions = [(2, inclusion1)]
+    all_inclusions.extend([(2, inclusion2)])
+    all_inclusions.extend([(2, inclusion3)])
+    all_inclusions.extend([(2, inclusion4)])
+    whole_domain = gmsh.model.occ.fragment([(2, background)], all_inclusions)
+    gmsh.model.occ.synchronize()
+
+    background_surfaces = []
+    other_surfaces = []
+    tags = {'bottom_wall': bottom_wall, 'right_wall': right_wall, 'top_wall': top_wall, 'left_wall': left_wall, 'inclusion_marker': 3, 'background_marker': 2}
+    for domain in whole_domain[0]:
+        com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
+        mass = gmsh.model.occ.getMass(domain[0], domain[1])
+        print(com, mass)
+        # Identify the square by its mass
+        if np.isclose(mass, (Lx*Ly - mass_inc)):
+            gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=background_marker)
+            background_surfaces.append(domain)
+        # Identify the inner circles by its center of mass
+        elif np.isclose(np.linalg.norm(com), np.sqrt((c1x)**2 + (c1y)**2)):
+            gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker)
+            other_surfaces.append(domain)
+        elif np.isclose(np.linalg.norm(com), np.sqrt((c2x)**2 + (c2y)**2)):
+            gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker+1)
+            other_surfaces.append(domain)
+        elif np.isclose(np.linalg.norm(com), np.sqrt((c3x)**2 + (c3y)**2)):
+            gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker+2)
+            other_surfaces.append(domain)
+        elif np.isclose(np.linalg.norm(com), np.sqrt((c4x)**2 + (c4y)**2)):
+            gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker+3)
+            other_surfaces.append(domain)
+        
+    # Tag the left and right boundaries
+    left = []
+    right = []
+    bottom = []
+    top = []
+    for line in gmsh.model.getEntities(dim=1):
+        com = gmsh.model.occ.getCenterOfMass(line[0], line[1])
+        if np.isclose(com[0], 0.0):
+            left.append(line[1])
+        if np.isclose(com[0], Lx):
+            right.append(line[1])
+        if np.isclose(com[1], 0.0):
+            bottom.append(line[1])
+        if np.isclose(com[1], Ly):
+            top.append(line[1])
+    gmsh.model.addPhysicalGroup(1, left, left_wall)
+    gmsh.model.addPhysicalGroup(1, right, right_wall)
+    gmsh.model.addPhysicalGroup(1, bottom, bottom_wall)
+    gmsh.model.addPhysicalGroup(1, top, top_wall)
+
+    if(False):
+        gmsh.model.mesh.field.add("Distance", 1)
+        edges = gmsh.model.getBoundary(other_surfaces, oriented=False)
+        gmsh.model.mesh.field.setNumbers(1, "EdgesList", [e[1] for e in edges])
+        gmsh.model.mesh.field.add("Threshold", 2)
+        gmsh.model.mesh.field.setNumber(2, "IField", 1)
+        r = 0.02
+        gmsh.model.mesh.field.setNumber(2, "LcMin", r / 4)
+        gmsh.model.mesh.field.setNumber(2, "LcMax", 3 * r)
+        gmsh.model.mesh.field.setNumber(2, "DistMin", 3 * r)
+        gmsh.model.mesh.field.setNumber(2, "DistMax", 3 * r)
+        gmsh.model.mesh.field.setAsBackgroundMesh(2)
+        # Generate mesh
+        gmsh.option.setNumber("Mesh.Algorithm", 2)
+        gmsh.model.mesh.generate(2) 
+    else:
+        gmsh.model.mesh.setSize(gmsh.model.getEntities(0), hsize)
+        gmsh.model.mesh.generate(2)
+        
+    filename = meshname+".msh"
+    gmsh.write(filename)
+    gmsh.finalize()
+
+    return filename, tags
+
 def CreateMesh1Inclusions(meshname):
 
     ninclusions = 1
