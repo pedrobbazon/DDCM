@@ -287,16 +287,16 @@ def CreateMesh4Inclusions(meshname, hsize):
     background_marker = 5
 
     ninclusions = 3
-    Lx = 1.0
-    Ly = 1.0
-    R1 = 0.175
-    R2 = 0.175
-    R3 = 0.175
-    R4 = 0.175
-    c1x, c1y = 0.255, 0.25
-    c2x, c2y = 0.75, 0.255
-    c3x, c3y = 0.75, 0.75
-    c4x, c4y = 0.25, 0.75
+    Lx = 2.0
+    Ly = 2.0
+    R1 = 0.2
+    R2 = 0.2
+    R3 = 0.2
+    R4 = 0.2
+    c1x, c1y = 0.5005, 0.5
+    c2x, c2y = 1.5, 0.5005
+    c3x, c3y = 1.5, 1.5
+    c4x, c4y = 0.5, 1.5005
 
     gmsh.initialize()
 
