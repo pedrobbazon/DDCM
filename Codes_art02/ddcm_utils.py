@@ -296,14 +296,14 @@ def CreateMesh4Inclusions(meshname, hsize):
     c1x, c1y = 0.25, 0.25
     c2x, c2y = 0.75, 0.25
     c3x, c3y = 0.75, 0.75
-    c3x, c3y = 0.25, 0.75
+    c4x, c4y = 0.25, 0.75
 
     gmsh.initialize()
 
     mass1 = np.pi*R1**2
     mass2 = np.pi*R2**2
     mass3 = np.pi*R3**2
-    mass3 = np.pi*R4**2
+    mass4 = np.pi*R4**2
     mass_inc = mass1 + mass2 + mass3 + mass4
 
     # We create one rectangle and the circular inclusion
