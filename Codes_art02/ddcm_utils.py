@@ -283,8 +283,8 @@ def CreateMesh4Inclusions(meshname, hsize):
     top_wall    = 4
     left_wall   = 1
 
-    inclusion_marker = 3
-    background_marker = 2
+    inclusion_marker = 6
+    background_marker = 5
 
     ninclusions = 3
     Lx = 1.0
@@ -322,7 +322,8 @@ def CreateMesh4Inclusions(meshname, hsize):
 
     background_surfaces = []
     other_surfaces = []
-    tags = {'bottom_wall': bottom_wall, 'right_wall': right_wall, 'top_wall': top_wall, 'left_wall': left_wall, 'inclusion_marker': 3, 'background_marker': 2}
+    tags = {'bottom_wall': bottom_wall, 'right_wall': right_wall, 'top_wall': top_wall, 'left_wall': left_wall, 
+            'inclusion_marker': inclusion_marker, 'background_marker': background_marker}
     for domain in whole_domain[0]:
         com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
         mass = gmsh.model.occ.getMass(domain[0], domain[1])
