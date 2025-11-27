@@ -2619,7 +2619,6 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
 
     # Read or sample some synthetic data from a standard solution:
     # The idea is to produce some plausible data similar to what an experiment would deliver
-    raise Exception('jjjjjjjj')
 
     if(False):
         ddcm_data = PoissonDDCMData(domain, Analytical=False)
@@ -2647,7 +2646,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
             xs = np.dstack([xlsg, ylsg]).reshape(Nsampx*Nsampy, 2)
 
         gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
-        sproj = fd.project(ref_prob.std_solution.s, domain.VDG0, name='Reference.Grad(u)')
+        sproj = fd.project(ref_prob.std_solution.s, domain.VDG0, name='Reference.Flux')
         point_evaluator = fd.PointEvaluator(domain.msh, xs)
         gradu_samples = np.array(point_evaluator.evaluate(gproj))
         flux_samples = np.array(point_evaluator.evaluate(sproj))
@@ -3032,7 +3031,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.005]:
+    for h in [0.05]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
