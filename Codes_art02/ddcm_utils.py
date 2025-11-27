@@ -283,7 +283,7 @@ def CreateMesh4Inclusions(meshname, hsize):
     top_wall    = 4
     left_wall   = 1
 
-    inclusion_marker = 6
+    inclusion_marker = 60
     background_marker = 5
 
     ninclusions = 3
