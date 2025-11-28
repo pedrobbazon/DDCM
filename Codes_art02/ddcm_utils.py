@@ -282,7 +282,6 @@ def CreateMesh4Inclusions(meshname, hsize):
     right_wall  = 2
     top_wall    = 4
     left_wall   = 1
-
     inclusion_marker = 6
     background_marker = 5
 
@@ -391,12 +390,20 @@ def CreateMesh4Inclusions(meshname, hsize):
 
     return filename, tags
 
-def CreateMesh1Inclusions(meshname):
+def CreateMesh1Inclusions(meshname, hsize):
+
+    # User defined data
+    bottom_wall = 3
+    right_wall  = 2
+    top_wall    = 4
+    left_wall   = 1
+    inclusion_marker = 6
+    background_marker = 5
 
     ninclusions = 1
-    Lx = 2.0
-    Ly = 2.0
-    R1 = 0.5
+    Lx = 1.0
+    Ly = 1.0
+    R1 = 0.25
 
     gmsh.initialize()
 
@@ -415,7 +422,8 @@ def CreateMesh1Inclusions(meshname):
 
         background_surfaces = []
         other_surfaces = []
-        tags = {'bottom_wall': 0, 'right_wall': 1, 'top_wall': 2, 'left_wall': 3, 'inclusion_marker': 3, 'background_marker': 2}
+        tags = {'bottom_wall': bottom_wall, 'right_wall': right_wall, 'top_wall': top_wall, 'left_wall': left_wall, 
+                'inclusion_marker': inclusion_marker, 'background_marker': background_marker}
         for domain in whole_domain[0]:
             com = gmsh.model.occ.getCenterOfMass(domain[0], domain[1])
             mass = gmsh.model.occ.getMass(domain[0], domain[1])
@@ -431,14 +439,22 @@ def CreateMesh1Inclusions(meshname):
         # Tag the left and right boundaries
         left = []
         right = []
+        bottom = []
+        top = []
         for line in gmsh.model.getEntities(dim=1):
             com = gmsh.model.occ.getCenterOfMass(line[0], line[1])
             if np.isclose(com[0], 0.0):
                 left.append(line[1])
             if np.isclose(com[0], Lx):
                 right.append(line[1])
+            if np.isclose(com[1], 0.0):
+                bottom.append(line[1])
+            if np.isclose(com[1], Ly):
+                top.append(line[1])
         gmsh.model.addPhysicalGroup(1, left, left_wall)
         gmsh.model.addPhysicalGroup(1, right, right_wall)
+        gmsh.model.addPhysicalGroup(1, bottom, bottom_wall)
+        gmsh.model.addPhysicalGroup(1, top, top_wall)
 
     if(False):
         gmsh.model.mesh.field.add("Distance", 1)
@@ -456,7 +472,7 @@ def CreateMesh1Inclusions(meshname):
         gmsh.option.setNumber("Mesh.Algorithm", 2)
         gmsh.model.mesh.generate(2) 
     else:
-        gmsh.model.mesh.setSize(gmsh.model.getEntities(0), 0.02)
+        gmsh.model.mesh.setSize(gmsh.model.getEntities(0), hsize)
         gmsh.model.mesh.generate(2)
         
     filename = meshname+".msh"
