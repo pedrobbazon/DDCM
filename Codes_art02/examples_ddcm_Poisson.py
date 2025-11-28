@@ -2545,7 +2545,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     source = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
-    sigmaA, sigmaB = 0.0, 4000.0
+    sigmaA, sigmaB = 0.0, 100.0
     ninclusions = 1
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
@@ -2584,7 +2584,6 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     #ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
     ref_prob.solve(int(1.0/hvalue), "myrefsol")
-    raise Exception('fjfjfjfj')
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
@@ -3028,7 +3027,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.005]:
+    for h in [0.025]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
