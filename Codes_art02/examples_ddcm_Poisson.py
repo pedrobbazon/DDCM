@@ -2545,7 +2545,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     source = fd.TrialFunction(Qh)
     vp = fd.TestFunction(Qh)
     ap = source*vp*fd.dx
-    sigmaA, sigmaB = 0.0, 100.0
+    sigmaA, sigmaB = 0.0, 1000.0
     ninclusions = 1
     background_marker = tags['background_marker']
     inclusion_marker = tags['inclusion_marker']
