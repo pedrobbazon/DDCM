@@ -2586,8 +2586,9 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     stdparams = {'difus': difus, 'reaction': reaction}
     #ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
-
     ref_prob.solve(int(1.0/hvalue), "myrefsol")
+
+    raise Exception('kkkk')
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
@@ -3031,7 +3032,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.05]:
+    for h in [0.005]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
