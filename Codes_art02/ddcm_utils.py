@@ -414,7 +414,7 @@ def CreateMesh1Inclusions(meshname, hsize):
     if proc == 0:
         # We create one rectangle and the circular inclusion
         background = gmsh.model.occ.addRectangle(0, 0, 0, Lx, Ly)
-        inclusion1 = gmsh.model.occ.addDisk(1.0, 1.0, 0, R1, R1)
+        inclusion1 = gmsh.model.occ.addDisk(Lx/2.0, Ly/2.0, 0, R1, R1)
         gmsh.model.occ.synchronize()
         all_inclusions = [(2, inclusion1)]
         whole_domain = gmsh.model.occ.fragment([(2, background)], all_inclusions)
@@ -433,7 +433,7 @@ def CreateMesh1Inclusions(meshname, hsize):
                 gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=background_marker)
                 background_surfaces.append(domain)
             # Identify the inner circle by its center of mass
-            elif np.isclose(np.linalg.norm(com), np.sqrt((1.0)**2 + (1.0)**2)):
+            elif np.isclose(np.linalg.norm(com), np.sqrt((Lx/2.0)**2 + (Ly/2.0)**2)):
                 gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker)
     
         # Tag the left and right boundaries
