@@ -3030,7 +3030,7 @@ def case_07(order_poly = 'Linear'):
 def case_08(order_poly = 'Linear'):
     
     function_output = {}
-    for h in [0.005]:
+    for h in [0.05]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
