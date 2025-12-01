@@ -2536,7 +2536,6 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     print('---------------------------------------------')
 
     mymeshfile, tags = CreateMesh1Inclusions('inclusions', hvalue)
-
     nsd, Ls, Ns = 2, [1.0, 1.0], [100, 100]
     domain = ComputationalDomain(nsd, Ls, Ns, meshfile=mymeshfile, flag_quads=False)
 
@@ -2583,7 +2582,24 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     stdparams = {'difus': difus, 'reaction': reaction}
     #ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonMixedHdiv, orders=[1,0])
     ref_prob = PoissonStdProblem(domain, stdparams, 'Pure-Neumann', forcings, None, PoissonPrimal, orders=[1])
-    ref_prob.solve(int(1.0/hvalue), "myrefsol")
+    ref_prob.solve(0.0, "myrefsol")
+
+    # First attempt to compute the exact solution using scipy
+
+    # Get the mesh coordinates
+    coords = domain.msh.coordinates.dat.data_ro
+
+    # Calculate exact physical fields
+    u_ex, e_ex, s_ex = exact_solution_reaction_diffusion_radial(domain.msh, x = coords[:, 0], y = coords[:, 1],
+                                                                sigma=1000.0, kappa=1.0)
+    # Save to visualize in paraview
+    u_ex.rename('u_exact')
+    e_ex.rename('e_exact')
+    s_ex.rename('s_exact')
+    VTKFile('exact_fields'+'/u_exact.pvd', mode='w').write(u_ex, project_output=False, time=0.0)
+    VTKFile('exact_fields'+'/e_exact.pvd', mode='w').write(e_ex, project_output=False, time=0.0)
+    VTKFile('exact_fields'+'/s_exact.pvd', mode='w').write(s_ex, project_output=False, time=0.0)
+
 
     # Set physical constants and formulation parameters
     if formulation == 'VMS-Primal':
@@ -2643,12 +2659,12 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
 
         gproj = fd.project(ref_prob.std_solution.g, domain.VDG0, name='Reference.Grad(u)')
         sproj = fd.project(ref_prob.std_solution.s, domain.VDG0, name='Reference.Flux')
-        point_evaluator = fd.PointEvaluator(domain.msh, xs)
-        gradu_samples = np.array(point_evaluator.evaluate(gproj))
-        flux_samples = np.array(point_evaluator.evaluate(sproj))
+        # point_evaluator = fd.PointEvaluator(domain.msh, xs)
+        # gradu_samples = np.array(point_evaluator.evaluate(gproj))
+        # flux_samples = np.array(point_evaluator.evaluate(sproj))
         # Old fashion
-        #gradu_samples = np.array(gproj.at(xs))
-        #flux_samples  = np.array(sproj.at(xs))
+        gradu_samples = np.array(gproj.at(xs))
+        flux_samples  = np.array(sproj.at(xs))
 
         ddcm_data = PoissonDDCMData(domain, Analytical=False, fluxex=None, gradex=None)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
@@ -2683,7 +2699,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     ddcm_forcings = PoissonForcingData(mysource, myflux_boundary_vals, mybcvalsu, mylmbd_boundary_vals, mymu_boundary_vals, mydual_source)
 
     if (formulation == 'VMS-Primal'):
-        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', ddcm_forcings, DDCMStabCod, orders=ords,
+        ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Dirichlet', ddcm_forcings, DDCMStabCod, orders=ords,
                                 params=params)
     elif (formulation == 'VMS-Dual'):
         ddcm_prob = DDCMProblem(ddcm_data, my_obj_func, None, 'Pure-Neumann', ddcm_forcings, DDCMStabCod, orders=ords,
@@ -2691,12 +2707,18 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(int(1.0/hvalue), f"mycodddcmsol_{formulation}_{Pprime}")
+    ddcm_prob.solve(0.0, f"mycodddcmsol_{formulation}_{Pprime}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
-    x = fd.SpatialCoordinate(ddcm_data.domain.msh)
+
+    norms_output = {key: None for key in ['h', 'L2u', 'H1u', 'L2l', 'H1l', 'L2s', 'L2e', 'L2m', 'Hdiv_s', 'Hdiv_e', 'Hdiv_m']}
+
+    norms_output['h'] = hvalue
+    norms_output['L2u'] = fd.errornorm(u_ex, ddcm_prob.ddcm_solution.u, norm_type='L2')
+    norms_output['L2e'] = fd.errornorm(e_ex, ddcm_prob.ddcm_solution.g, norm_type='L2')
+    norms_output['L2s'] = fd.errornorm(s_ex, ddcm_prob.ddcm_solution.s, norm_type='L2')
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution: Ok')
@@ -2705,7 +2727,7 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
     print('|> End DDCM Computation | Total time= %1.1f s' % elapsed_time)
     print('==========================================================')
 
-    return 0
+    return norms_output
 
 # ===============================================
 # Helper functions
@@ -3025,20 +3047,44 @@ def case_07(order_poly = 'Linear'):
         results.save_results(folder_name='Convergence_TANH', order_poly=order_poly)
 
 def case_08(order_poly = 'Linear'):
-    
+
+    list_of_formulations = ['Primal-ASGS']
+
+    norms = {key: [] for key in list_of_formulations}
+
+    for form in norms.keys():
+        norms[form] = get_norm_list(form)
+
+    error = {}
+    for form, norm_list in norms.items():
+        error[form] = {}
+        for norm in norm_list:
+            error[form][norm] = []
+
     function_output = {}
-    for h in [0.025]:
+    for h in [0.1, 0.05, 0.025, 0.0125]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
 
-        _ = main_ex10_(formulation='VMS-Primal', hvalue=h, Pprime='Identity', order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-ASGS'] = main_ex10_(formulation='VMS-Primal', hvalue=h, Pprime='Identity', order_poly=order_poly, kwargs=get_stab_params('Primal-ASGS'))
 
-        _ = main_ex10_(formulation='VMS-Dual', hvalue=h, Pprime='Identity', order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
+        # _ = main_ex10_(formulation='VMS-Dual', hvalue=h, Pprime='Identity', order_poly=order_poly, kwargs=get_stab_params('Dual-ASGS'))
 
-        _ = main_ex10_(formulation='VMS-Primal', hvalue=h, Pprime='OSS', order_poly=order_poly, kwargs=get_stab_params('Primal-OSGS'))
+        # _ = main_ex10_(formulation='VMS-Primal', hvalue=h, Pprime='OSS', order_poly=order_poly, kwargs=get_stab_params('Primal-OSGS'))
 
-        _ = main_ex10_(formulation='VMS-Dual', hvalue=h, Pprime='OSS', order_poly=order_poly, kwargs=get_stab_params('Dual-OSGS'))
+        # _ = main_ex10_(formulation='VMS-Dual', hvalue=h, Pprime='OSS', order_poly=order_poly, kwargs=get_stab_params('Dual-OSGS'))
+
+        # Store the errors
+        for form, inner_dict in error.items():
+            for norm in inner_dict.keys():
+                error[form][norm].append(function_output[form][norm])
+
+    # Save the results
+    for form, inner_dict in error.items():
+        results = DDCMSaveResults(errors=inner_dict, formulation=form)
+        results.save_results(folder_name='Convergence_inclusion', order_poly=order_poly)
+
 
 # ===============================================
 # Main

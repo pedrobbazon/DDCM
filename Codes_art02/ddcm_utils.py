@@ -1,6 +1,7 @@
 import firedrake as fd
 import gmsh as gm
 import matplotlib.pyplot as plt
+import scipy as sp
 
 def PlotPoissonData(lst_data_files, flag_type_plot = 'magnitude'):
     
@@ -435,6 +436,7 @@ def CreateMesh1Inclusions(meshname, hsize):
             # Identify the inner circle by its center of mass
             elif np.isclose(np.linalg.norm(com), np.sqrt((Lx/2.0)**2 + (Ly/2.0)**2)):
                 gmsh.model.addPhysicalGroup(domain[0], [domain[1]], tag=inclusion_marker)
+                other_surfaces.append(domain)
     
         # Tag the left and right boundaries
         left = []
@@ -456,13 +458,14 @@ def CreateMesh1Inclusions(meshname, hsize):
         gmsh.model.addPhysicalGroup(1, bottom, bottom_wall)
         gmsh.model.addPhysicalGroup(1, top, top_wall)
 
-    if(False):
+    inclusion_refinement =  True
+    if inclusion_refinement:
         gmsh.model.mesh.field.add("Distance", 1)
         edges = gmsh.model.getBoundary(other_surfaces, oriented=False)
         gmsh.model.mesh.field.setNumbers(1, "EdgesList", [e[1] for e in edges])
         gmsh.model.mesh.field.add("Threshold", 2)
         gmsh.model.mesh.field.setNumber(2, "IField", 1)
-        r = 0.04
+        r = hsize
         gmsh.model.mesh.field.setNumber(2, "LcMin", r / 2)
         gmsh.model.mesh.field.setNumber(2, "LcMax", 2 * r)
         gmsh.model.mesh.field.setNumber(2, "DistMin", 1 * r)
@@ -480,6 +483,50 @@ def CreateMesh1Inclusions(meshname, hsize):
     gmsh.finalize()
 
     return filename, tags
+
+def exact_solution_reaction_diffusion_radial(mesh, x:np.ndarray, y:np.ndarray, sigma:float, kappa:float, x0 = 0.5, y0 = 0.5, R = 0.25):
+
+    # Convert to radius
+    r = np.sqrt((x - x0) ** 2 + (y - y0) ** 2)
+    lambda_val = np.sqrt(sigma / kappa)
+    u = np.zeros_like(r)
+
+    # Region I: r <= R
+    mask_inner = r <= R
+    if np.any(mask_inner):
+        r_in = r[mask_inner]
+        u[mask_inner] = (
+                1 - lambda_val * R * sp.special.kv(1, lambda_val * R) * sp.special.iv(0, lambda_val * r_in)
+        )
+
+    # Region II: r > R
+    mask_outer = r > R
+    if np.any(mask_outer):
+        r_out = r[mask_outer]
+        u[mask_outer] = (
+                lambda_val * R * sp.special.iv(1, lambda_val * R) * sp.special.kv(0, lambda_val * r_out)
+        )
+
+    # Now we assign the computed data to a firedrake function
+    """
+    Note that we can directly assign the computed values of u to u_exact, because in a 
+    CG1 space the degrees of freedom are located at the mesh vertices.
+    """
+    # u
+    U = fd.FunctionSpace(mesh, "CG", 1)
+    u_exact = fd.Function(U)
+    u_exact.dat.data[:] = u
+
+    # e
+    E = fd.VectorFunctionSpace(mesh, "CG", 1)
+    e_exact = fd.project(fd.grad(u_exact), E)
+
+    # s
+    S = fd.VectorFunctionSpace(mesh, "CG", 1)
+    s_exact = fd.project(- fd.Constant(kappa) * fd.grad(u_exact), S)
+
+    return u_exact, e_exact, s_exact
+
 
 def CreateMeshReentrantCornerOriginal(meshname, case=1, lc=0.1, flag_singularity_refinement=True):
     # Cases 1, 2 and 3 consider non-convex geometries. 
