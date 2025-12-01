@@ -2668,6 +2668,10 @@ def main_ex10_(formulation, hvalue=0.1, Pprime='Identity', order_poly = 'Linear'
 
         ddcm_data = PoissonDDCMData(domain, Analytical=False, fluxex=None, gradex=None)
         ddcm_data.SetSampledData(gradu_samples, flux_samples, add_origin=True, data_file='myDATA.txt')
+
+        noise_params = {'type': 'gaussian', 'mean': 0.0, 'std': 3.0e-10}
+        ddcm_data.AddNoisetoData(noise_params, data_file='myDATA.txt')
+
         ddcm_data.DistributeCoordBased(xs, tt=0.0 ,flag_plot=True)
 
     # Solve the Data Driven problem: This problem should share the same
