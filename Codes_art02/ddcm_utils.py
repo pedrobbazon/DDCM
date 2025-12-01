@@ -458,7 +458,7 @@ def CreateMesh1Inclusions(meshname, hsize):
         gmsh.model.addPhysicalGroup(1, bottom, bottom_wall)
         gmsh.model.addPhysicalGroup(1, top, top_wall)
 
-    inclusion_refinement =  True
+    inclusion_refinement =  False
     if inclusion_refinement:
         gmsh.model.mesh.field.add("Distance", 1)
         edges = gmsh.model.getBoundary(other_surfaces, oriented=False)
