@@ -1,0 +1,97 @@
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'inclusion_u_s_primal_dual_ASGS.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{461.09316368bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.92214954)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.04500848,0.58144957){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{-8.9e-07}\end{tabular}}}}}%
+    \put(0.04500848,0.87505172){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{1.0}\end{tabular}}}}}%
+    \put(0.04500848,0.66959229){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.3}\end{tabular}}}}}%
+    \put(0.04500848,0.72794028){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.5}\end{tabular}}}}}%
+    \put(0.04500848,0.78690898){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.7}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.56057764,0.58144957){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{-2.7e-04}\end{tabular}}}}}%
+    \put(0.56057764,0.87505172){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{1.0}\end{tabular}}}}}%
+    \put(0.56057764,0.66959229){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.3}\end{tabular}}}}}%
+    \put(0.56057764,0.72794028){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.5}\end{tabular}}}}}%
+    \put(0.56057764,0.78690898){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.7}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.26532678,0.48242145){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
+    \put(0.26610093,0.00324069){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
+    \put(0.77979573,0.48242145){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
+    \put(0.77979577,0.00324073){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.04570879,0.08617514){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{1.8e-06}\end{tabular}}}}}%
+    \put(0.04570879,0.36742681){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{15}\end{tabular}}}}}%
+    \put(0.04570879,0.13937425){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{2}\end{tabular}}}}}%
+    \put(0.04570879,0.17552348){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{4}\end{tabular}}}}}%
+    \put(0.04570879,0.21167266){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{6}\end{tabular}}}}}%
+    \put(0.04570879,0.2478218){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{8}\end{tabular}}}}}%
+    \put(0.04570879,0.28397103){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{10}\end{tabular}}}}}%
+    \put(0.04570879,0.32012003){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{12}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.56127797,0.08274203){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{0.0}\end{tabular}}}}}%
+    \put(0.56127797,0.36399375){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{13}\end{tabular}}}}}%
+    \put(0.56127797,0.13594114){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{2}\end{tabular}}}}}%
+    \put(0.56127797,0.17209042){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{4}\end{tabular}}}}}%
+    \put(0.56127797,0.20823956){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{6}\end{tabular}}}}}%
+    \put(0.56127797,0.24438869){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{8}\end{tabular}}}}}%
+    \put(0.56127797,0.28053792){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{10}\end{tabular}}}}}%
+    \put(0.56127797,0.31668692){\color[rgb]{0,0,0.15686275}\rotatebox{90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scriptsize{12}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{inclusion_u_s_primal_dual_ASGS.pdf}}%
+    \put(0.01867608,0.21976769){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\sF$\end{tabular}}}}}%
+    \put(0.01867608,0.71555264){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\uF$\end{tabular}}}}}%
+    \put(0.53507536,0.71555264){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\uF$\end{tabular}}}}}%
+    \put(0.53507536,0.21976769){\color[rgb]{0,0,0}\rotatebox{90}{\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\sF$\end{tabular}}}}}%
+  \end{picture}%
+\endgroup%

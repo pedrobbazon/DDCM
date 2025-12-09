@@ -1,0 +1,112 @@
+%% Creator: Inkscape 1.4.2 (1:1.4.2+202505120738+ebf0e940d0), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'dual_formulation_fields_solution.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{535.80097349bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,1.53239452)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{dual_formulation_fields_solution.pdf}}%
+    \put(0.91321799,1.44309015){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-1.0}\end{tabular}}}}}%
+    \put(0.91321799,1.24827396){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.0}\end{tabular}}}}}%
+    \put(0.91321799,1.385016){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.4}\end{tabular}}}}}%
+    \put(0.91321799,1.345888){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}}%
+    \put(0.91321799,1.30676001){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.4}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{dual_formulation_fields_solution.pdf}}%
+    \put(0.91291509,1.13988864){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}}%
+    \put(0.91276438,0.95412926){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2.4}\end{tabular}}}}}%
+    \put(0.91291509,1.10223924){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.5}\end{tabular}}}}}%
+    \put(0.91291509,1.0642095){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
+    \put(0.91291509,1.02617979){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.5}\end{tabular}}}}}%
+    \put(0.91291509,0.9895067){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{dual_formulation_fields_solution.pdf}}%
+    \put(0.91307154,0.84091781){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0}\end{tabular}}}}}%
+    \put(0.91307154,0.65332712){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{3.1}\end{tabular}}}}}%
+    \put(0.91307154,0.78142814){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1}\end{tabular}}}}}%
+    \put(0.91307154,0.72154186){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{2}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{dual_formulation_fields_solution.pdf}}%
+    \put(0.91290856,0.54415643){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-1.6e-02}\end{tabular}}}}}%
+    \put(0.91290856,0.36460502){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.6e-02}\end{tabular}}}}}%
+    \put(0.91290856,0.48266094){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{-0.005}\end{tabular}}}}}%
+    \put(0.91290856,0.42648){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.005}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{dual_formulation_fields_solution.pdf}}%
+    \put(0.91293229,0.24836593){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{1.9e-14}\end{tabular}}}}}%
+    \put(0.91293229,0.06764335){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{7.1e-02}\end{tabular}}}}}%
+    \put(0.91293229,0.17195053){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.03}\end{tabular}}}}}%
+    \put(0.91293229,0.12113425){\color[rgb]{0,0,0.15686275}\rotatebox{-90}{\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\tiny{0.05}\end{tabular}}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{dual_formulation_fields_solution.pdf}}%
+    \put(0.06152218,1.47512712){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$h = 0.1$\end{tabular}}}}%
+    \put(0.37234457,1.47512712){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$h = 0.025$\end{tabular}}}}%
+    \put(0.67490917,1.47512712){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$h = 0.00625$\end{tabular}}}}%
+    \put(0.10189683,1.19143197){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
+    \put(0.42261207,1.19142124){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
+    \put(0.7445045,1.19143197){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
+    \put(0.10165493,0.89428899){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
+    \put(0.42282708,0.89429973){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e)\end{tabular}}}}%
+    \put(0.74668161,0.89428899){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f)\end{tabular}}}}%
+    \put(0.10165493,0.59800623){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g)\end{tabular}}}}%
+    \put(0.42262284,0.59715691){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(h)\end{tabular}}}}%
+    \put(0.7474988,0.59715691){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(i)\end{tabular}}}}%
+    \put(0.10558449,0.30086317){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(j)\end{tabular}}}}%
+    \put(0.4232249,0.30002458){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(k)\end{tabular}}}}%
+    \put(0.7474988,0.30002458){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(l)\end{tabular}}}}%
+    \put(0.09791889,0.00290292){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(m)\end{tabular}}}}%
+    \put(0.42262284,0.00290292){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(n)\end{tabular}}}}%
+    \put(0.74382179,0.00290292){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(o)\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{dual_formulation_fields_solution.pdf}}%
+    \put(0.35533101,1.51566565){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}mesh refinement \end{tabular}}}}%
+    \put(0.93602503,1.340154){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\uF$\end{tabular}}}}%
+    \put(0.93726677,1.04302177){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\sF$\end{tabular}}}}%
+    \put(0.93622927,0.74588957){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\eF$\end{tabular}}}}%
+    \put(0.93994389,0.44875725){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\lF$\end{tabular}}}}%
+    \put(0.9322782,0.15162508){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\mF$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{dual_formulation_fields_solution.pdf}}%
+  \end{picture}%
+\endgroup%
