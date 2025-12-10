@@ -81,6 +81,31 @@ In the numerical experiment, the computational domain $\Omega$ is chosen to be t
 \end{equation}
 where the values on the right-hand side are computed from the manufactured fields. Finally, the diffusion and reaction coefficients are taken as unity, i.e., $\kappa = 1$ and $\zeta = 1$.
 
+\begin{figure}[h!]
+	\centering
+	\caption{...}
+	\def\svgwidth{1.0\linewidth}
+	\input{Figures/PDFs/reference_fields_solution.pdf_tex}
+	\label{fig:reference_fields_solution}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Primal}
+	\def\svgwidth{0.85\columnwidth}
+	\input{Figures/PDFs/primal_formulation_fields_solution.pdf_tex}
+	\label{fig:primal_formulation_fields_solution}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Dual}
+	\def\svgwidth{0.85\columnwidth}
+	\input{Figures/PDFs/dual_formulation_fields_solution.pdf_tex}
+	\label{fig:dual_formulation_fields_solution}
+\end{figure}
+
+
 
 %=============================================
 % k = 0
@@ -142,11 +167,230 @@ where the values on the right-hand side are computed from the manufactured field
 \begin{figure}[h!]
 	\centering
 	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=1$, evaluated in the Hdiv-norm for Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS formulations.}
-	%\fontsize{11pt}{10pt}\selectfont 
+	\fontsize{12pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_quadratic_hdiv_art02.pdf_tex}
 	\label{fig:convergence_vector_quadratic_hdiv_art02}
 \end{figure}
+
+
+\cleardoublepage
+\subsubsection{Inclusion}
+
+In this case, instead of proposing a manufactured solution -- i.e., one explicitly constructed from the strong optimality conditions -- we consider a reference standard problem whose exact solution is known in closed form, thus allowing us to systematically generate physically consistent data pairs $(\eFt,\sFt)$.
+
+\begin{remark}
+	If a closed-form analytical solution for the reference problem is not available, the reference fields can instead be computed numerically using a conventional finite element formulation, such as the standard Galerkin method.
+\end{remark}
+
+Once the values of $ \{(\eFt_{i},\sFt_{i})\}_{i} $ were obtained, they are assigned to each element of the mesh, we use a geometric proximity criterion, i.e., denoting $\mathbf{x}_{K}^{c}$ the centroid of the mesh element $K \in \mathcal{T}_{h}$, the data point assigned to element $K$ is given by:
+
+\begin{equation}
+	(\eFt_{h}, \sFt_{h})(\mathbf{x}_{K}^{c}) := (\eFt_{i},\sFt_{i}), \quad \text{where } i = \arg \min_{j} \|\mathbf{x}_{K}^{c} - \mathbf{x}_{j}^{c}\|_{2}
+\end{equation} 
+where $\| \cdot \|_2$ stands for the Euclidean norm. Notice that, in this way, the data fields $(\eFt, \sFt)$ have an elementwise constant representation over $\Omega$ in which all the elements of $\mathcal{T}_h$ that are close to a sampled point share the same value. This does not introduce any additional approximation error only when the vector fields are in $[\DG_0]^2$.
+
+First, let us introduce the reference (standard) problem. Consider a circular inclusion  embedded in a regular Cartesian domain, on which different source terms are prescribed. Let  $\Omega = [0,1]\times[0,1]$ be the computational domain, with geometric center $\mathbf{x}_{c} = (0.0,\,0.0)$ and boundary denoted by $\partial\Omega$. Inside $\Omega$, we define a circular inclusion  
+$$
+\Omega_{\mathrm{inc}} = \{\, \mathbf{x}\in \Omega : \|\mathbf{x}-\mathbf{x}_{c}\| < R \,\},
+\qquad R=0.25,
+$$
+whose boundary is denoted by $\Gamma$. The reference problem therefore consists 
+of a diffusion–reaction equation with piecewise constant source terms. 
+We seek a field $\uF:\Omega \to \mathbb{R}$ such that
+\begin{equation}
+	\left\lbrace
+	\begin{array}{rcll}
+		-\nabla \cdot (\kappa\,\nabla \uF)+ \sigma\, \uF &=& f 
+		&\quad \text{in } \Omega, \\[4pt]
+		\nabla \uF \cdot \check{\mathbf{n}} &=& g 
+		&\quad \text{on } \partial\Omega,
+	\end{array}
+	\right.
+	\label{eq:diff_reaction}
+\end{equation}
+where the reaction coefficient satisfies $\sigma > 0$ (non-negativity) and is uniform, and the source term $f(\mathbf{x})$ is piecewise constant:
+$$
+f(\mathbf{x}) =
+\begin{cases}
+	\sigma, & \mathbf{x}\in \Omega_{\mathrm{inc}}, \\[3pt]
+	0, & \mathbf{x}\in \Omega\setminus \Omega_{\mathrm{inc}}.
+\end{cases}
+$$
+Fig.~\ref{fig:inclusion_mesh_exact_fields}(a) provides a schematic illustration of the computational setting. Now, assuming uniform conductivity, symmetry implies that the solution depends only on the
+radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2} + y^{2}}$. Under this assumption, the governing eq.~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction:
+\begin{equation}
+	\left\lbrace
+	\begin{array}{rcll}
+		-\kappa\!\left(u''(r) + \dfrac{1}{r}\,u'(r)\right) + \sigma\,u(r)
+		&=& f(r),
+		&\quad 0 < r < \tfrac{L\sqrt{2}}{2}, \\[6pt]
+		u'(r) &=& g,
+		&\quad r = \tfrac{L\sqrt{2}}{2},
+	\end{array}
+	\right.
+	\label{eq:radial_ode}
+\end{equation}
+where
+$$
+f(r) =
+\begin{cases}
+	\sigma, & 0 \le r < R, \\[3pt]
+	0, & R < r \le \tfrac{L\sqrt{2}}{2}.
+\end{cases}
+$$
+Across the interface $\Gamma = \{r=R\}$, the the solution must also satisfies the following physical conditions:
+$$
+\text{at } r=R:\qquad
+\begin{cases}
+	u(R^{+}) = u(R^{-}), \\[3pt]
+	\kappa\,u'(R^{+}) = \kappa\,u'(R^{-}),
+\end{cases}
+$$
+ensuring continuity of the field and of the normal diffusive flux. In addition, boundedness at the origin further requires $u'(0)=0$.
+
+Then, imposing boundedness at the origin, enforcing the interface conditions, and ensuring
+the correct decay in the outer region leads to the exact analytical solution:
+\begin{equation}
+	u(r) =
+	\begin{cases}
+		\displaystyle
+		1 - \lambda R\,K_{1}(\lambda R)\,I_{0}(\lambda r),
+		& 0 \le r \le R, \\[10pt]
+		\displaystyle
+		\lambda R\,I_{1}(\lambda R)\,K_{0}(\lambda r),
+		& r > R,
+	\end{cases}
+	\qquad
+	\lambda = \sqrt{\frac{\sigma}{\kappa}},
+\end{equation}
+where \(I_{0}, I_{1}\) are the modified Bessel functions of the first kind (orders 0 and 1, respectively),
+and \(K_{0}, K_{1}\) are the corresponding modified Bessel functions of the second kind. Fig.~\ref{fig:inclusion_mesh_exact_fields}(b), in this aspect, shows the exact potential field \(u\),
+whereas Fig.~\ref{fig:inclusion_mesh_exact_fields}(c)--(d) illustrate the corresponding
+gradient and flux fields, \(\eF\) and \(\sF\), respectively.
+
+
+%Assuming uniform conductivity, it can be shown that the solution depends solely on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2}+y^{2}}$. Under this symmetry assumption, the governing equation~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction. In polar coordinates, the Laplacian of a radially symmetric field is
+%$$
+%\Delta u(r) = u''(r) + \frac{1}{r}\,u'(r).
+%$$
+%Hence, the diffusion–reaction equation becomes the following radial boundary-value problem:
+%\begin{equation}
+%	\left\lbrace
+%	\begin{array}{rcll}
+%		-\kappa\!\left(u''(r) + \dfrac{1}{r}\,u'(r)\right) + \sigma\,u(r) &=& f(r), 
+%		&\quad 0 < r < \tfrac{L\sqrt{2}}{2}, \\[6pt]
+%		u'(r) &=& g, &\quad r = \tfrac{L\sqrt{2}}{2},
+%	\end{array}
+%	\right.
+%	\label{eq:radial_ode}
+%\end{equation}
+%where the radial source is
+%$$
+%f(r) =
+%\begin{cases}
+%	\sigma, & 0 \le r < R, \\[3pt]
+%	0, & R < r \le \tfrac{L\,\sqrt{2}}{2}.
+%\end{cases}
+%$$
+%The transmission conditions on \(\Gamma \equiv \{r=R\}\) reduce to
+%\begin{equation}
+%	\text{at } r=R:\qquad
+%	\begin{cases}
+%		u(R^+) = u(R^-),\\[3pt]
+%		\kappa\,u'(R^+) = \kappa\,u'(R^-),
+%	\end{cases}
+%\end{equation}
+%and boundedness at the origin further requires \(u'(0)=0\).
+%
+%This way, the problem can be splitted into two differential equations:
+%\begin{equation}
+%	\left\lbrace\begin{array}{rcll}
+%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& -1, &\qquad 0\le r<R, \\
+%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& 0. &\qquad r>R
+%	\end{array}
+%	\right.
+%\end{equation}
+%with $\lambda = \sqrt{\tfrac{\sigma}{\kappa}}$. The homogeneous modified Helmholtz problem admits solutions in terms of the modified Bessel functions $I_{0}$ and $K_{0}$. Imposing boundedness at the origin, decay away 
+%from the inclusion, and enforcing the interface conditions at $r=R$ yields the exact 
+%analytical solution:
+%\begin{equation}
+%	u(r) =
+%	\begin{cases}
+%		\displaystyle 1 - \lambda R\,K_{1}(\lambda R)\,I_{0}(\lambda r),
+%		& 0 \le r \le R, \\[10pt]
+%		\displaystyle \lambda R\,I_{1}(\lambda R)\,K_{0}(\lambda r),
+%		& r > R,
+%	\end{cases}
+%	\qquad 
+%	\lambda = \sqrt{\frac{\sigma}{\kappa}},
+%\end{equation}
+%where \(I_{0}, I_{1}\) are the modified Bessel functions of the first kind of orders 
+%zero and one, and \(K_{0}, K_{1}\) are the corresponding modified Bessel functions 
+%of the second kind. Figure \ref{fig:inclusion_mesh_exact_fields}(b), for example, illustrates the exact solution for the potential field $\uF$ where as Figures \ref{fig:inclusion_mesh_exact_fields}(c)-(d) present the gradient and flux vector fields, i.e., $\eF$ and $\sF$, respectively.  
+%
+%\begin{remark}
+%	In the SI system of units, the diffusion coefficient is given by
+%	$$
+%	\kappa = \frac{[W]}{[m][K]},
+%	$$
+%	whereas the reaction coefficient has units
+%	$$
+%	\sigma = \frac{[W]}{[m^{3}][K]}.
+%	$$
+%	Consequently, the parameter \(\lambda = \sqrt{\sigma/\kappa}\) has units of \(1/[m]\), and the dimensionless quantity \(\lambda R\) governs the qualitative behavior of the solution. For example, for fixed \(\kappa\) and \(R\), increasing the reaction coefficient \(\sigma\) leads to a stronger boundary layer, meaning that the solution becomes progressively sharper.
+%	
+%\end{remark}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figure (a) presents the computational domain and the associated finite element mesh. Figures (b), (c), and (d) illustrate the corresponding reference (exact) physical fields: the potential $\uF$, the flux $\sF$, and the gradient $\eF$, respectively.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{0.9\columnwidth}
+	\input{Figures/PDFs/inclusion_mesh_exact_fields.pdf_tex}
+	\label{fig:inclusion_mesh_exact_fields}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (a) and (b) illustrate the field $\uF$ for the primal and dual ASGS formulations. Likewise, Figures (c) and (d) show the field $\sF$ for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/inclusion_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:inclusion_u_s_primal_dual_ASGS}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figure (a) displays the $\uF$ profile along the coordinate diagonal for the exact reference solution, together with the corresponding profiles obtained from the primal and dual ASGS formulations. Likewise, Figure (b) displays the $\sF$ profile along the coordinate diagonal for the exact reference solution and for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{0.8\columnwidth}
+	\input{Figures/PDFs/plot_over_line_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:plot_over_line_u_s_primal_dual_ASGS}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (b)--(d) present the $\uF$ profiles along three circumferences of radius $r = 0.1$, $r = 0.2$, and $r = 0.4$ -- illustrated schematically in Figure (a), respectively -- schematically illustrated in Figure (a). Each plot compares the exact reference solution with the corresponding profiles obtained from the primal and dual ASGS formulations. Likewise, Figures (e)--(g) display the $\|\sF\|$ profiles along the same radii for both the exact reference solution and the primal and dual ASGS formulations.}
+	\fontsize{8pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/plot_over_curve_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:plot_over_curve_u_s_primal_dual_ASGS}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (a) and (b) present the error field $\uF - \uFh$ for the primal and dual ASGS formulations. In the same way, Figures (c) and (d) present the error field $\sF - \sFh$ for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/inclusion_udif_sdif_primal_dual_ASGS.pdf_tex}
+	\label{fig:inclusion_udif_sdif_primal_dual_ASGS}
+\end{figure}
+
+
 
 
 \cleardoublepage
@@ -197,7 +441,7 @@ By proposing $ \lF $ and $ \eFt $ as in eqs.~(\ref{X}) and~(\ref{X}), respective
 
 
 \cleardoublepage
-\subsubsection{Eigenvalue problems}
+\subsubsection{Convergence: Discrete Babuška inf–sup constant}
 To assess the stability of a given finite element discretization, one may consider 
 the generalized eigenvalue problem associated with the Babuška–Brezzi conditions. 
 Following \cite{X,X}, the Babuška inf–sup constant can be characterized in terms of the 
@@ -227,22 +471,30 @@ This way, provided the inner product on the right-hand side induces the norm $\|
 \end{equation}
 where $\sigma(B)$ denotes the spectrum of the generalized eigenvalue problem.
 
-For the discrete primal formulation $\Pph$, we set $B \leftarrow \Bsp$ and $(x_h,y_h) \leftarrow (\xFh, \varxFh)$; thus the corresponding Babuška eigenvalue problem reads: Find $\,0 \neq \xFh= (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSph$ and $\lambda \in \mathbb{R}$ such that
-\begin{equation}
-	\Bsp(\xFh,\varxF)
-	= \lambda\, (\xFh,\varxF)_{\XSph},
-	\qquad \forall\, \varxFh \in \XSph,
-	\label{eq:primal-babuska-eigen}
-\end{equation}
-where $(\cdot,\cdot)_{\XSph}$ denotes the inner product inducing the norm 
-$\|\cdot\|_{\XSph}$ defined in Section~\ref{sec:X}. Similarly, for the discrete dual problem $\Pdh$, we set $B \leftarrow \Bsd$ and $(x_h,y_h) \leftarrow (\xFh, \varxFh)$; thus the corresponding Babuška eigenvalue problem reads: Find $\,0 \neq \mathbf{x}_h = (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSdh$ and $\lambda \in \mathbb{R}$ such that 
-\begin{equation}
-	\Bsd(\xFh,\varxFh)
-	= \lambda\, (\xFh,\varxFh)_{\XSdh},
-	\qquad \forall\, \varxFh \in \XSdh,
-	\label{eq:dual-babuska-eigen}
-\end{equation}
-where $(\cdot,\cdot)_{\XSdh}$ denotes the inner product inducing the norm $\|\cdot\|_{\XSdh}$ defined in Section~\ref{sec:X}.
+For the discrete primal formulation $\Pph$, we set $B \leftarrow \Bsp$ and $(x_h,y_h) \leftarrow (\xFh, \varxF)$; thus the corresponding Babuška eigenvalue problem reads: 
+\begin{problem}\label{prob:eigenvalue_primal}
+	Find $\,0 \neq \xFh= (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSph$ and $\lambda \in \mathbb{R}$ such that
+	\begin{equation}
+		\Bsp(\xFh,\varxF)
+		= \lambda\, (\xFh,\varxF)_{\XSp},
+		\qquad \forall\, \varxF \in \XSp,
+		\label{eq:primal-babuska-eigen}
+	\end{equation}
+where $(\cdot,\cdot)_{\XSp}$ denotes the inner product inducing the norm 
+$\|\cdot\|_{\XSp}$ defined in Section~\ref{sec:X}.
+\end{problem}
+Similarly, for the discrete dual problem $\Pdh$, we set $B \leftarrow \Bsd$ and $(x_h,y_h) \leftarrow (\xFh, \varxF)$; thus the corresponding Babuška eigenvalue problem reads: 
+\begin{problem}
+	Find $\,0 \neq \mathbf{x}_h = (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSdh$ and $\lambda \in \mathbb{R}$ such that 
+	\begin{equation}
+		\Bsd(\xFh,\varxFh)
+		= \lambda\, (\xFh,\varxF)_{\XSd},
+		\qquad \forall\, \varxF \in \XSd,
+		\label{eq:dual-babuska-eigen}
+	\end{equation}
+	where $(\cdot,\cdot)_{\XSd}$ denotes the inner product inducing the norm $\|\cdot\|_{\XSd}$ defined in Section~\ref{sec:X}.
+\end{problem}
+
 
 In both cases, the discrete eigenvalue problem admits the following algebraic representation:
 \begin{equation}
@@ -257,6 +509,54 @@ $(\cdot,\cdot)_{\XSph}$ (resp.~$(\cdot,\cdot)_{\XSdh}$).
 Having established the eigenvalues problems for both discrete primal and dual problems, we shall present that $\gamma_{h,p}$ and $\gamma_{h,d}$ (associated to the primal and dual problems) are bounded from below independently of $h$. 
 
 
+\paragraph{Heuristic optimization algorithm through ASCoT}
+For the Primal-ASGS formulation, we first take $\ku = \ke = 0$ and solve
+Prob.~\ref{prob:eigenvalue_primal} to compute the discrete inf--sup constant
+$\gamma_{h,p}$ on a fixed unit-square Cartesian grid with a sufficiently fine mesh
+size $h$. We then vary the remaining stabilization parameters, namely
+$\ks$, $\kl$, and $\km$, within the admissible intervals
+prescribed in Theorem~3. After this parameter sweep, we identify the tuple
+$(\ks, \kl, \km)$ that maximizes the value of the
+discrete inf--sup constant. In compact form, the heuristic optimization problem is
+\begin{equation}
+	\label{eq:heuristic_opt}
+	(\ks^\star,\;\kl^\star,\;\km^\star) :=	\underset{
+		\substack{
+			\ks \in I_{\ks},\\
+			\kl \in I_{\kl},\\
+			\km \in I_{\km}}}
+	{\operatorname{arg\,max}}
+	\;\gamma_{h,p}(\ks,\kl,\km),
+\end{equation}
+where $I_{\ks}$, $I_{\kl}$, and $I_{\km}$ denote the stabilization intervals given in Theorem~3. From the numerical experiments, we obtained
+$$
+\ks^\star = \km^\star = 0.245, 
+\qquad 
+\kl^\star = 1.0.
+$$
+
+With these values fixed, i.e., by setting $\ks \leftarrow \ks^{\star}$,
+$\km \leftarrow \km^{\star}$, and $\kl \leftarrow \kl^{\star}$, we proceed
+analogously but vary $\ku$ and $\ke$ within their respective admissible intervals.
+Figure~\ref{fig:infsup_optimum_values}(a), for instance, shows $\gamma_{h,p}$
+as a function of $\ku$ and $\ke$. Based on these results, the optimal values are
+selected as
+$$
+\ku^{\star} = \ke^{\star} = \tfrac{1}{8}.
+$$
+
+\begin{figure}
+	\centering
+	\caption{...}
+	\def\svgwidth{0.8\columnwidth}
+	\input{Figures/PDFs/infsup_optimum_values.pdf_tex}
+	\label{fig:infsup_optimum_values}
+\end{figure}
+
+From Fig.~\ref{fig:infsup_optimum_values}(c), we observe that the resulting
+optimal set of stabilization constants avoids the decaying behavior, particularly
+on coarser meshes, and also yields a larger value for the discrete inf--sup
+constant.
 
 
 

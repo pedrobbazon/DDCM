@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{396.85035045bp}%
+    \setlength{\unitlength}{745.70420153bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,15 +50,17 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.49211257)%
+  \begin{picture}(1,0.87464386)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{plot_over_curve_u_s_primal_dual_ASGS.pdf}}%
-    \put(0.9292487,1.30311731){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
-    \put(0.92884216,1.07692775){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
-    \put(0.93041404,0.85245993){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
-    \put(0.92884216,0.52235256){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
-    \put(0.92920358,0.29616301){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e)\end{tabular}}}}%
-    \put(0.93407266,0.0716953){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f)\end{tabular}}}}%
+    \put(0.96051863,0.76455648){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(b)\end{tabular}}}}%
+    \put(0.14344043,0.24695714){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(a)\end{tabular}}}}%
+    \put(0.96051863,0.63244906){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(c)\end{tabular}}}}%
+    \put(0.96051863,0.50134714){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(d)\end{tabular}}}}%
+    \put(0.96051863,0.30854579){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(e)\end{tabular}}}}%
+    \put(0.96051863,0.17643831){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(f)\end{tabular}}}}%
+    \put(0.96051863,0.04533654){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}(g)\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{plot_over_curve_u_s_primal_dual_ASGS.pdf}}%
   \end{picture}%
 \endgroup%
