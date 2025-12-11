@@ -177,20 +177,36 @@ where the values on the right-hand side are computed from the manufactured field
 \cleardoublepage
 \subsubsection{Inclusion}
 
-In this case, instead of proposing a manufactured solution -- i.e., one explicitly constructed from the strong optimality conditions -- we consider a reference standard problem whose exact solution is known in closed form, thus allowing us to systematically generate physically consistent data pairs $(\eFt,\sFt)$.
+In this case, instead of proposing a manufactured solution -- i.e., one explicitly constructed from the strong form of optimality conditions -- we consider a reference standard problem whose exact solution is known in closed form, thus allowing us to systematically generate physically consistent data pairs  $(\eF_{\text{ref}},\sF_{\text{ref}})$.
 
 \begin{remark}
 	If a closed-form analytical solution for the reference problem is not available, the reference fields can instead be computed numerically using a conventional finite element formulation, such as the standard Galerkin method.
 \end{remark}
 
-Once the values of $ \{(\eFt_{i},\sFt_{i})\}_{i} $ were obtained, they are assigned to each element of the mesh, we use a geometric proximity criterion, i.e., denoting $\mathbf{x}_{K}^{c}$ the centroid of the mesh element $K \in \mathcal{T}_{h}$, the data point assigned to element $K$ is given by:
-
+To sample the reference data pairs $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})$ onto the data-driven mesh, we proceed as illustrated in Fig.~\ref{fig:data-mapping}. For each element of the reference mesh, with centroid denoted by $\mathbf{x}_{j}$, we evaluate the reference fields $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})_j$. This evaluation introduces no additional approximation error when these fields are represented in an elementwise-discontinuous vector space, such as $[\mathrm{DG}_0]^2$. Next, for each element $K \in \mathcal{T}_h$ of the data-driven mesh, with centroid $\mathbf{x}_{K}^{c}$, we determine the closest reference point $\mathbf{x}_j$ by measuring the geometric distance
 \begin{equation}
-	(\eFt_{h}, \sFt_{h})(\mathbf{x}_{K}^{c}) := (\eFt_{i},\sFt_{i}), \quad \text{where } i = \arg \min_{j} \|\mathbf{x}_{K}^{c} - \mathbf{x}_{j}^{c}\|_{2}
-\end{equation} 
-where $\| \cdot \|_2$ stands for the Euclidean norm. Notice that, in this way, the data fields $(\eFt, \sFt)$ have an elementwise constant representation over $\Omega$ in which all the elements of $\mathcal{T}_h$ that are close to a sampled point share the same value. This does not introduce any additional approximation error only when the vector fields are in $[\DG_0]^2$.
+	d(K,j)=\left\|\mathbf{x}_{K}^{c}-\mathbf{x}_{j}\right\|.
+\end{equation}
+The data pair assigned to element $K$ is then selected according to the nearest--neighbor rule
+\begin{equation}
+	(\tilde{\eF}_h,\tilde{\sF}_h)(K)
+	= \bigl(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}}\bigr)_{j(K)},
+	\qquad 
+	j(K)=\arg\min_{j} d(K,j).
+\end{equation}
 
-First, let us introduce the reference (standard) problem. Consider a circular inclusion  embedded in a regular Cartesian domain, on which different source terms are prescribed. Let  $\Omega = [0,1]\times[0,1]$ be the computational domain, with geometric center $\mathbf{x}_{c} = (0.0,\,0.0)$ and boundary denoted by $\partial\Omega$. Inside $\Omega$, we define a circular inclusion  
+In other words, at each element $K$, the quantity $(\tilde{\eF}_h,\tilde{\sF}_h)(K)$ is given by the reference data pair located at the centroid $\mathbf{x}_{j}$ that is closest to $\mathbf{x}_{K}^{c}$. This way, the functions $(\tilde{\eF}_h,\tilde{\sF}_h)$ are elementwise constant.
+\begin{figure}[h!]
+	\centering
+	\caption{Schematic illustration of the nearest-neighbor sampling procedure used to assign reference data pairs $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})$ to the data-driven mesh.}
+	
+	\fontsize{6pt}{10pt}\selectfont 
+	\def\svgwidth{0.9\columnwidth}
+	\input{Figures/PDFs/sampling.pdf_tex}
+	\label{fig:data-mapping}
+\end{figure}
+
+Now, let us introduce the reference (standard) problem. Consider a circular inclusion  embedded in a regular Cartesian domain, on which different source terms are prescribed. Let  $\Omega = [0,1]\times[0,1]$ be the computational domain, with geometric center $\mathbf{x}_{c} = (0.0,\,0.0)$ and boundary denoted by $\partial\Omega$. Inside $\Omega$, we define a circular inclusion  
 $$
 \Omega_{\mathrm{inc}} = \{\, \mathbf{x}\in \Omega : \|\mathbf{x}-\mathbf{x}_{c}\| < R \,\},
 \qquad R=0.25,
@@ -217,8 +233,9 @@ f(\mathbf{x}) =
 	0, & \mathbf{x}\in \Omega\setminus \Omega_{\mathrm{inc}}.
 \end{cases}
 $$
-Fig.~\ref{fig:inclusion_mesh_exact_fields}(a) provides a schematic illustration of the computational setting. Now, assuming uniform conductivity, symmetry implies that the solution depends only on the
-radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2} + y^{2}}$. Under this assumption, the governing eq.~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction:
+Fig.~\ref{fig:inclusion_mesh_exact_fields}(a) provides a schematic illustration of the computational setting. 
+
+Assuming uniform conductivity, symmetry implies that the solution depends only on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2} + y^{2}}$. Under this assumption, the governing eq.~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction:
 \begin{equation}
 	\left\lbrace
 	\begin{array}{rcll}
@@ -239,7 +256,7 @@ f(r) =
 	0, & R < r \le \tfrac{L\sqrt{2}}{2}.
 \end{cases}
 $$
-Across the interface $\Gamma = \{r=R\}$, the the solution must also satisfies the following physical conditions:
+Across the interface $\Gamma \equiv \{r=R\}$, the solution must also satisfies the following physical conditions:
 $$
 \text{at } r=R:\qquad
 \begin{cases}
@@ -247,10 +264,9 @@ $$
 	\kappa\,u'(R^{+}) = \kappa\,u'(R^{-}),
 \end{cases}
 $$
-ensuring continuity of the field and of the normal diffusive flux. In addition, boundedness at the origin further requires $u'(0)=0$.
+ensuring continuity of the field and of the normal diffusive flux. Furthermore, boundedness at the origin further requires $u'(0)=0$.
 
-Then, imposing boundedness at the origin, enforcing the interface conditions, and ensuring
-the correct decay in the outer region leads to the exact analytical solution:
+Therefore, imposing boundedness at the origin, enforcing the interface conditions, and ensuring the correct decay in the outer region one can obtain the following analytical solution:
 \begin{equation}
 	u(r) =
 	\begin{cases}
@@ -264,10 +280,10 @@ the correct decay in the outer region leads to the exact analytical solution:
 	\qquad
 	\lambda = \sqrt{\frac{\sigma}{\kappa}},
 \end{equation}
-where \(I_{0}, I_{1}\) are the modified Bessel functions of the first kind (orders 0 and 1, respectively),
-and \(K_{0}, K_{1}\) are the corresponding modified Bessel functions of the second kind. Fig.~\ref{fig:inclusion_mesh_exact_fields}(b), in this aspect, shows the exact potential field \(u\),
+being $I_{0}, I_{1}$ are the modified Bessel functions of the first kind (orders 0 and 1, respectively),
+and $K_{0}, K_{1}$ are the corresponding modified Bessel functions of the second kind. Fig.~\ref{fig:inclusion_mesh_exact_fields}(b), in this aspect, shows the exact potential field $\uF$
 whereas Fig.~\ref{fig:inclusion_mesh_exact_fields}(c)--(d) illustrate the corresponding
-gradient and flux fields, \(\eF\) and \(\sF\), respectively.
+gradient and flux fields, $\eF$ and $\sF$, respectively.
 
 
 %Assuming uniform conductivity, it can be shown that the solution depends solely on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2}+y^{2}}$. Under this symmetry assumption, the governing equation~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction. In polar coordinates, the Laplacian of a radially symmetric field is
