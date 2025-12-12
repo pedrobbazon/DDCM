@@ -183,7 +183,7 @@ In this case, instead of proposing a manufactured solution -- i.e., one explicit
 	If a closed-form analytical solution for the reference problem is not available, the reference fields can instead be computed numerically using a conventional finite element formulation, such as the standard Galerkin method.
 \end{remark}
 
-To sample the reference data pairs $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})$ onto the data-driven mesh, we proceed as illustrated in Fig.~\ref{fig:data-mapping}. For each element of the reference mesh, with centroid denoted by $\mathbf{x}_{j}$, we evaluate the reference fields $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})_j$. This evaluation introduces no additional approximation error when these fields are represented in an elementwise-discontinuous vector space, such as $[\mathrm{DG}_0]^2$. Next, for each element $K \in \mathcal{T}_h$ of the data-driven mesh, with centroid $\mathbf{x}_{K}^{c}$, we determine the closest reference point $\mathbf{x}_j$ by measuring the geometric distance
+To sample the reference data pairs $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})$ onto the data-driven mesh, we proceed as illustrated in Fig.~\ref{fig:data-mapping}. For each element of the reference mesh, with centroid denoted by $\mathbf{x}_{j}$, we evaluate the reference fields $(\eF_{\mathrm{ref}},\sF_{\mathrm{ref}})_j$. This evaluation introduces no additional approximation error when these fields are represented in an elementwise-discontinuous vector function space, such as $[\mathrm{DG}_0]^2$. Next, for each element $K \in \mathcal{T}_h$ of the data-driven mesh, with centroid $\mathbf{x}_{K}^{c}$, we determine the closest reference point $\mathbf{x}_j$ by measuring the geometric distance
 \begin{equation}
 	d(K,j)=\left\|\mathbf{x}_{K}^{c}-\mathbf{x}_{j}\right\|.
 \end{equation}
@@ -285,79 +285,6 @@ and $K_{0}, K_{1}$ are the corresponding modified Bessel functions of the second
 whereas Fig.~\ref{fig:inclusion_mesh_exact_fields}(c)--(d) illustrate the corresponding
 gradient and flux fields, $\eF$ and $\sF$, respectively.
 
-
-%Assuming uniform conductivity, it can be shown that the solution depends solely on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2}+y^{2}}$. Under this symmetry assumption, the governing equation~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction. In polar coordinates, the Laplacian of a radially symmetric field is
-%$$
-%\Delta u(r) = u''(r) + \frac{1}{r}\,u'(r).
-%$$
-%Hence, the diffusion–reaction equation becomes the following radial boundary-value problem:
-%\begin{equation}
-%	\left\lbrace
-%	\begin{array}{rcll}
-%		-\kappa\!\left(u''(r) + \dfrac{1}{r}\,u'(r)\right) + \sigma\,u(r) &=& f(r), 
-%		&\quad 0 < r < \tfrac{L\sqrt{2}}{2}, \\[6pt]
-%		u'(r) &=& g, &\quad r = \tfrac{L\sqrt{2}}{2},
-%	\end{array}
-%	\right.
-%	\label{eq:radial_ode}
-%\end{equation}
-%where the radial source is
-%$$
-%f(r) =
-%\begin{cases}
-%	\sigma, & 0 \le r < R, \\[3pt]
-%	0, & R < r \le \tfrac{L\,\sqrt{2}}{2}.
-%\end{cases}
-%$$
-%The transmission conditions on \(\Gamma \equiv \{r=R\}\) reduce to
-%\begin{equation}
-%	\text{at } r=R:\qquad
-%	\begin{cases}
-%		u(R^+) = u(R^-),\\[3pt]
-%		\kappa\,u'(R^+) = \kappa\,u'(R^-),
-%	\end{cases}
-%\end{equation}
-%and boundedness at the origin further requires \(u'(0)=0\).
-%
-%This way, the problem can be splitted into two differential equations:
-%\begin{equation}
-%	\left\lbrace\begin{array}{rcll}
-%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& -1, &\qquad 0\le r<R, \\
-%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& 0. &\qquad r>R
-%	\end{array}
-%	\right.
-%\end{equation}
-%with $\lambda = \sqrt{\tfrac{\sigma}{\kappa}}$. The homogeneous modified Helmholtz problem admits solutions in terms of the modified Bessel functions $I_{0}$ and $K_{0}$. Imposing boundedness at the origin, decay away 
-%from the inclusion, and enforcing the interface conditions at $r=R$ yields the exact 
-%analytical solution:
-%\begin{equation}
-%	u(r) =
-%	\begin{cases}
-%		\displaystyle 1 - \lambda R\,K_{1}(\lambda R)\,I_{0}(\lambda r),
-%		& 0 \le r \le R, \\[10pt]
-%		\displaystyle \lambda R\,I_{1}(\lambda R)\,K_{0}(\lambda r),
-%		& r > R,
-%	\end{cases}
-%	\qquad 
-%	\lambda = \sqrt{\frac{\sigma}{\kappa}},
-%\end{equation}
-%where \(I_{0}, I_{1}\) are the modified Bessel functions of the first kind of orders 
-%zero and one, and \(K_{0}, K_{1}\) are the corresponding modified Bessel functions 
-%of the second kind. Figure \ref{fig:inclusion_mesh_exact_fields}(b), for example, illustrates the exact solution for the potential field $\uF$ where as Figures \ref{fig:inclusion_mesh_exact_fields}(c)-(d) present the gradient and flux vector fields, i.e., $\eF$ and $\sF$, respectively.  
-%
-%\begin{remark}
-%	In the SI system of units, the diffusion coefficient is given by
-%	$$
-%	\kappa = \frac{[W]}{[m][K]},
-%	$$
-%	whereas the reaction coefficient has units
-%	$$
-%	\sigma = \frac{[W]}{[m^{3}][K]}.
-%	$$
-%	Consequently, the parameter \(\lambda = \sqrt{\sigma/\kappa}\) has units of \(1/[m]\), and the dimensionless quantity \(\lambda R\) governs the qualitative behavior of the solution. For example, for fixed \(\kappa\) and \(R\), increasing the reaction coefficient \(\sigma\) leads to a stronger boundary layer, meaning that the solution becomes progressively sharper.
-%	
-%\end{remark}
-
 \begin{figure}[h!]
 	\centering
 	\caption{Figure (a) presents the computational domain and the associated finite element mesh. Figures (b), (c), and (d) illustrate the corresponding reference (exact) physical fields: the potential $\uF$, the flux $\sF$, and the gradient $\eF$, respectively.}
@@ -366,6 +293,25 @@ gradient and flux fields, $\eF$ and $\sF$, respectively.
 	\input{Figures/PDFs/inclusion_mesh_exact_fields.pdf_tex}
 	\label{fig:inclusion_mesh_exact_fields}
 \end{figure}
+
+Moving on to the results, we begin by specifying the following configuration:
+
+\begin{enumerate}[label=(\roman*)]
+	\item For the numerical experiments, we consider a finite element mesh with mesh size $h = 0.025$;
+	\item For the physical constants, we set $\kappa = 1.0$ and $\sigma = 10^{3}$;
+	\item For the stabilization parameters, we use
+	$$
+	\ku = \kl = 1.0, \qquad \ks = \ke = \km = \tfrac{1}{8}
+	$$
+	for the primal ASGS formulation, whereas for the dual ASGS formulation we take
+	$$
+	\ku = \kl = \ke = \tfrac{1}{4}, \qquad 	\ks = 1.0,\qquad \km = \tfrac{1}{8};
+	$$
+	\item Regarding the boundary conditions, we impose pure Dirichlet conditions for the primal ASGS formulation and pure Neumann conditions for the dual ASGS formulation. Thus, the boundary conditions are strongly enforced on the scalar fields $\uF$ and $\lF$ in the former case, and on the vector fields $\sF$ and $\mF$ in the latter.
+\end{enumerate}
+
+
+In Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS} we first illustrate the physical fields $\uF$ and $\sF$ obtained for both primal and dual ASGS formulations. Comparing Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(a) and Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(b), we notice that the primal formulation provides a better approximation to the scalar potential field. Conversely, ...
 
 \begin{figure}[h!]
 	\centering
@@ -574,7 +520,79 @@ optimal set of stabilization constants avoids the decaying behavior, particularl
 on coarser meshes, and also yields a larger value for the discrete inf--sup
 constant.
 
+% ==== DO NOT DELETE THIS ====
 
+%Assuming uniform conductivity, it can be shown that the solution depends solely on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2}+y^{2}}$. Under this symmetry assumption, the governing equation~\eqref{eq:diff_reaction} reduces to an ordinary differential equation in the radial direction. In polar coordinates, the Laplacian of a radially symmetric field is
+%$$
+%\Delta u(r) = u''(r) + \frac{1}{r}\,u'(r).
+%$$
+%Hence, the diffusion–reaction equation becomes the following radial boundary-value problem:
+%\begin{equation}
+%	\left\lbrace
+%	\begin{array}{rcll}
+	%		-\kappa\!\left(u''(r) + \dfrac{1}{r}\,u'(r)\right) + \sigma\,u(r) &=& f(r), 
+	%		&\quad 0 < r < \tfrac{L\sqrt{2}}{2}, \\[6pt]
+	%		u'(r) &=& g, &\quad r = \tfrac{L\sqrt{2}}{2},
+	%	\end{array}
+%	\right.
+%	\label{eq:radial_ode}
+%\end{equation}
+%where the radial source is
+%$$
+%f(r) =
+%\begin{cases}
+%	\sigma, & 0 \le r < R, \\[3pt]
+%	0, & R < r \le \tfrac{L\,\sqrt{2}}{2}.
+%\end{cases}
+%$$
+%The transmission conditions on \(\Gamma \equiv \{r=R\}\) reduce to
+%\begin{equation}
+%	\text{at } r=R:\qquad
+%	\begin{cases}
+	%		u(R^+) = u(R^-),\\[3pt]
+	%		\kappa\,u'(R^+) = \kappa\,u'(R^-),
+	%	\end{cases}
+%\end{equation}
+%and boundedness at the origin further requires \(u'(0)=0\).
+%
+%This way, the problem can be splitted into two differential equations:
+%\begin{equation}
+%	\left\lbrace\begin{array}{rcll}
+	%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& -1, &\qquad 0\le r<R, \\
+	%		u''(r) + \frac{1}{r}\,u'(r) - \lambda^{2} u(r) &=& 0. &\qquad r>R
+	%	\end{array}
+%	\right.
+%\end{equation}
+%with $\lambda = \sqrt{\tfrac{\sigma}{\kappa}}$. The homogeneous modified Helmholtz problem admits solutions in terms of the modified Bessel functions $I_{0}$ and $K_{0}$. Imposing boundedness at the origin, decay away 
+%from the inclusion, and enforcing the interface conditions at $r=R$ yields the exact 
+%analytical solution:
+%\begin{equation}
+%	u(r) =
+%	\begin{cases}
+	%		\displaystyle 1 - \lambda R\,K_{1}(\lambda R)\,I_{0}(\lambda r),
+	%		& 0 \le r \le R, \\[10pt]
+	%		\displaystyle \lambda R\,I_{1}(\lambda R)\,K_{0}(\lambda r),
+	%		& r > R,
+	%	\end{cases}
+%	\qquad 
+%	\lambda = \sqrt{\frac{\sigma}{\kappa}},
+%\end{equation}
+%where \(I_{0}, I_{1}\) are the modified Bessel functions of the first kind of orders 
+%zero and one, and \(K_{0}, K_{1}\) are the corresponding modified Bessel functions 
+%of the second kind. Figure \ref{fig:inclusion_mesh_exact_fields}(b), for example, illustrates the exact solution for the potential field $\uF$ where as Figures \ref{fig:inclusion_mesh_exact_fields}(c)-(d) present the gradient and flux vector fields, i.e., $\eF$ and $\sF$, respectively.  
+%
+%\begin{remark}
+%	In the SI system of units, the diffusion coefficient is given by
+%	$$
+%	\kappa = \frac{[W]}{[m][K]},
+%	$$
+%	whereas the reaction coefficient has units
+%	$$
+%	\sigma = \frac{[W]}{[m^{3}][K]}.
+%	$$
+%	Consequently, the parameter \(\lambda = \sqrt{\sigma/\kappa}\) has units of \(1/[m]\), and the dimensionless quantity \(\lambda R\) governs the qualitative behavior of the solution. For example, for fixed \(\kappa\) and \(R\), increasing the reaction coefficient \(\sigma\) leads to a stronger boundary layer, meaning that the solution becomes progressively sharper.
+%	
+%\end{remark}
 
 
 
