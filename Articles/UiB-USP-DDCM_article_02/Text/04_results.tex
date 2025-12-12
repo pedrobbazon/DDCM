@@ -1,31 +1,47 @@
 
 \section{Results}
 
-This section presents the numerical assessment of both, the primal and dual formulation presented above. We consider two numerical examples. The first example aims to assess the convergence properties of the methods by computing the errors with respect to a smooth manufactured solution. The results are also compared with the Natural, Equal-Order Fully Stabilized, and Equal-Order Unstabilized formulations recently presented in \cite{ddcm1_article_gus}. 
+This section presents the numerical assessment of both, the primal and dual formulation presented above. We consider two numerical examples. The first one aims to assess the convergence properties of the methods by computing the errors with respect to a smooth manufactured solution. The results are also compared with the Natural, Equal-Order Fully Stabilized, and Equal-Order Unstabilized formulations recently presented in \cite{ddcm1_article_gus}. 
 The second example considers a more challenging problem that exhibits an internal reaction
-boundary layer, in which we assess the approximation properties of the proposed methods.
-This example also serves to explore the effect of
+boundary layer, so as to assess the approximation properties of the proposed methods in the presence
+of large gradients. This example nicely illustrates some key differences between the primal
+and the dual formulations and also allows us to study the effect of different choices for the data 
+fields $(\eFt,\sFt)$, which is more appealing in data-driven computational mechanics computations.
 
-Next, we examine the accuracy and convergence behavior of both formulations on a non-convex domain, specifically considering the prototypical reentrant-corner geometry, and again provide comparisons with the formulations in \cite{X}. Finally, to numerically corroborate the well-posedness of the discrete primal and dual problems, we compute the Babuška inf-sup constant for a sequence of mesh refinements, demonstrating it is bounded from below independently of the mesh size for both formulations.
-
-To introduce the finite element setting employed throughout this section, we consider a sequence of conforming and shape-regular finite element partitions of the computational domain, denoted by $\mathcal{T}_h$, with characteristic mesh size $h$, unless otherwise specified. In addition, within the variational multiscale framework with stable equal-order approximations, we define the following discrete function space:
-\begin{equation*}
-	\CG_{k+1}(\mathcal{T}_h) \subset H^{1}(\Omega),\quad \CG_{k+1} := \left\{ v \in C^0(\Omega) \;\middle|\; v|_K \in \mathbb{P}_k(K),\ \forall K \in \mathcal{T}_h \right\}	
-\end{equation*}
-where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$. Accordingly, for both discretized primal and dual problems with $P'$ being the identity (ASGS), scalar and vector fields are approximated as
+We consider a sequence of conforming and shape-regular finite element partitions of the computational domain, denoted by $\mathcal{T}_h$, with characteristic mesh size $h$. 
+One of the main motivations of the variational multiscale approach is the possibility of equal-order approximations.
+Therefore we consider the following choice of discrete finite element spaces 
 \begin{equation*}\label{eq:equal_order_func_spaces}
 	\left(\uF_{h}, \eF_{h}, \sF_{h}, \lF_{h}, \mF_{h}\right)
 	\in
-	\CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
-	\times \left[\CG_{k+1}\right]^{d_{\Omega}}
-	\times \CG_{k+1}
-	\times \left[\CG_{k+1}\right]^{d_{\Omega}},
+	\CG_{k} \times \left[\CG_{k}\right]^{d_{\Omega}}
+	\times \left[\CG_{k}\right]^{d_{\Omega}}
+	\times \CG_{k}
+	\times \left[\CG_{k}\right]^{d_{\Omega}},
 \end{equation*}
-where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\Omega$.\footnote{The details of the discrete function spaces used for the Natural and Equal-Order (and its variants) formulations can be found in \cite{X}.} 
+where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\Omega$, $k>0$ and 
+\begin{equation*}
+	\quad \CG_{k} := \left\{ v \in C^0(\Omega) \;\middle|\; v|_K \in \mathbb{P}_k(K),\ \forall K \in \mathcal{T}_h \right\}	
+\end{equation*}
+where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$.
+A comment is in order to as the computation of the subscale component of the discrete solution. 
+Whereas in the ASGS method, being $P'$ the identity operator, no additional unknowns are 
+needed, since the subscales are simply evaluated locally at the element level, for the OSS 
+method, with $P'$ being the projector onto the orthogonal complement of the finite element space, 
+we need to introduce one additional unknown for each field if we aim to solve the problem monolithically,
+this is, if we denote by $w$ any field, such that $w = w_h + w'$, $w'$ is given by
+\begin{equation}
+w' = \tau_w \ P' \left ( r(w) \right ) = r(w) - P_{L^2(\Omega)} \left ( r(w) \right )
+\end{equation}
 
+
+
+Although it is worth mentioning at this point that no significative differences were observed between the two approaches in both, the primal and dual formulations. 
+
+Finally, the implementation was done in the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
 
 \newpage
-\subsubsection{Convergence: a convex domain}
+\subsubsection{Convergence to a manufactured solution}
 
 First, we define the parameters employed in each formulation. For this purpose, we consider $P'$ to be the identity operator in both the primal and dual problems. Accordingly, we shall hereafter refer to these formulations as \textbf{Primal-ASGS} and \textbf{Dual-ASGS}. Additionally, the stabilization constants for the primal formulation are chosen as
 $$
@@ -153,6 +169,13 @@ where the values on the right-hand side are computed from the manufactured field
 \end{figure}
 
 
+
+
+
+
+
+\iffalse
+
 \cleardoublepage
 \subsubsection{Convergence: a non-convex domain}
 With reference to the non-convex domain discussed in \cite{X}, we now assess the accuracy of both \textbf{Primal-ASGS} and \textbf{Dual-ASGS} formulations for the re-entrant corner problem, whose geometry is shown in Fig.~\ref{X} for the opening angle $\phi = \pi/4$. The corner is located at the origin $(0,0)$. A manufactured solution is prescribed by defining the scalar field $\uF$ as
@@ -263,7 +286,7 @@ Having established the eigenvalues problems for both discrete primal and dual pr
 
 
 
-
+\fi
 
 
 
