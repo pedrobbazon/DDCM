@@ -178,13 +178,17 @@ all cases exhibits $\mathcal{O}(h)$ convergence with very similar errors for $\s
 but significantly better results for the dual formulation for $\mF$ (yellow lines), 
 the only one attaining linear convergence. 
 
-Passing to quadratic elements ($k=2$), the primal formulation attained $\mathcal{O}(h^2)$ convergence in the $H^1$-norm for the scalar fields $\uF$ and $\lF$, which is the theoretical optimal rate (see figure fig:convergence_scalar_quadratic_art02), with results essentially superimposing to those of the Natural and GLS Fully stabilized formulation. As expected, the unstabilized formulation exhibited suboptimal convergence rates, showing the importance of stabilization. Results in the $L^2$-norm for these fields show the dual formulation exhibiting the worst errors among all the formulations. 
+Passing to quadratic elements ($k=2$), the primal formulation attained $\mathcal{O}(h^2)$ convergence in the $H^1$-norm for the scalar fields $\uF$ and $\lF$, which is the theoretical optimal rate (see figure \ref{fig:convergence_scalar_quadratic_art02}), with results essentially superimposing to those of the Natural and GLS Fully stabilized formulation. As expected, the unstabilized formulation exhibited suboptimal convergence rates, showing the importance of stabilization. Results in the $L^2$-norm for these fields show the dual formulation exhibiting the worst errors among all the formulations. 
 For the vector fields, all formulations attained second order convergence in the
 $L^2$-norm for all formulations (figure \ref{fig:convergence_vector_quadratic_art02}).
 It is remarkable that the GLS Fully stabilized formulation exhibited a superconvergent
 behavior for $\sF$, almost reaching $\mathcal{O}(h^3)$.
-
-
+Again, the main advantage of the dual formulation, as expected, is shown
+by looking at the errors in the $H(div)$-norm (figure \ref{fig:convergence_vector_quadratic_hdiv_art02}) where
+the dual formulation is the only one to attain second order convergence
+for the $\mF$ field. Although there are no estimates for
+$\eF$ in this norm, notably the error for the $\eF$ is significantly
+smaller among all the formulations.
 
 %=============================================
 % k = 0
