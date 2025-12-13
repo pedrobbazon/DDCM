@@ -38,8 +38,10 @@ the relevant error norms will be computed. Its construction deserves some attent
 although it essentially follows the idea presented in \cite{ddcm1_article_gus}.
 By examining the optimality conditions in their strong form it is easy
 to devise a manufactured solution that resembles a relevant case
-for data-driven computational mechanics. To that end,
-we begin by defining the primal scalar field
+for data-driven computational mechanics scenarios. 
+The manufactured solution to be constructed is illustrated in figure \ref{fig:reference_fields_solution}, that shows all the primal fields $(\uF, \sF, \eF)$, 
+the dual fields $(\lF,\mF)$ and the data fields $(\sFt,\eFt)$. 
+To construct such solution, we begin by defining the primal scalar field
 \begin{equation}
 	\uF : \Omega \to \mathbb{R}, \qquad \uF(x,y) = \cos(\pi x)\cos(\pi y),
 \end{equation}
@@ -57,7 +59,10 @@ Second, for the primal flux $\sF$ we consider
 	\sF : \Omega \to \mathbb{R}^{2}, \qquad 
 	\sF = -\frac{\eF}{\|\eF\|}\left(\|\eF\| - \frac{1}{40}\,\|\eF\|^{3}\right).
 \end{equation}
-such that we mimic a nonlinear constitutive relation between $\sF$ and $\eF$. 
+such that to mimic a nonlinear constitutive relation between $\sF$ and $\eF$,
+as plot in subfigure (f), showing the corresponding relation between the magnitude of
+$\sF$ and the magnitude of $\eF$ obtained by sampling the solution over a
+computational mesh.
 For the dual scalar field $\lambda$ we take the function
 \begin{equation}
 	\lF : \Omega \to \mathbb{R}, \qquad 
@@ -83,11 +88,11 @@ the balance equation
 \begin{equation}
 	q = \zeta \uF + \nabla \cdot \sF,
 \end{equation}
+Subfigure (f) also shows with blue dots the sampled values over the computational mesh
+of the magnitude of $\sFt$ as a function of the magnitude of $\eFt$.
 The computational domain $\Omega$ is chosen to be the unit square $[0,1]^2$. 
 The scale parameter and the reaction coefficient are taken as unity, 
 i.e., $\kappa = 1$ and $\zeta = 1$. 
-The manufactured solution is illustrated in figure \ref{fig:reference_fields_solution}
-that shows all the primal fields $(\uF, \sF, \eF)$, the dual fields $(\lF,\mF)$ and the data fields $(\sFt,\eFt)$. We also show in subfigure (f) the corresponding relation between $\sF$ and $\eF$ and $\sFt$ and $\eFt$ obtained by sampling the solution over the domain.
 \begin{figure}[ht!!]
 	\centering
 	\caption{Manufactured solution for the example 1 showing the 
@@ -123,8 +128,8 @@ of the vector unknowns $\sF$ and $\mF$, i.e.,
 	\end{array}
 	\right.
 \end{equation}
-where the values on the right-hand side are evaluated at the position of the corresponding
-degrees of freedom, from the manufactured fields. 
+where the values on the right-hand side are evaluated  from the manufactured fields
+at the locations of the corresponding degrees of freedom.
 
 \subsubsection*{Choice of estabilization parameters}
 
@@ -154,14 +159,31 @@ Passing to the numerical results, figures
 considering linear elements ($k=1$). Figures \ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} show the same results for quadratic elements ($k=2$). Let us recall that we are also comparing results
 against the different formulations recently assessed in \cite{ddcm1_article_gus}, namely,
 a Galerkin (stable) Natural formulation in which $\nabla{U}_u \subset M_h$, 
-$\nabla{L}_u \subset S_h$ and $E_h = M_h$, a GLS formulation which allows 
-equal-order interpolation and also an equal order plain Galerkin unstabilized formulation.
+$\nabla{L}_u \subset S_h$ and $E_h = M_h$, a Fully stabilized Galerkin Least Square (GLS) formulation which allows equal-order interpolation and also an equal order plain Galerkin unstabilized formulation.
 
-For linear elements all formulations attain second order convergence 
-for the scalar fields in the $L^2$-norm and first order in the $H^1$-norm, 
-which is optimal.  However, the errors are significantly larger for the Dual-ASGS formulation.
-Notice that in this case, for the Dual-ASGS formulation, only the $L^2$ norm 
-is assessed. For the vector fields
+For linear elements (figures \ref{fig:convergence_scalar_linear_art02} to
+\ref{fig:convergence_vector_linear_hdiv_art02}) all formulations attain second order convergence for the scalar fields in the $L^2$-norm and first order convergence 
+in the $H^1$-norm, which is optimal.  However, the errors are significantly larger for the 
+Dual-ASGS formulation, showing the advantage of the primal formulation to as 
+accuracy of the scalar fields.
+Notice also that in this case, for the Dual-ASGS formulation, only the $L^2$ norm is 
+assessed. For the vector fields (figure \ref{fig:convergence_vector_linear_art02}) 
+all formulations under consideration except the Natural one,
+exhibits superlinear convergence in the $L^2$-norm, almost reaching $\mathcal{O}(h^2)$ convergence, although the theoretical estimate is $\mathcal{O}(h)$. 
+For all formulations (except the Natural), results for the $H(div)$-norm are displayed 
+in figure \ref{fig:convergence_vector_linear_hdiv_art02}. Recall that the only formulation
+for which we can guarantee convergence for the vector fields $\sF$ and $\mF$ in the 
+$H(div)$-norm is the dual formulation. At least for linear elements, however,
+all cases exhibits $\mathcal{O}(h)$ convergence with very similar errors for $\sF$ 
+but significantly better results for the dual formulation for $\mF$ (yellow lines), 
+the only one attaining linear convergence. 
+
+Passing to quadratic elements ($k=2$), the primal formulation attained $\mathcal{O}(h^2)$ convergence in the $H^1$-norm for the scalar fields $\uF$ and $\lF$, which is the theoretical optimal rate (see figure fig:convergence_scalar_quadratic_art02), with results essentially superimposing to those of the Natural and GLS Fully stabilized formulation. As expected, the unstabilized formulation exhibited suboptimal convergence rates, showing the importance of stabilization. Results in the $L^2$-norm for these fields show the dual formulation exhibiting the worst errors among all the formulations. 
+For the vector fields, all formulations attained second order convergence in the
+$L^2$-norm for all formulations (figure \ref{fig:convergence_vector_quadratic_art02}).
+It is remarkable that the GLS Fully stabilized formulation exhibited a superconvergent
+behavior for $\sF$, almost reaching $\mathcal{O}(h^3)$.
+
 
 
 %=============================================
