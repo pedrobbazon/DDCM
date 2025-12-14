@@ -128,7 +128,40 @@ Although we could also have selected $k_{\mF} = k_{\sF} = 0$, the choice $k_{\mF
 As a final remark, the convergence studies presented below employ linear and quadratic polynomial approximations, corresponding to polynomial degrees $k \in {1,2}$.
 Therefore, in the following discussion, we consider the algebraic implementation of the method, which we refer to as \textbf{Primal-ASGS} and \textbf{Dual-ASGS}.
 
-Turning to the numerical results, Figures \ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02} display the error norms for all fields using linear elements ($k=1$), while Figures \ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} present the corresponding results for quadratic elements ($k=2$). Recall that we are also comparing our results against the different formulations recently evaluated in \cite{ddcm1_article_gus}: namely, a (stable) Galerkin-based Natural formulation in which $\nabla{U}_h \subset M_h$, $\nabla{L}_h \subset S_h$, and $E_h = M_h$; a fully stabilized Galerkin Least Squares (GLS) formulation permitting equal-order interpolation; and finally, an unstabilized equal-order plain Galerkin formulation.
+Turning to the numerical results, in the first place we show a qualitative
+comparison to illustrate the behavior of all the unknown fields
+as the mesh is refined. Three levels of refinement are considered, 
+namely, a very coarse mesh ($h = 0.1$), an intermediate mesh ($h = 0.025)
+and a very fine mesh $h=0.00625$).
+Figure \ref{fig:primal_formulation_fields_solution} 
+shows the results for the \textbf{Primal-ASGS} and 
+figure \ref{fig:dual_formulation_fields_solution} for the \textbf{Dual-ASGS}
+formulation. This plots should be compared to the reference solution shown 
+in figure \ref{fig:reference_fields_solution}.
+A first catching eye conclusion by looking at these plots is that all formulations 
+capture well the main trends of the solution for the finer grid.
+
+\begin{figure}[ht!!]
+	\centering
+	\caption{Contours of fields $\uF$, $\sF$, $\eF$, $\lF$, $\mF$ 
+	for the \textbf{Primal-ASGS} for different levels of mesh refinement.}
+	~\\
+	\def\svgwidth{0.85\columnwidth}
+	\input{Figures/PDFs/primal_formulation_fields_solution.pdf_tex}
+	\label{fig:primal_formulation_fields_solution}
+\end{figure}
+
+\begin{figure}[ht!!]
+	\centering
+	\caption{Contours of fields $\uF$, $\sF$, $\eF$, $\lF$, $\mF$ 
+	for the \textbf{Dual-ASGS} for different levels of mesh refinement.}
+	~\\
+	\def\svgwidth{0.85\columnwidth}
+	\input{Figures/PDFs/dual_formulation_fields_solution.pdf_tex}
+	\label{fig:dual_formulation_fields_solution}
+\end{figure}
+
+ Figures \ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02} display the error norms for all fields using linear elements ($k=1$), while Figures \ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} present the corresponding results for quadratic elements ($k=2$). Recall that we are also comparing our results against the different formulations recently evaluated in \cite{ddcm1_article_gus}: namely, a (stable) Galerkin-based Natural formulation in which $\nabla{U}_h \subset M_h$, $\nabla{L}_h \subset S_h$, and $E_h = M_h$; a fully stabilized Galerkin Least Squares (GLS) formulation permitting equal-order interpolation; and finally, an unstabilized equal-order plain Galerkin formulation.
 
 For linear elements (Figures \ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02}), all formulations achieve optimal convergence rates: second-order for the scalar fields in the $L^2$-norm and first-order in the $H^1$-norm. However, the errors for the Dual-ASGS formulation are significantly larger, highlighting the superior accuracy of the primal formulation to approximate the scalar fields.
 
@@ -214,7 +247,6 @@ These numerical results confirm the well-posedness and validate the implementati
 	\label{fig:convergence_vector_quadratic_hdiv_art02}
 \end{figure}
 
-\newpage
 \subsubsection{Example 2: Performance Assessment in the Presence of Large Gradients}
 
 
