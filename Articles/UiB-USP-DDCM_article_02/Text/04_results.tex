@@ -238,20 +238,16 @@ These numerical results confirm the well-posedness of the discrete formulations 
 \clearpage
 \subsubsection{Example 2: Performance Assessment in the Presence of Large Gradients}
 
-The aim of this final example is to further assess the performance of both the primal and dual formulations on a more challenging problem that exhibits very large gradients on internal boundary layers, typical of reaction-diffusion problems. 
-Let us introduce a standard problem that will serve two purposes. On the one hand, it will be used to generate synthetic data fields $\sFt$ and $\eFt$ to be fed to the data-driven formulation. On the other hand, it will provide a reference solution to which we can compare the results from these formulations.
+This final example aims to further assess the performance of the primal and dual formulations on a more challenging problem characterized by large internal gradients, typical of reaction-diffusion systems. We introduce a standard problem that serves a dual purpose: it will generate the synthetic data fields $\sFt$ and $\eFt$ required for the data-driven formulation while also providing a reference solution for comparative evaluation.
 
-Let  $\Omega = [0,1]\times[0,1]$ be the computational domain, with geometric center at 
-$\mathbf{x}_{c} = (0,\,0)$ and boundary denoted by $\partial\Omega$. 
-We consider a circular inclusion centered at $\mathbf{x}_{c}$ defined by
+Let  $\Omega = [0,1]\times[0,1]$ be the computational domain.
+We consider a circular inclusion immersed in $\Omega$, centered at $\mathbf{x}_{c} = (\frac12,\,\frac12)$ and defined by
 $$
 \Omega_{\mathrm{inc}} = \{\, \mathbf{x}\in \Omega : \|\mathbf{x}-\mathbf{x}_{c}\| < R \,\},
 \qquad R=0.25,
 $$
 whose boundary is denoted by $\Gamma$. 
-Figure \ref{fig:inclusion_mesh_exact_fields} shows a schematic representation
-of the computational domain as well as the finite element mesh to be 
-used. By taking a closer look at this figure we can notice that $\Gamma$ conforms to the element edges. 
+Figure \ref{fig:inclusion_mesh_exact_fields} presents a schematic of the computational domain along with the finite element mesh. As shown, the interface $\Gamma$ is aligned with the element edges. 
 \begin{figure}[h!]
 	\centering
 	\caption{Computational domain and the associated finite element mesh. Figures (b), (c), and (d) illustrate the corresponding reference (exact) physical fields: the potential $\uF$, the flux $\sF$, and the gradient $\eF$, respectively.}
@@ -261,9 +257,8 @@ used. By taking a closer look at this figure we can notice that $\Gamma$ conform
 	\input{Figures/PDFs/inclusion_mesh_exact_fields.pdf_tex}
 	\label{fig:inclusion_mesh_exact_fields}
 \end{figure}
-The standard problem therefore consists in solving the following 
-diffusion–reaction equation with piecewise constant source terms:
-We seek a field $\uF:\Omega \to \mathbb{R}$ such that
+The standard problem therefore consists of solving the following diffusion–reaction equation:
+Find $\uF:\Omega \to \mathbb{R}$ such that
 \begin{equation}
 	\left\lbrace
 	\begin{array}{rcll}
@@ -275,7 +270,8 @@ We seek a field $\uF:\Omega \to \mathbb{R}$ such that
 	\right.
 	\label{eq:diff_reaction}
 \end{equation}
-where the reaction coefficient $\zeta > 0$ is uniform and the source term $q$ is piecewise constant, i.e.,
+where the reaction coefficient $\zeta > 0$ is uniform and the source term $q$ 
+is piecewise constant, i.e.,
 $$
 q(\mathbf{x}) =
 \begin{cases}
@@ -283,8 +279,7 @@ q(\mathbf{x}) =
 	0, & \mathbf{x}\in \Omega\setminus \Omega_{\mathrm{inc}}.
 \end{cases}
 $$
-Assuming uniform conductivity, symmetry implies that the solution depends only on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2} + y^{2}}$. Under this assumption, the problem reduces to an ordinary differential equation in the radial coordinate whose solution
-reads
+Assuming uniform conductivity, symmetry implies the solution depends only on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{(x-\frac12)^{2} + (y-\frac12)^{2}}$. Under this assumption, the problem reduces to an ordinary differential equation in $r$, whose solution is
 \begin{equation}
 	u(r) =
 	\begin{cases}
@@ -298,10 +293,7 @@ reads
 	\qquad
 	\lambda = \sqrt{\frac{\zeta}{\mu}},
 \end{equation}
-being $I_{0}, I_{1}$ the modified Bessel functions of the first kind (orders 0 and 1, respectively),
-and $K_{0}, K_{1}$ the corresponding modified Bessel functions of the second kind. Fig.~\ref{fig:inclusion_mesh_exact_fields}(b) shows the exact potential field $\uF$ whereas Fig.~\ref{fig:inclusion_mesh_exact_fields}(c)--(d) illustrates the corresponding
-gradient and flux fields, $\eF$ and $\sF$, respectively.
-A few comments are in order: first, notice that this solution satisfies the following physical conditions across the interface $\Gamma$
+Here, $I_{0}$ and $I_{1}$ are the modified Bessel functions of the first kind (orders 0 and 1, respectively), and $K_{0}$, $K_{1}$ are the corresponding modified Bessel functions of the second kind. Figure~\ref{fig:inclusion_mesh_exact_fields}(b) shows the exact potential field $\uF$, while subfigures (c) and (d) illustrate the corresponding gradient and flux fields, $\eF$ and $\sF$, respectively. Several observations are noteworthy: first, note that this solution satisfies the following physical conditions across the interface $\Gamma$:
 $$
 \text{at } r=R:\qquad
 \begin{cases}
@@ -309,29 +301,27 @@ $$
 	\mu\,u'(R^{+}) = \mu\,u'(R^{-}),
 \end{cases}
 $$
-ensuring continuity of the field and of the normal diffusive flux. 
-Second, the solution decays to zero at infinity and boundedness at the origin also 
-gives that $u'(0)=0$. Third, we control the violence of the transition region 
-by adjusting the ratio of the reaction to the diffusion coefficient $\lambda$.
-In the numerical experiments we set $mu = 1$ and $\zeta=1000$, given 
-a transition with characteristic lenght $~0.03$.
+ensuring continuity of $u$ and of the normal diffusive flux. 
+Second, the solution decays to zero at infinity, and its boundedness at the origin implies $u'(0) = 0$. Third, the sharpness of the transition region is controlled by adjusting the ratio $\lambda$ of the reaction to the diffusion coefficient. In our numerical experiments, we set $\mu = 1$ and $\zeta = 1000$, which yields a transition region with a characteristic length of approximately $0.03$.
 
-Moving on to the results, we begin by specifying the following configuration:
-
+Before presenting the numerical results, we specify the following computational setup:
 \begin{enumerate}
-	\item For the numerical experiments, we consider a finite element mesh with mesh size $h = 0.025$;
-	\item For the physical constants, we set $\kappa = 1.0$ and $\sigma = 10^{3}$;
-	\item For the stabilization parameters, we use
-	$$
-	\ku = \kl = 1.0, \qquad \ks = \ke = \km = \tfrac{1}{8}
-	$$
-	for the primal ASGS formulation, whereas for the dual ASGS formulation we take
-	$$
-	\ku = \kl = \ke = \tfrac{1}{4}, \qquad 	\ks = 1.0,\qquad \km = \tfrac{1}{8};
-	$$
-	\item Regarding the boundary conditions, we impose pure Dirichlet conditions for the primal ASGS formulation and pure Neumann conditions for the dual ASGS formulation. Thus, the boundary conditions are strongly enforced on the scalar fields $\uF$ and $\lF$ in the former case, and on the vector fields $\sF$ and $\mF$ in the latter.
-\end{enumerate}
+\item[(i)] A finite element mesh with characteristic size $h = 0.025$;
+\item[(ii)] Stabilization parameters set as
+\[
+\ku = \kl = 1, \qquad \ks = \ke = \km = \tfrac{1}{8}
+\]
+for the primal-ASGS formulation, and
+\[
+\ku = \kl = \ke = \tfrac{1}{4}, \qquad \ks = 1, \qquad \km = \tfrac{1}{8}
+\]
+for the dual-ASGS formulation;
 
+\item[(iii)] Strong imposition of boundary conditions: for the primal formulation, $\uF = 0$ and $\lF = 0$; for the dual formulation, $\sF \cdot \normal = 0$ and $\mF \cdot \normal = 0$. These
+homogenous values are safe since the solution has already sufficiently decayed at the boundary.
+
+\item[(iv)] The data fields $\sFt$ and $\eFt$ are defined as elementwise constants. They are generated by sampling a finite element solution of problem (\ref{eq:diff_reaction}), which is computed using a standard primal Galerkin formulation with continuous piecewise linear elements on the same mesh used for the data-driven problem. Unlike the previous example,  where data fields were treated as continuously available, here the data are provided only at discrete locations. This brings the test closer to realistic data-driven mechanics applications.
+\end{enumerate}
 
 In Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS} we first illustrate the physical fields $\uF$ and $\sF$ obtained for both primal and dual ASGS formulations. Comparing Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(a) and Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(b), we notice that the primal formulation provides a better approximation to the scalar potential field. Conversely, ...
 
