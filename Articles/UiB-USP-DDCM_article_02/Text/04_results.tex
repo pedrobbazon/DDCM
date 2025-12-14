@@ -1,82 +1,94 @@
 
-\section{Results}
+\section{Numerical results}
 
-This section presents the numerical assessment of both, the primal and dual formulation presented above. We consider two numerical examples. The first example aims to assess the convergence properties of the methods by computing the errors with respect to a smooth manufactured solution. The results are also compared with the Natural, Equal-Order Fully Stabilized, and Equal-Order Unstabilized formulations recently presented in \cite{ddcm1_article_gus}. 
-The second example considers a more challenging problem that exhibits an internal reaction
-boundary layer, in which we assess the approximation properties of the proposed methods.
-This example also serves to explore the effect of
+This section presents a numerical assessment of both the primal and dual formulations introduced above. Two numerical examples are considered. The first aims to evaluate the convergence properties of the methods by computing relevant error norms against a smooth manufactured solution. These results will be compared with those from a Natural formulation, an Equal-Order method based on Galerkin Least Squares, and an Unstabilized Equal-Order method, all recently discussed in \cite{ddcm1_article_gus}.
 
-Next, we examine the accuracy and convergence behavior of both formulations on a non-convex domain, specifically considering the prototypical reentrant-corner geometry, and again provide comparisons with the formulations in \cite{X}. Finally, to numerically corroborate the well-posedness of the discrete primal and dual problems, we compute the Babuška inf-sup constant for a sequence of mesh refinements, demonstrating it is bounded from below independently of the mesh size for both formulations.
+The second example addresses a more challenging problem featuring an internal reaction boundary layer, in order to assess the approximation properties of the proposed methods in the presence of large solution gradients. This case clearly illustrates key differences between the primal and dual formulations and further allows us to examine the effect of different choices for the data fields $(\eFt,\sFt)$ making this final experiment particularly relevant for data-driven computational mechanics applications.
 
-To introduce the finite element setting employed throughout this section, we consider a sequence of conforming and shape-regular finite element partitions of the computational domain, denoted by $\mathcal{T}_h$, with characteristic mesh size $h$, unless otherwise specified. In addition, within the variational multiscale framework with stable equal-order approximations, we define the following discrete function space:
-\begin{equation*}
-	\CG_{k+1}(\mathcal{T}_h) \subset H^{1}(\Omega),\quad \CG_{k+1} := \left\{ v \in C^0(\Omega) \;\middle|\; v|_K \in \mathbb{P}_k(K),\ \forall K \in \mathcal{T}_h \right\}	
-\end{equation*}
-where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$. Accordingly, for both discretized primal and dual problems with $P'$ being the identity (ASGS), scalar and vector fields are approximated as
+We consider a sequence of conforming, shape-regular finite element partitions $\mathcal{T}_h$ of the computational domain, with characteristic mesh size $h$. A primary motivation for the variational multiscale approach is the ability to use equal-order approximations. Accordingly, we employ the following choice of discrete finite element spaces:
 \begin{equation*}\label{eq:equal_order_func_spaces}
 	\left(\uF_{h}, \eF_{h}, \sF_{h}, \lF_{h}, \mF_{h}\right)
 	\in
-	\CG_{k+1} \times \left[\CG_{k+1}\right]^{d_{\Omega}}
-	\times \left[\CG_{k+1}\right]^{d_{\Omega}}
-	\times \CG_{k+1}
-	\times \left[\CG_{k+1}\right]^{d_{\Omega}},
+	\CG_{k} \times \left[\CG_{k}\right]^{d_{\Omega}}
+	\times \left[\CG_{k}\right]^{d_{\Omega}}
+	\times \CG_{k}
+	\times \left[\CG_{k}\right]^{d_{\Omega}},
 \end{equation*}
-where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\Omega$.\footnote{The details of the discrete function spaces used for the Natural and Equal-Order (and its variants) formulations can be found in \cite{X}.} 
+where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\Omega$, $k>0$ and 
+\begin{equation*}
+	\quad \CG_{k} := \left\{ v \in C^0(\Omega) \;\middle|\; v|_K \in \mathbb{P}_k(K),\ \forall K \in \mathcal{T}_h \right\}	
+\end{equation*}
+where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$.
+A comment is in order regarding the computation of the subscale component of the numerical solution. In the ASGS method, being $P'$ the identity operator, no additional unknowns are required, since the subscales are simply evaluated locally at the element level. In contrast, for the OSGS method, with $P'$ denoting the projector onto the orthogonal complement of the finite element space, one additional unknown per field must be considered.
 
-
-\newpage
-\subsubsection{Convergence: a convex domain}
-
-First, we define the parameters employed in each formulation. For this purpose, we consider $P'$ to be the identity operator in both the primal and dual problems. Accordingly, we shall hereafter refer to these formulations as \textbf{Primal-ASGS} and \textbf{Dual-ASGS}. Additionally, the stabilization constants for the primal formulation are chosen as
-$$
-k_{\uF} = k_{\lF} = 0, 
-\quad 
-k_{\eF} = k_{\sF} = k_{\mF} = \tfrac{1}{8},
-$$
-whereas for the dual formulation we take
-$$
-k_{\uF} = k_{\lF} = k_{\eF} = k_{\mF} = \tfrac{1}{4}, 
-\quad 
-k_{\sF} = 1.0.
-$$
-%\quad  k_{\mF} = \tfrac{1}{8}. 
-The former choice exploits the residual orthogonality property proved earlier, while the latter ensures that $k_{\eF}$ can be chosen independently of the mesh size. Moreover, the characteristic length scale of the problem is fixed as $\ell = 1$, which implies $L_{0} \sim h$ and $L_{1} \sim \tfrac{1}{h}$ for the $P_{p,h}$, whereas $L_{0} \sim 1$ and $L_{1} \sim 1$ for $P_{d,h}$. As a final remark, in the convergence studies presented below we consider linear and quadratic polynomial approximations, corresponding to degrees $k \in \{0,1\}$.
-
-Now we describe the construction of the manufactured solution employed in this test problem. Although it is essentially the same as that adopted for the convergence assessment in a convex domain in \cite{X}, we opted to give a brief review. Let $\uF$ denote the smooth scalar field defined by
+That is, if we denote by $w$ any of the unknown fields, such that $w = w_h + w'$, the subscale component $w'$ is in this case given by
 \begin{equation}
-	\uF : \Omega \to \mathbb{R}, \qquad \uF(x,y) = \cos(\pi x)\cos(\pi y),
+w' = \tau_w \, P' \left ( r(w) \right ) = \tau_w \, \left [ r_w - P_{W_{h}} \left ( r_w \right ) \right ]
+\end{equation}
+where $r_w$ is the algebraic residual equation of the variable $w$ and $P_{W_{h}}$ stands for the $L^2(\Omega)$ projection onto $W_h$.
+Since this leads to an excessive computational burden, in practice the explicit computation of the subscales is avoided by applying some sort of fixed-point iteration scheme. However, in this work we choose to include them as unknowns and solve the problem monolithically. This approach allows for a cleaner code and simplifies the implementation, eliminating any numerical error that may arise from the additional iterative process.
+
+Although it is worth mentioning that no significant differences in the numerical results were observed between the ASGS and OSGS methods, for both the primal and dual formulations. Finally, the implementation was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
+
+\subsubsection{Example 1: Convergence to a manufactured solution}
+
+Let us first describe the construction of a manufactured solution with respect to which the relevant error norms will be computed. Its construction deserves some attention, although it essentially follows the idea presented in \cite{ddcm1_article_gus}. By examining the optimality conditions in their strong form, it is straightforward to devise a manufactured solution that resembles a relevant scenario for data-driven computational mechanics.
+
+The manufactured solution is illustrated in Figure~\ref{fig:reference_fields_solution}, which shows all the primal fields $(\uF, \sF, \eF)$, the dual fields $(\lF,\mF)$, and the data fields $(\sFt,\eFt)$. To construct this solution, we begin by defining the primal scalar field
+\begin{equation}
+ \uF(x,y) = \cos(\pi x)\cos(\pi y),
 \end{equation}
 whose gradient is given by
 \begin{equation}
-	\eF : \Omega \to \mathbb{R}^{2}, \qquad 
 	\eF(x,y) = -\pi \,[\sin(\pi x)\cos(\pi y),\, \cos(\pi x)\sin(\pi y)]^{\top}.
 \end{equation}
-Then, we propose $\lambda$ to be as
+We then define $\eFt$ as a perturbation of $\eF$ as follows
 \begin{equation}
-	\lF : \Omega \to \mathbb{R}, \qquad 
-	\lF(x,y) = -\frac{1}{40\pi}\,[\cos(2\pi x) + \cos(2\pi y)],
+\eFt(x,y) = \eF(x,y) + \frac{1}{20} \left[\sin\left(4\pi x \right), \sin\left(4 \pi y \right) \right]^{\top}
 \end{equation}
-and define $\sF$ as follows
+Then, for the primal flux $\sF$ we consider 
 \begin{equation}\label{eq:nonlinear_fluxlaw}
-	\sF : \Omega \to \mathbb{R}^{2}, \qquad 
 	\sF = -\frac{\eF}{\|\eF\|}\left(\|\eF\| - \frac{1}{40}\,\|\eF\|^{3}\right).
 \end{equation}
-This way, eq.~\ref{eq:nonlinear_fluxlaw} establishes a nonlinear constitutive relation between flux $\sF$ and gradient $\eF$. 
-
-Similarly to the approach in \cite{X}, and solely for the purpose of assessing the convergence properties of the discrete formulations under general conditions, it is convenient to add an additional source term to the right-hand side of eqs.~\ref{X} and \ref{X}:
+such as to mimic a nonlinear constitutive relation between $\sF$ and $\eF$, as plotted in subfigure~(f), which shows the corresponding relation between the magnitude of $\sF$ and the magnitude of $\eF$ obtained by sampling the solution over a computational mesh.
+For the dual scalar field $\lambda$ we take the function
+\begin{equation}
+	\lF(x,y) = -\frac{1}{40\pi}\,[\cos(2\pi x) + \cos(2\pi y)],
+\end{equation}
+and finally from the equation for $\eF$ we simply obtain $\mF$ as
+\begin{equation}\label{eq:nonlinear_fluxlaw}
+\mF = \eFt - \eF
+\end{equation}
+We need to introduce a (dual) source term on the right-hand side of the equation for $u$, which must satisfy
 \begin{equation}
 	\zeta \lF + \nabla \cdot \mF = f,
 \end{equation}
-which amounts to adding the term \(- (f, \uF)\) to the Lagrangian (eq.~\ref{X}).
-
-By examining the optimality conditions in their strong form either from $P_{p,h}$ or $P_{d,h}$ (eqs.~\ref{X} and \ref{X} respectively), we proceed as follows to construct the manufactured solution for the remaining fields. First take
+but note that this is done solely for the purpose of assessing the convergence 
+properties of the method using such a manufactured solution.
+Finally, $\sFt$ is obtained from
 \begin{equation}
-	\eFt:\Omega \rightarrow \mathbb{R}^2, \qquad \eFt(x,y) = \eF(x,y) + \frac{1}{20} \left[\sin\left(4\,\pi\,x \right), \sin\left(4\,\pi\,y\right) \right]^{\top}
+	\sFt = \sF - \kappa^{-1} \, \nabla{\lF}
 \end{equation}
-as a perturbation of $\eF$, from which $\mF$ can be obtained using the last optimality condition. Then, $\sFt$ is computed from the third optimality condition, and finally, the source terms $f$ and $q$ are determined by substituting the proposed fields into the first and second equations.
-
-In the numerical experiment, the computational domain $\Omega$ is chosen to be the unit square $[0,1]^2$. On the boundary $\partial \Omega$, we impose pure Dirichlet boundary conditions, i.e.,
+and the source term $q$ is obtained by substituting the proposed fields into
+the balance equation
 \begin{equation}
+	q = \zeta \uF + \nabla \cdot \sF,
+\end{equation}
+Subfigure~(f) also displays, using blue dots, the sampled values of the magnitude of $\sFt$ as a function of the magnitude of $\eFt$, taken over the computational mesh. The computational domain $\Omega$ is chosen as the unit square $[0,1]^2$, with the scale parameter and reaction coefficient both set to unity, i.e., $\kappa = 1$ and $\zeta = 1$.
+\begin{figure}[ht!!]
+	\centering
+	\caption{Manufactured solution for the example 1 showing the 
+	primal and dual fields as well as the data fields $\sFt$ and $\eFt$.}
+	~\\
+	\def\svgwidth{1.0\linewidth}
+	\input{Figures/PDFs/reference_fields_solution.pdf_tex}
+	\includegraphics[width=0.35\textwidth]{Figures/plot_s_vs_e.png}
+	\includegraphics[width=0.6\textwidth]{Figures/fields_st_et.png}
+	\label{fig:reference_fields_solution}
+\end{figure}
+
+Regarding boundary conditions on $\partial \Omega$, we consider two scenarios to ensure a fair comparison between the primal and dual formulations:
+In the first case, we assume the entire boundary is of Dirichlet type and strongly impose the boundary conditions on the scalar unknowns $\uF$ and $\lF$, i.e.,\begin{equation}
 	\left\lbrace
 	\begin{array}{rclll}
 		\uF &=& \mathsf{g}_{\uF} &\mbox{on}&~\partial \Omega, \\
@@ -84,14 +96,81 @@ In the numerical experiment, the computational domain $\Omega$ is chosen to be t
 	\end{array}
 	\right.
 \end{equation}
-where the values on the right-hand side are computed from the manufactured fields. Finally, the diffusion and reaction coefficients are taken as unity, i.e., $\kappa = 1$ and $\zeta = 1$.
+while in the latter case, we assume the entire boundary is of Neumann type and strongly impose the boundary conditions on the normal component of the vector unknowns $\sF$ and $\mF$, i.e.,
+\begin{equation}
+	\left\lbrace
+	\begin{array}{rclll}
+		\sF \cdot \normal  &=& \mathsf{g}_{\sF} &\mbox{on}&~\partial \Omega, \\
+		\mF \cdot \normal &=& \mathsf{g}_{\mF} &\mbox{on}&~\partial \Omega, \\
+	\end{array}
+	\right.
+\end{equation}
+where the values on the right-hand side are evaluated  from the manufactured fields
+at the locations of the corresponding degrees of freedom.
+
+\subsubsection*{Choice of estabilization parameters}
+
+From Sections \ref{sec:anal_primal} and \ref{sec:anal_dual}, we observe considerable flexibility in selecting the stabilization parameters for both the primal and dual formulations. 
+In this example, for the primal formulation, the stabilization parameters are chosen as
+$$
+k_{\uF} = k_{\lF} = 0, 
+\quad 
+k_{\eF} = k_{\sF} = k_{\mF} = \tfrac{1}{8}.
+$$
+This choice is convenient, as it reduces the number of parameters to be selected to just three. It also exploits the residual orthogonality property established earlier, ensuring that the results are independent of the choice of the projector operator $P'$.
+On the other hand, for the dual formulation we take
+$$
+k_{\uF} = k_{\lF} = k_{\eF} = k_{\mF} = \tfrac{1}{4}, 
+\quad 
+k_{\sF} = 1.
+$$
+Although we could also have selected $k_{\mF} = k_{\sF} = 0$, the choice $k_{\mF} = \tfrac{1}{4}$ makes the selection of $k_{\eF}$ mesh-independent. This is convenient for assessing the convergence rates of the method across the full range of mesh refinements tested.
+As a final remark, the convergence studies presented below employ linear and quadratic polynomial approximations (i.e., $k \in {1,2}$).
+Therefore, in the following discussion, we consider the algebraic implementation of the methods, which we refer to as \textbf{Primal-ASGS} and \textbf{Dual-ASGS}.
+
+We begin the numerical analysis with a qualitative comparison of the unknown fields across successive mesh refinements. Three refinement levels are examined: a very coarse mesh ($h = 0.1$), an intermediate mesh ($h = 0.025$), and a very fine mesh ($h = 0.00625$). The solutions for the \textbf{Primal-ASGS} and \textbf{Dual-ASGS} formulations are shown in Figures~\ref{fig:primal_formulation_fields_solution} and~\ref{fig:dual_formulation_fields_solution}, respectively. These results should be compared against the reference solution in Figure~\ref{fig:reference_fields_solution}.
+A eye-catching observation from these plots is that both formulations perform well on the finest mesh. The only minor exception is the field $\lF$, which exhibits slight numerical artifacts near the boundaries (see Figure~\ref{fig:dual_formulation_fields_solution}(f)). These artifacts, however, diminish with further refinement and do not impact the convergence of the method, as will be demonstrated. For the coarsest and intermediate mesh levels, the differences between the two formulations become more evident. While the primal formulation does a reasonable job of capturing the scalar fields, it struggles to accurately resolve particularly the $\mF$ field (see parts~(m) and~(n) of Figure~\ref{fig:primal_formulation_fields_solution}). As expected, the situation is reversed for the dual formulation, which performs significantly better in capturing
+$\mF$ but exhibits poorer accuracy for the scalar fields (see parts~(a),~(j), and~(k) of Figure~\ref{fig:dual_formulation_fields_solution}, where this behavior is most evident).
+This qualitative assessment suggests that both formulations capture the field $\sF$ well, a finding later corroborated by the $L^2$ error norm in the numerical convergence analysis. However, the situation differs when the error is measured in the $H(\text{div})$-norm, a distinction not apparent from this preliminary evaluation.
+\begin{figure}[ht!!]
+	\centering
+	\caption{Contours of fields $\uF$, $\sF$, $\eF$, $\lF$, $\mF$ 
+	for the \textbf{Primal-ASGS} for different levels of mesh refinement.}
+	~\\
+	\def\svgwidth{0.7\columnwidth}
+	\input{Figures/PDFs/primal_formulation_fields_solution.pdf_tex}
+	\label{fig:primal_formulation_fields_solution}
+\end{figure}
+
+\begin{figure}[ht!!]
+	\centering
+	\caption{Contours of fields $\uF$, $\sF$, $\eF$, $\lF$, $\mF$ 
+	for the \textbf{Dual-ASGS} for different levels of mesh refinement.}
+	~\\
+	\def\svgwidth{0.7\columnwidth}
+	\input{Figures/PDFs/dual_formulation_fields_solution.pdf_tex}
+	\label{fig:dual_formulation_fields_solution}
+\end{figure}
+
+We now numerically assess the convergence properties of the discrete formulations. To this end, figures~\ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02} present the error norms for all fields using linear elements ($k=1$), while figures~\ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} show the corresponding errors obtained with quadratic elements ($k=2$). Recall that we are also comparing our results against the different formulations recently evaluated in \cite{ddcm1_article_gus}: namely, a (stable) Galerkin-based Natural formulation in which $\nabla{U}_h \subset M_h$, $\nabla{L}_h \subset S_h$, and $E_h = M_h$; a fully stabilized Galerkin Least Squares (GLS) formulation permitting equal-order interpolation; and finally, an unstabilized equal-order plain Galerkin formulation.
+
+For linear elements (figures \ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02}), all formulations achieve optimal convergence rates: second-order for the scalar fields in the $L^2$-norm and first-order in the $H^1$-norm. However, the errors for the Dual-ASGS formulation are significantly larger, highlighting the superior accuracy of the primal formulation to approximate the scalar fields.
+Note also that, in this case, only the $L^2$ norm is assessed for the Dual-ASGS formulation. For the vector fields (Figure \ref{fig:convergence_vector_linear_art02}), all formulations under consideration--except for the Natural formulation--exhibit superlinear convergence in the $L^2$-norm, nearly achieving $\mathcal{O}(h^2)$ despite a theoretical estimate of $\mathcal{O}(h)$.
+Results for the $H(\text{div})$-norm are shown in Figure \ref{fig:convergence_vector_linear_hdiv_art02} for all formulations except the Natural one. Recall that only the dual formulation guarantees convergence for the vector fields $\sF$ and $\mF$ in the $H(\text{div})$-norm. Nevertheless, for linear elements, all cases exhibit $\mathcal{O}(h)$ convergence, with very similar errors for $\sF$. For $\mF$ (yellow lines), the dual formulation yields significantly better results and is the only one achieving linear convergence.
+
+Moving to quadratic elements ($k=2$), the primal formulation achieved $\mathcal{O}(h^2)$ convergence in the $H^1$-norm for the scalar fields $\uF$ and $\lF$, which is the theoretical optimal rate (see figure \ref{fig:convergence_scalar_quadratic_art02}). Its results are essentially identical to those of the Natural and fully stabilized GLS formulations. As anticipated, the unstabilized formulation exhibited suboptimal convergence rates, underscoring the importance of stabilization. For these fields in the $L^2$-norm, the dual formulation shows the largest errors among all formulations since it only attains $\mathcal{O}(h^2)$ in contrast to
+the primal and GLS formulations that achieved $\mathcal{O}(h^3)$.
+
+For the vector fields $\sF$, $\mF$, and $\eF$, all formulations achieved second-order convergence in the $L^2$-norm (see Figure \ref{fig:convergence_vector_quadratic_art02}). Notably, the fully stabilized GLS formulation exhibited near-cubic ($\mathcal{O}(h^3)$) superconvergence for $\sF$. This behavior may, however, be specific to this particular example. As anticipated, the primary advantage of the dual formulation is evident in the $H(\text{div})$-norm errors (Figure \ref{fig:convergence_vector_quadratic_hdiv_art02}), where it is the only method to achieve second-order convergence for $\mF$. Although theoretical estimates for $\eF$ in this norm are unavailable, we note that the dual formulation yields significantly lower errors for $\eF$ compared to all other methods.
+These numerical results confirm the well-posedness of the discrete formulations and validate our implementation of both the primal and dual methods introduced earlier.
 
 %=============================================
 % k = 0
 
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of scalar fields $\uF$ and $\lF$ for $k = 0$. Figures (a)--(b) show the results for $\uF$, and (c)--(d) for $\lF$, considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS. Errors are evaluated in the $L^2$ and $H^1$ norms, as indicated. For the Dual-ASGS formulation, only the $L^2$ norm is assessed.}
+	\caption{Convergence of scalar fields $\uF$ and $\lF$ for $k = 1$. Figures (a)--(b) show the results for $\uF$, and (c)--(d) for $\lF$, considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS. Errors are evaluated in the $L^2$ and $H^1$ norms, as indicated. For the Dual-ASGS formulation, only the $L^2$ norm is assessed.}
+		~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_scalar_linear_art02.pdf_tex}
@@ -101,8 +180,9 @@ where the values on the right-hand side are computed from the manufactured field
 
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=0$, evaluated in the $L^{2}$-norm considering all formulations: Natural, Equal-Order Unstabilized, Order-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS.
+	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=1$, evaluated in the $L^{2}$-norm considering all formulations: Natural, Equal-Order Unstabilized, Order-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS.
 	}
+	~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_linear_art02.pdf_tex}
@@ -112,8 +192,9 @@ where the values on the right-hand side are computed from the manufactured field
 
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=0$, evaluated in the Hdiv-norm for Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS formulations.
+	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=1$, evaluated in the Hdiv-norm for Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS formulations.
 	}
+	~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_linear_hdiv_art02.pdf_tex}
@@ -126,17 +207,18 @@ where the values on the right-hand side are computed from the manufactured field
 
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of scalar fields $\uF$ and $\lF$ for $k = 1$. Figures (a)--(b) show the results for $\uF$, and (c)--(d) for $\lF$, considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS. Errors are evaluated in the $L^2$ and $H^1$ norms, as indicated. For the Dual-ASGS formulation, only the $L^2$ norm is assessed.}
+	\caption{Convergence of scalar fields $\uF$ and $\lF$ for $k = 2$. Figures (a)--(b) show the results for $\uF$, and (c)--(d) for $\lF$, considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS. Errors are evaluated in the $L^2$ and $H^1$ norms, as indicated. For the Dual-ASGS formulation, only the $L^2$ norm is assessed.}
+	~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_scalar_quadratic_art02.pdf_tex}
 	\label{fig:convergence_scalar_quadratic_art02}
 \end{figure}
 
-
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=1$, evaluated in the $L^{2}$-norm considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS.}
+	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=2$, evaluated in the $L^{2}$-norm considering all formulations: Natural, Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS.}
+	~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_quadratic_art02.pdf_tex}
@@ -145,123 +227,15 @@ where the values on the right-hand side are computed from the manufactured field
 
 \begin{figure}[h!]
 	\centering
-	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=1$, evaluated in the Hdiv-norm for Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS formulations.}
+	\caption{Convergence of vector fields $\sF$, $\eF$, and $\mF$ with $k=2$, evaluated in the Hdiv-norm for Equal-Order Unstabilized, Equal-Order Fully Stabilized, Primal-ASGS, and Dual-ASGS formulations.}
+	~\\
 	%\fontsize{11pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
 	\input{Figures/PDFs/convergence_vector_quadratic_hdiv_art02.pdf_tex}
 	\label{fig:convergence_vector_quadratic_hdiv_art02}
 \end{figure}
 
-
-\cleardoublepage
-\subsubsection{Convergence: a non-convex domain}
-With reference to the non-convex domain discussed in \cite{X}, we now assess the accuracy of both \textbf{Primal-ASGS} and \textbf{Dual-ASGS} formulations for the re-entrant corner problem, whose geometry is shown in Fig.~\ref{X} for the opening angle $\phi = \pi/4$. The corner is located at the origin $(0,0)$. A manufactured solution is prescribed by defining the scalar field $\uF$ as
-\begin{equation*}
-	\begin{aligned}
-		&\uF: \Omega \rightarrow \mathbb{R}, \quad \uF(x,y) = r^{\nu}\,\sin(\nu\,\theta), \\
-		&\text{where} \quad r = \sqrt{x^{2} + y^{2}}, \quad \theta = \arctan{\left(\frac{y}{x}\right)}, \quad \nu = \frac{\pi}{\psi}, \quad \text{and} \quad \psi = 2\pi - \phi.
-	\end{aligned}
-\end{equation*}
-The corresponding gradient field is then given by
-\begin{equation*}
-	\eF: \Omega \rightarrow \mathbb{R}^{2}, \quad 
-	\eF(x,y) = \nu\,r^{\nu-2}
-	\begin{bmatrix}
-		x\,\sin(\nu\,\theta) - y\,\cos(\nu\,\theta) \\
-		y\,\sin(\nu\,\theta) + x\,\cos(\nu\,\theta)
-	\end{bmatrix}.
-\end{equation*}
-By proposing $ \lF $ and $ \eFt $ as in eqs.~(\ref{X}) and~(\ref{X}), respectively, and assuming a linear constitutive flux law, i.e., $ \sF = -\kappa \eF $, the remaining fields can be fully determined. Lastly, it is worth mentioning that pure Dirichlet boundary conditions are imposed for both $\uF$ and $\lF$, prescribed according to the manufactured solution.
-
-\begin{figure}[h!]
-	\centering
-	\caption{$\uF$ and $\sF$ for the reentrant corner considering both Primal-ASGS and Dual-ASGS formulations.}
-	%\fontsize{11pt}{10pt}\selectfont 
-	\def\svgwidth{0.8\columnwidth}
-	\input{Figures/PDFs/reentrant_u_s_art02.pdf_tex}
-	\label{fig:reentrant_u_s_art02}
-\end{figure}
-
-\begin{figure}[h!]
-	\centering
-	\caption{$\lF$ and $\mF$ for the reentrant corner considering both Primal-ASGS and Dual-ASGS formulations.}
-	%\fontsize{11pt}{10pt}\selectfont 
-	\def\svgwidth{0.8\linewidth}
-	\input{Figures/PDFs/reentrant_lam_mu_art02.pdf_tex}
-	\label{fig:reentrant_lam_mu_art02}
-\end{figure}
-
-\begin{figure}[h!]
-	\centering
-	\caption{$\uF$, $\sF$, $\lF$ and $\mF$ along the coordinate diagonal for the reentrant corner considering both Primal-ASGS and Dual-ASGS formulations.}
-	%\fontsize{11pt}{10pt}\selectfont 
-	\includegraphics[width=\linewidth]{Figures/PDFs/plot_over_line_reentrant_corner.png}
-	\label{fig:}
-\end{figure}
-
-
-\cleardoublepage
-\subsubsection{Eigenvalue problems}
-To assess the stability of a given finite element discretization, one may consider 
-the generalized eigenvalue problem associated with the Babuška–Brezzi conditions. 
-Following \cite{X,X}, the Babuška inf–sup constant can be characterized in terms of the 
-smallest (in modulus) eigenvalue of a generalized eigenvalue problem.
-
-Let $Z_h = X_h \times Y_h$ denote an abstract discrete mixed function space, on which we 
-pose the abstract mixed variational problem: Find $(x_h,y_h) \in Z_h$ such that
-\begin{equation*}
-	B((x_h,y_h),(\delta x_h, \delta y_h)) = L((\delta x_h, \delta y_h)),
-	\qquad \forall\, (\delta x_h, \delta y_h) \in Z_h.
-\end{equation*}  
-The stability of this discretization is governed by the Babuška inf-sup constant $\gamma_h$, defined as
-\[
-\gamma_h := \inf_{(x_h,y_h) \in Z_h \setminus \{0\}} \sup_{(\delta x_h, \delta y_h) \in Z_h \setminus \{0\}} \frac{B((x_h,y_h),(\delta x_h, \delta y_h))}{\|(x_h,y_h)\|_{Z_h} \|(\delta x_h, \delta y_h)\|_{Z_h}},
-\]
-where $\|(x_h,y_h)\|_{Z_h}^2 = \|x_h\|_{X_h}^2 + \|y_h\|_{Y_h}^2$ is the natural norm on the product space.This constant can be characterized by the following generalized eigenvalue problem: Find $0 \neq (x_h,y_h) \in Z_h$ and $\lambda \in \mathbb{R}$ such that
-\begin{equation}
-	B((x_h,y_h),(\delta x_h, \delta y_h))
-	= \lambda \, \left( \langle x_h, \delta x_h \rangle_{X_h}
-	+ \langle y_h, \delta y_h \rangle_{Y_h} \right),
-	\quad \forall\, (\delta x_h, \delta y_h) \in Z_h.
-	\label{eq:babuska-eigen}
-\end{equation}
-This way, provided the inner product on the right-hand side induces the norm $\|\cdot\|_{Z_h}$ used in the definition of $\gamma_h$, the inf-sup constant is equal to the smallest eigenvalue of this problem in modulus, that is,
-\begin{equation}
-	\gamma_h = \min_{\lambda \in \sigma(B)} |\lambda|,
-\end{equation}
-where $\sigma(B)$ denotes the spectrum of the generalized eigenvalue problem.
-
-For the discrete primal formulation $\Pph$, we set $B \leftarrow \Bsp$ and $(x_h,y_h) \leftarrow (\xFh, \varxFh)$; thus the corresponding Babuška eigenvalue problem reads: 
-Find $\,0 \neq \xFh= (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSph$ and $\lambda \in \mathbb{R}$ such that
-\begin{equation}
-	\Bsp(\xFh,\varxF)
-	= \lambda\, (\xFh,\varxF)_{\XSph},
-	\qquad \forall\, \varxFh \in \XSph,
-	\label{eq:primal-babuska-eigen}
-\end{equation}
-where $(\cdot,\cdot)_{\XSph}$ denotes the inner product inducing the norm 
-$\|\cdot\|_{\XSph}$ defined in Section~\ref{sec:X}. Similarly, for the discrete dual problem $\Pdh$, we set $B \leftarrow \Bsd$ and $(x_h,y_h) \leftarrow (\xFh, \varxFh)$; thus the corresponding Babuška eigenvalue problem reads: 
-Find $\,0 \neq \mathbf{x}_h = (\uFh,\eFh,\sFh,\lFh,\mFh) \in \XSdh$ and $\lambda \in \mathbb{R}$ such that 
-\begin{equation}
-	\Bsd(\xFh,\varxFh)
-	= \lambda\, (\xFh,\varxFh)_{\XSdh},
-	\qquad \forall\, \varxFh \in \XSdh,
-	\label{eq:dual-babuska-eigen}
-\end{equation}
-where $(\cdot,\cdot)_{\XSdh}$ denotes the inner product inducing the norm $\|\cdot\|_{\XSdh}$ defined in Section~\ref{sec:X}.
-In both cases, the discrete eigenvalue problem admits the following algebraic representation:
-\begin{equation}
-	\mathbf{A}\,\mathbf{x} = \lambda\,\mathbf{M}\,\mathbf{x},
-	\label{eq:babuska-matrix}
-\end{equation}
-with $\mathbf{A}_{p}$ (resp.~$\mathbf{A}_{d}$) and $\mathbf{M}_{p}$ (resp.~$\mathbf{M}_{d}$)
-are the matrices associated, respectively, with the stabilized bilinear forms
-$\Bsp$ (resp.~$\Bsd$) and the inner products
-$(\cdot,\cdot)_{\XSph}$ (resp.~$(\cdot,\cdot)_{\XSdh}$).
-
-Having established the eigenvalues problems for both discrete primal and dual problems, we shall present that $\gamma_{h,p}$ and $\gamma_{h,d}$ (associated to the primal and dual problems) are bounded from below independently of $h$. 
-
-
+\subsubsection{Example 2: Performance Assessment in the Presence of Large Gradients}
 
 
 
