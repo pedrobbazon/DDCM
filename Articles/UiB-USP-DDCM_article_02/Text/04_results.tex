@@ -20,15 +20,13 @@ where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\O
 \end{equation*}
 where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$.
 A comment is in order regarding the computation of the subscale component of the numerical solution. In the ASGS method, being $P'$ the identity operator, no additional unknowns are required, since the subscales are simply evaluated locally at the element level. In contrast, for the OSGS method, with $P'$ denoting the projector onto the orthogonal complement of the finite element space, one additional unknown per field must be considered.
-
 That is, if we denote by $w$ any of the unknown fields, such that $w = w_h + w'$, the subscale component $w'$ is in this case given by
 \begin{equation}
 w' = \tau_w \, P' \left ( r(w) \right ) = \tau_w \, \left [ r_w - P_{W_{h}} \left ( r_w \right ) \right ]
 \end{equation}
 where $r_w$ is the algebraic residual equation of the variable $w$ and $P_{W_{h}}$ stands for the $L^2(\Omega)$ projection onto $W_h$.
-Since this leads to an excessive computational burden, in practice the explicit computation of the subscales is avoided by applying some sort of fixed-point iteration scheme. However, in this work we choose to include them as unknowns and solve the problem monolithically. This approach allows for a cleaner code and simplifies the implementation, eliminating any numerical error that may arise from the additional iterative process.
-
-Although it is worth mentioning that no significant differences in the numerical results were observed between the ASGS and OSGS methods, for both the primal and dual formulations. Finally, the implementation was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
+Since this leads to an excessive computational burden, in practice the explicit computation of the subscales is avoided by applying some sort of fixed-point iteration scheme. However, in this work we choose to include them as unknowns and solve the problem monolithically. This approach allows for a cleaner code and simplifies the implementation. Also, it eliminates any numerical error that may arise from the additional iterative process.
+Although it is worth to anticipate that no significant differences in the numerical results were observed between the ASGS and OSGS methods, for both the primal and dual formulations. Finally, the implementation was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
 
 \subsubsection{Example 1: Convergence to a manufactured solution}
 
@@ -86,6 +84,8 @@ Subfigure~(f) also displays, using blue dots, the sampled values of the magnitud
 	\includegraphics[width=0.6\textwidth]{Figures/fields_st_et.png}
 	\label{fig:reference_fields_solution}
 \end{figure}
+
+\subsubsection*{Boundary conditions}
 
 Regarding boundary conditions on $\partial \Omega$, we consider two scenarios to ensure a fair comparison between the primal and dual formulations:
 In the first case, we assume the entire boundary is of Dirichlet type and strongly impose the boundary conditions on the scalar unknowns $\uF$ and $\lF$, i.e.,\begin{equation}
@@ -235,8 +235,144 @@ These numerical results confirm the well-posedness of the discrete formulations 
 	\label{fig:convergence_vector_quadratic_hdiv_art02}
 \end{figure}
 
+\clearpage
 \subsubsection{Example 2: Performance Assessment in the Presence of Large Gradients}
 
+The aim of this final example is to further assess the performance of both the primal and dual formulations on a more challenging problem that exhibits very large gradients on internal boundary layers, typical of reaction-diffusion problems. 
+Let us introduce a standard problem that will serve two purposes. On the one hand, it will be used to generate synthetic data fields $\sFt$ and $\eFt$ to be fed to the data-driven formulation. On the other hand, it will provide a reference solution to which we can compare the results from these formulations.
+
+Let  $\Omega = [0,1]\times[0,1]$ be the computational domain, with geometric center at 
+$\mathbf{x}_{c} = (0,\,0)$ and boundary denoted by $\partial\Omega$. 
+We consider a circular inclusion centered at $\mathbf{x}_{c}$ defined by
+$$
+\Omega_{\mathrm{inc}} = \{\, \mathbf{x}\in \Omega : \|\mathbf{x}-\mathbf{x}_{c}\| < R \,\},
+\qquad R=0.25,
+$$
+whose boundary is denoted by $\Gamma$. 
+Figure \ref{fig:inclusion_mesh_exact_fields} shows a schematic representation
+of the computational domain as well as the finite element mesh to be 
+used. By taking a closer look at this figure we can notice that $\Gamma$ conforms to the element edges. 
+\begin{figure}[h!]
+	\centering
+	\caption{Computational domain and the associated finite element mesh. Figures (b), (c), and (d) illustrate the corresponding reference (exact) physical fields: the potential $\uF$, the flux $\sF$, and the gradient $\eF$, respectively.}
+	~\\
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{0.9\columnwidth}
+	\input{Figures/PDFs/inclusion_mesh_exact_fields.pdf_tex}
+	\label{fig:inclusion_mesh_exact_fields}
+\end{figure}
+The standard problem therefore consists in solving the following 
+diffusion–reaction equation with piecewise constant source terms:
+We seek a field $\uF:\Omega \to \mathbb{R}$ such that
+\begin{equation}
+	\left\lbrace
+	\begin{array}{rcll}
+		-\nabla \cdot (\mu\,\nabla \uF)+ \zeta\, \uF &=& q
+		&\quad \text{in } \Omega, \\[4pt]
+		\nabla \uF \cdot \check{\mathbf{n}} &=& g 
+		&\quad \text{on } \partial\Omega,
+	\end{array}
+	\right.
+	\label{eq:diff_reaction}
+\end{equation}
+where the reaction coefficient $\zeta > 0$ is uniform and the source term $q$ is piecewise constant, i.e.,
+$$
+q(\mathbf{x}) =
+\begin{cases}
+	\zeta, & \mathbf{x}\in \Omega_{\mathrm{inc}}, \\[3pt]
+	0, & \mathbf{x}\in \Omega\setminus \Omega_{\mathrm{inc}}.
+\end{cases}
+$$
+Assuming uniform conductivity, symmetry implies that the solution depends only on the radial coordinate, i.e., $\uF = \uF(r)$ with $r = \sqrt{x^{2} + y^{2}}$. Under this assumption, the problem reduces to an ordinary differential equation in the radial coordinate whose solution
+reads
+\begin{equation}
+	u(r) =
+	\begin{cases}
+		\displaystyle
+		1 - \lambda R\,K_{1}(\lambda R)\,I_{0}(\lambda r),
+		& 0 \le r \le R, \\[10pt]
+		\displaystyle
+		\lambda R\,I_{1}(\lambda R)\,K_{0}(\lambda r),
+		& r > R,
+	\end{cases}
+	\qquad
+	\lambda = \sqrt{\frac{\zeta}{\mu}},
+\end{equation}
+being $I_{0}, I_{1}$ the modified Bessel functions of the first kind (orders 0 and 1, respectively),
+and $K_{0}, K_{1}$ the corresponding modified Bessel functions of the second kind. Fig.~\ref{fig:inclusion_mesh_exact_fields}(b) shows the exact potential field $\uF$ whereas Fig.~\ref{fig:inclusion_mesh_exact_fields}(c)--(d) illustrates the corresponding
+gradient and flux fields, $\eF$ and $\sF$, respectively.
+A few comments are in order: first, notice that this solution satisfies the following physical conditions across the interface $\Gamma$
+$$
+\text{at } r=R:\qquad
+\begin{cases}
+	u(R^{+}) = u(R^{-}), \\[3pt]
+	\mu\,u'(R^{+}) = \mu\,u'(R^{-}),
+\end{cases}
+$$
+ensuring continuity of the field and of the normal diffusive flux. 
+Second, the solution decays to zero at infinity and boundedness at the origin also 
+gives that $u'(0)=0$. Third, we control the violence of the transition region 
+by adjusting the ratio of the reaction to the diffusion coefficient $\lambda$.
+In the numerical experiments we set $mu = 1$ and $\zeta=1000$, given 
+a transition with characteristic lenght $~0.03$.
+
+Moving on to the results, we begin by specifying the following configuration:
+
+\begin{enumerate}
+	\item For the numerical experiments, we consider a finite element mesh with mesh size $h = 0.025$;
+	\item For the physical constants, we set $\kappa = 1.0$ and $\sigma = 10^{3}$;
+	\item For the stabilization parameters, we use
+	$$
+	\ku = \kl = 1.0, \qquad \ks = \ke = \km = \tfrac{1}{8}
+	$$
+	for the primal ASGS formulation, whereas for the dual ASGS formulation we take
+	$$
+	\ku = \kl = \ke = \tfrac{1}{4}, \qquad 	\ks = 1.0,\qquad \km = \tfrac{1}{8};
+	$$
+	\item Regarding the boundary conditions, we impose pure Dirichlet conditions for the primal ASGS formulation and pure Neumann conditions for the dual ASGS formulation. Thus, the boundary conditions are strongly enforced on the scalar fields $\uF$ and $\lF$ in the former case, and on the vector fields $\sF$ and $\mF$ in the latter.
+\end{enumerate}
+
+
+In Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS} we first illustrate the physical fields $\uF$ and $\sF$ obtained for both primal and dual ASGS formulations. Comparing Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(a) and Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS}(b), we notice that the primal formulation provides a better approximation to the scalar potential field. Conversely, ...
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (a) and (b) illustrate the field $\uF$ for the primal and dual ASGS formulations. Likewise, Figures (c) and (d) show the field $\sF$ for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/inclusion_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:inclusion_u_s_primal_dual_ASGS}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figure (a) displays the $\uF$ profile along the coordinate diagonal for the exact reference solution, together with the corresponding profiles obtained from the primal and dual ASGS formulations. Likewise, Figure (b) displays the $\sF$ profile along the coordinate diagonal for the exact reference solution and for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{0.8\columnwidth}
+	\input{Figures/PDFs/plot_over_line_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:plot_over_line_u_s_primal_dual_ASGS}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (b)--(d) present the $\uF$ profiles along three circumferences of radius $r = 0.1$, $r = 0.2$, and $r = 0.4$ -- illustrated schematically in Figure (a), respectively -- schematically illustrated in Figure (a). Each plot compares the exact reference solution with the corresponding profiles obtained from the primal and dual ASGS formulations. Likewise, Figures (e)--(g) display the $\|\sF\|$ profiles along the same radii for both the exact reference solution and the primal and dual ASGS formulations.}
+	\fontsize{8pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/plot_over_curve_u_s_primal_dual_ASGS.pdf_tex}
+	\label{fig:plot_over_curve_u_s_primal_dual_ASGS}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\caption{Figures (a) and (b) present the error field $\uF - \uFh$ for the primal and dual ASGS formulations. In the same way, Figures (c) and (d) present the error field $\sF - \sFh$ for the primal and dual ASGS formulations.}
+	\fontsize{12pt}{10pt}\selectfont 
+	\def\svgwidth{1.0\columnwidth}
+	\input{Figures/PDFs/inclusion_udif_sdif_primal_dual_ASGS.pdf_tex}
+	\label{fig:inclusion_udif_sdif_primal_dual_ASGS}
+\end{figure}
 
 
 
