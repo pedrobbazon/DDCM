@@ -19,20 +19,35 @@ where $d_{\Omega}$ denotes the spatial dimension of the computational domain $\O
 	\quad \CG_{k} := \left\{ v \in C^0(\Omega) \;\middle|\; v|_K \in \mathbb{P}_k(K),\ \forall K \in \mathcal{T}_h \right\}	
 \end{equation*}
 where $\mathbb{P}_k(K)$ denotes the space of polynomials of degree $k$ defined on each element $K \in \mathcal{T}_h$.
-A comment is in order regarding the computation of the subscale component of the numerical solution. In the ASGS method, being $P'$ the identity operator, no additional unknowns are required, since the subscales are simply evaluated locally at the element level. In contrast, for the OSGS method, with $P'$ denoting the projector onto the orthogonal complement of the finite element space, one additional unknown per field must be considered.
-That is, if we denote by $w$ any of the unknown fields, such that $w = w_h + w'$, the subscale component $w'$ is in this case given by
+A comment is in order regarding the computation of the subscale component of the numerical
+solution. In the ASGS method, being $P'$ the identity operator, no additional unknowns are
+required, since the subscales are simply evaluated locally at the element level. In contrast, 
+for the OSGS method, with $P'$ denoting the projector onto the orthogonal complement of the 
+finite element space, one additional unknown per field must be considered.
+That is, if we denote by $w$ any of the unknown fields, such that $w = w_h + w'$, 
+the subscale component $w'$ is in this case given by
 \begin{equation}
 w' = \tau_w \, P' \left ( r(w) \right ) = \tau_w \, \left [ r_w - P_{W_{h}} \left ( r_w \right ) \right ]
 \end{equation}
 where $r_w$ is the algebraic residual equation of the variable $w$ and $P_{W_{h}}$ stands for the $L^2(\Omega)$ projection onto $W_h$.
-Since this leads to an excessive computational burden, in practice the explicit computation of the subscales is avoided by applying some sort of fixed-point iteration scheme. However, in this work we choose to include them as unknowns and solve the problem monolithically. This approach allows for a cleaner code and simplifies the implementation. Also, it eliminates any numerical error that may arise from the additional iterative process.
-Although it is worth to anticipate that no significant differences in the numerical results were observed between the ASGS and OSGS methods, for both the primal and dual formulations. Finally, the implementation was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
+Since this leads to an excessive computational burden, in practice the explicit computation 
+of the subscales is avoided by applying some sort of fixed-point iteration scheme. 
+In our implementation, these variables are included as unknowns and solved for 
+monolithically. This approach yields cleaner code, simplifies the implementation, 
+and eliminates the numerical error associated with an additional iterative procedure. 
+We anticipate, however, that no significant differences in results were observed between the 
+ASGS and OSGS methods for either the primal or dual formulations. 
+Consequently, all results presented hereafter are obtained using the algebraic variant 
+of the formulations. Finally, the implementation of both formulation, including the two variants,
+ASGS and OSGS, was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
 
 \subsubsection{Example 1: Convergence to a manufactured solution}
 
 Let us first describe the construction of a manufactured solution with respect to which the relevant error norms will be computed. Its construction deserves some attention, although it essentially follows the idea presented in \cite{ddcm1_article_gus}. By examining the optimality conditions in their strong form, it is straightforward to devise a manufactured solution that resembles a relevant scenario for data-driven computational mechanics.
 
-The manufactured solution is illustrated in Figure~\ref{fig:reference_fields_solution}, which shows all the primal fields $(\uF, \sF, \eF)$, the dual fields $(\lF,\mF)$, and the data fields $(\sFt,\eFt)$. To construct this solution, we begin by defining the primal scalar field
+The manufactured solution is illustrated in Figure~\ref{fig:reference_fields_solution}, which
+shows all the primal fields $(\uF, \sF, \eF)$, the dual fields $(\lF,\mF)$, and the data fields
+$(\sFt,\eFt)$. To construct this solution, we begin by defining the primal scalar field
 \begin{equation}
  \uF(x,y) = \cos(\pi x)\cos(\pi y),
 \end{equation}
@@ -302,7 +317,7 @@ $$
 \end{cases}
 $$
 ensuring continuity of $u$ and of the normal diffusive flux. 
-Second, the solution decays to zero at infinity, and its boundedness at the origin implies $u'(0) = 0$. Third, the sharpness of the transition region is controlled by adjusting the ratio $\lambda$ of the reaction to the diffusion coefficient. In our numerical experiments, we set $\mu = 1$ and $\zeta = 1000$, which yields a transition region with a characteristic length of approximately $0.03$. This behavior is clearly illustrated in figure ~\ref{fig:inclusion_mesh_exact_fields}(b) Also, figures (c) and (d) shows the very sharp gradients in the vector fields $\eF$ and $\sF$.
+Second, the solution decays to zero at infinity, and its boundedness at the origin implies $u'(0) = 0$. Third, the sharpness of the transition region is controlled by adjusting the ratio $\lambda$ of the reaction to the diffusion coefficient. In our numerical experiments, we set $\mu = 1$ and $\zeta = 1000$, which yields a transition region with a characteristic length of approximately $0.03$. This behavior is clearly illustrated in figure ~\ref{fig:inclusion_mesh_exact_fields}(b) Also, figures (c) and (d) show the very sharp gradients in the vector fields $\eF$ and $\sF$.
 
 Before presenting the numerical results, we specify the following computational setup:
 \begin{enumerate}
@@ -320,12 +335,36 @@ for the dual-ASGS formulation;
 \item[(iii)] Strong imposition of boundary conditions: for the primal formulation, $\uF = 0$ and $\lF = 0$; for the dual formulation, $\sF \cdot \normal = 0$ and $\mF \cdot \normal = 0$. These
 homogenous values are safe since the solution has already sufficiently decayed at the boundary.
 
-\item[(iv)] The data fields $\sFt$ and $\eFt$ are defined as elementwise constants. They are generated by sampling a finite element solution of problem (\ref{eq:diff_reaction}), which is computed using a standard primal Galerkin formulation with continuous piecewise linear elements on the same mesh used for the data-driven problem. Unlike the previous example,  where data fields were treated as continuously available, here the data are provided only at discrete locations. This brings the test closer to realistic data-driven mechanics applications.
+\item[(iv)] The data fields $\sFt$ and $\eFt$ are defined as elementwise constants. 
+They are generated by sampling a finite element solution of problem (\ref{eq:diff_reaction}),
+which is computed using a standard primal Galerkin formulation with continuous piecewise
+linear elements on the same mesh used for the data-driven problem. Unlike the previous example, 
+where data fields were treated as continuously available, here the data are provided only at
+discrete locations. This brings the test closer to realistic data-driven mechanics applications.
 \end{enumerate}
 
-Turning to the numerical results, Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS} illustrates the physical fields $\uF$ and $\sF$ obtained using both the primal and dual ASGS formulations. Figures ~\ref{fig:inclusion_u_s_primal_dual_ASGS}(a) and (b) demonstrate that the primal formulation provides a superior approximation for the scalar potential field, whereas the dual formulation shows considerable distortion compared to the reference solution in figure \ref{fig:inclusion_mesh_exact_fields}. On the other hand, the dual formulation approximates the flux field more effectively. This is evident from parts (c) and (d), where the largest distortions are observed in the primal result. Unlike the previous test, where improvements were confined to the $H(div)$-norm of the error, here the advantage of the dual formulation is already visible by simple inspection. This trend is further evident in figures  \ref{fig:plot_over_line_u_s_primal_dual_ASGS} and \ref{fig:plot_over_curve_u_s_primal_dual_ASGS}, which show profiles of $\uF$ and $\sF$ along the domain diagonal and along circumferential curves at different radii. In
-part (a) of both figures, the primal formulation (magenta lines) clearly outperforms the dual formulation (green lines) in capturing $\uF$. Conversely, parts (b) reveal 
-the opposite situation for $\sF$. A closer view of these differences is provided in the figure insets, which in the latter case also report the root mean square error for each formulation. For further clarity, it is instructive to examine the pointwise error distribution across the computational domain. Figure \ref{fig:inclusion_udif_sdif_primal_dual_ASGS} presents these error fields: subfigures (a) and (b) show the error in $\uF - \uF_h$ while parts (c) and (d) show the error in the flux $\sF - \sF_h$. Results for formulation appear in the left column; those for the dual-ASGS formulation appear on the right.
+Turning to the numerical results, Fig.~\ref{fig:inclusion_u_s_primal_dual_ASGS} illustrates
+the physical fields $\uF$ and $\sF$ obtained using both the primal and dual ASGS formulations.
+Figures ~\ref{fig:inclusion_u_s_primal_dual_ASGS}(a) and (b) demonstrate that the primal
+formulation provides a superior approximation for the scalar potential field, whereas the dual 
+formulation shows considerable distortion compared to the reference solution in figure 
+\ref{fig:inclusion_mesh_exact_fields}. On the other hand, the dual formulation approximates the 
+flux field more effectively. This is evident from parts (c) and (d), where the largest distortions 
+are observed in the primal result. Unlike the previous test, where improvements were confined to 
+the $H(div)$-norm of the error, here the advantage of the dual formulation is already visible by 
+simple inspection. This trend is further evident in figures
+\ref{fig:plot_over_line_u_s_primal_dual_ASGS} and \ref{fig:plot_over_curve_u_s_primal_dual_ASGS}, 
+which show profiles of $\uF$ and $\sF$ along the domain diagonal and along circumferential curves 
+at different radii. In
+part (a) of both figures, the primal formulation (magenta lines) clearly outperforms the
+dual formulation (green lines) in capturing $\uF$. Conversely, parts (b) reveal 
+the opposite situation for $\sF$. A closer view of these differences is provided in the figure
+insets, which in the latter case also report the root mean square error for each formulation. 
+For further clarity, it is instructive to examine the pointwise error distribution across the
+computational domain. Figure \ref{fig:inclusion_udif_sdif_primal_dual_ASGS} presents these error
+fields: subfigures (a) and (b) show the error in $\uF - \uF_h$ while parts (c) and (d) show the
+error in the flux $\sF - \sF_h$. Results for formulation appear in the left column; those for the
+dual-ASGS formulation appear on the right.
 \begin{figure}[ht!!]
 	\centering
 	\caption{Figures (a) and (b) illustrate the field $\uF$ for the primal and dual ASGS formulations. Likewise, Figures (c) and (d) show the field $\sF$ for the primal and dual ASGS formulations.}
@@ -374,17 +413,20 @@ where $\delta > 0$ represents the noise level and $\boldsymbol{\xi}_{\eF}$ and $
 \begin{equation}
 	\boldsymbol{\xi}_{\eF}, \boldsymbol{\xi}_{\sF} \sim \mathcal{U}(-1,1).
 \end{equation}
-This corresponds to adding a uniform perturbation in the interval $[-\delta, \delta]$ to each component of the gradient and flux fields.
-Figure \ref{fig:st_with_noise} show the data field $\sFt^{\,\delta}$
-for different noise levels, namely, (a) $\delta=0.25$, (b) $\delta=0.5$ and
+This corresponds to adding a uniform perturbation in the interval $[-\delta, \delta]$ to each component of the gradient and flux fields. Figure \ref{fig:st_with_noise} show the data field $\sFt^{\,\delta}$ for different noise levels, namely, (a) $\delta=0.25$, (b) $\delta=0.5$ and
 (c) $\delta=1$. Figure.~\ref{fig:noise_graph_and_u}(a)--(c) further illustrates
 both, the noise-free data pairs $(\eFt,\sFt)$, which form a straight line, since the flux and the gradient are related by a linear constitutive law, and the corresponding perturbed data pairs sampled from the finite element mesh.
 The effect of increasing noise on the numerical approximation of $\uF$ is shown in Fig.~\ref{fig:noise_graph_and_u}(d)–(i) for both the Primal- and Dual-ASGS formulations. Corresponding results for $\sF$ appear in Fig.~\ref{fig:noise_s}. These results reinforce the trends observed earlier: the primal formulation remains more robust for approximating the scalar field, while the dual formulation continues to better capture the vector field, even at high noise levels as seen in Fig.~\ref{fig:noise_graph_and_u}(f) and Fig.~\ref{fig:noise_s}(f). 
-The presence of noise introduces an additional consideration: the loss of thermodynamic consistency between $\eF$ and $\sF$. Both formulations exhibit this effect, as visualized in Fig. \ref{fig:noise_s_dot_e}, where elements failing to satisfy consistency are colored blue. Nothing in the formulation itself precludes these violations, but their occurrence underscores a central issue for reliable data-driven computations in practical applications. Future work will focus on this aspect.
+The presence of noise introduces an additional consideration: the loss of thermodynamic consistency between $\eF$ and $\sF$. Both formulations exhibit this effect, as visualized in Fig. \ref{fig:noise_s_dot_e}, where elements failing to satisfy consistency are colored blue. 
+The data pairs near the origin exhibit a larger relative noise, leading to a higher concentration
+of elements violating the thermodynamic consistency in regions where the solution gradient is 
+low, that is, far from the interface $\Gamma$. Nothing in the formulation itself precludes 
+these violations, but their occurrence underscores a central issue for reliable data-driven
+computations in practical applications. Future work will focus on this aspect.
 \begin{figure}[ht!!]
 	\centering
 	\caption{Data field $\sFt$ sampled from a finite element solution of problem
-		(\ref{eq:diff_reaction}) to which uniforme noise has been added. Different noise levels are considered: (a) $\delta=0.25$, (b) $\delta=0.5$, (c) $\delta=1$.}
+		(\ref{eq:diff_reaction}) to which uniform noise has been added. Different noise levels are considered: (a) $\delta=0.25$, (b) $\delta=0.5$, (c) $\delta=1$.}
 	~\\
 	\fontsize{12pt}{10pt}\selectfont 
 	\def\svgwidth{1.0\columnwidth}
