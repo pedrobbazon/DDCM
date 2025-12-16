@@ -3,13 +3,13 @@
 
 \subsection{Data-Driven Computational Mechanics}
 
-Given a domain $\Omega\subset\mathbb{R}^\dimo$ such that $\dimo\in\{2,3\}$ (a bounded and connected open subset with Lipschitz-continuous boundary $\partial\Omega$), consider a physical system that occupies the closure $\bar{\Omega}$ and that is subject to body sources, i.e., $q:\Omega\to\mathbb{R}$. All necessary conditions $\Phi$ required to formulate the conservation and geometric laws of such a physical system up to constitutive dependencies can be described with the help of: \textit{three primal fields}, e.g., a concentration or temperature $\uF:\Omega\to\mathbb{R}$, the concetration or temperature gradient $\eF:\Omega\to\mathbb{R}^\dimo$ and the flux $\sF:\Omega\to\mathbb{R}^\dimo$; and, \textit{two dual fields} $\lF:\Omega\to\mathbb{R}$ and $\mF:\Omega\to\mathbb{R}^\dimo$, where the first one corresponds to the enforcement of the conservation law in itself and the second one to the enforcement of the geometric law relating the primal fields $\uF$ and $\eF$. In this work, we only consider those conditions to formulate the conservation and geometric laws up to constitutive dependencies that can be formulated as
+Given a domain $\Omega\subset\mathbb{R}^\dimo$ such that $\dimo\in\{2,3\}$ (a bounded and connected open subset with Lipschitz-continuous boundary $\partial\Omega$), consider a physical system that occupies the closure $\bar{\Omega}$ and that is subject to body sources, i.e., $q:\Omega\to\mathbb{R}$. All necessary conditions required to formulate the conservation and geometric laws of such a physical system up to constitutive dependencies can be described with the help of: \textit{three primal fields}, e.g., a concentration or temperature $\uF:\Omega\to\mathbb{R}$, the concetration or temperature gradient $\eF:\Omega\to\mathbb{R}^\dimo$ and the flux $\sF:\Omega\to\mathbb{R}^\dimo$; and, \textit{two dual fields} $\lF:\Omega\to\mathbb{R}$ and $\mF:\Omega\to\mathbb{R}^\dimo$, where the first one corresponds to the enforcement of the conservation law in itself and the second one to the enforcement of the geometric law relating the primal fields $\uF$ and $\eF$. In this work, we only consider those conditions to formulate the conservation and geometric laws up to constitutive dependencies that can be formulated as
 $$
-\Phi((\lF,\mF),(\uF,\eF,\sF);q,\Omega) =
+\Phi((\lF,\mF),(\uF,\eF,\sF);q,\Omega) :=
 \iprod[]{\lF}{\zeta\uF+\nabla\cdot\sF-q}+
 \iprod[]{\mF}{\eF-\nabla\uF} = 0 \quad\mathrm{in}\quad\Omega,
 $$
-where $\iprod[]{\cdot}{\cdot}$ represents a suitable inner product, the differential operator $\nabla$ is such that the identity $\iprod[]{\nabla\uF}{\sF} = - \iprod[]{\uF}{\nabla\cdot\sF}$ is identically satisfied for any admissible pair $(\uF,\sF)$ \cite[Thm. 6.2]{Kurula_Zwart:2012} and $\zeta\in L^\infty(\Omega)$ is a reaction coefficient as considered by \cite{Balbao2025}, which gives origin to the coupling of all optimality conditions. In addition, achieving physical admissibility of the primal fields $(\eF,\sF)$ requires considering the Second Law of Thermodynamics, i.e., $\eF\cdot\sF\leq 0$ almost everywhere in $\Omega$. 
+where $\iprod[]{\cdot}{\cdot}$ represents a suitable inner product, the differential operator $\nabla$ is such that the identity $\iprod[]{\nabla\uF}{\sF} = - \iprod[]{\uF}{\nabla\cdot\sF}$ is identically satisfied for any admissible pair $(\uF,\sF)$ under appropriate boundary conditions \cite[Thm. 6.2]{Kurula_Zwart:2012} and $\zeta\in L^\infty(\Omega)$ is a reaction coefficient as considered by \cite{Balbao2025}, which gives origin to the coupling of all optimality conditions. To simplify the exposition, we shall consider $\zeta$ as a non-negative physical constant in what follows. In addition, achieving physical admissibility of the primal fields $(\eF,\sF)$ requires considering the Second Law of Thermodynamics, i.e., $\eF\cdot\sF\leq 0$ almost everywhere in $\Omega$. 
 
 \iffalse
 $$
@@ -41,7 +41,7 @@ $$
 \right.
 $$
 %
-This construction for $(\eFt,\sFt)$ is a good approximation in the $L^2$-sense.
+This construction for $(\eFt,\sFt)$ is a good approximation in the $L^2(\Omega)$-sense.
 
 By choosing proximity measures $\varphi_e$ and $\varphi_s$ that satisfy $\varphi_e(0) = \varphi_s(0) = 0$, a possible realization of the DDCM approach relies on solving a \textit{Discrete-Continuous Nonlinear Optimization Problem} (DCNLP) given by
 %
@@ -50,11 +50,11 @@ By choosing proximity measures $\varphi_e$ and $\varphi_s$ that satisfy $\varphi
 \left.\:\:\mathrm{s.t.}\:-\eF\cdot\sF\geq 0,\:\:\nF\geq 0,\:\:\nF\eF\cdot\sF = 0\right\rbrace.
 \end{multline*}
 %
-Standard choices of the proximity measures are those induced by the $L^2-$norm, e.g.,
+Standard choices of the proximity measures are those induced by the $L^2(\Omega)$-norm, e.g.,
 $$
 \varphi_e(\eF-\eFt)+\varphi_s(\sF-\sFt) = \frac12\norm[]{\eF-\eFt}^2+\frac{\kappa}{2}\norm[]{\sF-\sFt}^2,
 $$
-where $\kappa \in (0,\infty)$ is a constant providing unit consistency. 
+where $\kappa \in (0,\infty)$ is a constant providing unit consistency, required to be small enough when necessary (cf. Theorem~\ref{thm:thm2} below).
 
 We can start with our argument, only after formally introducing the PDE-constrained optimization problem at given $(\eFt,\sFt)$ and $q$, which is defined as follows:  
 \begin{problem}[$P_0$]
@@ -79,7 +79,7 @@ Our description
 %and warrant well-posedness 
 of 
 %the PDE-constrained optimization problem 
-$P_0$ will be completed by specifying: \textit{i}) appropriate function spaces $U,E,S,L,M,N$; and, \textit{ii}) appropriate boundary conditions for the fields $\uF$ and/or $\sF$. 
+$P_0$ will be completed by specifying: \textit{i}) appropriate function spaces $U,E,S,L,M,N$; and, \textit{ii}) appropriate boundary conditions for the fields $\uF$ and/or $\sF$; whichever these conditions are, in $P_0$ it is assumed that they are homogeneous, for simplicity.  
 \end{remark}
 %
 The weak form of the optimality conditions for $P_0$ reads
@@ -93,7 +93,7 @@ The weak form of the optimality conditions for $P_0$ reads
     \iprod[]{\delta\mF}{-\nabla\uF+\eF}          &=& 0                            & \forall \delta\mF\in M,\\
     -\eF\cdot\sF &\geq& 0 &\mathrm{a.e.}\IN\Omega,\\
     \nu &\geq& 0 & \mathrm{a.e.}\IN\Omega,\\
-    \nu\eF\cdot\sF &=& 0 &\mathrm{a.e.}\IN\Omega.
+    \nu\eF\cdot\sF &=& 0 &\mathrm{a.e.}\IN\Omega,
 \end{array}
 \right.    
 \end{equation}
@@ -107,23 +107,23 @@ $$
 $$
 where $\measbd$ stands for the Hausdorff measure on the boundary of $\Omega$.
 
-\begin{remark}
-The consistency in units of $P_0$ is achieved by noting that the dimensional relationship $\zeta$ and $\kappa$ is given by
+\begin{remark}\label{rem2}
+The consistency in units of $P_0$ is achieved by noting that the dimensional relationship between $\zeta$ and $\kappa$ is given by
 $$
 [\zeta] = [\kappa]^{-1/2}[\length]^{-2},
 $$
-where $\length$ represents the characteristic length of the problem. Therefore, the cost function conjugated with constraints' enforcement terms will be dimension free.      
+where $\length$ represents the characteristic length of the problem and $[\cdot]$ stands for physical units. In particular, since we assume $\zeta$ is a constant we may take $\ell_\Omega^4 \zeta^2 \kappa$ as a dimensionless constant, which we will consider $\ell_\Omega^4 \zeta^2 \kappa > 0$. In the case $\zeta = 0$ (or $\zeta \to 0$) our arguments can be easily adapted. Therefore, the cost function conjugated with constraints' enforcement terms will be dimension free.      
 \end{remark}
 
 In the remainder of this work, we specialize DDCM to the reaction-diffusion problem. Our analysis proceeds via two sequential levels of simplification to handle the resulting PDE-constrained optimization problem:
 \begin{itemize}
-    \item We assume the thermodynamically-consistent auxiliary fields $(\eFt,\sFt)$ are prescribed, which simplifies the original DDCM problem to a \textit{Mathematical Program with Complementarity Constraints} (MPCC).
-    \item We further simplify the analysis by omitting the enforcement of the Second Law of Thermodynamics for the fields $(\eF,\sF)$. This step linearizes the MPCC, yielding a simpler problem in saddle-point form.
+    \item We assume the thermodynamically-consistent auxiliary fields $(\eFt,\sFt)$ are prescribed, which simplifies the original DCNLP problem to a MPCC.
+    \item We further simplify the analysis by omitting the enforcement of the Second Law of Thermodynamics for the fields $(\eF,\sF)$. This step linearizes the MPCC, yielding a simpler problem in saddle-point form. Nevertheless, the explicit inclusion of this Second Law that we have proposed in problem $P_0$ should serve to design more robust optimization schemes. We shall not explore this fact in this paper.
 \end{itemize}
 Although the linear saddle-point problem does not intrinsically guarantee thermodynamic consistency for $(\eF,\sF)$, we verify \textit{a posteriori} that any computed numerical solution fulfills the Second Law of Thermodynamics.
 
 Finally, with the simplified setting adopted, we examine under which conditions this underlying linear problem guarantees a unique global minimizer $\yF^*=(\uF^*,\eF^*,\sF^*)$ with unique multiplier $\zF^
-*=(\lF^*,\mF^*)$, considering not only the continuous primal and dual formulations, but also their finite element discretizations. Crucially, we introduce and analyze stabilizations via the \textit{Variational MultiScale} (VMS) approach, which offers an alternative to the \textit{Galerkin/Least-Squares} (GLS) technique utilized in previous work \cite{Balbao2025}.
+*=(\lF^*,\mF^*)$, considering not only the continuous primal and dual formulations, but also their finite element discretizations. Crucially, we introduce and analyze stabilizations via the VMS approach, which offers an alternative to the GLS technique utilized in a previous work \cite{Balbao2025}.
  
 \subsection{Primal form}
 
@@ -135,19 +135,21 @@ $$
     \eF+\mF                 &=& \eFt       & \IN E^* \simeq E = [\Ltwo]^\dimo,\\   
     \kappa\sF-\nabla\lF     &=& \kappa\sFt & \IN S^* \simeq S = [\Ltwo]^\dimo,\\
     \zeta\uF+\nabla\cdot\sF &=& q          & \IN L^*,\:     L = \Honez,\\
-    -\nabla\uF+\eF          &=& \zero      & \IN M^* \simeq M = [\Ltwo]^\dimo.
+    -\nabla\uF+\eF          &=& \zero      & \IN M^* \simeq M = [\Ltwo]^\dimo,
 \end{array}
 \right.
 $$
-By taking $M = E$, $E = \nabla U$, and $S = \nabla L$, we arrive to
-$$
+where $\simeq$ stands for isomorphism between functional spaces. The standard notation is used for the Lebesgue and Sobolev spaces.
+
+By taking $M = E$, $E = \nabla U$, and $S = \nabla L$, we arrive at
+\begin{align}
 \left\lbrace
 \begin{array}{rcll}
     \zeta\lF-\Delta\uF &=& -\nabla\cdot\eFt& \IN U^*,\: U = \Honez,\\
     -\kappa\zeta\uF-\Delta\lF  &=& \kappa \nabla\cdot\sFt-\kappa q & \IN L^*,\: L = \Honez.
 \end{array}
-\right.
-$$
+\right. \label{eq:primal-u-l}
+\end{align}
 Provided higher regularity in the function spaces involved and the domain, we have the reduced strong form
 $$
 \kappa\zeta^2 u+\Delta \Delta \uF = \Delta\nabla\cdot \eFt-\zeta\kappa\nabla\cdot\sFt+\zeta\kappa q \quad\IN \Ltwo%U^*, U = H^4_0(\Omega)
@@ -162,7 +164,7 @@ $$
 \quad\text{and}\quad
 q\in L^2(\Omega), 
 $$
-which is a well-posed elliptic problem. In matrix-vector representation, it takes the form
+which is a well-posed elliptic problem. In matrix-vector representation, problem~\eqref{eq:primal-u-l} takes the form
 $$
 -
 \begin{bmatrix}
@@ -188,7 +190,7 @@ $$
     \kappa\nabla\cdot\sFt-\kappa q 
 \end{pmatrix}.
 $$
-The eigenvalues of the ``reaction'' matrix are $\pm i \sqrt{\kappa}\zeta$, showing that the problem cannot be uncoupled (for $\zeta\neq 0$) and behaves as a fourth order problem. For the primal formulation, the fields $\sF$ and $\mF$ are unnecessary. However, for the dual formulation, keeping them makes sense. 
+The eigenvalues of the ``reaction'' matrix are $\pm \,{\hbox{i}}\, \sqrt{\kappa}\zeta$, showing that the problem cannot be uncoupled (for $\zeta\neq 0$) and behaves as a fourth order problem. For the primal formulation, the fields $\sF$ and $\mF$ are unnecessary. However, for the dual formulation, keeping them makes sense, as we shall see. Furthermore, $\eF$ or $\mF$ could be eliminated one in terms of the other, but this is not possible in the dual formulation.
 
 Finally, the governing equations can be expressed in their weak form as
 %
@@ -225,25 +227,33 @@ $$
 \frac{1}{\kappa}         \norm[]{\nabla\lF}^2+
                          \norm[]{\mF}^2}.
 $$
+Finally, let us define $\ap: \YSp\times\YSp\rightarrow \mathbb{R}$ and $\bp : \YSp\times \ZSp \rightarrow \mathbb{R}$ as
+\begin{align}
+\ap(\yF_1,\yF_2) & = \iprod[]{\eF_1}{\eF_2} + \kappa \iprod[]{\sF_1}{\sF_2}  \label{eq:defap}\\
+\bp(\yF,\zF) & = -\iprod[]{\nabla\lF}{\sF}+\zeta\iprod[]{\lF}{\uF}+\iprod[]{\mF}{\eF-\nabla\uF}.\label{eq:defbp}
+\end{align}
 \end{definition}
 
 \begin{problem}[$\Pp$] Find $\xF = (\yF,\zF)\in\XSp = \YSp\times\ZSp$ such that
 \begin{equation}
-\Bp(\xF,\delta\xF) = L(\delta\xF),\quad\forall\delta\xF\in\XSp. 
+\Bp(\xF,\delta\xF) = L(\delta\xF),\quad\forall\delta\xF = (\delta\yF, \delta \zF)\in\XSp, 
 \end{equation} 
+or, equivalently,
+\begin{alignat}{3}
+\ap(\yF,\delta\yF) + \bp(\delta \yF,\zF) & = 
+\iprod[]{\eFt}{\delta\eF}+\kappa\iprod[]{\sFt}{\delta\sF}\qquad && \forall \delta \yF\in \YSp,\nonumber\\
+\bp(\yF,\delta\zF) & = \iprod[]{q}{\delta\lF} && \forall \delta \zF\in \ZSp.\nonumber
+\end{alignat}
 \end{problem}
 
 \begin{theorem}
-    $\Pp$ is well posed.
+    Problem $\Pp$ is well posed.
 \end{theorem}
 
 \begin{proof}
-The bilinear and linear forms are continuous in $\XSp$. Moreover, from the bilinear form, we identify
-$$\ap(\yF,\yF) = \norm[]{\eF}^2+\kappa\norm[]{\sF}^2$$
-and
-$$\bp(\yF,\zF) = -\iprod[]{\nabla\lF}{\sF}+\zeta\iprod[]{\lF}{\uF}+\iprod[]{\mF}{\eF-\nabla\uF}.$$
-From \cite[Thm. 3.1]{Balbao2025}, the necessary requirements on $\ap$ and $\bp$ are met.
-Finally, the solution continuously depends on $(\eFt,\sFt,q)$.
+The bilinear and linear forms are continuous in $\XSp$. %Moreover, from the bilinear form, we identify
+%$$\ap(\yF,\yF) = \norm[]{\eF}^2+\kappa\norm[]{\sF}^2.$$
+From \cite[Thm. 3.1]{Balbao2025}, the necessary requirements on $\ap$ and $\bp$ to have a well posed mixed saddle-point problem are met. Finally, the solution continuously depends on $(\eFt,\sFt,q)$.
 \end{proof}
 
 \subsection{Dual form}
@@ -254,25 +264,27 @@ $$
 \begin{array}{rcll}
     \zeta\lF+\nabla\cdot\mF &=& 0          & \IN U^* \simeq U = \Ltwo,\\
     \eF+\mF                 &=& \eFt       & \IN E^* \simeq E = [\Ltwo]^\dimo,\\   
-    \kappa\sF-\nabla\lF     &=& \kappa\sFt & \IN S^*,       S = \Hdiv,\\
+    \kappa\sF-\nabla\lF     &=& \kappa\sFt & \IN S^*,       S = \Hdivz,\\
     \zeta\uF+\nabla\cdot\sF &=& q          & \IN L^* \simeq L = \Ltwo,\\
-    -\nabla\uF+\eF          &=& \zero      & \IN M^*,       M = \Hdiv.
+    -\nabla\uF+\eF          &=& \zero      & \IN M^*,       M = \Hdivz,
 \end{array}
 \right.
 $$
-By taking $M = E$, $U = \sqrt{\kappa}\length^2\nabla \cdot S$, and $L = \sqrt{\kappa}\length^2\nabla \cdot M$, we arrive to
-$$
+where $\Hdivz$ is the space of functions in $[L^2(\Omega)]^\dimo$ with divergence in $L^2(\Omega)$ and vanishing normal trace on $\partial\Omega$.
+
+By taking $M = E$, $U = \sqrt{\kappa}\length^2\nabla \cdot S$, and $L = \sqrt{\kappa}\length^2\nabla \cdot M$, we arrive at
+\begin{equation}
 \left\lbrace
 \begin{array}{rcll}
-    \zeta\mF-\nabla(\nabla\cdot\sF) &=& \zeta\eFt-\nabla q& \IN S^*,\: S = \Hdiv,\\
-    -\zeta\kappa\sF-\nabla(\nabla\cdot\mF)  &=& -\zeta\kappa\sFt & \IN M^*,\: M = \Hdiv.
+    \zeta\mF-\nabla(\nabla\cdot\sF) &=& \zeta\eFt-\nabla q& \IN S^*,\: S = \Hdivz,\\
+    -\zeta\kappa\sF-\nabla(\nabla\cdot\mF)  &=& -\zeta\kappa\sFt & \IN M^*,\: M = \Hdivz.
 \end{array}
-\right.
-$$
+\right. \label{eq:dual-mu-s}
+\end{equation}
 Provided higher regularity in the function spaces involved and the domain, we have the reduced strong form
 $$
 \zeta^2\kappa \sF+\nabla(\nabla\cdot(\nabla(\nabla\cdot\sF))) = -\zeta \nabla(\nabla\cdot\eFt)+\zeta^2\kappa\nabla\cdot\sFt+\nabla(\nabla\cdot(\nabla q)) \quad\IN [\Ltwo]^\dimo,$$
-where
+where we may take
 $$\sF \in [H^4(\Omega)]^\dimo,
 \quad
 \eFt \in [H^2(\Omega)]^\dimo,
@@ -288,9 +300,9 @@ almost everywhere on all $\partial\Omega$, which is a well-posed elliptic proble
 %$$
 %H^4(\Omega)^3
 %\overset{\text{c}}{\hookrightarrow}
-%\Hdiv
+%\Hdivz
 %$$
-In matrix-vector representation, it takes the form
+In matrix-vector representation, problem \eqref{eq:dual-mu-s} takes the form
 $$
 -
 \begin{bmatrix}
@@ -316,7 +328,7 @@ $$
     -\zeta\kappa\sFt 
 \end{pmatrix}.
 $$
-The eigenvalues of the ``reaction'' matrix are $\pm i \sqrt{\kappa}\zeta$, showing that the problem cannot be uncoupled (for $\zeta\neq 0$) and behaves as a fourth order problem. For the dual formulation, the fields $\uF$ and $\lF$ are unnecessary. However, for the primal formulation, keeping them makes sense.
+The eigenvalues of the ``reaction'' matrix are $\pm\, \hbox{i}\, \sqrt{\kappa}\zeta$, showing that the problem cannot be uncoupled (for $\zeta\neq 0$) and behaves as a fourth order problem. For the dual formulation, the fields $\uF$ and $\lF$ are unnecessary. However, for the primal formulation, keeping them makes sense as seen above.
 
 Finally, the governing equations can be expressed in their weak form as
 %
@@ -330,12 +342,12 @@ Finally, the governing equations can be expressed in their weak form as
 &= \iprod[]{\eFt}{\delta\eF}+\kappa\iprod[]{\sFt}{\delta\sF}+\iprod[]{q}{\delta\lF} =: L(\delta \xF). 
 \end{align*}
 %
-In principle, one could consider $E = \Hdiv$, but as we shall see there is no way to control the divergence of $\eF$. Thus, keeping $\eF$ and $\mF$ as unknowns simultaneously makes sense. Again, note that the space $E$ acts as pivot space in this dual formulation.
+In principle, one could consider $E = \Hdivz$, but as we shall see there is no way to control the divergence of $\eF$. Thus, keeping $\eF$ and $\mF$ as unknowns simultaneously makes sense. Again, note that the space $E$ acts as pivot space in this dual formulation.
 
 \begin{definition} 
 Let the space $\YSd$ be defined as
 $$
-\YSd = \left\lbrace\yF = (\uF,\eF,\sF)\in\Ltwo\times[\Ltwo]^\dimo\times\Hdiv\right\rbrace
+\YSd = \left\lbrace\yF = (\uF,\eF,\sF)\in\Ltwo\times[\Ltwo]^\dimo\times\Hdivz\right\rbrace
 $$
 and let equip $\YSd$ with the norm
 $$
@@ -347,7 +359,7 @@ $$
 $$
 In addition, let the space $\ZSd$ be defined as
 $$
-\ZSd = \left\lbrace\zF = (\lF,\mF)\in\Ltwo\times\Hdiv\right\rbrace
+\ZSd = \left\lbrace\zF = (\lF,\mF)\in\Ltwo\times\Hdivz\right\rbrace
 $$
 and let equip $\ZSd$ with the norm
 $$
@@ -356,32 +368,42 @@ $$
                          \norm[]{\mF}^2+
 \length^2                \norm[]{\nabla\cdot\mF}^2}.
 $$
+Finally, let us define $\ad: \YSd\times\YSd\rightarrow \mathbb{R}$ and $\bd : \YSd\times \ZSd \rightarrow \mathbb{R}$ as
+\begin{align}
+\ad(\yF_1,\yF_2) & = \iprod[]{\eF_1}{\eF_2} + \kappa \iprod[]{\sF_1}{\sF_2}  \label{eq:defad}\\
+\bd(\yF,\zF) & =
+\iprod[]{\lF}{\nabla\cdot\sF+\zeta\uF}+\iprod[]{\mF}{\eF}+\iprod[]{\nabla\cdot\mF}{\uF}.\label{eq:defbd}
+\end{align}
 \end{definition}
 
 \begin{problem}[$\Pd$] Find $\xF = (\yF,\zF)\in\XSd = \YSd\times\ZSd$ such that
 \begin{equation}
-\Bd(\xF,\delta\xF) = L(\delta\xF),\quad\forall\delta\xF\in\XSd. 
+\Bd(\xF,\delta\xF) = L(\delta\xF),\quad\forall\delta\xF = (\delta\xF,\delta\yF)\in\XSd, 
 \end{equation} 
+or, equivalently,
+\begin{alignat}{3}
+\ad(\yF,\delta\yF) + \bd(\delta \yF,\zF) & = 
+\iprod[]{\eFt}{\delta\eF}+\kappa\iprod[]{\sFt}{\delta\sF}\qquad && \forall \delta \yF\in \YSd,\nonumber\\
+\bd(\yF,\delta\zF) & = \iprod[]{q}{\delta\lF} && \forall \delta \zF\in \ZSd.\nonumber
+\end{alignat}
 \end{problem}
 
-\begin{theorem}
-    $\Pd$ is well posed.
+\begin{theorem} \label{thm:thm2}
+    For $\kappa$ small enough, problem $\Pd$ is well posed.
 \end{theorem}
 
 \begin{proof}
-The bilinear and linear forms are continuous in $\XSd$. Moreover, from the bilinear form, we identify
-$$\ad(\yF,\yF) = \norm[]{\eF}^2+\kappa\norm[]{\sF}^2$$
-and
-$$\bd(\yF,\zF) = \iprod[]{\lF}{\nabla\cdot\sF+\zeta\uF}+\iprod[]{\mF}{\eF}+\iprod[]{\nabla\cdot\mF}{\uF}.$$
-%
-First, we consider the $\inf-\sup$ part: Let us consider
+The bilinear forms in \eqref{eq:defad}-\eqref{eq:defbd} and the linear form $L$ are continuous. Moreover, from \eqref{eq:defad} we have that
+$$\ad(\yF,\yF) = \norm[]{\eF}^2+\kappa\norm[]{\sF}^2.$$
+
+Let us proof the $\inf$-$\sup$ condition for \eqref{eq:defbd}. Let us consider $(\uF_{\mF},\sF_{\lF},\eF_{\mF})$ such that
 $$\uF_{\mF} = \length^2\nabla\cdot\mF,\:\:
 \nabla\cdot\sF_{\lF} = \frac{1}{\kappa\length^2}\lF\:\: (\textrm{no }\sF_{\lF}\cdot\normal\textrm{ prescribed on }\partial\Omega)
 \:\:\mathrm{and}\:\:
 \eF_{\mF} = \mF.$$
 Since the divergence operator
-$\nabla\cdot:\Hdiv\to\Ltwo$ is surjective and its closed image is precisely the entire target space,
-$\Image(\nabla\cdot) = \left\lbrace\nabla\cdot\sF:\sF\in\Hdiv\right\rbrace= \Ltwo$, the existence of $\sF_{\lF}$ si warranted.
+$\nabla\cdot:\Hdivz\to\Ltwo$ is surjective, i.e., its closed image is precisely the entire target space or equivalently
+$\Image(\nabla\cdot) = \left\lbrace\nabla\cdot\sF:\sF\in\Hdivz\right\rbrace= \Ltwo$, the existence of $\sF_{\lF}$ is warranted.
 %but this also implies that $\uF$ and $\lF$ must belong to $H^1_0(\Omega)$ for the associated primal formulation (not in this dual formulation, but yes for the kernel of $\bd$) otherwise the duality goes destroyed!
 Then, by inserting
 $\yF_{\zF} = (\uF_{\mF},\eF_{\mF},\sF_{\lF})$
@@ -394,6 +416,7 @@ $$\bd(\yF_{\zF},\zF) =
 $$
 Now, we use Young's inequality as follows
 $$
+\zeta \iprod[]{\lF}{\uF_{\mF}} = 
 \length^2\iprod[]{\zeta\lF}{\nabla\cdot\mF} \geq -\frac{\length^2\zeta^2}{2}\norm[]{\lF}^2-\frac{\length^2}{2}\norm[]{\nabla\cdot\mF}^2%,\quad\text{(Young)}.
 $$
 to arrive at
@@ -416,24 +439,29 @@ $$
 with 
 $$\kbd = \min\left\lbrace \frac{2-\kappa\zeta^2\length^4}{2}, \frac12\right\rbrace > 0,\:\:\forall\kappa\in\left(0,\frac{2}{\zeta^2\length^4}\right).$$
 %
-Last, we consider the kernel part: The null space of $\bd(\cdot,\zF)$ is given by
-$$\Kernel(\bd(\cdot,\zF)) = \left\lbrace\yF = (\uF,\eF,\sF)\in\YSd:\nabla\cdot\sF = -\zeta\uF,\eF = \nabla\uF,\uF = 0\:\mathrm{on}\:\partial\Omega\: (\uF\in\Honez)\right\rbrace$$
-Using Poincaré's inequality, i.e.,
-$$ \norm[]{\nabla\uF}^2 \geq \frac12\norm[]{\nabla\uF}^2+\frac{1}{2\CPF^2\length^2}\norm[]{\uF}^2,
+
+Let us consider now the coercivity of $\ad$ in the kernel of $\bd$. Let 
+\begin{align}
+\Kernel(\bd(\cdot,\zF)) = \left\lbrace \yF = (\uF,\eF,\sF)\in\YSd : 
+\bd(\yF,\zF) = 0 ~ \forall \zF\in \ZSd\right\rbrace.\label{eq:kerB}
+\end{align}
+Let us pick $\yF_\infty = (\uF_\infty,\eF_\infty,\sF_\infty)$, with $\uF_\infty \in {\cal C}^\infty_0(\Omega)$. Then, $\yF_\infty\in \Kernel(\bd(\cdot,\zF))$ if $\nabla\cdot\sF_\infty = -\zeta\uF_\infty$, $\eF_\infty = \nabla\uF_\infty$, $\uF_\infty = 0$ on $\partial\Omega$. Using Poincaré's inequality, i.e.,
+$$ \norm[]{\nabla\uF_\infty}^2 \geq \frac12\norm[]{\nabla\uF_\infty}^2+\frac{1}{2\CPF^2\length^2}\norm[]{\uF_\infty}^2,
 %,\quad\text{(Poincaré)},
 $$
-and the definition of the null space of $\bd(\cdot,\zF)$, we arrive at
-$$\ad(\yF,\yF) = \norm[]{\eF}^2+\kappa\norm[]{\sF}^2 \geq \frac{1}{8\CPF^2\length^2}\norm[]{\uF}^2+\frac12\norm[]{\eF}^2+\kappa\norm[]{\sF}^2+\frac{1}{8\zeta^2\CPF^2\length^2}\norm[]{\nabla\cdot\sF}^2$$
+with $\CPF$ a dimensionless constant, we arrive at
+$$\ad(\yF_\infty,\yF_\infty) = \norm[]{\eF_\infty}^2+\kappa\norm[]{\sF_\infty}^2 \geq \frac{1}{8\CPF^2\length^2}\norm[]{\uF_\infty}^2+\frac12\norm[]{\eF_\infty}^2+\kappa\norm[]{\sF_\infty}^2+\frac{1}{8\zeta^2\CPF^2\length^2}\norm[]{\nabla\cdot\sF_\infty}^2,$$
 or in a more compact form
-$$
-\ad(\yF,\yF) \geq \kad\norm[\YSd]{(\uF,\eF,\sF)}^2 
-$$
+\begin{equation}
+\ad(\yF_\infty,\yF_\infty) \geq \kad\norm[\YSd]{(\uF_\infty,\eF_\infty,\sF_\infty)}^2, \label{eq:coer-ker}
+\end{equation}
 with
 $$\kad = \min\left\lbrace\frac{1}{8\CPF^2},\frac12,\frac{1}{8\CPF^2\kappa\zeta^2\length^4}\right\rbrace > 0, \:\:\forall\frac{1}{\kappa}\in\left(\frac{\zeta^2\length^4}{2},\infty\right),$$
-which is consisten with the range of $\kappa$ rquired to satisfy the previous $\inf-\sup$ condition.
-Finally, we can conclude that
+which is consistent with the range of $\kappa$ required to satisfy the previous $\inf$-$\sup$ condition. Recall that we consider $\kappa\zeta^2\length^4 > 0$ (cf. Remark~\ref{rem2}).
+
+The continuity of $\bd$ and a standard compactness argument allows us to establish that \eqref{eq:coer-ker} holds on the whole space in \eqref{eq:kerB}. We can conclude that
 $$\kad = \min\left\lbrace\frac12,\frac{1}{16\CPF^2}\right\rbrace > 0.$$
-%
-Then, all the necessary requirements on $\ad$ and $\bd$ are met.
+Then, all the necessary requirements on $\ad$ and $\bd$ to have a well-posed mixed saddle point problem are met.
+
 Finally, the solution continuously depends on $(\eFt,\sFt,q)$.
 \end{proof}
