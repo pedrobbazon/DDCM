@@ -1,7 +1,7 @@
 
 \section{Numerical results}
 
-This section presents a numerical assessment of both the primal and dual formulations introduced above. Two numerical examples are considered. The first aims to evaluate the convergence properties of the methods by computing relevant error norms against a smooth manufactured solution. These results will be compared with those from a Natural formulation, an Equal-Order method based on Galerkin Least Squares, and an Unstabilized Equal-Order method, all recently discussed in \cite{ddcm1_article_gus}.
+This section presents a numerical assessment of both the primal and dual formulations introduced above. Two numerical examples are considered. The first aims to evaluate the convergence properties of the methods by computing relevant error norms against a smooth manufactured solution. These results will be compared with those from a Natural formulation, an Equal-Order method based on Galerkin Least Squares, and an Unstabilized Equal-Order method, all recently discussed in \cite{Balbao2025}.
 
 The second example addresses a more challenging problem featuring an internal reaction boundary layer, in order to assess the approximation properties of the proposed methods in the presence of large solution gradients. This case clearly illustrates key differences between the primal and dual formulations and further allows us to examine the effect of different choices for the data fields $(\eFt,\sFt)$ making this final experiment particularly relevant for data-driven computational mechanics applications.
 
@@ -43,7 +43,7 @@ ASGS and OSGS, was carried out using the finite element platform Firedrake \cite
 
 \subsubsection{Example 1: Convergence to a manufactured solution}
 
-Let us first describe the construction of a manufactured solution with respect to which the relevant error norms will be computed. Its construction deserves some attention, although it essentially follows the idea presented in \cite{ddcm1_article_gus}. By examining the optimality conditions in their strong form, it is straightforward to devise a manufactured solution that resembles a relevant scenario for data-driven computational mechanics.
+Let us first describe the construction of a manufactured solution with respect to which the relevant error norms will be computed. Its construction deserves some attention, although it essentially follows the idea presented in \cite{Balbao2025}. By examining the optimality conditions in their strong form, it is straightforward to devise a manufactured solution that resembles a relevant scenario for data-driven computational mechanics.
 
 The manufactured solution is illustrated in Figure~\ref{fig:reference_fields_solution}, which
 shows all the primal fields $(\uF, \sF, \eF)$, the dual fields $(\lF,\mF)$, and the data fields
@@ -167,7 +167,7 @@ This qualitative assessment suggests that both formulations capture the field $\
 	\label{fig:dual_formulation_fields_solution}
 \end{figure}
 
-We now numerically assess the convergence properties of the discrete formulations. To this end, figures~\ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02} present the error norms for all fields using linear elements ($k=1$), while figures~\ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} show the corresponding errors obtained with quadratic elements ($k=2$). Recall that we are also comparing our results against the different formulations recently evaluated in \cite{ddcm1_article_gus}: namely, a (stable) Galerkin-based Natural formulation in which $\nabla{U}_h \subset M_h$, $\nabla{L}_h \subset S_h$, and $E_h = M_h$; a fully stabilized Galerkin Least Squares (GLS) formulation permitting equal-order interpolation; and finally, an unstabilized equal-order plain Galerkin formulation.
+We now numerically assess the convergence properties of the discrete formulations. To this end, figures~\ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02} present the error norms for all fields using linear elements ($k=1$), while figures~\ref{fig:convergence_scalar_quadratic_art02} to \ref{fig:convergence_vector_quadratic_hdiv_art02} show the corresponding errors obtained with quadratic elements ($k=2$). Recall that we are also comparing our results against the different formulations recently evaluated in \cite{Balbao2025}: namely, a (stable) Galerkin-based Natural formulation in which $\nabla{U}_h \subset M_h$, $\nabla{L}_h \subset S_h$, and $E_h = M_h$; a fully stabilized Galerkin Least Squares (GLS) formulation permitting equal-order interpolation; and finally, an unstabilized equal-order plain Galerkin formulation.
 
 For linear elements (figures \ref{fig:convergence_scalar_linear_art02} to \ref{fig:convergence_vector_linear_hdiv_art02}), all formulations achieve optimal convergence rates: second-order for the scalar fields in the $L^2$-norm and first-order in the $H^1$-norm. However, the errors for the Dual-ASGS formulation are significantly larger, highlighting the superior accuracy of the primal formulation to approximate the scalar fields.
 Note also that, in this case, only the $L^2$ norm is assessed for the Dual-ASGS formulation. For the vector fields (Figure \ref{fig:convergence_vector_linear_art02}), all formulations under consideration, except for the Natural formulation, exhibit superlinear convergence in the $L^2$-norm, nearly achieving $\mathcal{O}(h^2)$ despite a theoretical estimate of $\mathcal{O}(h)$.
@@ -461,7 +461,8 @@ computations in practical applications. Future work will focus on this aspect.
 	\caption{Plots showing with blue color the mesh elements in which violation of thermodynamic consistency is reported for different level of noise in the data fields $\eFt$ and $\sFt$.}
 	~\\
 	\def\svgwidth{1.0\columnwidth}
-	\input{Figures/PDFs/noise_s_dot_e.pdf_tex}
+	%\input{Figures/PDFs/noise_s_dot_e_contour.pdf_tex}
+	\includegraphics[width=1.1\textwidth]{Figures/s_dot_e_contours}
 	\label{fig:noise_s_dot_e}
 \end{figure}
 
