@@ -39,7 +39,7 @@ We anticipate, however, that no significant differences in results were observed
 ASGS and OSGS methods for either the primal or dual formulations. 
 Consequently, all results presented hereafter are obtained using the algebraic variant 
 of the formulations. Finally, the implementation of both formulations, including the two variants,
-ASGS and OSGS, was carried out using the finite element platform Firedrake \cite{firedrake} and is available in \cite{githubrepoddcm}.
+ASGS and OSGS, was carried out using the finite element platform Firedrake \cite{FiredrakeUserManual} and is available in \url{https://github.com/pedrobbazon/DDCM.git}.
 
 \subsubsection{Example 1: Convergence to a manufactured solution}
 
@@ -421,12 +421,16 @@ This corresponds to adding a uniform perturbation in the interval $[-\delta, \de
 both, the noise-free data pairs $(\eFt,\sFt)$, which form a straight line, since the flux and the gradient are related by a linear constitutive law, and the corresponding perturbed data pairs sampled from the finite element mesh.
 The effect of increasing noise on the numerical approximation of $\uF$ is shown in figure~\ref{fig:noise_graph_and_u}(d)–(i) for both the Primal- and Dual-ASGS formulations. Corresponding results for $\sF$ appear in Fig.~\ref{fig:noise_s}. These results reinforce the trends observed earlier: the primal formulation remains more robust for approximating the scalar field, while the dual formulation continues to better capture the vector field, even at high noise levels as seen in figure~\ref{fig:noise_graph_and_u}(f) and figure~\ref{fig:noise_s}(f). 
 
-The presence of noise introduces an additional consideration: the loss of thermodynamic consistency between $\eF$ and $\sF$. Both formulations exhibit this effect, as visualized in figure \ref{fig:noise_s_dot_e}, where elements failing to satisfy consistency are colored blue. 
-The data pairs near the origin exhibit a larger relative noise, leading to a higher concentration
+The presence of noise introduces an additional consideration: the loss of thermodynamic consistency between $\eF$ and $\sF$, an effect present in both formulations. This is visualized 
+in Fig. \ref{fig:noise_s_dot_e} via contours of the scalar field $\sF \cdot \eF$.
+The onset of violation is indicated by the zero contour, shown as a black line.
+The data near the origin exhibit a larger relative noise, leading to a higher concentration
 of elements violating the thermodynamic consistency in regions where the solution gradient is 
 low, that is, far from the interface $\Gamma$. Nothing in the formulation itself precludes 
 these violations, but their occurrence underscores a central issue for reliable data-driven
-computations in practical applications. Future work will focus on this aspect.
+computations in practical applications. The development of numerical methods capable of 
+filtering potential experimental errors from the data fields is essential and left 
+for future work.
 \begin{figure}[ht!!]
 	\centering
 	\caption{Data field $\sFt$ sampled from a finite element solution of problem
@@ -458,7 +462,7 @@ computations in practical applications. Future work will focus on this aspect.
 
 \begin{figure}[h!]
 	\centering
-	\caption{Plots showing with blue color the mesh elements in which violation of thermodynamic consistency is reported for different level of noise in the data fields $\eFt$ and $\sFt$.}
+	\caption{Contours of $\sF \cdot \eF$ to illustrate the violation of thermodynamic consistency across the domain for different levels of noise in the data fields $\eFt$ and $\sFt$.}
 	~\\
 	\def\svgwidth{1.0\columnwidth}
 	%\input{Figures/PDFs/noise_s_dot_e_contour.pdf_tex}
