@@ -2950,7 +2950,7 @@ def case_06(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_04(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-OSGS']#, 'Dual-ASGS']
+    list_of_formulations = ['Primal-ASGS', 'Primal-OSGS']#, 'Dual-ASGS']
 
     norms = {key: [] for key in list_of_formulations}
 
@@ -2978,7 +2978,8 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  Pprime='OSS', order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
+        function_output['Primal-ASGS'] = main_ex08_(formulation='VMS-Primal', hsize=h, case_corner=1,  Pprime='Identity', order_poly = 'Linear', kwargs=get_stab_params('Primal-ASGS'))
+        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h, case_corner=1,  Pprime='OSS', order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
         #function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
