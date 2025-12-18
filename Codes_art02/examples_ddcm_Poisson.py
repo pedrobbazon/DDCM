@@ -2043,7 +2043,7 @@ def main_ex077_(formulation='Natural', hvalue=0.1, order_poly = 'Linear', **kwar
 # ========================================
 # Re-entrant coner: Codina's formulation
 # ========================================
-def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **kwargs):
+def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_poly = 'Linear', **kwargs):
     ti = time.time()
     print('|> Beginning Data Driven Computational Mechanics (DDCM) Computation')
 
@@ -2081,7 +2081,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
                   'cl': fd.Constant(kwargs.get('cl', 0.125)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': Pprime,
                   'L0': kwargs.get('L0', h),
                   'L1': kwargs.get('L1', fd.Constant(1.0) / h),
                   'formulation': kwargs.get('formulation', 'VMS-Primal')}
@@ -2093,7 +2093,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
                   'cs': fd.Constant(kwargs.get('cs', 0.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.25)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
-                  'Pprime': kwargs.get('Pprime', 'Identity'),
+                  'Pprime': Pprime,
                   'L0': kwargs.get('L0', fd.Constant(1.0)),
                   'L1': kwargs.get('L1', fd.Constant(1.0)),
                   'formulation': kwargs.get('formulation', 'VMS-Dual')}
@@ -2978,7 +2978,7 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
+        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  Pprime='Identity', order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
         #function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
