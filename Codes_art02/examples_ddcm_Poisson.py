@@ -2076,9 +2076,9 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
+                  'cu': fd.Constant(kwargs.get('cu', 10.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
-                  'cs': fd.Constant(kwargs.get('cs', 0.125)),
+                  'cs': fd.Constant(kwargs.get('cs', 10.0)),
                   'cl': fd.Constant(kwargs.get('cl', 0.125)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': Pprime,
