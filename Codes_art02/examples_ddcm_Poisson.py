@@ -2287,7 +2287,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     print('|> End DDCM Computation | Total time= %1.1f s' % elapsed_time)
     print('==========================================================')
 
-    return norms_output
+    return 
 
 def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     ti = time.time()
