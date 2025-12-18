@@ -2978,7 +2978,7 @@ def case_04(order_poly = 'Linear'):
         # function_output['Equal-Order-fully'] = main_ex07_(formulation='Equal-Order', hsize=h, case_corner=0,  order_poly = 'Linear',
         #                                                   kwargs=get_stab_params('Equal-Order-fully'))
         #
-        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  Pprime='Identity', order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
+        function_output['Primal-OSGS'] = main_ex08_(formulation='VMS-Primal', hsize=h,case_corner=1,  Pprime='OSS', order_poly = 'Linear', kwargs=get_stab_params('Primal-OSGS'))
 
         #function_output['Dual-ASGS'] = main_ex08_(formulation='VMS-Dual', hsize=h, case_corner=1,  order_poly = 'Linear', kwargs=get_stab_params('Dual-ASGS'))
 
