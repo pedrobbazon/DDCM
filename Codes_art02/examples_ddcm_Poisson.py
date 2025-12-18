@@ -2213,6 +2213,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
 
     ddcm_prob.solve(0.0, f"mycodddcmsol_corner_{formulation}_{Pprime}")
 
+    '''
     # Compute some error norms
     print('----------------------------------------------------------')
     print('|> Computing some error norms ')
@@ -2257,6 +2258,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
         # norms_output['Hdivsemi_m'] = error_seminorm(muexact(x), ddcm_prob.ddcm_solution.mu, norm_type='Hdiv')
     else:
         raise ValueError('Formulation not recognized')
+    '''
 
     print('----------------------------------------------------------')
     print('|> Data Driven solution: Ok')
@@ -2265,7 +2267,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     print('|> End DDCM Computation | Total time= %1.1f s' % elapsed_time)
     print('==========================================================')
 
-    return norms_output
+    return 
 
 def main_ex09_(formulation, hvalue=0.1,  order_poly = 'Linear', **kwargs):
     ti = time.time()
