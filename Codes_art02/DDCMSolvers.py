@@ -229,6 +229,9 @@ def DDCMStabCod(domain, ObjFunc, der_ObjFunc, graddata, fluxdata, flag_quads,
     else:
         raise ValueError('Projection operator not recognized')
     
+    total_dofs = W.dim()
+    print(f"Total DOFs in mixed space: {total_dofs}")
+    
     # Coordinates and unit outward normal vector 
     x = fd.SpatialCoordinate(mesh)
     n = fd.FacetNormal(mesh)
