@@ -2231,7 +2231,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(int(1.0/hsize), f"mycodddcmsol_{formulation}")
+    ddcm_prob.solve(int(1.0/hsize), f"mycodddcmsol_{formulation}_{Pprime}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
