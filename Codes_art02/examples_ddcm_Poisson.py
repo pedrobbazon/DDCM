@@ -2053,7 +2053,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  order_poly = 'Linear', **
 
     #  Create (or import) the computational domain/mesh and Compute a reference solution
     lc = hsize  # characteristic length of the mesh
-    flag_singularity_refinement = True
+    flag_singularity_refinement = False
     mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
 
     if (case_corner == 0):
@@ -2964,7 +2964,7 @@ def case_04(order_poly = 'Linear'):
             error[form][norm] = []
 
     function_output = {}
-    for h in [0.1, 0.05, 0.025]:
+    for h in [0.1]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
@@ -2984,14 +2984,14 @@ def case_04(order_poly = 'Linear'):
 
 
         # Store the errors
-        for form, inner_dict in error.items():
-            for norm in inner_dict.keys():
-                error[form][norm].append(function_output[form][norm])
+        #for form, inner_dict in error.items():
+        #    for norm in inner_dict.keys():
+        #        error[form][norm].append(function_output[form][norm])
 
     # Save the results
-    for form, inner_dict in error.items():
-        results = DDCMSaveResults(errors=inner_dict, formulation=form)
-        results.save_results(folder_name='Convergence_reentrant', order_poly=order_poly)
+    #for form, inner_dict in error.items():
+    #    results = DDCMSaveResults(errors=inner_dict, formulation=form)
+    #    results.save_results(folder_name='Convergence_reentrant', order_poly=order_poly)
 
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_05(order_poly = 'Linear'):
