@@ -2054,7 +2054,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     #  Create (or import) the computational domain/mesh and Compute a reference solution
     lc = hsize  # characteristic length of the mesh
     flag_singularity_refinement = False
-    mymeshfile, tags = CreateMeshReentrantCorner('reentrant', case_corner, lc, flag_singularity_refinement)
+    mymeshfile, tags = CreateMeshReentrantCornerOriginal('reentrant', case_corner, lc, flag_singularity_refinement)
 
     if (case_corner == 0):
         omega = 1.75 * fd.pi
@@ -2076,10 +2076,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     if formulation == 'VMS-Primal':
         params = {'perm': fd.Constant(1.0), 'zeta': fd.Constant(1.0), 'kappa': fd.Constant(1.0),
                   'difus': fd.Constant(1.0),
-                  'cu': fd.Constant(kwargs.get('cu', 0.125)),
+                  'cu': fd.Constant(kwargs.get('cu', 1.0)),
                   'ce': fd.Constant(kwargs.get('ce', 0.125)),
                   'cs': fd.Constant(kwargs.get('cs', 0.125)),
-                  'cl': fd.Constant(kwargs.get('cl', 0.125)),
+                  'cl': fd.Constant(kwargs.get('cl', 1.0)),
                   'cm': fd.Constant(kwargs.get('cm', 0.125)),
                   'Pprime': Pprime,
                   'L0': kwargs.get('L0', h),
@@ -2100,32 +2100,12 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
         
 
     # We define the analytical expression for the potential field and its gradient
-    '''
     def uexact(x):
-        angle = fd.atan2(x[1], x[0])
-        theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
-        r = fd.sqrt(x[0]**2 + x[1]**2)
-        alpha = fd.pi / omega
-        return (r ** alpha) * fd.sin(alpha * theta)
-    '''
-        
-    def uexact(x):
-        angle = fd.atan2(x[1], x[0])
+        angle = fd.atan2(x[1] + 1e-12, x[0] + 1e-12)
         theta = fd.conditional(fd.gt(angle, 0), angle, angle + 2 * fd.pi)
         r = fd.sqrt(x[0]**2 + x[1]**2) + 1e-12
         alpha = fd.pi/omega
         return (r**alpha)*fd.sin(alpha*theta)
-    
-    '''
-    def uexact(x):
-        import ufl
-        eps = fd.Constant(1.0e-10)
-        theta = ufl.conditional(ufl.gt(ufl.atan2(x[1]+eps, x[0]+eps), -eps), ufl.atan2(x[1]+eps, x[0]+eps), ufl.atan2(x[1]+eps, x[0]+eps) + 2*ufl.pi)
-        r = ufl.sqrt(x[0]**2 + x[1]**2) + fd.Constant(1.0e-10)
-        omega = 1.5*ufl.pi
-        alpha = ufl.pi/omega
-        return (r**alpha)*ufl.sin(alpha*theta)
-    '''
 
     def eexact(x):
         return fd.grad(uexact(x))
@@ -2148,10 +2128,10 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     def sexact(x):
         A = fd.Constant(0.0)  # 0.025 Amplitude
         eps = fd.Constant(1.0e-10)
-        met = fd.sqrt(eexact(x)[0]**2 + eexact(x)[1]**2) + eps
-        etn = fd.as_vector([eexact(x)[0]/met, eexact(x)[1]/met])
-        mst = met - A*met**3
-        return fd.as_vector([-mst*etn[0], -mst*etn[1]])
+        met = fd.sqrt(eexact(x)[0] ** 2 + eexact(x)[1] ** 2) + eps
+        etn = fd.as_vector([eexact(x)[0] / met, eexact(x)[1] / met])
+        mst = met - A * met ** 3
+        return fd.as_vector([-mst * etn[0], -mst * etn[1]])
     
     # by eq.(22)
     def muexact(x):
@@ -2199,7 +2179,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     ref_prob = PoissonStdProblem(domain, params_anal, 'Irrelevant', forcings, None, PoissonAnalytical,
                                  orders=[3, 3])
 
-    ref_prob.solve(int(1.0/hsize), "myrefsol")
+    ref_prob.solve(0.0, "myrefsol_corner")
 
     print('----------------------------------------------------------')
     print('|::| Reference domain and solution: OK')
@@ -2231,7 +2211,7 @@ def main_ex08_(formulation, hsize=0.1, case_corner=0,  Pprime='Identity', order_
     else:
         raise ValueError('Invalid formulation')
 
-    ddcm_prob.solve(int(1.0/hsize), f"mycodddcmsol_{formulation}_{Pprime}")
+    ddcm_prob.solve(0.0, f"mycodddcmsol_corner_{formulation}_{Pprime}")
 
     # Compute some error norms
     print('----------------------------------------------------------')
@@ -2950,21 +2930,21 @@ def case_06(order_poly: str = 'Linear'):
 # Compare Gustavo's formulation with Primal and Dual Codina's formulation
 def case_04(order_poly = 'Linear'):
     # list_of_formulations = ['Natural', 'Equal-Order-uns', 'Equal-Order-fully', 'Primal-ASGS', 'Dual-ASGS']
-    list_of_formulations = ['Primal-ASGS', 'Primal-OSGS']#, 'Dual-ASGS']
-
-    norms = {key: [] for key in list_of_formulations}
-
-    for form in norms.keys():
-        norms[form] = get_norm_list(form)
-
-    error = {}
-    for form, norm_list in norms.items():
-        error[form] = {}
-        for norm in norm_list:
-            error[form][norm] = []
-
+    # list_of_formulations = ['Primal-ASGS', 'Primal-OSGS']#, 'Dual-ASGS']
+    #
+    # norms = {key: [] for key in list_of_formulations}
+    #
+    # for form in norms.keys():
+    #     norms[form] = get_norm_list(form)
+    #
+    # error = {}
+    # for form, norm_list in norms.items():
+    #     error[form] = {}
+    #     for norm in norm_list:
+    #         error[form][norm] = []
+    #
     function_output = {}
-    for h in [0.06, 0.03, 0.015]:
+    for h in [0.075]:
         print('===================================================')
         print(f' \t Solving h = {h}')
         print('===================================================')
