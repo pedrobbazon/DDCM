@@ -57,7 +57,8 @@ dgrad, dflux = e-etilde(x), s-stilde(x)
 L = 0.5*fd.inner(dgrad,dgrad)*fd.dx + 0.5*kap*fd.inner(dflux,dflux)*fd.dx
 
 # Balance and Compatibility constraint
-L -= (fd.inner(s, fd.grad(lam)) + fd.inner(pars['zeta']*u - q(x), lam))*fd.dx
+L -= fd.inner(s, fd.grad(lam))*fd.dx
+L += fd.inner(pars['zeta']*u - q(x), lam)*fd.dx
 L += fd.inner(e - fd.grad(u), mu)*fd.dx
 
 # Stabilization terms
